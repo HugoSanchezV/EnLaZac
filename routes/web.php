@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\User;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +26,9 @@ Route::middleware([
         ]);
     })->name('dashboard');
 
-    Route::get('/usuarios', [User::class, 'index'])->name('usuarios');
+    Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios');
 
-    Route::get('/usuarios/create', [User::class, 'create'])->name('usuarios.create');
+    Route::get('/usuarios/create', [UserController::class, 'create'])->name('usuarios.create');
+
+    Route::post('/usuarios/store', [UserController::class, 'store'])->name('usuarios.store');
 });
