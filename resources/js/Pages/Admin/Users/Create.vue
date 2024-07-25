@@ -10,7 +10,7 @@
       <div class="flex justify-center items-center w-full h-full">
         
         <div class="p-8 rounded-lg w-1/2">
-            <register-admin></register-admin>
+            <Form/>
         </div>
       </div>
     </template>
@@ -19,12 +19,11 @@
 
 <script>
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import RegisterAdmin from "@/Pages/Auth/RegisterAdmin.vue";
-
+import Form from "./Form.vue";
 export default {
   components: {
     DashboardBase,
-    RegisterAdmin,
+    Form,
   },
 };
 </script>
