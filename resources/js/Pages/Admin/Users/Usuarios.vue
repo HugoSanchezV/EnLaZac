@@ -63,9 +63,9 @@ export default {
 
   data() {
     return {
-      headers: ["Nombre", "Alias", "Email", "admin", "Acciones"],
+      headers: ['id', "Nombre", "Alias", "Email", "Rol", "Acciones"],
       rows: this.users.data,
-      filters: ["Nombre", "Alias", "Email"],
+      filters: ['id', "Nombre", "Alias", "Email", 'Rol'],
       show: true,
       edit: true,
       del: true,

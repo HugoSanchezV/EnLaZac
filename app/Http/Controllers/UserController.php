@@ -20,6 +20,7 @@ class UserController extends Controller
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
+                    'alias' => $item->alias === null? "Sin asignar": $item->alias,
                     'email' => $item->email,
                     'role' => $item->admin,
                 ];

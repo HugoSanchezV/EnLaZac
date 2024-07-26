@@ -104,7 +104,7 @@
     <table class="w-full text-sm text-left text-gray-500 p-10">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
-          <th class="bg-gray-200"></th>
+          <th></th>
           <th
             v-for="(header, index) in headers"
             :key="index"
