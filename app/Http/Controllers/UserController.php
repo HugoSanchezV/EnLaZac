@@ -13,8 +13,28 @@ class UserController extends Controller
     //
     public function index()
     {
+        $users = User::where('admin', '!=', 1)
+            ->latest()
+            ->paginate(1)
+            ->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'email' => $item->email,
+                    'role' => $item->admin,
+                ];
+            });
+
         return Inertia::render('Admin/Users/Usuarios', [
             'user' => Auth::user(),
+            'users' => $users,
+            'pagination' => [
+                'links' => $users->links()->elements[0], // Proporciona los enlaces de paginación
+                'next_page_url' => $users->nextPageUrl(),
+                'prev_page_url' => $users->previousPageUrl(),
+                'per_page' => $users->perPage(),
+                'total' => $users->total(),
+            ],
         ]);
     }
 

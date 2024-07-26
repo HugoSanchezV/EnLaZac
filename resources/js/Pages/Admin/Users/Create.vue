@@ -1,5 +1,5 @@
 <template>
-  <dashboard-base>
+  <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div>
         <h2>Crear Usuario</h2>

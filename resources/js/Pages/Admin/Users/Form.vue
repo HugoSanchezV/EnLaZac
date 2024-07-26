@@ -29,7 +29,7 @@ const seleccionar = (valor) => {
 </script>
 
 <template>
-  <div class="flex justify-center border flex-col m-5 p-10">
+  <div class="flex justify-center border flex-col m-5 p-10 bg-white">
     <h2 class="flex justify-center">
       Selecciona el tipo de usuario que deseas crear
     </h2>
@@ -66,7 +66,7 @@ const seleccionar = (valor) => {
   </div>
 
   <div class="mt-5">
-    <form @submit.prevent="submit" class="border p-14 m-5">
+    <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
         <InputLabel for="name" value="Nombre" />
         <TextInput
