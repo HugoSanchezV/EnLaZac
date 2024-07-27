@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,19 +16,18 @@ class UserController extends Controller
     {
         $users = User::where('admin', '!=', 1)
             ->latest()
-            ->paginate(1)
+            ->paginate(10)
             ->through(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
-                    'alias' => $item->alias === null? "Sin asignar": $item->alias,
+                    'alias' => $item->alias === null ? "Sin asignar" : $item->alias,
                     'email' => $item->email,
                     'role' => $item->admin,
                 ];
             });
 
         return Inertia::render('Admin/Users/Usuarios', [
-            'user' => Auth::user(),
             'users' => $users,
             'pagination' => [
                 'links' => $users->links()->elements[0], // Proporciona los enlaces de paginación
@@ -49,7 +49,6 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $validatedData = $request->validated();
-
         $user = User::create([
             'name' => $validatedData['name'],
             'alias' => $validatedData['alias'],
@@ -59,5 +58,36 @@ class UserController extends Controller
         ]);
 
         return redirect()->route('usuarios')->with(['success' => 'Usuario creado con éxito', 'user' => $user], 201);
+    }
+
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return Inertia::render('Admin/Users/Edit', [
+            'user' => $user
+        ]);
+    }
+
+    public function update(UpdateUserRequest $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validatedData = $request->validated();
+
+        if (!empty($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            unset($validatedData['password']);
+        }
+
+        $user->update($validatedData);
+        return redirect()->route('usuarios')->with('success', 'Usuario actualizado con éxito');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return redirect()->route('usuarios')->with('success', 'Usuario actualizado con éxito');
     }
 }

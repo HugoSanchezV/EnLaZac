@@ -8,9 +8,10 @@ import AppLayoutEmpleado from "@/Layouts/AppLayoutEmpleado.vue";
 import AppLayoutTecnico from "@/Layouts/AppLayoutTecnico.vue";
 
 const { props } = usePage();
+const authenticatedUser = props.auth.user; // Aquí accedes al usuario autenticado
 
 const layoutComponent = computed(() => {
-  switch (props.user.admin) {
+  switch (authenticatedUser.admin) {
     case 0:
       return AppLayoutUser;
     case 1:

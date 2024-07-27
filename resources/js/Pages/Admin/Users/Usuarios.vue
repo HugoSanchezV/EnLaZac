@@ -18,23 +18,26 @@
     </template>
     <template v-slot:content>
       <div>
-        <div>
+        <div v-if="users.data.length > 0">
           <!-- Esta es el inicio de la tabla -->
-          <base-table
+          <base-table-users
             :headers="headers"
             :rows="rows"
             :filters="filters"
             :show="true"
             :edit="edit"
             :del="del"
-          ></base-table>
+          ></base-table-users>
           <!-- Este es el fin de la tabla -->
           <base-pagination
             :links="users.links"
             :pagination="pagination"
-            :current="users.to"
-            :total="users.total"
+            :current="users.current_page"
+            :total="users.last_page"
           ></base-pagination>
+        </div>
+        <div v-else class="flex justify-center uppercase font-bold">
+          <h2>No hay Usuarios para mostrar</h2>
         </div>
       </div>
     </template>
@@ -45,14 +48,14 @@
 import { Link } from "@inertiajs/vue3";
 
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTable from "@/Components/Base/BaseTable.vue";
+import BaseTableUsers from "@/Components/Base/BaseTableUsers.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTable,
+    BaseTableUsers,
     BasePagination,
   },
 

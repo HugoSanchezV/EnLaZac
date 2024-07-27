@@ -1,25 +1,39 @@
 <script setup>
-import { router, useForm } from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import TextInput from "@/Components/TextInput.vue";
+import { onMounted } from 'vue';
+import { router, useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+
+const props = defineProps({
+  user: Object,
+});
 
 const form = useForm({
-  name: "",
-  alias: "",
-  email: "",
-  password: "",
-  password_confirmation: "",
+  name: '',
+  alias: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
   admin: 0,
 });
 
+onMounted(() => {
+  if (props.user) {
+    form.name = props.user.name || '';
+    form.alias = props.user.alias || '';
+    form.email = props.user.email || '';
+    form.admin = props.user.admin || 0;
+  }
+});
+
 const submit = () => {
-  form.post(route("usuarios.store"), {
-    onFinish: () => form.reset("password", "password_confirmation"),
+  form.put(route('usuarios.update', { id: props.user.id }), {
+    onFinish: () => form.reset('password', 'password_confirmation'),
     onSuccess: () => {
-        router.back()
-    }
+      router.back();
+    },
   });
 };
 
@@ -27,6 +41,7 @@ const seleccionar = (valor) => {
   form.admin = Number(valor);
 };
 </script>
+
 
 <template>
   <div class="flex justify-center border flex-col m-5 p-10 bg-white">
@@ -112,7 +127,6 @@ const seleccionar = (valor) => {
           v-model="form.password"
           type="password"
           class="mt-1 block w-full"
-          required
           autocomplete="new-password"
         />
         <InputError class="mt-2" :message="form.errors.password" />
@@ -125,7 +139,6 @@ const seleccionar = (valor) => {
           v-model="form.password_confirmation"
           type="password"
           class="mt-1 block w-full"
-          required
           autocomplete="new-password"
         />
         <InputError class="mt-2" :message="form.errors.password_confirmation" />
@@ -139,9 +152,19 @@ const seleccionar = (valor) => {
           :class="{ 'opacity-25': form.processing }"
           :disabled="form.processing"
         >
-          Registrar
+          Guardar Cambios
         </PrimaryButton>
       </div>
     </form>
   </div>
 </template>
+
+
+<script>
+
+export default {
+  props: ['user'],
+
+}
+
+</script>
