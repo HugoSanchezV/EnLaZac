@@ -1,36 +1,36 @@
 <script setup>
-import { onMounted } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { onMounted } from "vue";
+import { router, useForm } from "@inertiajs/vue3";
+import InputError from "@/Components/InputError.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
   user: Object,
 });
 
 const form = useForm({
-  name: '',
-  alias: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
+  name: "",
+  alias: "",
+  email: "",
+  password: "",
+  password_confirmation: "",
   admin: 0,
 });
 
 onMounted(() => {
   if (props.user) {
-    form.name = props.user.name || '';
-    form.alias = props.user.alias || '';
-    form.email = props.user.email || '';
+    form.name = props.user.name || "";
+    form.alias = props.user.alias || "";
+    form.email = props.user.email || "";
     form.admin = props.user.admin || 0;
   }
 });
 
 const submit = () => {
-  form.put(route('usuarios.update', { id: props.user.id }), {
-    onFinish: () => form.reset('password', 'password_confirmation'),
+  form.put(route("usuarios.update", { id: props.user.id }), {
+    onFinish: () => form.reset("password", "password_confirmation"),
     onSuccess: () => {
       router.back();
     },
@@ -120,28 +120,41 @@ const seleccionar = (valor) => {
         <InputError class="mt-2" :message="form.errors.email" />
       </div>
 
-      <div class="mt-4">
-        <InputLabel for="password" value="Password" />
-        <TextInput
-          id="password"
-          v-model="form.password"
-          type="password"
-          class="mt-1 block w-full"
-          autocomplete="new-password"
-        />
-        <InputError class="mt-2" :message="form.errors.password" />
+      <div class="flex justify-between items-center gap-2 mt-5">
+        <p>Editar Password</p>
+        <label class="switch">
+          <input type="checkbox" checked v-model="modificarPassword" />
+          <span class="slider round"></span>
+        </label>
       </div>
 
-      <div class="mt-4">
-        <InputLabel for="password_confirmation" value="Confirmar Password" />
-        <TextInput
-          id="password_confirmation"
-          v-model="form.password_confirmation"
-          type="password"
-          class="mt-1 block w-full"
-          autocomplete="new-password"
-        />
-        <InputError class="mt-2" :message="form.errors.password_confirmation" />
+      <div v-if="modificarPassword">
+        <div class="mt-4">
+          <InputLabel for="password" value="Password" />
+          <TextInput
+            id="password"
+            v-model="form.password"
+            type="password"
+            class="mt-1 block w-full"
+            autocomplete="new-password"
+          />
+          <InputError class="mt-2" :message="form.errors.password" />
+        </div>
+
+        <div class="mt-4">
+          <InputLabel for="password_confirmation" value="Confirmar Password" />
+          <TextInput
+            id="password_confirmation"
+            v-model="form.password_confirmation"
+            type="password"
+            class="mt-1 block w-full"
+            autocomplete="new-password"
+          />
+          <InputError
+            class="mt-2"
+            :message="form.errors.password_confirmation"
+          />
+        </div>
       </div>
 
       <input type="hidden" id="admin" :value="form.admin" readonly />
@@ -161,10 +174,74 @@ const seleccionar = (valor) => {
 
 
 <script>
-
 export default {
-  props: ['user'],
+  props: ["user"],
+  data() {
+    return {
+      modificarPassword: false,
+    };
+  },
+};
+</script>
 
+<style scoped>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 20px;
 }
 
-</script>
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 17px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>

@@ -1,8 +1,9 @@
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
-      <div>
-        <h2>Editar <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">{{user.name}}</span></h2>
+      <div class="flex justify-between">
+        <h2>Editar</h2>
+        <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">{{user.name}}</span>
       </div>
     </template>
 
