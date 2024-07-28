@@ -1,16 +1,49 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
+
+import { useToast, TYPE, POSITION } from "vue-toastification";
+
+import BaseQuestion from "./BaseQuestion.vue";
+
 const destroy = (id) => {
-  const url = `/usuarios/delete/${id}`;
+  const toast = useToast();
 
-  if(confirm('Estas Seguro que quieres eliminar el registro ??')) {
-    router.delete(url)
-  }else {
-    return
-  }
-  
-}
+  toast(
+    {
+      component: BaseQuestion,
+      props: {
+        message: "¿Estas seguro de Eliminar el registro?",
+        accept: true,
+        cancel: true,
+        textConfirm: "Eliminar",
+      },
 
+      listeners: {
+        accept: () => {
+          const url = route("usuarios.destroy", id);
+
+          router.delete(url, () => {
+            onError: (error) => {
+              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+            };
+          });
+        },
+      },
+    },
+
+    {
+      type: TYPE.WARNING,
+      position: POSITION.TOP_CENTER,
+      timeout: 10000,
+    }
+  );
+
+  // if(confirm('Estas Seguro que quieres eliminar el registro ??')) {
+  //   router.delete(url)
+  // }else {
+  //   return
+  //}
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -21,7 +54,7 @@ const destroy = (id) => {
         <button
           id="dropdownRadioButton"
           @click="toggleDropdown"
-          class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+          class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
           type="button"
         >
           <svg
@@ -77,7 +110,7 @@ const destroy = (id) => {
                 />
                 <label
                   :for="'filter-radio-' + index"
-                  class="w-full ms-2 text-sm font-medium text-gray-900 rounded"
+                  class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase"
                   >{{ filter }}</label
                 >
               </div>
@@ -215,6 +248,7 @@ const destroy = (id) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4">
               <Link
+                href="#"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -290,6 +324,7 @@ const destroy = (id) => {
   
   <script>
 import { Link, router } from "@inertiajs/vue3";
+import { onErrorCaptured } from "vue";
 export default {
   components: {
     Link,
@@ -328,7 +363,7 @@ export default {
     return {
       searchQuery: "",
       dropdownOpen: false,
-      currentFilter: "Nombre",
+      currentFilter: "Todo",
     };
   },
   computed: {

@@ -1,16 +1,24 @@
 <script setup>
-import { toRefs } from "vue";
+import { onMounted, toRefs } from "vue";
+import { watch } from "vue";
 
 const props = defineProps({
   users: Object,
   pagination: Object,
+  success: String,
 });
 
-const { users } = toRefs(props);
+const { users, success } = toRefs(props);
+
+watch(success, (newValue) => {
+  if (newValue) {
+    // alert(newValue);
+    //success.value = null
+  }
+});
 
 const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
-const filters = ["id", "Nombre", "Alias", "Email", "Rol"];
-
+const filters = ["todo", "id", "nombre", "alias", "email", "rol"];
 </script>
 
 <template>
@@ -61,6 +69,7 @@ const filters = ["id", "Nombre", "Alias", "Email", "Rol"];
 
 <script>
 import { Link } from "@inertiajs/vue3";
+import { POSITION, useToast } from "vue-toastification";
 
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import BaseTableUsers from "@/Components/Base/BaseTableUsers.vue";
@@ -87,9 +96,23 @@ export default {
 
   watch: {
     users() {
-      this.rows = this.users.data
+      const toast = useToast();
+      this.rows = this.users.data;
+      toast.success(this.success, {
+        position: POSITION.TOP_CENTER,
+        draggable: true,
+      });
     },
-  }
+  },
 
+  beforeMount() {
+    const toast = useToast();
+    if (this.success) {
+      toast.success(this.success, {
+        position: POSITION.TOP_CENTER,
+        draggable: true,
+      });
+    }
+  },
 };
 </script>

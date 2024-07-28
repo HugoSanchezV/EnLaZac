@@ -37,6 +37,7 @@ class UserController extends Controller
                 'per_page' => $users->perPage(),
                 'total' => $users->total(),
             ],
+            'success' => session('success') ?? null
         ]);
     }
 
@@ -58,7 +59,7 @@ class UserController extends Controller
             'admin' => $validatedData['admin'],
         ]);
 
-        return redirect()->route('usuarios')->with(['success' => 'Usuario creado con éxito', 'user' => $user], 201);
+        return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');
     }
 
     public function edit($id)
@@ -82,13 +83,13 @@ class UserController extends Controller
         }
 
         $user->update($validatedData);
-        return redirect()->route('usuarios')->with('success', 'Usuario actualizado con éxito');
+        return redirect()->route('usuarios')->with('success', 'Usuario Actualizado Con Éxito');
     }
 
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
-        return Redirect::route('usuarios');
+        return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito');
     }
 }

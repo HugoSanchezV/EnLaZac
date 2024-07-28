@@ -36,11 +36,11 @@ export default {
       required: true,
     },
     current: {
-      type: String,
+      type: Number,
     },
     
     total: {
-      type: String,
+      type: Number,
     }
   },
   computed: {

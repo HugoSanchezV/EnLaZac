@@ -31,9 +31,6 @@ onMounted(() => {
 const submit = () => {
   form.put(route("usuarios.update", { id: props.user.id }), {
     onFinish: () => form.reset("password", "password_confirmation"),
-    onSuccess: () => {
-      router.back();
-    },
   });
 };
 
