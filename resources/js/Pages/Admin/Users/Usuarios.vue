@@ -1,3 +1,18 @@
+<script setup>
+import { toRefs } from "vue";
+
+const props = defineProps({
+  users: Object,
+  pagination: Object,
+});
+
+const { users } = toRefs(props);
+
+const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
+const filters = ["id", "Nombre", "Alias", "Email", "Rol"];
+
+</script>
+
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
@@ -25,8 +40,8 @@
             :rows="rows"
             :filters="filters"
             :show="true"
-            :edit="edit"
-            :del="del"
+            :edit="true"
+            :del="true"
           ></base-table-users>
           <!-- Este es el fin de la tabla -->
           <base-pagination
@@ -66,13 +81,15 @@ export default {
 
   data() {
     return {
-      headers: ['id', "Nombre", "Alias", "Email", "Rol", "Acciones"],
       rows: this.users.data,
-      filters: ['id', "Nombre", "Alias", "Email", 'Rol'],
-      show: true,
-      edit: true,
-      del: true,
     };
   },
+
+  watch: {
+    users() {
+      this.rows = this.users.data
+    },
+  }
+
 };
 </script>
