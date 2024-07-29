@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, toRefs } from "vue";
-import { watch } from "vue";
+import { onMounted, toRefs, watch } from "vue";
+import { useToast, POSITION } from "vue-toastification";
 
 const props = defineProps({
   users: Object,
@@ -9,16 +9,19 @@ const props = defineProps({
 });
 
 const { users, success } = toRefs(props);
+const toast = useToast();
 
 watch(success, (newValue) => {
   if (newValue) {
-    // alert(newValue);
-    //success.value = null
+    toast.success(newValue, {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
   }
 });
 
 const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
-const filters = ["todo", "id", "nombre", "alias", "email", "rol"];
+const filters = ["id", "nombre", "alias", "email", "rol"];
 </script>
 
 <template>
@@ -50,6 +53,7 @@ const filters = ["todo", "id", "nombre", "alias", "email", "rol"];
             :show="true"
             :edit="true"
             :del="true"
+            @search="search"
           ></base-table-users>
           <!-- Este es el fin de la tabla -->
           <base-pagination
@@ -68,8 +72,8 @@ const filters = ["todo", "id", "nombre", "alias", "email", "rol"];
 </template>
 
 <script>
-import { Link } from "@inertiajs/vue3";
-import { POSITION, useToast } from "vue-toastification";
+import { Link, router } from "@inertiajs/vue3";
+import { useToast, POSITION } from "vue-toastification";
 
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import BaseTableUsers from "@/Components/Base/BaseTableUsers.vue";
@@ -86,6 +90,7 @@ export default {
   props: {
     users: Object,
     pagination: Object,
+    success: String,
   },
 
   data() {
@@ -94,14 +99,58 @@ export default {
     };
   },
 
+  methods: {
+    search(props) {
+      const link = route("usuarios");
+
+      if (props.filter === "rol") {
+        props.filter = "admin";
+
+        if (props.searchQuery === "cliente") {
+          props.searchQuery = 0;
+        } else if (props.searchQuery === "coordinador") {
+          props.searchQuery = 2;
+        } else if (props.searchQuery === "tecnico") {
+          props.searchQuery = 3;
+        }
+      }
+
+      console.log(props.searchQuery);
+
+      let q = props.searchQuery;
+      let order = props.order;
+      let type = props.type;
+
+      if (order === "nombre") {
+        order = "name";
+      }
+
+      if (type === "cliente") {
+        type = 0;
+      } else if (type === "coordinador") {
+        type = 2;
+      } else if (type === "tecnico") {
+        type = 3;
+      }
+
+      this.$inertia.get(
+        link,
+        { q: q, order: order, type: type },
+        { preserveState: true, replace: true }
+      );
+    },
+  },
+
   watch: {
     users() {
       const toast = useToast();
       this.rows = this.users.data;
-      toast.success(this.success, {
-        position: POSITION.TOP_CENTER,
-        draggable: true,
-      });
+      if (this.success) {
+        toast.success(this.success, {
+          position: POSITION.TOP_CENTER,
+          draggable: true,
+        });
+      }
     },
   },
 
