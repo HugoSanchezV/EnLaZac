@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,3 +38,5 @@ Route::middleware([
 
     Route::delete('/usuarios/delete/{id}', [UserController::class, 'destroy'])->name('usuarios.destroy');
 });
+
+Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');
