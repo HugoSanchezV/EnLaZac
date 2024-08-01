@@ -20,16 +20,19 @@ class RouterosApiController extends Controller
 
         $API->debug(false);
         if ($API->connect($ip, $user, $password)) {
-            $identitas = $API->comm('/user/print');
+            $identitas = $API->comm('/ip/address/print');
 
-            dd($identitas);
+            //dd($identitas);
             $data = [
-                'identitas' => $identitas[0],
+                'identitas' => $identitas,
             ];
         } else {
             return 'No se logro la conexion';
         }
 
-        return Inertia::render('TestApi', compact($data));
+        return Inertia::render('TestApi', [
+            
+            "data" => $data
+        ]);
     }
-}
+}   

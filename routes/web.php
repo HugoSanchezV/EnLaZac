@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RouterController;
 use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -26,17 +27,19 @@ Route::middleware([
         return Inertia::render('DashboardBase');
     })->name('dashboard');
 
-    Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios');
+    // Usuarios
+    Route::get('/usuarios',                 [UserController::class, 'index'])   ->name('usuarios');
+    Route::get('/usuarios/create',          [UserController::class, 'create'])  ->name('usuarios.create');
+    Route::post('/usuarios/store',          [UserController::class, 'store'])   ->name('usuarios.store');
+    Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])    ->name('usuarios.edit');
+    Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])  ->name('usuarios.update');
+    Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy']) ->name('usuarios.destroy');
 
-    Route::get('/usuarios/create', [UserController::class, 'create'])->name('usuarios.create');
+    //Routers
+    Route::get('/routers',                  [RouterController::class, 'index']) ->name('routers');
+    Route::get('/routers/create',           [RouterController::class, 'create'])->name('routers.create');
+    Route::post('/routers/store',           [RouterController::class, 'store']) ->name('routers.store');
 
-    Route::post('/usuarios/store', [UserController::class, 'store'])->name('usuarios.store');
-
-    Route::get('/usuarios/edit/{id}', [UserController::class, 'edit'])->name('usuarios.edit');
-
-    Route::put('/usuarios/update/{id}', [UserController::class, 'update'])->name('usuarios.update');
-
-    Route::delete('/usuarios/delete/{id}', [UserController::class, 'destroy'])->name('usuarios.destroy');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

@@ -1,12 +1,14 @@
 <template>
   <div>
-    {{ data }}
+    <pre>
+        {{ data }}
+    </pre>
   </div>
 </template>
 
 
 <script>
 export default {
-    props: ['data']
+  props: ["data"],
 };
 </script>
