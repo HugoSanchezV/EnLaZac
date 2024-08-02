@@ -22,7 +22,7 @@ const destroy = (id) => {
       listeners: {
         accept: () => {
           const url = route("routers.destroy", id);
-
+          
           router.delete(url, () => {
             onError: (error) => {
               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");

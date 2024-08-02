@@ -40,7 +40,7 @@ Route::middleware([
     Route::post('/routers/store',           [RouterController::class, 'store'])->name('routers.store');
     Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');
     Route::put('/routers/update/{id}',      [RouterController::class, 'update'])->name('routers.update');
-    Route::delete('/routers/delete/{id}',   [UserController::class, 'destroy'])->name('routers.destroy');
+    Route::delete('/routers/delete/{id}',   [RouterController::class, 'destroy'])->name('routers.destroy');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

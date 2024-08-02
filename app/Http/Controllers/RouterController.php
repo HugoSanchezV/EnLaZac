@@ -136,7 +136,6 @@ class RouterController extends Controller
      */
     public function destroy($id)
     {
-        dd('Estas desde eliminar de router');
         $router = Router::findOrFail($id);
         $router->delete();
         return Redirect::route('routers')->with('success', 'Router Eliminado Con Éxito');
