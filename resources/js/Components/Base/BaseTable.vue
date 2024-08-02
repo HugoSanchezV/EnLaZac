@@ -1,3 +1,30 @@
+<script setup>
+import { toRefs, watch } from "vue";
+import { useToast, POSITION } from "vue-toastification";
+
+const props = defineProps({
+  routers: Object,
+  pagination: Object,
+  success: String,
+});
+
+const { routers, success } = toRefs(props);
+const toast = useToast();
+
+watch(success, (newValue) => {
+  if (newValue) {
+    toast.success(newValue, {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+  }
+});
+
+const headers = ["id", "Usuario", "IP"];
+const filters = ["id", "usuario"];
+</script>
+
+
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div

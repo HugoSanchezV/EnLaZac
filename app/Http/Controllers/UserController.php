@@ -18,15 +18,12 @@ class UserController extends Controller
     {
         $query = User::query();
 
-        // Excluir administradores
-        // dd($request->type);
-
         if ($request->type !== null && $request->type !== 'todos') {
             $query->where('admin', '=', $request->type);
         }
 
         $query->where('admin', '!=', 1);
-        // Aplicar término de búsqueda
+
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
@@ -54,7 +51,6 @@ class UserController extends Controller
             ];
         });
 
-        // Si deseas depurar la salida, puedes usar `dd($users)` aquí
 
         return Inertia::render('Admin/Users/Usuarios', [
             'users' => $users,
@@ -117,6 +113,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
+        dd('Eliminar usuario');
         $user = User::findOrFail($id);
         $user->delete();
         return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito');
