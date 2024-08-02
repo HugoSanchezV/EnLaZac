@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, toRefs, watch } from "vue";
+import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
 
 const props = defineProps({
@@ -21,7 +21,7 @@ watch(success, (newValue) => {
 });
 
 const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
-const filters = ["id", "nombre", "alias", "email", "rol"];
+const filters = ["id", "nombre", "alias", "email"];
 </script>
 
 <template>
@@ -61,6 +61,11 @@ const filters = ["id", "nombre", "alias", "email", "rol"];
             :pagination="pagination"
             :current="users.current_page"
             :total="users.last_page"
+            :data="{
+              'q': q,
+              'order': order,
+              'type': type,
+            }"
           ></base-pagination>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
@@ -72,7 +77,7 @@ const filters = ["id", "nombre", "alias", "email", "rol"];
 </template>
 
 <script>
-import { Link, router } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 
 import DashboardBase from "@/Pages/DashboardBase.vue";
@@ -96,6 +101,9 @@ export default {
   data() {
     return {
       rows: this.users.data,
+      q: '',
+      order: 'id',
+      type: 'todos',
     };
   },
 
@@ -117,25 +125,25 @@ export default {
 
       console.log(props.searchQuery);
 
-      let q = props.searchQuery;
-      let order = props.order;
-      let type = props.type;
+      this.q = props.searchQuery;
+      this.order = props.order;
+      this.type = props.type;
 
-      if (order === "nombre") {
-        order = "name";
+      if (this.order === "nombre") {
+        this.order = "name";
       }
 
-      if (type === "cliente") {
-        type = 0;
-      } else if (type === "coordinador") {
-        type = 2;
-      } else if (type === "tecnico") {
-        type = 3;
+      if (this.type === "cliente") {
+        this.type = 0;
+      } else if (this.type === "coordinador") {
+        this.type = 2;
+      } else if (this.type === "tecnico") {
+        this.type = 3;
       }
 
       this.$inertia.get(
         link,
-        { q: q, order: order, type: type },
+        { q: this.q, order: this.order, type: this.type },
         { preserveState: true, replace: true }
       );
     },

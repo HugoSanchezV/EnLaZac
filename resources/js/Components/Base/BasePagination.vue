@@ -8,7 +8,9 @@
       >
         Anterior
       </button>
-      <div class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-600 border rounded">
+      <div
+        class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-600 border rounded"
+      >
         Página {{ current }} de {{ total }}
       </div>
       <button
@@ -23,7 +25,7 @@
 </template>
 
 <script>
-import { Link } from '@inertiajs/vue3';
+import { Link } from "@inertiajs/vue3";
 
 export default {
   props: {
@@ -38,30 +40,41 @@ export default {
     current: {
       type: Number,
     },
-    
+
     total: {
       type: Number,
-    }
+    },
+    data: {
+      type: Object,
+    },
   },
   computed: {
     currentPage() {
-      const activeLink = this.links.find(link => link.active);
+      const activeLink = this.links.find((link) => link.active);
       return activeLink ? parseInt(activeLink.label) : 1;
     },
     totalPages() {
-      const lastPageLink = this.links.find(link => link.label.match(/^\d+$/));
+      const lastPageLink = this.links.find((link) => link.label.match(/^\d+$/));
       return lastPageLink ? parseInt(lastPageLink.label) : 1;
     },
   },
   methods: {
     prevPage() {
       if (this.pagination.prev_page_url) {
-        this.$inertia.get(this.pagination.prev_page_url);
+        this.$inertia.get(
+          this.pagination.prev_page_url,
+          this.data,
+          { preserveState: true, replace: true }
+        );
       }
     },
     nextPage() {
       if (this.pagination.next_page_url) {
-        this.$inertia.get(this.pagination.next_page_url);
+        this.$inertia.get(
+          this.pagination.next_page_url,
+          this.data,
+          { preserveState: true, replace: true }
+        );
       }
     },
   },
