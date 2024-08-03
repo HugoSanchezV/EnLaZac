@@ -51,6 +51,7 @@ class UserController extends Controller
             ];
         });
 
+        $totalUsersCount = User::where('admin', '!=', 1)->count();
 
         return Inertia::render('Admin/Users/Usuarios', [
             'users' => $users,
@@ -62,6 +63,7 @@ class UserController extends Controller
                 'total' => $users->total(),
             ],
             'success' => session('success') ?? null,
+            'totalUsersCount' => $totalUsersCount 
         ]);
     }
 

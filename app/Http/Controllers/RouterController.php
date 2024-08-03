@@ -49,8 +49,8 @@ class RouterController extends Controller
             ];
         });
         
-        
-        //dd($routers);
+        $totalRoutersCount = Router::count();
+
         return Inertia::render('Admin/Routers/Index', [
             'routers' => $routers,
             'pagination' => [
@@ -61,6 +61,7 @@ class RouterController extends Controller
                 'total' => $routers->total(),
             ],
             'success' => session('success') ?? null,
+            'totalRoutersCount' => $totalRoutersCount,
         ]);
 
         return Inertia::render('Admin/Routers/Index');

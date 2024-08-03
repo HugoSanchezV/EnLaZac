@@ -6,6 +6,7 @@ const props = defineProps({
   routers: Object,
   pagination: Object,
   success: String,
+  totalRoutersCount: Number,
 });
 
 const { routers, success } = toRefs(props);
@@ -39,27 +40,23 @@ const filters = ["id", "usuario", "ip"];
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="size-5"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
               />
             </svg>
 
-          Crear Router
+            Crear Router
           </Link>
         </div>
       </div>
     </template>
 
     <template v-slot:content>
-      <div v-if="routers.data.length > 0">
+      <div v-if="totalRoutersCount > 0">
         <!-- Esta es el inicio de la tabla -->
         <router-table
           :headers="headers"
@@ -71,18 +68,21 @@ const filters = ["id", "usuario", "ip"];
           @search="search"
         >
         </router-table>
-        <!-- Este es el fin de la tabla -->
-        <!-- <base-pagination
-            :links="users.links"
-            :pagination="pagination"
-            :current="users.current_page"
-            :total="users.last_page"
-            :data="{
-              'q': q,
-              'order': order,
-              'type': type,
-            }"
-          ></base-pagination> -->
+        <base-pagination
+          v-if="routers.data.length > 0"
+          :links="routers.links"
+          :pagination="pagination"
+          :current="routers.current_page"
+          :total="routers.last_page"
+          :data="{
+            q: q,
+            order: order,
+            type: type,
+          }"
+        ></base-pagination>
+        <h2 v-else class="flex justify-center mt-4 bg-gray-400 text-white py-2">
+          No se encontró ningún resultado de "{{ q }}"
+        </h2>
       </div>
 
       <div v-else>
@@ -96,12 +96,14 @@ const filters = ["id", "usuario", "ip"];
 import { Link } from "@inertiajs/vue3";
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import RouterTable from "./RouterTable.vue";
+import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
     RouterTable,
+    BasePagination,
     // BasePagination,
   },
 
@@ -109,6 +111,7 @@ export default {
     routers: Object,
     pagination: Object,
     success: String,
+    totalRoutersCount: Number,
   },
 
   data() {
@@ -128,12 +131,12 @@ export default {
       this.order = props.order;
       this.type = props.type;
 
-      if (this.order === 'usuario') {
-        this.order = 'user'
+      if (this.order === "usuario") {
+        this.order = "user";
       }
 
-      if (this.order === 'ip') {
-        this.order = 'ip_address'
+      if (this.order === "ip") {
+        this.order = "ip_address";
       }
 
       this.$inertia.get(
