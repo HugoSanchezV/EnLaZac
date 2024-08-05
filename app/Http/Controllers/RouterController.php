@@ -43,9 +43,10 @@ class RouterController extends Controller
         
         $routers = $query->latest()->paginate(8)->through(function ($item) {
             return [
+                'sync' => $item->sync,
                 'id' => $item->id,
                 'user' => $item->user,
-                'ip_address' => $item->ip_address,
+                'ip_address' => $item->ip_address,              
             ];
         });
         

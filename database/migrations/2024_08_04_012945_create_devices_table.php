@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('modems', function (Blueprint $table) {
+        Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->integer("router_id");
+            $table->integer("router_id")->references('id')->on('routers')->onDelete('cascade');
             $table->ipAddress("network");
             $table->ipAddress("interface");
             $table->string("current_interface");
-            $table->boolean("disabled");
+            $table->integer("device")->references('id')->on('inventoriedevices')->default(null)->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('modems');
+        Schema::dropIfExists('devices');
     }
 };

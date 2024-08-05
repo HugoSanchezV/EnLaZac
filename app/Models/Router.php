@@ -12,6 +12,7 @@ class Router extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'sync',
         'ip_address',
         'user',
         'password',

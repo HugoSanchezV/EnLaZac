@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('routers', function (Blueprint $table) {
+        Schema::create('inventorie_devices', function (Blueprint $table) {
             $table->id();
-            $table->ipAddress("ip_address")->unique()->require();
-            $table->ipAddress("user")->require();
-            $table->boolean("sync")->default(false);
-            $table->string("password")->require();
             $table->timestamps();
         });
     }
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('routers');
+        Schema::dropIfExists('inventorie_devices');
     }
 };
