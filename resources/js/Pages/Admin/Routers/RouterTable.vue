@@ -236,9 +236,6 @@ const destroy = (id) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          <!-- <th>
-            <span class="font-bold">SYN</span>
-          </th> -->
           <th
             v-for="(header, index) in headers"
             :key="index"
@@ -264,7 +261,7 @@ const destroy = (id) => {
             <div v-if="cellIndex === 'sync'">
               <Link
                 v-if="edit"
-                :href="route('routers.edit', row.id)"
+                :href="route('routers.sync', row.id)"
                 class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
                 :class="
                   row.sync
@@ -295,7 +292,7 @@ const destroy = (id) => {
             <div class="sm:flex gap-4">
               <Link
                 href="#"
-                v-if="show"
+                v-if="cellIndex === 'sync'"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -315,6 +312,10 @@ const destroy = (id) => {
 
                 Mostrar
               </Link>
+
+              <div v-else class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1">
+                Sincroniza para detalles
+              </div>
               <Link
                 v-if="edit"
                 :href="route('routers.edit', row.id)"

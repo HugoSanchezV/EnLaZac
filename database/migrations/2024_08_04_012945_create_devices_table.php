@@ -13,12 +13,24 @@ return new class extends Migration
     {
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
-            $table->integer("router_id")->references('id')->on('routers')->onDelete('cascade');
-            $table->ipAddress("network");
-            $table->ipAddress("interface");
+            $table->string('device_internal_id');
+
+            $table->unsignedBigInteger('router_id');
+            $table->unsignedBigInteger('device_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+
+            $table->string("list");
+            $table->ipAddress("address")->uniqid()->require();
+            $table->time("creation_time");
             $table->string("current_interface");
-            $table->integer("device")->references('id')->on('inventoriedevices')->default(null)->onDelete('cascade');
+            $table->boolean("disabled")->default(true);
+
+            $table->softDeletes();
             $table->timestamps();
+
+            $table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
+            $table->foreign('device_id')->references('id')->on('inventorie_devices')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -27,6 +39,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('devices', function (Blueprint $table) {
+            $table->dropForeign(['router_id']);
+            $table->dropForeign(['device_id']);
+            $table->dropForeign(['user_id']);
+        });
+
+        
+        //Schema::dropIfExists('routers');
         Schema::dropIfExists('devices');
     }
 };
