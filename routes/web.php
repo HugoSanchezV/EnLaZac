@@ -35,15 +35,18 @@ Route::middleware([
     Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
 
     //Routers
-    // Resource 
+        // Resource 
     Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
     Route::get('/routers/create',           [RouterController::class, 'create'])->name('routers.create');
     Route::post('/routers/store',           [RouterController::class, 'store'])->name('routers.store');
     Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');
     Route::put('/routers/update/{id}',      [RouterController::class, 'update'])->name('routers.update');
     Route::delete('/routers/delete/{id}',   [RouterController::class, 'destroy'])->name('routers.destroy');
-    // sync
-    Route::get('/routers/{id}/sync',   [RouterController::class, 'sync'])->name('routers.sync');
+        // sync
+    Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
+        // devices
+    Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
+    Route::get('/devices/create',     [RouterController::class, 'devices'])->name('devices.create');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

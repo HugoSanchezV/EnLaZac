@@ -17,4 +17,8 @@ class Router extends Model
         'user',
         'password',
     ];
+
+    public function devices() {
+        return $this->hasMany(Device::class, 'router_id');
+    }
 }

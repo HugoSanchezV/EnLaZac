@@ -235,7 +235,7 @@ const destroy = (id) => {
     <table class="w-full text-sm text-left text-gray-500 p-10">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
-          <th></th>
+          <!-- <th></th> -->
           <th
             v-for="(header, index) in headers"
             :key="index"
@@ -252,48 +252,66 @@ const destroy = (id) => {
           :key="rowIndex"
           class="bg-white border-b hover:bg-gray-100"
         >
-          <td></td>
+          <!-- <td></td> -->
+
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'sync'">
+            <div v-if="cellIndex === 'disabled'">
+              <label class="inline-flex items-center mb-5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  :checked="cell === 0"
+                  class="sr-only peer"
+                  @click="enable(row)"
+                />
+                <div
+                  class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:ring-blue-300 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-green-300"
+                ></div>
+              </label>
+            </div>
+            <!-- <div v-if="cellIndex === 'sync'">
               <Link
-                v-if="edit"
-                :href="route('routers.sync', row.id)"
-                class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
-                :class="
-                  row.sync
+              v-if="edit"
+              :href="route('routers.sync', row.id)"
+              class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
+              :class="
+              row.sync
                     ? 'bg-green-500 hover:bg-green-600'
                     : ' bg-orange-500 hover:bg-orange-600'
                 "
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                  />
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+                >
+                <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                />
                 </svg>
               </Link>
+            </div> -->
+            <div v-else>
+              <!-- v-if="cellIndex !== 'router_id'" -->
+              <div>
+                {{ cell }}
+              </div>
             </div>
-            <div v-else>{{ cell }}</div>
           </td>
 
           <td class="flex items-stretch">
             <div class="sm:flex gap-4">
               <Link
                 :href="route('routers.devices', row.id)"
-                v-if="row.sync"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -301,7 +319,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -309,16 +327,13 @@ const destroy = (id) => {
                     d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
                   />
                 </svg>
-                Detalles 
+                Detalles
               </Link>
 
-              <div v-else class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1">
-                Sincroniza para detalles
-              </div>
               <Link
                 v-if="edit"
                 :href="route('routers.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-1 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -326,7 +341,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -341,7 +356,7 @@ const destroy = (id) => {
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -349,7 +364,7 @@ const destroy = (id) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    class="size-5"
                   >
                     <path
                       stroke-linecap="round"
@@ -416,17 +431,19 @@ export default {
   },
   computed: {
     filteredRows() {
-      // if (!this.searchQuery) {
-      return this.rows;
-      //}
-      // return this.rows.filter((row) =>
-      //   row.some((cell) =>
-      //     cell.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
-      //   )
-      // );
+      return this.rows
     },
   },
   methods: {
+
+    enable(row) {
+      const newValue = row.disabled ? 1: 0
+
+      console.log(row)
+      alert(row.disabled)
+      alert(newValue)
+
+    },
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
     },

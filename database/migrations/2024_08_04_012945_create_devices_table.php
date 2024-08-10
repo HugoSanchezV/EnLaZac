@@ -19,10 +19,10 @@ return new class extends Migration
             $table->unsignedBigInteger('device_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
 
+            $table->string("comment")->nullable()->default(null);
             $table->string("list");
             $table->ipAddress("address")->uniqid()->require();
             $table->time("creation_time");
-            $table->string("current_interface");
             $table->boolean("disabled")->default(true);
 
             $table->softDeletes();

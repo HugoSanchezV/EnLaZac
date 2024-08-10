@@ -12,6 +12,7 @@ class DevicesController extends Controller
     public function index()
     {
         //
+        
     }
 
     /**

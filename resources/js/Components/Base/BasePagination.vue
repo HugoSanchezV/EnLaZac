@@ -1,5 +1,5 @@
 <template>
-  <div v-if="links.length > 0" class="mt-5">
+  <div class="mt-5">
     <div class="flex justify-between -mb-1">
       <button
         @click="prevPage"
