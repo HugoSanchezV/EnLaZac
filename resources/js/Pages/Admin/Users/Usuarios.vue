@@ -177,12 +177,12 @@ export default {
     users() {
       const toast = useToast();
       this.rows = this.users.data;
-      // if (this.success) {
-      //   toast.success(this.success, {
-      //     position: POSITION.TOP_CENTER,
-      //     draggable: true,
-      //   });
-      // }
+      if (this.success) {
+        toast.success(this.success, {
+          position: POSITION.TOP_CENTER,
+          draggable: true,
+        });
+      }
     },
   },
 
