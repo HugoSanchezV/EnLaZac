@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
@@ -51,6 +52,7 @@ Route::middleware([
     Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
     Route::get('/devices/create',     [RouterController::class, 'devices'])->name('devices.create');
 
+<<<<<<< HEAD
     //Tickets
     Route::get('/tickets',                 [TicketController::class, 'index'])->name('tickets');
     Route::get('/tickets/create',          [TicketController::class, 'create'])->name('tickets.create');
@@ -58,6 +60,10 @@ Route::middleware([
     Route::get('/tickets/edit/{id}',       [TicketController::class, 'edit'])->name('tickets.edit');
     Route::put('/tickets/update/{id}',     [TicketController::class, 'update'])->name('tickets.update');
     Route::delete('/tickets/delete/{id}',  [TicketController::class, 'destroy'])->name('tickets.destroy');
+=======
+    Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
+
+>>>>>>> 6086f7ae64892c747c570576db04646e2e479afc
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');
