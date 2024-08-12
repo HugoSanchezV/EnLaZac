@@ -3,6 +3,9 @@
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TicketController;
+
+use App\Models\Ticket;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,6 +50,14 @@ Route::middleware([
         // devices
     Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
     Route::get('/devices/create',     [RouterController::class, 'devices'])->name('devices.create');
+
+    //Tickets
+    Route::get('/tickets',                 [TicketController::class, 'index'])->name('tickets');
+    Route::get('/tickets/create',          [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets/store',          [TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/edit/{id}',       [TicketController::class, 'edit'])->name('tickets.edit');
+    Route::put('/tickets/update/{id}',     [TicketController::class, 'update'])->name('tickets.update');
+    Route::delete('/tickets/delete/{id}',  [TicketController::class, 'destroy'])->name('tickets.destroy');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');
