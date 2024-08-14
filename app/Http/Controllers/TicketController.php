@@ -128,4 +128,6 @@ class TicketController extends Controller
         $ticket->delete();
         return Redirect::route('tickets')->with('success', 'Ticket Eliminado Con Éxito');
     }
+    //Para Usuario
+   
 }
