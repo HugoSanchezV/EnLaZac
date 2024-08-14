@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Ticket\StoreTicketRequest;
 use App\Http\Requests\Ticket\UpdateTicketRequest;
+use App\Http\Requests\Ticket\UpdateTicketStatusRequest;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,10 +29,11 @@ class TicketController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
+                    ->orWhere('subject', 'like', "%$search%")
                     ->orWhere('description', 'like', "%$search%")
-                    ->orWhere('ubication', 'like', "%$search%")
                     ->orWhere('status', 'like', "%$search%")
-                    ->orWhere('user_id', 'like', "%$search%");
+                    ->orWhere('user_id', 'like', "%$search%")
+                    ->orWhere('created_at','like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -45,19 +47,14 @@ class TicketController extends Controller
         $tickets = $query->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
+                'subject' => $item->subject,
                 'description' => $item->description,
-                'ubication' => $item->ubication,
                 'status' => $item->status,
-                'user_id' => $item->user_id,
+                'user_id' =>  $item->user_id,
+                'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];
         });
-        /*
-        $sedeCoordinates = $tickets -> map(function ($tickets){
-            return $tickets -> ubication;
-        }) -> toArray();
 
-        $centerCoordinate = count($sedeCoordinates) > 0 ? $sedeCoordinates[0] : '';
-        */
         
         $totalTicketsCount = Ticket::count();
 
@@ -82,17 +79,15 @@ class TicketController extends Controller
     }
 
     public function store(StoreTicketRequest $request)
-    {
+    {   $user_id = Auth::id();
         $validatedData = $request->validated();
         $ticket = Ticket::create([
-            'name' => $validatedData['name'],
-            'alias' => $validatedData['alias'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'admin' => $validatedData['admin'],
+            'subject' => $validatedData['subject'],
+            'description' => $validatedData['description'],
+            'user_id' => $user_id,
         ]);
 
-        return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');
+        return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
     }
 
     public function edit($id)
@@ -102,7 +97,7 @@ class TicketController extends Controller
             'ticket' => $ticket
         ]);
     }
-
+    
     public function update(UpdateTicketRequest $request, $id)
     {
         $ticket = Ticket::findOrFail($id);
@@ -116,9 +111,17 @@ class TicketController extends Controller
         }
 
         $ticket->update($validatedData);
-        return redirect()->route('usuarios')->with('success', 'Ticket Actualizado Con Éxito');
+        return redirect()->route('tickets')->with('success', 'Ticket Actualizado Con Éxito');
     }
+    public function statusUpdate(UpdateTicketStatusRequest $request, $id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->status = $request->input('status');
+        $ticket->save();
+        
 
+        return redirect()->route('tickets')->with('success', 'Ticket Actualizado Con Éxito');
+    }
     public function destroy($id)
     {
         $ticket = Ticket::findOrFail($id);

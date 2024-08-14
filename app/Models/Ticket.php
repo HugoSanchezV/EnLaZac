@@ -11,9 +11,8 @@ class Ticket extends Model
 
     public $fillable =[
         'id',
+        'subject',
         'description',
-        'ubication',
-        'create_date',
         'status',
         'user_id'
     ];

@@ -21,8 +21,8 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["Número", "Descripción", "Ubicación", "Estado", "Cliente", "Acciones"];
-const filters = ["Número", "Descripción","Ubicación", "Estado", "Cliente"];
+const headers = ["Id", "Asunto", "Descripción", "Estado", "Cliente","Creación", "Acciones"];
+const filters = ["id", "subject","description", "status", "user_id", 'created_at'];
 
 </script>
 

@@ -58,6 +58,8 @@ Route::middleware([
     Route::get('/tickets/edit/{id}',       [TicketController::class, 'edit'])->name('tickets.edit');
     Route::put('/tickets/update/{id}',     [TicketController::class, 'update'])->name('tickets.update');
     Route::delete('/tickets/delete/{id}',  [TicketController::class, 'destroy'])->name('tickets.destroy');
+    Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
+
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

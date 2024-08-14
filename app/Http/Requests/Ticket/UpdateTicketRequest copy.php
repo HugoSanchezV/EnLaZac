@@ -3,11 +3,12 @@
 namespace App\Http\Requests\Ticket;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreTicketRequest extends FormRequest
+class UpdateTicketRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine if the ticket is authorized to make this request.
      */
     public function authorize(): bool
     {
@@ -21,6 +22,7 @@ class StoreTicketRequest extends FormRequest
      */
     public function rules(): array
     {
+        $routerId = $this->route('id');
         return [
             'subject' => 'required|max:255',
             'description' => 'required|max:255',

@@ -8,7 +8,7 @@
 
     <template v-slot:content>
       <div class="flex justify-center items-center w-full h-full">
-        
+
         <div class="p-8 rounded-lg w-1/2">
             <Form/>
         </div>
@@ -19,7 +19,7 @@
 
 <script>
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import Form from "./Form.vue";
+import Form from "./FormCreate.vue";
 export default {
   components: {
     DashboardBase,

@@ -11,9 +11,9 @@ const props = defineProps({
 });
 
 const form = useForm({
-  name: "",
-  alias: "",
-  email: "",
+  subject: "",
+  description: "",
+  status: "",
   password: "",
   password_confirmation: "",
   admin: 0,

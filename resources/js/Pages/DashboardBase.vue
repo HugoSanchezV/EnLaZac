@@ -6,6 +6,7 @@ import AppLayoutAdmin from "@/Layouts/AppLayoutAdmin.vue";
 import AppLayoutUser from "@/Layouts/AppLayoutUser.vue";
 import AppLayoutEmpleado from "@/Layouts/AppLayoutEmpleado.vue";
 import AppLayoutTecnico from "@/Layouts/AppLayoutTecnico.vue";
+import AppLayoutCoordinador from "@/Layouts/AppLayoutCoordinador.vue";
 
 const { props } = usePage();
 const authenticatedUser = props.auth.user; // Aquí accedes al usuario autenticado
@@ -17,6 +18,8 @@ const layoutComponent = computed(() => {
     case 1:
       return AppLayoutAdmin;
     case 2:
+      return AppLayoutCoordinador;
+    case 3:
       return AppLayoutEmpleado;
     case 3:
       return AppLayoutTecnico;
