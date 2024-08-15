@@ -31,7 +31,7 @@ const filters = ["id", "subject","description", "status", "user_id", 'created_at
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Tickets</h2>
+          <h2>Tickets para usuario</h2>
         </div>
         <div>
           <Link
@@ -95,7 +95,7 @@ const filters = ["id", "subject","description", "status", "user_id", 'created_at
         <div v-else class="flex justify-center uppercase font-bold">
           <h2>No hay Tickets para mostrar</h2>
         </div>
-        <div id="map-container" style="width: 100%; height: 400px; margin-top: 20px;">Aqui ban las </div>
+    
       </div>
     </template>
   </dashboard-base>
@@ -173,7 +173,7 @@ function clearMarkers() {
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableTickets from "@/Components/Base/BaseTableTickets.vue";
+import BaseTableTickets from "@/Components/Base/BaseTableTicketsForUser.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {

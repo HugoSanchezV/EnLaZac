@@ -61,7 +61,7 @@ Route::middleware([
     Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
 
     //Tickets user
-    Route::get('/tickets/usuario',                 [TicketController::class, 'index'])->name('tickets');
+    Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
     Route::get('/tickets/create',          [TicketController::class, 'create'])->name('tickets.create');
     Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/edit/{id}',       [TicketController::class, 'edit'])->name('tickets.edit');

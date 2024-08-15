@@ -95,7 +95,6 @@ const filters = ["id", "subject","description", "status", "user_id", 'created_at
         <div v-else class="flex justify-center uppercase font-bold">
           <h2>No hay Tickets para mostrar</h2>
         </div>
-        <div id="map-container" style="width: 100%; height: 400px; margin-top: 20px;">Aqui ban las </div>
       </div>
     </template>
   </dashboard-base>

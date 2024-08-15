@@ -39,38 +39,6 @@ const destroy = (id) => {
     }
   );
 };
-const editStatus = (id, estado) => {
-    const toast = useToast();
-    var str = estado.toString()
-    toast({
-        component: BaseQuestion,
-        props: {
-            message: "¿Estás seguro de cambiar el estado del ticket?",
-            accept: true,
-            cancel: true,
-            textConfirm: "Cambiar",
-        },
-        listeners: {
-            accept: () => {
-                axios.post(route('tickets.statusUpdate', id), {
-                    status: str // Enviar el nuevo estado como 'status'
-                })
-                .then(response => {
-                    console.log('Estado actualizado exitosamente');
-                    // Opcionalmente, redireccionar o actualizar la interfaz
-                    window.location.reload(); // Recarga la página para reflejar los cambios
-                })
-                .catch(error => {
-                    console.log('Error al actualizar el estado:', error.response.data);
-                });
-            },
-        },
-    }, {
-        type: TYPE.WARNING,
-        position: POSITION.TOP_CENTER,
-        timeout: 10000,
-    });
-};
 
 </script>
 <style>
@@ -252,16 +220,7 @@ const editStatus = (id, estado) => {
         <td v-for="(cell, cellIndex) in row"
           :key="cellIndex"
           class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-          <div class="flex gap-2">
           <div v-if="cellIndex === 'status'">
-            <button
-              id="dropdownRadioButton"
-              @click="toggleDropdown(rowIndex)"
-              class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-              type="button"
-            >
-          
-            <div>
             <h2
               v-if="cell === '0'"
               class="bg-green-500 text-white px-2 py-1 rounded flex justify-start items-center gap-2"
@@ -346,59 +305,9 @@ const editStatus = (id, estado) => {
             </h2>
             <h2 v-else>{{ cell }}</h2>
             </div>
-              <svg
-                class="w-2.5 h-2.5 ms-2.5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 10 6"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="m1 1 4 4 4-4"
-                />
-              </svg>
-            </button>
-
-            <!-- Dropdown menu -->
-            <div
-              v-if="dropdownOpen[rowIndex]"
-              id="dropdownRadio"
-              class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute dropdown-contents"
-            >
-              <ul class="p-3 space-y-1 text-sm text-gray-700">
-                <li v-for="(type, index) in typeStatus" :key="index">
-                  <div class="flex items-center p-2 rounded hover:bg-gray-100">
-                    <input
-                    :id="'type-radio-' + index"
-                    type="radio"
-                    :value="type"
-                    v-model="currentUser"
-                    @click="editStatus(row.id, index)"
-                    name="type-radio"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <label
-                    :for="'type-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
-                    >{{ type }}</label
-                  >
-                    
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
           <div v-else>
             {{ cell }}
           </div>
-
-          <!-- Final dfrop nbuton  -->
-        </div>
-
         </td>
         <!-- SELECTOR DE ESTADOS DE TICKET  -->
         
@@ -406,28 +315,6 @@ const editStatus = (id, estado) => {
 
           <td class="flex items-stretch">
             <div class="sm:flex gap-4">
-              <Link
-                href="#"
-                v-if="show"
-                class="btn-modal flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-                  />
-                </svg>
-                
-                Mostrar cliente
-              </Link>
               <Link
                 v-if="edit"
                 :href="route('tickets.edit', row.id)"
