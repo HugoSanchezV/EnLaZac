@@ -39,23 +39,26 @@ Route::middleware([
     Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
 
     //Routers
-    // Resource 
+    // -- Resource 
     Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
     Route::get('/routers/create',           [RouterController::class, 'create'])->name('routers.create');
     Route::post('/routers/store',           [RouterController::class, 'store'])->name('routers.store');
     Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');
     Route::put('/routers/update/{id}',      [RouterController::class, 'update'])->name('routers.update');
     Route::delete('/routers/delete/{id}',   [RouterController::class, 'destroy'])->name('routers.destroy');
-    // sync
+    // -- sync
     Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
-    // devices
+    // -- devices
     Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
 
     // Devices
     Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
     Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
+    Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');
+    Route::put('/devices/update/{device}',          [DevicesController::class, 'update'])->name('devices.update');
+    Route::delete('/devices/delete/{device}',          [DevicesController::class, 'destroy'])->name('devices.destroy');
+    // -- status 
     Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
-  //  Route::get('/devices/create',                           [DevicesController::class, 'create'])->name('devices.create');
 
     //Tickets coordi
     Route::get('/tickets',                 [TicketController::class, 'index'])->name('tickets');

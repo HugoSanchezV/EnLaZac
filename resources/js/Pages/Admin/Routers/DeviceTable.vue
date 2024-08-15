@@ -15,7 +15,7 @@ const destroy = (id) => {
     {
       component: BaseQuestion,
       props: {
-        message: "¿Estas seguro de Eliminar el Router?",
+        message: "¿Estas seguro de Eliminar el Dispositivo?",
         accept: true,
         cancel: true,
         textConfirm: "Eliminar",
@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("routers.destroy", id);
+          const url = route("devices.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -385,7 +385,10 @@ const confirmSelection = () => {
 
               <Link
                 v-if="edit"
-                :href="route('routers.edit', row.id)"
+                :href="route('devices.edit', {
+                  'router': route().params.router,
+                  'device': row.id
+                })"
                 class="flex items-center gap-1 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg

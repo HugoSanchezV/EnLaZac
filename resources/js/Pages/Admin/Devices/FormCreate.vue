@@ -54,8 +54,8 @@ watch(
 const form = useForm({
   address: "",
   comment: "",
-  user: "",
-  device: "",
+  user_id: "",
+  device_id: "",
   router_id: "",
 });
 
@@ -68,15 +68,15 @@ form.router_id = route().params.router;
 const submit = () => {
   form.address = props.router.initial_device_ip + address;
   form.comment = comment
-  form.user = user
-  form.user = device
+  form.user_id = user
+  form.device_id = device
 
   if (!user_active.value) {
-    form.user = null;
+    form.user_id = null;
   }
 
   if (!device_active.value) {
-    form.device_active = null;
+    form.device_id = null;
   }
 
   form.post(route("devices.store"), {
