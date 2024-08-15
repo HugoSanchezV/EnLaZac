@@ -55,7 +55,7 @@ Route::middleware([
     Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
     Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
     Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
-    Route::get('/devices/create',                           [RouterController::class, 'devices'])->name('devices.create');
+  //  Route::get('/devices/create',                           [DevicesController::class, 'create'])->name('devices.create');
 
     //Tickets coordi
     Route::get('/tickets',                 [TicketController::class, 'index'])->name('tickets');

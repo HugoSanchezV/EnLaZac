@@ -49,7 +49,7 @@ class DevicesController extends Controller
     {
         $validatedData = $request->validated();
 
-        dd($request);
+        //dd($request);
         //dd($validatedData['address']);
 
         $router = Router::findOrFail($request->router_id);
@@ -84,18 +84,18 @@ class DevicesController extends Controller
 
                 ]);
 
-                return redirect()->route('routers.devices')->with([
+                return redirect()->route('routers.devices', [
                     'router' => $validatedData['router_id'],
                     'success' => 'El dispositovo ha sido agreado con éxito'
                 ]);
             } else {
-                return Redirect::route('routers.devices')->with([
+                return Redirect::route('routers.devices', [
                     'router' => $validatedData['router_id'],
                     'error' => 'Error al añadir la dirección, intentalo más tarde'
                 ]);
             }
         } else {
-            return Redirect::route('routers.devices')->with([
+            return Redirect::route('routers.devices', [
                 'router' => $validatedData['router_id'],
                 'error' => 'Error al intentar conectar con el router, intentalo más tarde'
             ]);
