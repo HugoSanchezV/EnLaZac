@@ -1,9 +1,11 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
+import { ref } from "vue";
 
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
+import ModalUsers from "../Components/ModalUsers.vue";
 
 // ACCION DE ELIMINAR
 const destroy = (id) => {
@@ -41,13 +43,24 @@ const destroy = (id) => {
 };
 
 const setDeviceStatus = (row) => {
-
   const url = route("devices.set.status", {
     device: row.id,
   });
 
-  router.patch(url, () => {})
+  router.patch(url, () => {});
 };
+
+const isModalOpen = ref(false);
+
+const openModal = () => {
+  isModalOpen.value = true;
+};
+
+const confirmSelection = () => {
+  emit('selectUser', selectedUser.value);
+  closeModal();
+};
+
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -244,7 +257,7 @@ const setDeviceStatus = (row) => {
     <table class="w-full text-sm text-left text-gray-500 p-10">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
-          <!-- <th></th> -->
+          <th></th>
           <th
             v-for="(header, index) in headers"
             :key="index"
@@ -261,7 +274,7 @@ const setDeviceStatus = (row) => {
           :key="rowIndex"
           class="bg-white border-b hover:bg-gray-100"
         >
-          <!-- <td></td> -->
+          <td></td>
 
           <td
             v-for="(cell, cellIndex) in row"
@@ -280,6 +293,37 @@ const setDeviceStatus = (row) => {
                   class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:ring-blue-300 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-green-300"
                 ></div>
               </label>
+            </div>
+
+            <div v-else-if="cellIndex === 'device_id'">
+              <div v-if="cell === null">
+                <Link
+                  href="#"
+                  class="flex justify-center items-center gap-1 border border-gray-500 bg-white-500 hover:bg-slate-600 py-1 px-2 rounded-md text-slate-600 hover:text-white sm:mb-0 mb-1"
+                >
+                  Asignar Dispositivo
+                </Link>
+              </div>
+              <div v-else>
+                {{ cell }}
+              </div>
+            </div>
+
+            <div v-else-if="cellIndex === 'user_id'">
+              <div v-if="cell === null">
+                <button
+                  @click="openModal"
+                  class="flex justify-center items-center gap-1 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:bg-teal-600 py-1 px-2 rounded-md hover:text-white sm:mb-0 mb-1"
+                >
+                  Asignar usuario
+                </button>
+
+                <modal-users :show="isModalOpen" @close="isModalOpen = false">
+                </modal-users>
+              </div>
+              <div v-else>
+                {{ cell }}
+              </div>
             </div>
             <!-- <div v-if="cellIndex === 'sync'">
               <Link

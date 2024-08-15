@@ -21,7 +21,7 @@ const layoutComponent = computed(() => {
     case 3:
       return AppLayoutTecnico;
     default:
-      return AppLayoutUser; // Default layout
+      return AppLayoutUser;
   }
 });
 </script>

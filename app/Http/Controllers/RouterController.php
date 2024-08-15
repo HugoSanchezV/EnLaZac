@@ -55,7 +55,7 @@ class RouterController extends Controller
         });
 
         $totalRoutersCount = Router::count();
-
+//Admin/Routers/Index
         return Inertia::render('Admin/Routers/Index', [
             'routers' => $routers,
             'pagination' => [
@@ -237,11 +237,11 @@ class RouterController extends Controller
             return [
                 'id' => $item->id,
                 'device_internal_id' => $item->device_internal_id,
-                'router_id' => $item->router_id,
+                //'router_id' => $item->router_id,
                 'device_id' => $item->device_id,
                 'user_id' => $item->user_id,
                 'comment' => $item->comment,
-                'list' => $item->list,
+                //'list' => $item->list,
                 'address' => $item->address,
                 'disabled' => $item->disabled,
             ];

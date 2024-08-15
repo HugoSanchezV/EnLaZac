@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->string("comment")->nullable()->default(null);
             $table->string("list");
-            $table->ipAddress("address")->uniqid()->require();
+            $table->ipAddress("address")->uniqid();
             $table->time("creation_time");
             $table->boolean("disabled")->default(true);
 
