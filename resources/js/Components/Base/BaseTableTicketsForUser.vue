@@ -1,11 +1,9 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { ref } from "vue";
 
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
-import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
-import ModalUsers from "../Components/ModalUsers.vue";
+import BaseQuestion from "./BaseQuestion.vue";
 
 // ACCION DE ELIMINAR
 const destroy = (id) => {
@@ -15,7 +13,7 @@ const destroy = (id) => {
     {
       component: BaseQuestion,
       props: {
-        message: "¿Estas seguro de Eliminar el Router?",
+        message: "¿Estas seguro de Eliminar el registro?",
         accept: true,
         cancel: true,
         textConfirm: "Eliminar",
@@ -23,7 +21,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("routers.destroy", id);
+          const url = route("tickets.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -42,26 +40,42 @@ const destroy = (id) => {
   );
 };
 
-const setDeviceStatus = (row) => {
-  const url = route("devices.set.status", {
-    device: row.id,
-  });
-
-  router.patch(url, () => {});
-};
-
-const isModalOpen = ref(false);
-
-const openModal = () => {
-  isModalOpen.value = true;
-};
-
-const confirmSelection = () => {
-  emit('selectUser', selectedUser.value);
-  closeModal();
-};
-
 </script>
+<style>
+  .boton-modal label{
+    cursor: pointer;
+    transition: all 300ms ease;
+  }
+  .overlay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0,0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .container-modal{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 380px;
+    width: 100%;
+    padding: 30px 20px;
+    border-radius: 24px;
+    background-color: #ffff;
+    opacity: 0;
+    pointer-events: none;
+
+  }
+  .content-modal Link{
+    font-size: 14px;
+    padding: 6px 12px;
+    margin: 0 10px;
+  }
+ 
+  
+
+</style>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
@@ -72,7 +86,7 @@ const confirmSelection = () => {
         <div>
           <button
             id="dropdownRadioButton"
-            @click="toggleDropdown"
+            @click="toggleDropdown1"
             class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
             type="button"
           >
@@ -115,7 +129,7 @@ const confirmSelection = () => {
 
           <!-- Dropdown menu -->
           <div
-            v-if="dropdownOpen"
+            v-if="dropdownOpen1"
             id="dropdownRadio"
             class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
           >
@@ -141,80 +155,6 @@ const confirmSelection = () => {
             </ul>
           </div>
         </div>
-
-        <!-- Drop button 2  -->
-        <!-- <div>
-          <button
-            id="dropdownRadioButton"
-            @click="toggleDropdown2"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-              />
-            </svg>
-
-            <span class="bg-gray-400 py-1 px-2 text-white rounded-md">
-              Usuarios
-            </span>
-
-            tipo {{ currentUser }}
-            <svg
-              class="w-2.5 h-2.5 ms-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
-
-          <!-- Dropdown menu -->
-        <!-- <div
-            v-if="dropdownOpen2"
-            id="dropdownRadio2"
-            class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
-          >
-            <ul class="p-3 space-y-1 text-sm text-gray-700">
-              <li v-for="(type, index) in typeUsers" :key="index">
-                <div class="flex items-center p-2 rounded hover:bg-gray-100">
-                  <input
-                    :id="'type-radio-' + index"
-                    type="radio"
-                    :value="type"
-                    v-model="currentUser"
-                    @click="selectUser(type)"
-                    name="type-radio"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <label
-                    :for="'type-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
-                    >{{ type }}</label
-                  >
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div> -->
 
         <!-- Final dfrop nbuton  -->
       </div>
@@ -274,119 +214,111 @@ const confirmSelection = () => {
           :key="rowIndex"
           class="bg-white border-b hover:bg-gray-100"
         >
-          <td></td>
-
-          <td
-            v-for="(cell, cellIndex) in row"
-            :key="cellIndex"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-          >
-            <div v-if="cellIndex === 'disabled'">
-              <label class="inline-flex items-center mb-5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  :checked="cell === 0"
-                  class="sr-only peer"
-                  @click="enable(row)"
-                />
-                <div
-                  class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:ring-blue-300 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-green-300"
-                ></div>
-              </label>
-            </div>
-
-            <div v-else-if="cellIndex === 'device_id'">
-              <div v-if="cell === null">
-                <Link
-                  href="#"
-                  class="flex justify-center items-center gap-1 border border-gray-500 bg-white-500 hover:bg-slate-600 py-1 px-2 rounded-md text-slate-600 hover:text-white sm:mb-0 mb-1"
-                >
-                  Asignar Dispositivo
-                </Link>
-              </div>
-              <div v-else>
-                {{ cell }}
-              </div>
-            </div>
-
-            <div v-else-if="cellIndex === 'user_id'">
-              <div v-if="cell === null">
-                <button
-                  @click="openModal"
-                  class="flex justify-center items-center gap-1 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:bg-teal-600 py-1 px-2 rounded-md hover:text-white sm:mb-0 mb-1"
-                >
-                  Asignar usuario
-                </button>
-
-                <modal-users :show="isModalOpen" @close="isModalOpen = false">
-                </modal-users>
-              </div>
-              <div v-else>
-                {{ cell }}
-              </div>
-            </div>
-            <!-- <div v-if="cellIndex === 'sync'">
-              <Link
-              v-if="edit"
-              :href="route('routers.sync', row.id)"
-              class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
-              :class="
-              row.sync
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : ' bg-orange-500 hover:bg-orange-600'
-                "
-                >
-                <svg
+        <!-- INICIO DEWL  -->
+        <td></td>
+        <!-- SELECTOR DE ESTADOS DE TICKET  -->
+        <td v-for="(cell, cellIndex) in row"
+          :key="cellIndex"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+          <div v-if="cellIndex === 'status'">
+            <h2
+              v-if="cell === '0'"
+              class="bg-green-500 text-white px-2 py-1 rounded flex justify-start items-center gap-2"
+            >
+              <svg
                 xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="size-5"
+              >
+                <path
+                  d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"
+                />
+              </svg>
+
+                Pendiente
+            </h2>
+            <h2
+              v-else-if="cell === '1'"
+              class="bg-blue-500 text-white px-2 py-1 rounded flex justify-start gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 mr-1"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
                 stroke="currentColor"
-                class="size-6"
-                >
+              >
                 <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5.121 17.804A1 1 0 016.638 17h10.724a1 1 0 01.8 1.6l-5.363 6.463a1 1 0 01-1.598 0l-5.36-6.463z"
                 />
-                </svg>
-              </Link>
-            </div> -->
-            <div v-else>
-              <!-- v-if="cellIndex !== 'router_id'" -->
-              <div>
-                {{ cell }}
-              </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 14c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zM12 10a4 4 0 100-8 4 4 0 000 8z"
+                />
+              </svg>
+
+              En espera
+            </h2>
+            <h2
+              v-else-if="cell === '2'"
+              class="bg-yellow-500 text-white px-2 py-1 rounded flex justify-start gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="size-5"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M19 5.5a4.5 4.5 0 0 1-4.791 4.49c-.873-.055-1.808.128-2.368.8l-6.024 7.23a2.724 2.724 0 1 1-3.837-3.837L9.21 8.16c.672-.56.855-1.495.8-2.368a4.5 4.5 0 0 1 5.873-4.575c.324.105.39.51.15.752L13.34 4.66a.455.455 0 0 0-.11.494 3.01 3.01 0 0 0 1.617 1.617c.17.07.363.02.493-.111l2.692-2.692c.241-.241.647-.174.752.15.14.435.216.9.216 1.382ZM4 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+
+              Trabajando
+            </h2>
+            <h2
+              v-else-if="cell === '3'"
+              class="bg-yellow-500 text-white px-2 py-1 rounded flex justify-start gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="size-5"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M19 5.5a4.5 4.5 0 0 1-4.791 4.49c-.873-.055-1.808.128-2.368.8l-6.024 7.23a2.724 2.724 0 1 1-3.837-3.837L9.21 8.16c.672-.56.855-1.495.8-2.368a4.5 4.5 0 0 1 5.873-4.575c.324.105.39.51.15.752L13.34 4.66a.455.455 0 0 0-.11.494 3.01 3.01 0 0 0 1.617 1.617c.17.07.363.02.493-.111l2.692-2.692c.241-.241.647-.174.752.15.14.435.216.9.216 1.382ZM4 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+
+              Finalizado
+            </h2>
+            <h2 v-else>{{ cell }}</h2>
             </div>
-          </td>
+          <div v-else>
+            {{ cell }}
+          </div>
+        </td>
+        <!-- SELECTOR DE ESTADOS DE TICKET  -->
+        
+         
 
           <td class="flex items-stretch">
             <div class="sm:flex gap-4">
               <Link
-                :href="route('routers.devices', row.id)"
-                class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-                  />
-                </svg>
-                Detalles
-              </Link>
-
-              <Link
                 v-if="edit"
-                :href="route('routers.edit', row.id)"
-                class="flex items-center gap-1 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                :href="route('tickets.edit', row.id)"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -394,7 +326,7 @@ const confirmSelection = () => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-5"
+                  class="size-6"
                 >
                   <path
                     stroke-linecap="round"
@@ -405,11 +337,10 @@ const confirmSelection = () => {
 
                 Editar
               </Link>
-
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -417,7 +348,7 @@ const confirmSelection = () => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-5"
+                    class="size-6"
                   >
                     <path
                       stroke-linecap="round"
@@ -434,6 +365,19 @@ const confirmSelection = () => {
       </tbody>
     </table>
   </div>
+  <span class="overlay"></span>
+  <div class="container-modal">
+      <div class="content-modal">
+        <h2>Hola checando esta vaina</h2>
+        <p>Parangaracutirimicuaro</p>
+          <div class="buttons">
+            <Link class="btn-cerrarflex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1">Cerrar</Link>
+   
+          </div>
+        
+      </div>
+
+    </div>
 </template>
   
   <script>
@@ -475,39 +419,38 @@ export default {
   data() {
     return {
       searchQuery: "",
-      dropdownOpen: false,
-      dropdownOpen2: false,
+      dropdownOpen1: false,
+      dropdownOpen: {},
       currentFilter: "id",
       currentUser: "todos",
-      typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
+      typeStatus: ["Pendiente", "En espera", "Trabajando", "Terminado"],
     };
   },
   computed: {
     filteredRows() {
-      return this.rows
+      // if (!this.searchQuery) {
+      return this.rows;
+      //}
+      // return this.rows.filter((row) =>
+      //   row.some((cell) =>
+      //     cell.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+      //   )
+      // );
     },
   },
   methods: {
-
-    enable(row) {
-      const newValue = row.disabled ? 1: 0
-
-      console.log(row)
-      alert(row.disabled)
-      alert(newValue)
-
-    },
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
+    toggleDropdown1() {
+      this.dropdownOpen1 = !this.dropdownOpen1;
     },
 
-    toggleDropdown2() {
-      this.dropdownOpen2 = !this.dropdownOpen2;
+    toggleDropdown(index) {
+    
+      this.dropdownOpen[index] = !this.dropdownOpen[index];
     },
-
+    
     selectFilter(filter) {
       this.currentFilter = filter;
-      this.toggleDropdown();
+      this.toggleDropdown1();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         order: this.currentFilter,
@@ -515,9 +458,9 @@ export default {
       });
     },
 
-    selectUser(user) {
+    selectUser(user, index) {
       this.currentUser = user;
-      this.toggleDropdown2();
+      this.toggleDropdown(index);
       this.$emit("search", {
         searchQuery: this.searchQuery,
         order: this.currentFilter,

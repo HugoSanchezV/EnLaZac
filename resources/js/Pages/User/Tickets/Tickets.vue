@@ -3,13 +3,13 @@ import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
 
 const props = defineProps({
-  users: Object,
+  tickets: Object,
   pagination: Object,
   success: String,
-  totalUsersCount: Number,
+  totalTicketsCount: Number,
 });
 
-const { users, success } = toRefs(props);
+const { tickets, success } = toRefs(props);
 const toast = useToast();
 
 watch(success, (newValue) => {
@@ -21,8 +21,9 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
-const filters = ["id", "nombre", "alias", "email"];
+const headers = ["Id", "Asunto", "Descripción", "Estado", "Cliente","Creación", "Acciones"];
+const filters = ["id", "subject","description", "status", "user_id", 'created_at'];
+
 </script>
 
 <template>
@@ -30,11 +31,11 @@ const filters = ["id", "nombre", "alias", "email"];
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Usuarios</h2>
+          <h2>Tickets para usuario</h2>
         </div>
         <div>
           <Link
-            :href="route('usuarios.create')"
+            :href="route('tickets.create')"
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
@@ -53,16 +54,16 @@ const filters = ["id", "nombre", "alias", "email"];
               />
             </svg>
 
-            Crear Usuario
+            Crear Tickets
           </Link>
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalUsersCount > 0">
+        <div v-if="props.totalTicketsCount > 0">
           <!-- Esta es el inicio de la tabla -->
-          <base-table-users
+          <base-table-tickets
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -70,14 +71,14 @@ const filters = ["id", "nombre", "alias", "email"];
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-users>
+          ></base-table-tickets>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="users.data.length > 0"
-            :links="users.links"
+            v-if="tickets.data.length > 0"
+            :links="tickets.links"
             :pagination="pagination"
-            :current="users.current_page"
-            :total="users.last_page"
+            :current="tickets.current_page"
+            :total="tickets.last_page"
             :data="{
               q: q,
               order: order,
@@ -92,60 +93,115 @@ const filters = ["id", "nombre", "alias", "email"];
           </h2>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
-          <h2>No hay Usuarios para mostrar</h2>
+          <h2>No hay Tickets para mostrar</h2>
         </div>
+    
       </div>
     </template>
   </dashboard-base>
 </template>
 
+/*
+  // Variable global para el mapa y los marcadores
+  var map;
+  var markers = [];
+
+  // Definir la función para inicializar el mapa
+  function initMap() {
+      // Crear el mapa con un centro y zoom inicial
+      map = new google.maps.Map(document.getElementById('map-container'), {
+          zoom: 8,
+          center: {lat: 4.134282, lng: -73.637742} // Establecer un centro predeterminado como punto de partida
+      });
+
+      // Cargar las coordenadas iniciales
+      var sedeCoordinates = {!! json_encode($sedeCoordinates) !!};
+      addMarkers(sedeCoordinates);
+  }
+
+  // Función para agregar marcadores al mapa
+  function addMarkers(sedeCoordinates) {
+      clearMarkers(); // Limpiar los marcadores existentes
+      sedeCoordinates.forEach(function(coordinate) {
+          var parts = coordinate.split(',');
+          var lat = parseFloat(parts[0]);
+          var lng = parseFloat(parts[1]);
+
+          var marker = new google.maps.Marker({
+              position: {lat: lat, lng: lng},
+              map: map
+          });
+          markers.push(marker);
+      });
+  }
+
+  // Función para limpiar los marcadores del mapa
+function clearMarkers() {
+    markers.forEach(function(marker) {
+        marker.setMap(null);
+    });
+    markers = [];
+}
+
+// Agregar un event listener para el formulario de búsqueda
+  document.getElementById('searchForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevenir el envío del formulario
+
+      // Hacer la solicitud de búsqueda (ajustar según sea necesario para tu configuración)
+      var formData = new FormData(this);
+      var searchParams = new URLSearchParams(formData).toString();
+
+      fetch('{{ route("agendas.index") }}?' + searchParams)
+          .then(response => response.json())
+          .then(data => {
+              // Actualizar los datos de la tabla y los marcadores del mapa
+              updateTable(data.agendas);
+              updateMap(data.sedeCoordinates);
+          });
+  });
+
+  function updateTable(agendas) {
+      // Actualizar la tabla de resultados (implementar según tu estructura de tabla)
+      // Aquí debes agregar la lógica para actualizar la tabla con los nuevos datos
+  }
+  function updateMap(sedeCoordinates){
+    addMarkers(sedeCoordinates);
+  }
+*/
+
 <script>
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
-
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableUsers from "@/Components/Base/BaseTableUsers.vue";
+import BaseTableTickets from "@/Components/Base/BaseTableTicketsForUser.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTableUsers,
+    BaseTableTickets,
     BasePagination,
   },
 
   props: {
-    users: Object,
+    tickets: Object,
     pagination: Object,
     success: String,
-    totalUsersCount: Number,
+    totalTicketsCount: Number,
   },
 
   data() {
     return {
-      rows: this.users.data,
+      rows: this.tickets.data,
       q: "",
       order: "id",
       type: "todos",
     };
   },
-
   methods: {
     search(props) {
-      const link = route("usuarios");
-
-      if (props.filter === "rol") {
-        props.filter = "admin";
-
-        if (props.searchQuery === "cliente") {
-          props.searchQuery = 0;
-        } else if (props.searchQuery === "coordinador") {
-          props.searchQuery = 2;
-        } else if (props.searchQuery === "tecnico") {
-          props.searchQuery = 3;
-        }
-      }
+      const link = route("tickets");
 
       console.log(props.searchQuery);
 
@@ -153,18 +209,14 @@ export default {
       this.order = props.order;
       this.type = props.type;
 
-      if (this.order === "nombre") {
-        this.order = "name";
+      if (this.order === "id") {
+        this.order = "id";
       }
 
-      if (this.type === "cliente") {
-        this.type = 0;
-      } else if (this.type === "coordinador") {
-        this.type = 2;
-      } else if (this.type === "tecnico") {
-        this.type = 3;
+      if (this.order === "status") {
+        this.order = "status";
       }
-
+      
       this.$inertia.get(
         link,
         { q: this.q, order: this.order, type: this.type },
@@ -172,11 +224,10 @@ export default {
       );
     },
   },
-
   watch: {
-    users() {
+    tickets() {
       const toast = useToast();
-      this.rows = this.users.data;
+      this.rows = this.tickets.data;
       if (this.success) {
         toast.success(this.success, {
           position: POSITION.TOP_CENTER,

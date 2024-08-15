@@ -56,7 +56,6 @@ const filters = ["id", "usuario", "ip"];
         </div>
       </div>
     </template>
-
     <template v-slot:content>
       <div v-if="totalRoutersCount > 0">
         <!-- Esta es el inicio de la tabla -->

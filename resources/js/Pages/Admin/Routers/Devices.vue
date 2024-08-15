@@ -91,7 +91,6 @@ const filters = [
           @search="search"
         >
         </device-table>
-
         <base-pagination
           v-if="devices.data.length > 0"
           :links="devices.links"
