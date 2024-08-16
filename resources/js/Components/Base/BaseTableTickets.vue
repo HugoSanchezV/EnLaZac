@@ -464,19 +464,6 @@ const editStatus = (id, estado) => {
       </tbody>
     </table>
   </div>
-  <span class="overlay"></span>
-  <div class="container-modal">
-      <div class="content-modal">
-        <h2>Hola checando esta vaina</h2>
-        <p>Parangaracutirimicuaro</p>
-          <div class="buttons">
-            <Link class="btn-cerrarflex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1">Cerrar</Link>
-   
-          </div>
-        
-      </div>
-
-    </div>
 </template>
   
   <script>

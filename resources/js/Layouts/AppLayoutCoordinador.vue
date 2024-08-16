@@ -26,7 +26,85 @@ const logout = () => {
     router.post(route('logout'));
 };
 </script>
+<style>
+.notification-dropdown {
+    position: relative;
+    display: inline-block;
+}
 
+.notification-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    position: relative;
+}
+
+.notification-count {
+    background-color: rgb(255, 0, 0);
+    color: white;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 50%;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 250px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown-header {
+    background-color: #ffffff;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #ccc;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
+}
+
+.time {
+    font-size: 12px;
+    color: gray;
+}
+
+.dropdown-footer {
+    padding: 10px;
+    text-align: center;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ccc;
+}
+
+.dropdown-footer a {
+    text-decoration: none;
+    color: rgb(188, 137, 255);
+}
+
+.notification-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+</style>
 <template>
     <div>
         <Head :title="title" />
@@ -93,7 +171,7 @@ const logout = () => {
                                                 <div class="block px-4 py-2 text-xs text-gray-400">
                                                     Switch Teams
                                                 </div>
-
+                                         
                                                 <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
                                                     <form @submit.prevent="switchToTeam(team)">
                                                         <DropdownLink as="button">
@@ -112,7 +190,36 @@ const logout = () => {
                                     </template>
                                 </Dropdown>
                             </div>
+                            <!-- Notifications -->
+         
+                            <div class="ms-3 relative">
+                                <div class="notification-dropdown">
+                                    <button class="notification-button" onclick="toggleDropdown()">
+                                        <i class="fas fa-bell"></i>
+                                        <span class="notification-count">3</span>
+                                    </button>
+                                    <div id="dropdown-content" class="dropdown-content">
+                                        <div class="dropdown-header">Notificaciones no leídas</div>
+                                        <a href="#" class="dropdown-item">
+                                            <i class="fas fa-envelope"></i> 4 new messages
+                                            <span class="time">3 mins ago</span>
+                                        </a>
+                                        <a href="#" class="dropdown-item">
+                                            <i class="fas fa-users"></i> 8 friend requests
+                                            <span class="time">12 hours ago</span>
+                                        </a>
+                                        <a href="#" class="dropdown-item">
+                                            <i class="fas fa-file"></i> 3 new reports
+                                            <span class="time">2 days ago</span>
+                                        </a>
+                                        <div class="dropdown-footer">
+                                            <a href="#">View all notifications</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
+              
                             <!-- Settings Dropdown -->
                             <div class="ms-3 relative">
                                 <Dropdown align="right" width="48">
