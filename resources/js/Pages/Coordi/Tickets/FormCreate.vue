@@ -15,12 +15,7 @@ const form = useForm({
 
 
 const submit = () => {
-  form.post(route("tickets.store"), {
-    onFinish: () => form.reset("password", "password_confirmation"),
-    onSuccess: () => {
-      router.back();
-    },
-  });
+  form.post(route("tickets.store"));
 };
 
 const seleccionar = (valor) => {

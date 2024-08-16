@@ -21,7 +21,7 @@ const layoutComponent = computed(() => {
       return AppLayoutCoordinador;
     case 3:
       return AppLayoutEmpleado;
-    case 3:
+    case 4:
       return AppLayoutTecnico;
     default:
       return AppLayoutUser;

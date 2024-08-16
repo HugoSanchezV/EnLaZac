@@ -2,22 +2,24 @@
 
 namespace App\Notifications;
 
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Ticket;
 
-class OrderNotification extends Notification
+class TicketNotification extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Order $order)
+    protected $ticket;
+    public function __construct(Ticket $ticket)
     {
-        //
-        $this -> order = $order;
+        $this->ticket = $ticket; 
     }
 
     /**
@@ -49,10 +51,11 @@ class OrderNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'subject',
-            'created_at',
-            'user_id',
-            'name'
+            'id' => $this->ticket->id,
+            'subject' =>  $this->ticket->subject,
+            'created_at' => $this->ticket ->created_at,
+            'user_id' => $this->ticket->user_id,
+            'name' => $this->ticket->user->name
         ];
     }
 }

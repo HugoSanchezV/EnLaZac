@@ -7,6 +7,8 @@ use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Http\Requests\Ticket\UpdateTicketStatusRequest;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Notifications\TicketNotification;
+use App\Events\TicketEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -96,7 +98,11 @@ class TicketController extends Controller
             'user_id' => $user_id,
         ]);
 
+       self::make_ticket_notification($ticket);
+
         return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
+
+        
     }
 
     public function edit($id)
@@ -134,7 +140,23 @@ class TicketController extends Controller
         $ticket->delete();
         return Redirect::route('tickets')->with('success', 'Ticket Eliminado Con Éxito');
     }
-    
+
+    static function make_ticket_notification($ticket){
+        event(new TicketEvent($ticket));
+    //      $creatorId = $ticket->user_id;
+
+    // // // Seleccionar usuarios donde 'admin' sea 1, 2, 3, o 4, excluyendo al creador del ticket
+    //      $users = User::whereIn('admin', [1, 2, 3, 4])
+    //                  ->where('id', '!=', $creatorId)
+    //                  ->get();
+        
+    //      // Enviar notificación a los usuarios seleccionados, excluyendo al creador del ticket
+    //      foreach ($users as $user) {
+    //          $user->notify(new TicketNotification($ticket));
+    //      }
+
+
+    }
     //Para Usuarios mortales--------------------------------------------------------------------------
 
     public function index2(Request $request)
