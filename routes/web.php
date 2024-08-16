@@ -63,6 +63,7 @@ Route::middleware([
     //Tickets coordi
     Route::get('/tickets',                 [TicketController::class, 'index'])->name('tickets');
     Route::get('/tickets/create',          [TicketController::class, 'create'])->name('tickets.create');
+    Route::get('/tickets/show/{id}',          [TicketController::class, 'show'])->name('tickets.show');
     Route::post('/tickets/store',          [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/edit/{id}',       [TicketController::class, 'edit'])->name('tickets.edit');
     Route::put('/tickets/update/{id}',     [TicketController::class, 'update'])->name('tickets.update');
@@ -70,12 +71,8 @@ Route::middleware([
     Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
 
     //Tickets user
-    Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
-    Route::get('/tickets/create',          [TicketController::class, 'create'])->name('tickets.create');
-    Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
-    Route::get('/tickets/edit/{id}',       [TicketController::class, 'edit'])->name('tickets.edit');
-    Route::put('/tickets/update/{id}',     [TicketController::class, 'update'])->name('tickets.update');
-    Route::delete('/tickets/delete/{id}',  [TicketController::class, 'destroy'])->name('tickets.destroy');
+    //Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
+    //Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

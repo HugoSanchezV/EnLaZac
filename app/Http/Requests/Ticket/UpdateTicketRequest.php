@@ -26,6 +26,7 @@ class UpdateTicketRequest extends FormRequest
         return [
             'subject' => 'required|max:255',
             'description' => 'required|max:255',
+            'status' => 'required|string|in:"0","1","2","3"'
         ];
     }
 
@@ -36,6 +37,9 @@ class UpdateTicketRequest extends FormRequest
             'subject.max' => 'La asunto no puede tener más de 255 caracteres.',
             'description.required' => 'La descripción es un campo obligatorio',
             'description.max' => 'La descripción no puede tener más de 255 caracteres.',
+            'status.required' => 'El estado es un campo obligatorio.',
+            'status.string' => 'El estado debe ser una cadena.',
+            'status.in' => 'El estado seleccionado no es válido.',
         ];
     }
 }

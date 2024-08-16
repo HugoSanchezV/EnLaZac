@@ -6,6 +6,7 @@ use App\Http\Requests\Ticket\StoreTicketRequest;
 use App\Http\Requests\Ticket\UpdateTicketRequest;
 use App\Http\Requests\Ticket\UpdateTicketStatusRequest;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -71,7 +72,15 @@ class TicketController extends Controller
             'totalTicketsCount' => $totalTicketsCount 
         ]);
     }
+    //Muestra la información del ticket y del usuario en específico
+    public function show($id)
+    {
+        $ticket = Ticket::with('user')->findOrFail($id);
 
+        return Inertia::render('Coordi/Tickets/Show', [
+            'ticket' => $ticket,
+        ]);
+    }
 
     public function create()
     {
@@ -93,23 +102,20 @@ class TicketController extends Controller
     public function edit($id)
     {
         $ticket = Ticket::findOrFail($id);
+        $name = $ticket->user->name; // Accede al nombre del usuario que creó el ticket
+
         return Inertia::render('Coordi/Tickets/Edit', [
-            'ticket' => $ticket
+            'ticket' => $ticket,
+            'nombre' => $name,
         ]);
     }
+
     
     public function update(UpdateTicketRequest $request, $id)
     {
         $ticket = Ticket::findOrFail($id);
 
         $validatedData = $request->validated();
-
-        if (!empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-        } else {
-            unset($validatedData['password']);
-        }
-
         $ticket->update($validatedData);
         return redirect()->route('tickets')->with('success', 'Ticket Actualizado Con Éxito');
     }
