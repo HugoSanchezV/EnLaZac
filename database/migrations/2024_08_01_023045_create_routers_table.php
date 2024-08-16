@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('routers', function (Blueprint $table) {
             $table->id();
             $table->ipAddress("ip_address")->unique()->require();
-            $table->ipAddress("user")->require();
+            $table->string("user")->require();
             $table->boolean("sync")->default(false);
+            $table->integer("total_devices")->default(0);
+            $table->integer("enable_devices")->default(0);
             $table->string("password")->require();
             $table->timestamps();
         });

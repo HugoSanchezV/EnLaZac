@@ -21,4 +21,8 @@ class Router extends Model
     public function devices() {
         return $this->hasMany(Device::class, 'router_id');
     }
+
+    public function networks() {
+        return $this->hasMany(Network::class, 'router_id');
+    }
 }

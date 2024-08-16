@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Router\StoreRouterRequest;
 use App\Http\Requests\Router\UpdateRouterRequest;
 use App\Models\Device;
+use App\Models\Network;
 use App\Models\Router;
 use App\Models\RouterosAPI;
+use App\Services\RouterService;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -19,16 +21,18 @@ class RouterController extends Controller
     /**
      * Display a listing of the resource.
      */
+    protected $routerService;
+
+
+    public function __construct(RouterService $routerService)
+    {
+        $this->routerService = $routerService;
+    }
+
     public function index(Request $request)
     {
 
         $query = Router::query();
-
-        // if ($request->type !== null && $request->type !== 'todos') {
-        //      $query->where('admin', '=', $request->type);
-        // }
-
-        // $query->where('admin', '!=', 1);
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -51,11 +55,13 @@ class RouterController extends Controller
                 'id' => $item->id,
                 'user' => $item->user,
                 'ip_address' => $item->ip_address,
+                'total_devices' => $item->total_devices,
+                'enable_devices' => $item->enable_devices,
             ];
         });
 
         $totalRoutersCount = Router::count();
-//Admin/Routers/Index
+        //Admin/Routers/Index
         return Inertia::render('Admin/Routers/Index', [
             'routers' => $routers,
             'pagination' => [
@@ -68,8 +74,6 @@ class RouterController extends Controller
             'success' => session('success') ?? null,
             'totalRoutersCount' => $totalRoutersCount,
         ]);
-
-        return Inertia::render('Admin/Routers/Index');
     }
 
     /**
@@ -102,9 +106,7 @@ class RouterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-    }
+    public function show($id) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -158,42 +160,64 @@ class RouterController extends Controller
         $API->debug(false);
 
         if ($API->connect($ip, $user, $password)) {
+
+            $address = $API->comm('/ip/address/print');
+
+            $address = $this->routerService->filterNetworksByPrefix($address, '172.17');
+
             $users = $API->comm('/ip/firewall/address-list/print', [
                 '.proplist' => '.id,list,address,creation-time,disabled,comment',
                 '?list' => 'MOROSOS'
             ]);
 
-            //dd($users);
-            
+            $db_devices = Device::all();
+
+            if (empty($users) && empty($db_devices)) {
+                $users = $this->routerService->getDevicesNotInDatabase($users, $db_devices);
+            }
+
+            $total_devices = count($users);
+            $enable_devices = 0;
+
             foreach ($users as $user) {
 
-                $ends = substr($user['address'], -4);
+                $comment = isset($user['comment']) ? $user['comment'] : null;
 
-                if (substr($ends, -4) !== '.com' && substr($ends, -4) !== '.net') {
+                $enable_devices += $user["disabled"] === "false" ? 1 : 0;
 
-                    $comment = isset($user['comment']) ? $user['comment'] : null;
-                    
-                    Device::create(
-                        [
-                            "device_internal_id" => $user[".id"],
-                            "router_id" => $id,
-                            //"device_id"=> null,
-                            //"user_id"=>$user[""],
-                            "comment" => $comment,
-                            "list" => $user["list"],
-                            "address" => $user["address"],
-                            "creation_time" => DateTime::createFromFormat('M/d/Y H:i:s', $user["creation-time"]),
-                            "disabled" => $user["disabled"] === "false" ? 0 : 1,
-                        ]
-                    );
-                }
+                Device::create(
+                    [
+                        "device_internal_id" => $user[".id"],
+                        "router_id" => $id,
+                        //"device_id"=> null,
+                        //"user_id"=>$user[""],
+                        "comment" => $comment,
+                        "list" => $user["list"],
+                        "address" => $user["address"],
+                        "creation_time" => DateTime::createFromFormat('M/d/Y H:i:s', $user["creation-time"]),
+                        "disabled" => $user["disabled"] === "false" ? 0 : 1,
+                    ]
+                );
             }
         } else {
             return Redirect::route('routers')->with('error', 'No se ha podido sincronizar el Router, intentalo más tarde');
         }
 
         $router->sync = 1;
+        $router->total_devices = $total_devices;
+        $router->enable_devices = $enable_devices;
         $router->save();
+
+        $db_networks = $router->networks;
+        $networks = $this->routerService->getNetworksNotInDatabase($address, $db_networks->toArray());
+
+        foreach ($networks as $network) {
+            Network::create([
+                'router_id' => $router->id,
+                'address' => $network["address"],
+                'network' => $network["network"],
+            ]);
+        }
 
         return Redirect::route('routers')->with('success', 'Router Sincronizado con Éxito');
     }
@@ -211,27 +235,27 @@ class RouterController extends Controller
         // aqui no se usa query por que el has many no tiene,
         // por lo tanto podemos usar durecto el router -> devices 
         $query = $router->devices();
-        
+
         // Filtro por parámetros de búsqueda si existen
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                ->orwhere('device_internal_id', 'like', "%$search%")
-                ->orWhere('device_id', 'like', "%$search%")
-                ->orWhere('comment', 'like', "%$search%")
-                ->orWhere('address', 'like', "%$search%")
-                ->orWhere('disabled', 'like', "%$search%");
+                    ->orwhere('device_internal_id', 'like', "%$search%")
+                    ->orWhere('device_id', 'like', "%$search%")
+                    ->orWhere('comment', 'like', "%$search%")
+                    ->orWhere('address', 'like', "%$search%")
+                    ->orWhere('disabled', 'like', "%$search%");
             });
         }
-        
+
         // Ordenación
         if ($request->order) {
             $query->orderBy($request->order, 'asc');
         } else {
             $query->orderBy('id', 'asc');
         }
-        
+
         // Paginación
         $devices = $query->paginate(8)->through(function ($item) {
             return [
@@ -246,11 +270,11 @@ class RouterController extends Controller
                 'disabled' => $item->disabled,
             ];
         });
-        
+
         //dd($devices);
         // Conteo total de dispositivos
         $totalDevicesCount = $router->devices()->count();
-        
+
         return Inertia::render('Admin/Routers/Devices', [
             'devices' => $devices,
             'pagination' => [

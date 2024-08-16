@@ -21,7 +21,7 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["SYNC", "id", "usuario", "ip", "Acciones"];
+const headers = ["SYNC", "id", "usuario", "ip", "Dipositivos", "Disp. Activos","Acciones"];
 const filters = ["id", "usuario", "ip"];
 </script>
 

@@ -43,6 +43,7 @@ class DevicesController extends Controller
                 'initial_device_ip' => '172.17.24.'
             ]
         ]);
+
     }
 
     /**
