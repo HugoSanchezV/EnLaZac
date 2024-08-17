@@ -19,6 +19,7 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
+        "@googlemaps/js-api-loader": "^1.16.8",
         "vue-toastification": "^2.0.0-rc.5"
     }
 }

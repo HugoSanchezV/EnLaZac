@@ -5,6 +5,7 @@ use App\Http\Controllers\RouterController;
 use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
+use App\Http\Controllers\ContractController;
 
 use App\Models\Ticket;
 use Illuminate\Foundation\Application;
@@ -73,6 +74,15 @@ Route::middleware([
     //Tickets user
     //Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
     //Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
+
+    //Contracts Coordi
+    Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
+    Route::get('/contracts/create',          [ContractController::class, 'create'])->name('contracts.create');
+    Route::get('/contracts/show/{id}',          [ContractController::class, 'show'])->name('contracts.show');
+    Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
+    Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
+    Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
+    Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');
