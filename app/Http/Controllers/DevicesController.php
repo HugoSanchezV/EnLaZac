@@ -8,7 +8,6 @@ use App\Models\Device;
 use App\Models\Router;
 use App\Models\RouterosAPI;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -40,7 +39,7 @@ class DevicesController extends Controller
             'router' => [
                 'user' => $router->user,
                 'ip_address' => $router->ip_address,
-                'initial_device_ip' => '172.17.24.'
+                'networks' => $router->networks->toArray()
             ]
         ]);
 
@@ -81,7 +80,7 @@ class DevicesController extends Controller
                     'comment' => $validatedData['comment'],
                     'address' => $validatedData['address'],
                     'list' => 'MOROSOS',
-                    'disabled' => true,
+                    'disabled' => false,
                     'creation_time' => now(), 
                 ]);
 

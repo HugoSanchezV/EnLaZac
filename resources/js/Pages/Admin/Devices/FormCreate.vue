@@ -20,6 +20,23 @@ const props = defineProps({
   },
 });
 
+let network_value = ref("");
+let startIp = "";
+
+const updateDevices = () => {
+  if (network_value.value !== "") {
+    startIp =
+      network_value.value.substring(0, network_value.value.lastIndexOf(".")) +
+      ".";
+    let filter_devices = props.devices.filter((device) =>
+      device.address.startsWith(startIp)
+    );
+
+    console.log(getIpAvalible(filter_devices).length);
+    ips = getIpAvalible(filter_devices);
+  }
+};
+
 const devicesCount = props.devices.length;
 
 let user_active = ref(false);
@@ -34,7 +51,7 @@ const setDeviceStatus = () => {
 };
 
 const getIpAvalible = (devices) => {
-  const allIps = Array.from({ length: 254 }, (_, i) => i + 1);
+  const allIps = Array.from({ length: 254 }, (_, i) => i + 2);
   const usedIps = devices.map((device) =>
     parseInt(device.address.split(".").pop())
   );
@@ -42,14 +59,14 @@ const getIpAvalible = (devices) => {
   return allIps.filter((ip) => !usedIps.includes(ip));
 };
 
-const ips = ref([]);
-watch(
-  () => props.devices,
-  (newDevices) => {
-    ips.value = getIpAvalible(newDevices);
-  },
-  { immediate: true }
-);
+let ips = getIpAvalible(props.devices);
+// watch(
+//   () => props.devices,
+//   (newDevices) => {
+//     ips.value = getIpAvalible(newDevices);
+//   },
+//   { immediate: true }
+// );
 
 const form = useForm({
   address: "",
@@ -66,10 +83,10 @@ let device = "";
 form.router_id = route().params.router;
 
 const submit = () => {
-  form.address = props.router.initial_device_ip + address;
-  form.comment = comment
-  form.user_id = user
-  form.device_id = device
+  form.address = startIp + address;
+  form.comment = comment;
+  form.user_id = user;
+  form.device_id = device;
 
   if (!user_active.value) {
     form.user_id = null;
@@ -78,7 +95,7 @@ const submit = () => {
   if (!device_active.value) {
     form.device_id = null;
   }
-
+  
   form.post(route("devices.store"), {
     onSuccess: () => {
       router.back();
@@ -95,7 +112,7 @@ const seleccionar = (valor) => {
   <div class="flex justify-center border flex-col m-5 p-10 bg-white">
     <h2 class="block text-center" v-if="devicesCount < 254">
       Configura una nueva conexion en el Router con Dirrección
-      <span class="bg-gray-400 text-white py-1 px-2 rounded-sm">{{
+      <span class="font-mono font-black py-1 px-2 rounded-sm">{{
         props.router.ip_address
       }}</span>
     </h2>
@@ -107,12 +124,38 @@ const seleccionar = (valor) => {
   <div class="mt-5" v-if="devicesCount < 254">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
+        <InputLabel for="address" value="Red" />
+        <div class="flex justify-center items-center">
+          <select
+            id="address"
+            v-model="network_value"
+            @click="updateDevices"
+            class="font-mono mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-r-md shadow-sm"
+            required
+          >
+            <option value="">Selecciona una red</option>
+            <option
+              v-for="network in props.router.networks"
+              :key="network.id"
+              :value="network.network"
+              class="font-mono"
+            >
+              {{ network.address }}
+            </option>
+          </select>
+        </div>
+        <InputError class="mt-2" :message="form.errors.address" />
+      </div>
+
+      <div class="mt-5" v-if="network_value">
         <InputLabel for="address" value="Ip Address" />
         <div class="flex justify-center items-center">
           <p
-            class="bg-slate-600 pr-1 text-end text-white font-semibold rounded-l-sm py-2 px-3 mt-1"
+            class="font-mono bg-slate-600 pr-1 text-end text-white rounded-l-sm py-2 px-3 mt-1"
           >
-            {{ props.router.initial_device_ip }}
+            {{
+              network_value.substring(0, network_value.lastIndexOf(".")) + "."
+            }}
           </p>
           <select
             id="address"
