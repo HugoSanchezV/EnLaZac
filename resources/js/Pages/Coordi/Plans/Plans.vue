@@ -3,13 +3,13 @@ import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
 
 const props = defineProps({
-  contracts: Object,
+  plans: Object,
   pagination: Object,
   success: String,
-  totalContractsCount: Number,
+  totalPlansCount: Number,
 });
 
-const { contracts, success } = toRefs(props);
+const { plans, success } = toRefs(props);
 const toast = useToast();
 
 watch(success, (newValue) => {
@@ -20,9 +20,9 @@ watch(success, (newValue) => {
     });
   }
 });
-
-const headers = ["Id", "Usuarios", "Plan", "Dirección", "Latitud","Longitud", "Acciones"];
-const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
+                                //  [   Burst Limit   ]  [Burst Threshold]  [   Burst Time   ] [   Limite At   ] [   Max Limit   ]
+const headers = ["Id", "Descripción", "Burst Limit", "Burst Threshold", "Burst Time", "Limite At", "Max Limit", "Acciones"];
+const filters = ["id", "descriptions","burst_limit", "burst_threshold", "burst_time", 'limite_at', 'max_limit'];
 
 </script>
 
@@ -31,11 +31,11 @@ const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Contratos</h2>
+          <h2>Planes de Internet</h2>
         </div>
         <div>
           <Link
-            :href="route('contracts.create')"
+            :href="route('plans.create')"
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
@@ -54,16 +54,16 @@ const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
               />
             </svg>
 
-            Crear contrato
+            Crear PI
           </Link>
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalContractsCount > 0">
+        <div v-if="props.totalPlansCount > 0">
           <!-- Esta es el inicio de la tabla -->
-          <base-table-contracts
+          <base-table-plans
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -71,14 +71,14 @@ const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-contracts>
+          ></base-table-plans>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="contracts.data.length > 0"
-            :links="contracts.links"
+            v-if="plans.data.length > 0"
+            :links="plans.links"
             :pagination="pagination"
-            :current="contracts.current_page"
-            :total="contracts.last_page"
+            :current="plans.current_page"
+            :total="plans.last_page"
             :data="{
               q: q,
               order: order,
@@ -93,37 +93,38 @@ const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
           </h2>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
-          <h2>No hay Contratos para mostrar</h2>
+          <h2>No hay planes de internet para mostrar</h2>
         </div>
       </div>
     </template>
   </dashboard-base>
 </template>
+
 <script>
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableContracts from "@/Components/Base/BaseTableContracts.vue";
+import BaseTablePlans from "@/Components/Base/BaseTablePlan.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTableContracts,
+    BaseTablePlans,
     BasePagination,
   },
 
   props: {
-    contracts: Object,
+    plans: Object,
     pagination: Object,
     success: String,
-    totalContractsCount: Number,
+    totalPlansCount: Number,
   },
 
   data() {
     return {
-      rows: this.contracts.data,
+      rows: this.plans.data,
       q: "",
       order: "id",
       type: "todos",
@@ -131,7 +132,7 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("contracts");
+      const link = route("plans");
 
       console.log(props.searchQuery);
 
@@ -155,9 +156,9 @@ export default {
     },
   },
   watch: {
-    contracts() {
+    plans() {
       const toast = useToast();
-      this.rows = this.contracts.data;
+      this.rows = this.plans.data;
       if (this.success) {
         toast.success(this.success, {
           position: POSITION.TOP_CENTER,

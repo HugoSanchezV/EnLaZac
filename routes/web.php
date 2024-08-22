@@ -6,7 +6,7 @@ use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
-
+use App\Http\Controllers\PlanController;
 use App\Models\Ticket;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -83,6 +83,15 @@ Route::middleware([
     Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
     Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
     Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
+
+    //Planes de internet
+    Route::get('/plans',                 [PlanController::class, 'index'])->name('plans');
+    Route::get('/plans/create',          [PlanController::class, 'create'])->name('plans.create');
+    Route::get('/plans/show/{id}',          [PlanController::class, 'show'])->name('plans.show');
+    Route::post('/plans/store',          [PlanController::class, 'store'])->name('plans.store');
+    Route::get('/plans/edit/{id}',       [PlanController::class, 'edit'])->name('plans.edit');
+    Route::put('/plans/update/{id}',     [PlanController::class, 'update'])->name('plans.update');
+    Route::delete('/plans/delete/{id}',  [PlanController::class, 'destroy'])->name('plans.destroy');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

@@ -389,21 +389,11 @@ const logout = () => {
 
             <!-- Page Content -->
             <main>
-                <GoogleMaps>
-                </GoogleMaps>
+                
 
                 <slot />
             </main>
         </div>
     </div>
 </template>
-<script>
-import GoogleMaps from '../Pages/Coordi/Tickets/GoogleMaps.vue';
-export default {
-    components: {
-        GoogleMaps
-    }
-}
-
-</script>
 

@@ -54,10 +54,10 @@ class ContractController extends Controller
         });
 
         
-        $totalContractCount = contract::count();
+        $totalContractsCount = Contract::count();
 
         return Inertia::render('Coordi/Contracts/Contracts', [
-            'tickets' => $contract,
+            'contracts' => $contract,
             'pagination' => [
                 'links' => $contract->links()->elements[0],
                 'next_page_url' => $contract->nextPageUrl(),
@@ -66,13 +66,13 @@ class ContractController extends Controller
                 'total' => $contract->total(),
             ],
             'success' => session('success') ?? null,
-            'totalTicketsCount' => $totalContractCount 
+            'totalContractsCount' => $totalContractsCount 
         ]);
     }
-    //Muestra la información del ticket y del usuario en específico
+    //Muestra la información del contrato y del usuario en específico
     public function show($id)
     {
-        $contract = Contract::with('user')->findOrFail($id);
+        $contract = Contract::findOrFail($id);
 
         return Inertia::render('Coordi/Contracts/Show', [
             'contract' => $contract,
@@ -91,7 +91,7 @@ class ContractController extends Controller
            
         ]);
 
-        return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
+        return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
 
         
     }
@@ -102,7 +102,7 @@ class ContractController extends Controller
         $name = $contract->user->name; // Accede al nombre del usuario que creó el ticket
 
         return Inertia::render('Coordi/Contract/Edit', [
-            'ticket' => $contract,
+            'contracts' => $contract,
             'nombre' => $name,
         ]);
     }

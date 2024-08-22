@@ -10,20 +10,18 @@ const form = useForm({
   plan_id: "",
   address: "",
   latitude: "",
-  longitudes: "",
+  longitude: "",
 });
 
-
-
-
+const handlePositionClicked = (position) => {
+  form.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
+  form.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
+};
 
 const submit = () => {
   form.post(route("contracts.store"));
 };
 
-const seleccionar = (valor) => {
-  form.admin = Number(valor);
-};
 </script>
 
 <template>
@@ -51,60 +49,64 @@ const seleccionar = (valor) => {
 
       <div class="mt-4">
         <InputLabel for="plan_id" value="ID del plan" />
-        <textarea
+        <TextInput
           id="plan_id"
           v-model="form.plan_id"
           type="text"
           class="mt-1 block w-full"
           required
+          autofocus
           autocomplete="plan_id"
-          style="height: 250px; resize: none; border-radius: 1.5%;"
         />
         <InputError class="mt-2" :message="form.errors.plan_id" />
       </div>
 
       <div class="mt-4">
         <InputLabel for="address" value="Dirección" />
-        <textarea
+        <TextInput
           id="address"
           v-model="form.address"
           type="text"
           class="mt-1 block w-full"
           required
           autocomplete="address"
-          style="height: 250px; resize: none; border-radius: 1.5%;"
+          autofocus
         />
         <InputError class="mt-2" :message="form.errors.address" />
       </div>
-
-      <div class="flex justify-between">
+      <div class="flex justify-between gap-5">
+        
         <div class="mt-4">
           <InputLabel for="latitude" value="Latitud" />
-          <textarea
+          <TextInput
             id="latitude"
             v-model="form.latitude"
             type="text"
             class="mt-1 block w-full"
             required
             autocomplete="latitude"
-            style="height: 250px; resize: none; border-radius: 1.5%;"
+            autofocus
           />
           <InputError class="mt-2" :message="form.errors.latitude" />
         </div>
         <div class="mt-4">
           <InputLabel for="longitude" value="Longitud" />
-          <textarea
+          <TextInput
             id="longitude"
             v-model="form.longitude"
             type="text"
             class="mt-1 block w-full"
             required
             autocomplete="longitude"
-            style="height: 250px; resize: none; border-radius: 1.5%;"
+            autofocus
           />
           <InputError class="mt-2" :message="form.errors.longitude" />
         </div>
 
+      </div>
+      <!-- MAPA -->
+      <div class="flex mt-4">
+        <GoogleMaps @otherPos_clicked="handlePositionClicked" />
       </div>
 
       <div class="flex items-center justify-end mt-4">
@@ -134,3 +136,20 @@ const seleccionar = (valor) => {
     </form>
   </div>
 </template>
+<script>
+import GoogleMaps from '@/Components/GoogleMaps.vue'
+export default {
+    components: {
+        GoogleMaps
+    },
+  data() {
+    return {
+      form: {
+        latitude: '',
+        longitude: ''
+      }
+    };
+  },
+}
+</script>
+
