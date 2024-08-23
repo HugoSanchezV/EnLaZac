@@ -263,7 +263,7 @@ const submit = () => {
             />
           </svg>
 
-          Enviar Ticket
+          Crear Plan
         </PrimaryButton>
       </div>
     </form>

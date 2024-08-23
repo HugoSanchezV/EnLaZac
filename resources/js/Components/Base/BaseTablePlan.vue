@@ -188,8 +188,7 @@ const destroy = (id) => {
             :key="cellIndex"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
-    
-              {{ typeof cell === 'object' ? ((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, '\n') : String(cell).replace(/[{}]/g, '') }}
+            {{ typeof cell === 'object' ? ((((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, ' | ')).replace('_limits', '')).replace('_limits','') : String(cell).replace(/[{}]/g, '') }}
         
           </td>
           <td class="flex items-stretch">
@@ -218,7 +217,7 @@ const destroy = (id) => {
               </Link>
               <Link
                 v-if="edit"
-                :href="route('contracts.edit', row.id)"
+                :href="route('plans.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
