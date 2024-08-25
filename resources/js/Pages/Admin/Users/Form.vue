@@ -5,12 +5,18 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
+
+
 const form = useForm({
   name: "",
   alias: "",
   email: "",
   password: "",
   password_confirmation: "",
+  coordinates:{
+    latitude: "",
+    longitude:"",
+  },
   admin: 0,
 });
 
@@ -23,6 +29,28 @@ const submit = () => {
   });
 };
 
+const handlePositionClicked = (position) => {
+  form.coordinates.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
+  form.coordinates.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
+};
+var lat;
+var lng;
+if(navigator.geolocation){
+  var success = function(position){
+    lat = form.coordinates.latitude = position.coords.latitude.toFixed(6),
+    lng = form.coordinates.longitude = position.coords.longitude.toFixed(6);
+  }
+
+  navigator.geolocation.getCurrentPosition(success, function(msg)
+  {
+   console.error( msg );
+  });
+}
+const getCurrentLocation = () =>
+{
+   form.coordinates.latitude = lat,
+   form.coordinates.longitude = lng;
+}
 const seleccionar = (valor) => {
   form.admin = Number(valor);
 };
@@ -130,7 +158,70 @@ const seleccionar = (valor) => {
         />
         <InputError class="mt-2" :message="form.errors.password_confirmation" />
       </div>
+      <div class="mt-4">
+        <p>La ubicación de tu localidad será tomada de manera automática 
+          o ingresala de manera manual
+        </p>
+      </div>
+      <div class="flex justify-between items-center gap-2 mt-5">
+        <p>Ingresar ubicación manualmente</p>
+        <label class="switch">
+          <input type="checkbox" 
+          @change="getCurrentLocation"  
+          checked 
+          v-model="ubicacionManual" />
+          <span class="slider round"></span>
+        </label>
+      </div>
 
+      <div v-if="ubicacionManual" class="flex gap-2">
+        <div class="mt-4">
+          <InputLabel for="latitude" value="Latitude" />
+          <TextInput
+            id="latitude"
+            v-model="form.coordinates.latitude"
+            type="latitude"
+            class="mt-1 block w-full"
+            autocomplete="latitude"
+          />
+          <InputError class="mt-2" :message="form.errors.latitude" />
+        </div>
+
+        <div class="mt-4">
+          <InputLabel for="longitude" value="Longitude" />
+          <TextInput
+            id="longitude"
+            v-model="form.coordinates.longitude"
+            type="longitude"
+            class="mt-1 block w-full"
+            autocomplete="longitude"
+          />
+          <InputError class="mt-2" :message="form.errors.longitude" />
+        </div>
+
+      </div>
+      <div v-if="ubicacionManual" class="flex mt-4">
+        <GoogleMaps @otherPos_clicked="handlePositionClicked" />
+      </div>
+      
+      <div v-else>
+        <div class="mt-4">
+          <TextInput
+            id="latitude"
+            v-model="form.coordinates.latitude"
+            type="latitude"
+            class="mt-1 block w-full"
+            autocomplete="latitude"
+          />
+          <TextInput
+            id="longitude"
+            v-model="form.coordinates.longitude"
+            type="longitude"
+            class="mt-1 block w-full"
+            autocomplete="longitude"
+          />
+      </div>
+      </div>
       <input type="hidden" id="admin" :value="form.admin" readonly />
 
       <div class="flex items-center justify-end mt-4">
@@ -145,3 +236,86 @@ const seleccionar = (valor) => {
     </form>
   </div>
 </template>
+
+
+<script>
+import GoogleMaps from '@/Components/GoogleMaps.vue'
+export default {
+  components: {
+        GoogleMaps
+    },
+  props: ["user"],
+  data() {
+    return {
+      ubicacionManual: false,
+      form: {
+        latitude: '',
+        longitude: ''
+      }
+    };
+  },
+};
+
+</script>
+
+<style scoped>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 17px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>

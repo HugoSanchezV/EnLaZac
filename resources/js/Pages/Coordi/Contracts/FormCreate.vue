@@ -13,11 +13,13 @@ const form = useForm({
   longitude: "",
 });
 
+//LO COMENTADO ES PARA QUE PUEDA HACER PRUEBAS CON EL MAPA DE USUARIOS
+/*
 const handlePositionClicked = (position) => {
   form.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
   form.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
 };
-
+*/
 const submit = () => {
   form.post(route("contracts.store"));
 };
@@ -106,7 +108,7 @@ const submit = () => {
       </div>
       <!-- MAPA -->
       <div class="flex mt-4">
-        <GoogleMaps @otherPos_clicked="handlePositionClicked" />
+      <!--  <GoogleMaps @otherPos_clicked="handlePositionClicked" />-->
       </div>
 
       <div class="flex items-center justify-end mt-4">
@@ -137,10 +139,10 @@ const submit = () => {
   </div>
 </template>
 <script>
-import GoogleMaps from '@/Components/GoogleMaps.vue'
+//import GoogleMaps from '@/Components/GoogleMaps.vue'
 export default {
     components: {
-        GoogleMaps
+     //   GoogleMaps
     },
   data() {
     return {

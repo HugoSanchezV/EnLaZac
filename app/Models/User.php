@@ -31,8 +31,8 @@ class User extends Authenticatable
         'email',
         'password',
         'admin',
+        'coordinates'
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -64,8 +64,12 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+
         ];
     }
+    protected $casts = [
+        'coordinates'  => 'array',
+    ];
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
