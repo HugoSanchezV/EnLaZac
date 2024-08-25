@@ -6,10 +6,20 @@ import { Loader } from '@googlemaps/js-api-loader'
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBQYG1b_KbXKX1ONj4eu2eWHD7k-qkjNkE'
 
 export default {
+  props: {
+    lat: {
+      type: Number,
+      required: true
+    },
+    lng: {
+      type: Number,
+      required: true
+    }
+  },
   setup(props, { emit }) {
     const currPos = computed(() => ({
-      lat: 23.174894722222,
-      lng: -102.86822944444
+      lat: props.lat,
+      lng: props.lng
     }))
     const otherPos = ref(null)
     const marker = ref(null) // Referencia para el marcador
@@ -23,7 +33,7 @@ export default {
       await loader.load()
       map.value = new google.maps.Map(mapDiv.value, {
         center: currPos.value,
-        zoom: 7
+        zoom: 8
       })
 
       // Manejar clics en el mapa para colocar o mover el marcador

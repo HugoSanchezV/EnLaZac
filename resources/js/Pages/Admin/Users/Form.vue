@@ -1,5 +1,6 @@
 <script setup>
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm} from "@inertiajs/vue3";
+import {ref, onMounted} from 'vue';
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -33,19 +34,21 @@ const handlePositionClicked = (position) => {
   form.coordinates.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
   form.coordinates.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
 };
-var lat;
-var lng;
-if(navigator.geolocation){
-  var success = function(position){
-    lat = form.coordinates.latitude = position.coords.latitude.toFixed(6),
-    lng = form.coordinates.longitude = position.coords.longitude.toFixed(6);
-  }
+const lat = ref(null);
+const lng = ref(null); 
+onMounted(() => {
+  if(navigator.geolocation){
+    var success = function(position){
+      lat.value = form.coordinates.latitude = position.coords.latitude.toFixed(6),
+      lng.value = form.coordinates.longitude = position.coords.longitude.toFixed(6);
+    }
 
-  navigator.geolocation.getCurrentPosition(success, function(msg)
-  {
-   console.error( msg );
-  });
-}
+    navigator.geolocation.getCurrentPosition(success, function(msg)
+    {
+    console.error( msg );
+    });
+  }
+});
 const getCurrentLocation = () =>
 {
    form.coordinates.latitude = lat,
@@ -159,8 +162,8 @@ const seleccionar = (valor) => {
         <InputError class="mt-2" :message="form.errors.password_confirmation" />
       </div>
       <div class="mt-4">
-        <p>La ubicación de tu localidad será tomada de manera automática 
-          o ingresala de manera manual
+        <p>Su ubicación actual será tomada de manera automática 
+          o ingresela manualmente
         </p>
       </div>
       <div class="flex justify-between items-center gap-2 mt-5">
@@ -180,7 +183,7 @@ const seleccionar = (valor) => {
           <TextInput
             id="latitude"
             v-model="form.coordinates.latitude"
-            type="latitude"
+            readonly 
             class="mt-1 block w-full"
             autocomplete="latitude"
           />
@@ -192,7 +195,7 @@ const seleccionar = (valor) => {
           <TextInput
             id="longitude"
             v-model="form.coordinates.longitude"
-            type="longitude"
+            readonly 
             class="mt-1 block w-full"
             autocomplete="longitude"
           />
@@ -201,7 +204,10 @@ const seleccionar = (valor) => {
 
       </div>
       <div v-if="ubicacionManual" class="flex mt-4">
-        <GoogleMaps @otherPos_clicked="handlePositionClicked" />
+        <GoogleMaps
+        :lat="lat"
+        :lng="lng"
+         @otherPos_clicked="handlePositionClicked" />
       </div>
       
       <div v-else>
@@ -209,14 +215,14 @@ const seleccionar = (valor) => {
           <TextInput
             id="latitude"
             v-model="form.coordinates.latitude"
-            type="latitude"
+            type="hidden"
             class="mt-1 block w-full"
             autocomplete="latitude"
           />
           <TextInput
             id="longitude"
             v-model="form.coordinates.longitude"
-            type="longitude"
+            type="hidden"
             class="mt-1 block w-full"
             autocomplete="longitude"
           />

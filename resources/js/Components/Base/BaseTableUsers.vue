@@ -324,6 +324,9 @@ const destroy = (id) => {
               </h2>
               <h2 v-else>{{ cell }}</h2>
             </div>
+            <div v-else-if="cellIndex === 'coordinates'">
+              {{ typeof cell === 'object' ? (((((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, ' | ')).replace('latitude', 'Latitud')).replace('longitude','Longitud')).replace('null','Sin locación') : String(cell).replace(/[{}]/g, '') }}
+            </div>
             <div v-else>
               {{ cell }}
             </div>
