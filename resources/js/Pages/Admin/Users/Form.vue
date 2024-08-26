@@ -51,8 +51,8 @@ onMounted(() => {
 });
 const getCurrentLocation = () =>
 {
-   form.coordinates.latitude = lat,
-   form.coordinates.longitude = lng;
+   form.coordinates.latitude = lat.value,
+   form.coordinates.longitude = lng.value;
 }
 const seleccionar = (valor) => {
   form.admin = Number(valor);
@@ -205,8 +205,8 @@ const seleccionar = (valor) => {
       </div>
       <div v-if="ubicacionManual" class="flex mt-4">
         <GoogleMaps
-        :lat="lat"
-        :lng="lng"
+        :lat="parseInt(lat)"
+        :lng="parseInt(lng)"
          @otherPos_clicked="handlePositionClicked" />
       </div>
       

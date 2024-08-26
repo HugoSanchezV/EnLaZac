@@ -36,12 +36,19 @@ export default {
         zoom: 8
       })
 
+      marker.value = new google.maps.Marker({
+        position: currPos.value,
+        map: map.value,
+        title: "Tu ubicación actual",
+        draggable: true
+      });
       // Manejar clics en el mapa para colocar o mover el marcador
       clickListener = map.value.addListener('click', ({ latLng }) => {
         otherPos.value = {
           lat: latLng.lat(),
           lng: latLng.lng()
         }
+
 
         // Si ya existe un marcador, mueve su posición
         if (marker.value) {
