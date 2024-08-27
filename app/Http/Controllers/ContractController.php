@@ -17,21 +17,13 @@ class ContractController extends Controller
     {
         $query = Contract::query();
 
-        //if ($request->type !== null && $request->type !== 'todos') {
-        //    $query->where('admin', '=', $request->type);
-       // }
-
-        //$query->where('admin', '!=', 1);
-
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('user_id', 'like', "%$search%")
                     ->orWhere('plan_id', 'like', "%$search%")
-                    ->orWhere('address', 'like', "%$search%")
-                    ->orWhere('latitude', 'like', "%$search%")
-                    ->orWhere('longitude','like', "%$search%");
+                    ->orWhere('address', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -48,8 +40,11 @@ class ContractController extends Controller
                 'user_id' => $item->user_id,
                 'plan_id' => $item->plan_id,
                 'address' => $item->address,
-                'latitude' =>  $item->latitude,
-                'longitude' => $item->longitude,
+                'geolocation' => $item -> geolocation ?[
+                    'latitude' => $item->geolocation['latitude'] ?? null,
+                    'longitude' => $item->geolocation['longitude'] ?? null,
+                ] : null,
+
             ];
         });
 
@@ -85,10 +80,13 @@ class ContractController extends Controller
     }
 
     public function store(StoreContractRequest $request)
-    {   $user_id = Auth::id();
+    {   
         $validatedData = $request->validated();
         $contract = Contract::create([
-           
+            'user_id' => $validatedData['user_id'],
+            'plan_id' => $validatedData['plan_id'],
+            'address' => $validatedData['address'],
+            'geolocation' => $validatedData['geolocation'],
         ]);
 
         return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
@@ -99,11 +97,9 @@ class ContractController extends Controller
     public function edit($id)
     {
         $contract = Contract::findOrFail($id);
-        $name = $contract->user->name; // Accede al nombre del usuario que creó el ticket
 
-        return Inertia::render('Coordi/Contract/Edit', [
-            'contracts' => $contract,
-            'nombre' => $name,
+        return Inertia::render('Coordi/Contracts/Edit', [
+            'contract' => $contract,
         ]);
     }
 
@@ -114,14 +110,14 @@ class ContractController extends Controller
 
         $validatedData = $request->validated();
         $contract->update($validatedData);
-        return redirect()->route('contract')->with('success', 'Contrato Actualizado Con Éxito');
+        return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
     }
     
     public function destroy($id)
     {
         $contract = Contract::findOrFail($id);
         $contract->delete();
-        return Redirect::route('contract')->with('success', 'Contrato Eliminado Con Éxito');
+        return Redirect::route('contracts')->with('success', 'Contrato Eliminado Con Éxito');
     }
    
 }

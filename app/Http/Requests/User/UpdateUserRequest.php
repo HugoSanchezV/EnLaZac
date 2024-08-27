@@ -36,8 +36,6 @@ class UpdateUserRequest extends FormRequest
             ],
             'password' => 'nullable|string|min:8|confirmed', 
             'admin' => 'required|integer|in:0,2,3',
-            'coordinates.latitude' => 'required|nullable',
-            'coordinates.longitude' => 'required|nullable',
         ];
     }
 }

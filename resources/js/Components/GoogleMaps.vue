@@ -33,8 +33,13 @@ export default {
       await loader.load()
       map.value = new google.maps.Map(mapDiv.value, {
         center: currPos.value,
-        zoom: 8
+        zoom: 9
       })
+      marker.value = new google.maps.Marker({
+          position: currPos.value,
+          map: map.value,
+          draggable: true
+        })
 
       marker.value = new google.maps.Marker({
         position: currPos.value,

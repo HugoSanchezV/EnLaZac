@@ -48,11 +48,6 @@ class UserController extends Controller
                 'alias' => $item->alias ?? "Sin asignar",
                 'email' => $item->email,
                 'role' => $item->admin,
-                'coordinates' => $item -> coordinates ?[
-                    'latitude' => $item->coordinates['latitude'] ?? null,
-                    'longitude' => $item->coordinates['longitude'] ?? null,
-                ] : null,
-
             ];
         });
 
@@ -89,7 +84,6 @@ class UserController extends Controller
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'admin' => $validatedData['admin'],
-            'coordinates' => $validatedData['coordinates'],
         ]);
 
         return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');

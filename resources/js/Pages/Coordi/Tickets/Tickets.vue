@@ -22,7 +22,7 @@ watch(success, (newValue) => {
 });
 
 const headers = ["Id", "Asunto", "Descripción", "Estado", "Cliente","Creación", "Acciones"];
-const filters = ["id", "subject","description", "status", "user_id", 'created_at'];
+const filters = ["id", "asunto","descripción", "estado", "usuario", 'creación'];
 
 </script>
 
@@ -100,74 +100,6 @@ const filters = ["id", "subject","description", "status", "user_id", 'created_at
   </dashboard-base>
 </template>
 
-/*
-  // Variable global para el mapa y los marcadores
-  var map;
-  var markers = [];
-
-  // Definir la función para inicializar el mapa
-  function initMap() {
-      // Crear el mapa con un centro y zoom inicial
-      map = new google.maps.Map(document.getElementById('map-container'), {
-          zoom: 8,
-          center: {lat: 4.134282, lng: -73.637742} // Establecer un centro predeterminado como punto de partida
-      });
-
-      // Cargar las coordenadas iniciales
-      var sedeCoordinates = {!! json_encode($sedeCoordinates) !!};
-      addMarkers(sedeCoordinates);
-  }
-
-  // Función para agregar marcadores al mapa
-  function addMarkers(sedeCoordinates) {
-      clearMarkers(); // Limpiar los marcadores existentes
-      sedeCoordinates.forEach(function(coordinate) {
-          var parts = coordinate.split(',');
-          var lat = parseFloat(parts[0]);
-          var lng = parseFloat(parts[1]);
-
-          var marker = new google.maps.Marker({
-              position: {lat: lat, lng: lng},
-              map: map
-          });
-          markers.push(marker);
-      });
-  }
-
-  // Función para limpiar los marcadores del mapa
-function clearMarkers() {
-    markers.forEach(function(marker) {
-        marker.setMap(null);
-    });
-    markers = [];
-}
-
-// Agregar un event listener para el formulario de búsqueda
-  document.getElementById('searchForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevenir el envío del formulario
-
-      // Hacer la solicitud de búsqueda (ajustar según sea necesario para tu configuración)
-      var formData = new FormData(this);
-      var searchParams = new URLSearchParams(formData).toString();
-
-      fetch('{{ route("agendas.index") }}?' + searchParams)
-          .then(response => response.json())
-          .then(data => {
-              // Actualizar los datos de la tabla y los marcadores del mapa
-              updateTable(data.agendas);
-              updateMap(data.sedeCoordinates);
-          });
-  });
-
-  function updateTable(agendas) {
-      // Actualizar la tabla de resultados (implementar según tu estructura de tabla)
-      // Aquí debes agregar la lógica para actualizar la tabla con los nuevos datos
-  }
-  function updateMap(sedeCoordinates){
-    addMarkers(sedeCoordinates);
-  }
-*/
-
 <script>
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
@@ -211,9 +143,22 @@ export default {
       if (this.order === "id") {
         this.order = "id";
       }
+      if (this.order === "asunto") {
+        this.order = "subject";
+      }
 
-      if (this.order === "status") {
+      if (this.order === "descripción") {
+        this.order = "description";
+      }
+
+      if (this.order === "estado") {
         this.order = "status";
+      }
+      if (this.order === "usuario") {
+        this.order = "user_id";
+      }
+      if (this.order === "creación") {
+        this.order = "created_at";
       }
       
       this.$inertia.get(

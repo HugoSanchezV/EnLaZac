@@ -16,10 +16,6 @@ const form = useForm({
   email: "",
   password: "",
   password_confirmation: "",
-  coordinates:{
-    latitude: "",
-    longitude:"",
-  },
   admin: 0,
 });
 
@@ -29,14 +25,8 @@ onMounted(() => {
     form.alias = props.user.alias || "";
     form.email = props.user.email || "";
     form.admin = props.user.admin || 0;
-    form.coordinates.latitude = props.user.coordinates.latitude || "";
-    form.coordinates.longitude = props.user.coordinates.longitude || "";
   }
 });
-const handlePositionClicked = (position) => {
-  form.coordinates.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
-  form.coordinates.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
-};
 const submit = () => {
   form.put(route("usuarios.update", { id: props.user.id }), {
     onFinish: () => form.reset("password", "password_confirmation"),
@@ -126,44 +116,6 @@ const seleccionar = (valor) => {
         <InputError class="mt-2" :message="form.errors.email" />
       </div>
 
-      <div class="flex justify-between items-center gap-2 mt-5">
-        <p>Ubicación</p>
-        <label class="switch">
-          <input type="checkbox" 
-          checked  />
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <div class="flex gap-2">
-        <div class="mt-4">
-          <InputLabel for="latitude" value="Latitude" />
-          <TextInput
-            id="latitude"
-            v-model="form.coordinates.latitude"
-            readonly 
-            class="mt-1 block w-full"
-            autocomplete="latitude"
-          />
-          <InputError class="mt-2" :message="form.errors.latitude" />
-        </div>
-
-        <div class="mt-4">
-          <InputLabel for="longitude" value="Longitude" />
-          <TextInput
-            id="longitude"
-            v-model="form.coordinates.longitude"
-            readonly 
-            class="mt-1 block w-full"
-            autocomplete="longitude"
-          />
-          <InputError class="mt-2" :message="form.errors.longitude" />
-        </div>
-
-      </div>
-      <div class="flex mt-4">
-        <GoogleMaps @otherPos_clicked="handlePositionClicked" />
-      </div>
 
       <div class="flex justify-between items-center gap-2 mt-5">
         <p>Editar Password</p>
@@ -219,19 +171,11 @@ const seleccionar = (valor) => {
 
 
 <script>
-import GoogleMaps from '@/Components/GoogleMaps.vue'
 export default {
-  components: {
-        GoogleMaps
-    },
   props: ["user"],
   data() {
     return {
       modificarPassword: false,
-      form: {
-        latitude: '',
-        longitude: ''
-      }
     };
   },
 };

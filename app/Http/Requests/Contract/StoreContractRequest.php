@@ -22,14 +22,21 @@ class StoreContractRequest extends FormRequest
     public function rules(): array
     {
         return [
-           
+            'user_id' => 'required',
+            'plan_id'=> 'required',
+            'address'=> 'required|max:100',
+            'geolocation.latitude'=> 'required|numeric',
+            'geolocation.longitude'=> 'required|numeric',
         ];
     }
 
     public function messages()
     {
         return [
-            
+            'user_id.required' => 'El id del usuario es un campo obligatorio.',
+            'plan_id.required' => 'El id del plan de internet es un campo obligatorio.',
+            'address.required' => 'La direccion es un campo obligatorio.',
+            'address.max' => 'La dirección no puede tener más de 100 caracteres.',
         ];
     }
 }

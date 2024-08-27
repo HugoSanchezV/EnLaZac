@@ -21,8 +21,8 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["Id", "Usuarios", "Plan", "Dirección", "Latitud","Longitud", "Acciones"];
-const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
+const headers = ["Id", "Usuarios", "Plan Internet", "Dirección", "Geolocación", "Acciones"];
+const filters = ["id", "usuario","plan internet", "dirección"];
 
 </script>
 
@@ -143,8 +143,16 @@ export default {
         this.order = "id";
       }
 
-      if (this.order === "status") {
-        this.order = "status";
+      if (this.order === "usuario") {
+        this.order = "user_id";
+      }
+
+      if (this.order === "plan internet") {
+        this.order = "plan_id";
+      }
+
+      if (this.order === "dirección") {
+        this.order = "address";
       }
       
       this.$inertia.get(
