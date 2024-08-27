@@ -161,73 +161,8 @@ const seleccionar = (valor) => {
         />
         <InputError class="mt-2" :message="form.errors.password_confirmation" />
       </div>
-      <div class="mt-4">
-        <p>Su ubicación actual será tomada de manera automática 
-          o ingresela manualmente
-        </p>
-      </div>
-      <div class="flex justify-between items-center gap-2 mt-5">
-        <p>Ingresar ubicación manualmente</p>
-        <label class="switch">
-          <input type="checkbox" 
-          @change="getCurrentLocation"  
-          checked 
-          v-model="ubicacionManual" />
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <div v-if="ubicacionManual" class="flex gap-2">
-        <div class="mt-4">
-          <InputLabel for="latitude" value="Latitude" />
-          <TextInput
-            id="latitude"
-            v-model="form.coordinates.latitude"
-            readonly 
-            class="mt-1 block w-full"
-            autocomplete="latitude"
-          />
-          <InputError class="mt-2" :message="form.errors.latitude" />
-        </div>
-
-        <div class="mt-4">
-          <InputLabel for="longitude" value="Longitude" />
-          <TextInput
-            id="longitude"
-            v-model="form.coordinates.longitude"
-            readonly 
-            class="mt-1 block w-full"
-            autocomplete="longitude"
-          />
-          <InputError class="mt-2" :message="form.errors.longitude" />
-        </div>
-
-      </div>
-      <div v-if="ubicacionManual" class="flex mt-4">
-        <GoogleMaps
-        :lat="parseInt(lat)"
-        :lng="parseInt(lng)"
-         @otherPos_clicked="handlePositionClicked" />
-      </div>
       
-      <div v-else>
-        <div class="mt-4">
-          <TextInput
-            id="latitude"
-            v-model="form.coordinates.latitude"
-            type="hidden"
-            class="mt-1 block w-full"
-            autocomplete="latitude"
-          />
-          <TextInput
-            id="longitude"
-            v-model="form.coordinates.longitude"
-            type="hidden"
-            class="mt-1 block w-full"
-            autocomplete="longitude"
-          />
-      </div>
-      </div>
+
       <input type="hidden" id="admin" :value="form.admin" readonly />
 
       <div class="flex items-center justify-end mt-4">
@@ -245,19 +180,11 @@ const seleccionar = (valor) => {
 
 
 <script>
-import GoogleMaps from '@/Components/GoogleMaps.vue'
 export default {
-  components: {
-        GoogleMaps
-    },
   props: ["user"],
   data() {
     return {
       ubicacionManual: false,
-      form: {
-        latitude: '',
-        longitude: ''
-      }
     };
   },
 };
