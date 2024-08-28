@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\TicketStatusChangedEvent;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\RouterosApiController;
@@ -19,6 +20,11 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+Route::get('/fire', function(){ 
+    event (new TicketStatusChangedEvent); 
+    return 'FIRE';
 });
 
 Route::middleware([
@@ -92,6 +98,8 @@ Route::middleware([
     Route::get('/plans/edit/{id}',       [PlanController::class, 'edit'])->name('plans.edit');
     Route::put('/plans/update/{id}',     [PlanController::class, 'update'])->name('plans.update');
     Route::delete('/plans/delete/{id}',  [PlanController::class, 'destroy'])->name('plans.destroy');
+
+    //Ruta pruebas
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

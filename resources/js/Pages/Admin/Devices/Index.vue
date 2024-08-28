@@ -57,7 +57,7 @@ const filters = [ "id", "usuario", "ip"];
     <template v-slot:content>
       <div v-if="totalRoutersCount > 0">
         <!-- Esta es el inicio de la tabla -->
-        <router-table
+ <!--       <router-table
           :headers="headers"
           :rows="rows"
           :filters="filters"
@@ -66,7 +66,7 @@ const filters = [ "id", "usuario", "ip"];
           :del="true"
           @search="search"
         >
-        </router-table>
+        </router-table>-->
         <base-pagination
           v-if="routers.data.length > 0"
           :links="routers.links"
@@ -94,14 +94,14 @@ const filters = [ "id", "usuario", "ip"];
 <script>
 import { Link } from "@inertiajs/vue3";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import RouterTable from "./RouterTable.vue";
+//import RouterTable from "./RouterTable.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    RouterTable,
+  //  RouterTable,
     BasePagination,
     // BasePagination,
   },

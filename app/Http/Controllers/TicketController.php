@@ -142,7 +142,7 @@ class TicketController extends Controller
     }
 
     static function make_ticket_notification($ticket){
-        event(new TicketEvent($ticket));
+        //event(new TicketEvent($ticket));
     //      $creatorId = $ticket->user_id;
 
     // // // Seleccionar usuarios donde 'admin' sea 1, 2, 3, o 4, excluyendo al creador del ticket
