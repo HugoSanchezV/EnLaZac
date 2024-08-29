@@ -16,7 +16,7 @@ class TicketNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    protected $ticket;
+    public $ticket;
     public function __construct(Ticket $ticket)
     {
         $this->ticket = $ticket; 

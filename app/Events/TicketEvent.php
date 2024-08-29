@@ -13,14 +13,14 @@ use App\Models\Ticket;
 
 class TicketEvent
 {
-    public $ticket;
+   
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public $ticket;
     /**
      * Create a new event instance.
      */
     
-    public function __construct($ticket)
+    public function __construct(Ticket $ticket)
     {
         $this->ticket = $ticket;
     }
