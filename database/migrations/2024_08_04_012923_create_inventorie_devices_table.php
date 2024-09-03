@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('inventorie_devices', function (Blueprint $table) {
             $table->id();
+            $table->macAddress('mac_address');
+            $table->tinyinteger('state')->default(0);
+            $table->string('description');
+            $table->string('brand');
             $table->timestamps();
         });
     }

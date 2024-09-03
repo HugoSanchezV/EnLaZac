@@ -8,8 +8,10 @@ use App\Models\Device;
 use App\Models\Network;
 use App\Models\Router;
 use App\Models\RouterosAPI;
+use App\Services\RouterOSService;
 use App\Services\RouterService;
 use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -128,7 +130,7 @@ class RouterController extends Controller
         $validatedData = $request->validated();
 
         if (!empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
+            $validatedData['password'] = Crypt::encrypt($validatedData['password']);
         } else {
             unset($validatedData['password']);
         }
@@ -147,28 +149,27 @@ class RouterController extends Controller
         return Redirect::route('routers')->with('success', 'Router Eliminado Con Éxito');
     }
 
+
     public function sync($id)
     {
-        $router = Router::findOrFail($id);
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($id);
 
-        $ip = $router->ip_address;
-        $user = $router->user;
-        $password = Crypt::decrypt($router->password);
+            $router = Router::findOrFail($id);
 
-        $API = new RouterosAPI();
+            $address = $routerOSService->executeCommand('/ip/address/print');
 
-        $API->debug(false);
-
-        if ($API->connect($ip, $user, $password)) {
-
-            $address = $API->comm('/ip/address/print');
 
             $address = $this->routerService->filterNetworksByPrefix($address, '172.17');
 
-            $users = $API->comm('/ip/firewall/address-list/print', [
-                '.proplist' => '.id,list,address,creation-time,disabled,comment',
-                '?list' => 'MOROSOS'
-            ]);
+            $users = $routerOSService->executeCommand(
+                '/ip/firewall/address-list/print',
+                [
+                    '.proplist' => '.id,list,address,creation-time,disabled,comment',
+                    '?list' => 'MOROSOS'
+                ]
+            );
 
             $db_devices = Device::all();
 
@@ -199,8 +200,11 @@ class RouterController extends Controller
                     ]
                 );
             }
-        } else {
-            return Redirect::route('routers')->with('error', 'No se ha podido sincronizar el Router, intentalo más tarde');
+
+            $routerOSService->disconnect();
+            
+        } catch (Exception $e) {
+            return Redirect::route('routers')->with('error', $e->getMessage());
         }
 
         $router->sync = 1;

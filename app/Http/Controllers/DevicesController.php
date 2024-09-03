@@ -8,6 +8,8 @@ use App\Models\Device;
 use App\Models\Router;
 use App\Models\RouterosAPI;
 use App\Models\User;
+use App\Services\RouterOSService;
+use Exception;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -42,13 +44,12 @@ class DevicesController extends Controller
                 'networks' => $router->networks->toArray()
             ]
         ]);
-
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreDeviceRequest $request)
+    public function store2(StoreDeviceRequest $request)
     {
         $validatedData = $request->validated();
 
@@ -81,7 +82,7 @@ class DevicesController extends Controller
                     'address' => $validatedData['address'],
                     'list' => 'MOROSOS',
                     'disabled' => false,
-                    'creation_time' => now(), 
+                    'creation_time' => now(),
                 ]);
 
                 return redirect()->route('routers.devices', ['router' => $router->id])
@@ -92,6 +93,48 @@ class DevicesController extends Controller
             }
         } else {
             return redirect()->route('routers.devices', ['router' => $router->id])
+                ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
+        }
+    }
+    public function store(StoreDeviceRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        try {
+
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($request->router_id);
+
+            $response = $routerOSService->executeCommand('/ip/firewall/address-list/add', [
+                'list' => 'MOROSOS',
+                'address' => $validatedData['address'],
+                'comment' => $validatedData['comment'],
+                //'disable' => 'yes'
+            ]);
+
+            $routerOSService->disconnect();
+
+            if (!empty($response)) {
+                Device::create([
+                    'device_internal_id' => $response,
+                    'router_id' => $validatedData['router_id'],
+                    'device_id' => $validatedData['device_id'] ?? null,
+                    'user_id' => $validatedData['user_id'] ?? null,
+                    'comment' => $validatedData['comment'],
+                    'address' => $validatedData['address'],
+                    'list' => 'MOROSOS',
+                    'disabled' => false,
+                    'creation_time' => now(),
+                ]);
+
+                return redirect()->route('routers.devices', ['router' => $request->router_id])
+                    ->with('success', 'El dispositivo ha sido agregado con éxito');
+            } else {
+                return redirect()->route('routers.devices', ['router' => $request->router_id])
+                    ->with('error', 'Error al añadir la dirección, inténtalo más tarde');
+            }
+        } catch (Exception $e) {
+            return redirect()->route('routers.devices', ['router' => $request->router_id])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
     }
@@ -135,7 +178,7 @@ class DevicesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateDeviceRequest $request, $id)
+    public function update2(UpdateDeviceRequest $request, $id)
     {
         $validatedData = $request->validated();
 
@@ -175,10 +218,46 @@ class DevicesController extends Controller
         }
     }
 
+    public function update(UpdateDeviceRequest $request, $id)
+    {
+        $validatedData = $request->validated();
+
+        $device = Device::findOrFail($id);
+
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($request->router_id);
+
+            $response = $routerOSService->executeCommand('/ip/firewall/address-list/set', [
+                '.id' => $device->device_internal_id,
+                'address' => $validatedData['address'],
+                'comment' => $validatedData['comment'],
+                //'disable' => 'yes'
+            ]);
+
+            $routerOSService->disconnect();
+
+            $device->update([
+                'device_id' => $validatedData['device_id'] ?? null,
+                'user_id' => $validatedData['user_id'] ?? null,
+                'comment' => $validatedData['comment'],
+                'address' => $validatedData['address'],
+                //'disabled' => $validatedData['disabled'] ?? false,
+            ]);
+
+            return redirect()->route('routers.devices', ['router' => $device->router_id])
+                ->with('success', 'El dispositivo ha sido actualizado con éxito');
+        } catch (Exception $e) {
+            return redirect()->route('routers.devices', ['router' => $device->router_id])
+                ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
+        }
+    }
+
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy2($id)
     {
         $device = Device::findOrFail($id);
         $router = Router::findOrFail($device->router_id);
@@ -217,9 +296,44 @@ class DevicesController extends Controller
         }
     }
 
+    public function destroy($id)
+    {
+        $device = Device::findOrFail($id);
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($device->router_id);
+
+            try {
+                $response = $routerOSService->executeCommand(
+                    '/ip/firewall/address-list/remove',
+                    [
+                        '.id' => $device->device_internal_id,
+                    ]
+                );
+
+                if (isset($response['!trap'])) {
+                    throw new \Exception('Error en la eliminación de la dirección en RouterOS');
+                }
+
+                $device->delete();
+
+                return redirect()->route('routers.devices', ['router' => $device->router_id])
+                    ->with('success', 'El dispositivo ha sido eliminado con éxito');
+            } catch (\Exception $e) {
+                return redirect()->route('routers.devices', ['router' => $$device->router_id])
+                    ->with('error', 'Error al eliminar la dirección: ' . $e->getMessage());
+            } finally {
+                $routerOSService->disconnect();
+            }
+        } catch (Exception $e) {
+            return redirect()->route('routers.devices', ['router' => $device->router_id])
+                ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
+        }
+    }
 
 
-    public function setDeviceStatus(Device $device)
+
+    public function setDeviceStatus2(Device $device)
     {
         $device = Device::findOrFail($device->id);
         $router = $device->router;
@@ -265,6 +379,59 @@ class DevicesController extends Controller
             $device->disabled = $state;
             $device->update();
         } else {
+            $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
+            return Redirect::route('routers.devices')->with('error', $message);
+        }
+
+        $message = $action . ' ' . $device->address . ' realizado con éxito';
+        return Redirect::route('routers.devices', $router)->with('success', $message);
+    }
+
+    public function setDeviceStatus(Device $device)
+    {
+        $device = Device::findOrFail($device->id);
+        $router = $device->router;
+
+        $state = 1;
+        $action = "";
+        $commandAction = "";
+
+
+        if ($device->disabled) {
+            $state = 0;
+            $commandAction = "no";
+            $action = "activar";
+        } else {
+            $state = 1;
+            $commandAction = "yes";
+            $action = "desactivar";
+        }
+
+        $device->disabled = $state;
+
+        ///////////////////////////////////////////////////////////////////////
+        $router = Router::findOrFail($router->id);
+
+        //////////////////////////////////////////////////////////////////////////
+
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($router->id);
+
+            $routerOSService->executeCommand(
+                '/ip/firewall/address-list/set',
+                [
+                    '.id' => $device->device_internal_id,
+                    'disabled' => $commandAction
+                ]
+            );
+
+            $routerOSService->disconnect();
+
+            $device->disabled = $state;
+            $device->update();
+
+        } catch (Exception $e) {
             $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
             return Redirect::route('routers.devices')->with('error', $message);
         }

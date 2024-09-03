@@ -1,11 +1,9 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { ref } from "vue";
 
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
-import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
-import ModalUsers from "../Components/ModalUsers.vue";
+import BaseQuestion from "./BaseQuestion.vue";
 
 // ACCION DE ELIMINAR
 const destroy = (id) => {
@@ -15,7 +13,7 @@ const destroy = (id) => {
     {
       component: BaseQuestion,
       props: {
-        message: "¿Estas seguro de Eliminar el Dispositivo?",
+        message: "¿Estas seguro de Eliminar el registro?",
         accept: true,
         cancel: true,
         textConfirm: "Eliminar",
@@ -23,7 +21,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("devices.destroy", id);
+          const url = route("plans.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -40,25 +38,6 @@ const destroy = (id) => {
       timeout: 10000,
     }
   );
-};
-
-const setDeviceStatus = (row) => {
-  const url = route("devices.set.status", {
-    device: row.id,
-  });
-
-  router.patch(url, () => {});
-};
-
-const isModalOpen = ref(false);
-
-const openModal = () => {
-  isModalOpen.value = true;
-};
-
-const confirmSelection = () => {
-  emit('selectUser', selectedUser.value);
-  closeModal();
 };
 
 </script>
@@ -142,80 +121,6 @@ const confirmSelection = () => {
           </div>
         </div>
 
-        <!-- Drop button 2  -->
-        <!-- <div>
-          <button
-            id="dropdownRadioButton"
-            @click="toggleDropdown2"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-              />
-            </svg>
-
-            <span class="bg-gray-400 py-1 px-2 text-white rounded-md">
-              Usuarios
-            </span>
-
-            tipo {{ currentUser }}
-            <svg
-              class="w-2.5 h-2.5 ms-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
-
-          <!-- Dropdown menu -->
-        <!-- <div
-            v-if="dropdownOpen2"
-            id="dropdownRadio2"
-            class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
-          >
-            <ul class="p-3 space-y-1 text-sm text-gray-700">
-              <li v-for="(type, index) in typeUsers" :key="index">
-                <div class="flex items-center p-2 rounded hover:bg-gray-100">
-                  <input
-                    :id="'type-radio-' + index"
-                    type="radio"
-                    :value="type"
-                    v-model="currentUser"
-                    @click="selectUser(type)"
-                    name="type-radio"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <label
-                    :for="'type-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
-                    >{{ type }}</label
-                  >
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div> -->
-
         <!-- Final dfrop nbuton  -->
       </div>
       <!-- final de filtros -->
@@ -245,7 +150,7 @@ const confirmSelection = () => {
             $emit('search', {
               searchQuery: searchQuery,
               order: currentFilter,
-              type: currentUser,
+              type: currentContract,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -258,6 +163,7 @@ const confirmSelection = () => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
+          
           <th
             v-for="(header, index) in headers"
             :key="index"
@@ -274,97 +180,23 @@ const confirmSelection = () => {
           :key="rowIndex"
           class="bg-white border-b hover:bg-gray-100"
         >
-          <td></td>
-
-          <td
+          <div>
+            
+          </div>
+        <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'disabled'">
-              <label class="inline-flex items-center mb-5 cursor-pointer">
-                <input
-                  type="checkbox"
-                  :checked="cell === 0"
-                  class="sr-only peer"
-                  @click="setDeviceStatus(row)"
-                />
-                <div
-                  class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:ring-blue-300 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-green-300"
-                ></div>
-              </label>
-            </div>
-
-            <div v-else-if="cellIndex === 'device_id'">
-              <div v-if="cell === null">
-                <Link
-                  href="#"
-                  class="flex justify-center items-center gap-1 border border-gray-500 bg-white-500 hover:bg-slate-600 py-1 px-2 rounded-md text-slate-600 hover:text-white sm:mb-0 mb-1"
-                >
-                  Asignar Dispositivo
-                </Link>
-              </div>
-              <div v-else>
-                {{ cell }}
-              </div>
-            </div>
-
-            <div v-else-if="cellIndex === 'user_id'">
-              <div v-if="cell === null">
-                <button
-                  @click="openModal"
-                  class="flex justify-center items-center gap-1 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:bg-teal-600 py-1 px-2 rounded-md hover:text-white sm:mb-0 mb-1"
-                >
-                  Asignar usuario
-                </button>
-
-                <modal-users :show="isModalOpen" @close="isModalOpen = false">
-                </modal-users>
-              </div>
-              <div v-else>
-                {{ cell }}
-              </div>
-            </div>
-            <!-- <div v-if="cellIndex === 'sync'">
-              <Link
-              v-if="edit"
-              :href="route('routers.sync', row.id)"
-              class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
-              :class="
-              row.sync
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : ' bg-orange-500 hover:bg-orange-600'
-                "
-                >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-                >
-                <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                />
-                </svg>
-              </Link>
-            </div> -->
-            <div v-else>
-              <!-- v-if="cellIndex !== 'router_id'" -->
-              <div>
-                {{ cell }}
-              </div>
-            </div>
+            {{ typeof cell === 'object' ? ((((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, ' | ')).replace('_limits', '')).replace('_limits','') : String(cell).replace(/[{}]/g, '') }}
+        
           </td>
-
           <td class="flex items-stretch">
             <div class="sm:flex gap-4">
               <Link
-                :href="route('routers.devices', row.id)"
-                class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                href="#"
+                v-if="show"
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -372,7 +204,7 @@ const confirmSelection = () => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-5"
+                  class="size-6"
                 >
                   <path
                     stroke-linecap="round"
@@ -380,16 +212,13 @@ const confirmSelection = () => {
                     d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
                   />
                 </svg>
-                Detalles
-              </Link>
 
+                Mostrar
+              </Link>
               <Link
                 v-if="edit"
-                :href="route('devices.edit', {
-                  'router': route().params.router,
-                  'device': row.id
-                })"
-                class="flex items-center gap-1 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                :href="route('plans.edit', row.id)"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -397,7 +226,7 @@ const confirmSelection = () => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-5"
+                  class="size-6"
                 >
                   <path
                     stroke-linecap="round"
@@ -412,7 +241,7 @@ const confirmSelection = () => {
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -420,7 +249,7 @@ const confirmSelection = () => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-5"
+                    class="size-6"
                   >
                     <path
                       stroke-linecap="round"
@@ -481,13 +310,19 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentUser: "todos",
-      typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
+      currentContract: "todos",
     };
   },
   computed: {
     filteredRows() {
-      return this.rows
+      // if (!this.searchQuery) {
+      return this.rows;
+      //}
+      // return this.rows.filter((row) =>
+      //   row.some((cell) =>
+      //     cell.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+      //   )
+      // );
     },
   },
   methods: {
@@ -505,17 +340,17 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         order: this.currentFilter,
-        type: this.currentUser,
+        type: this.currentContract,
       });
     },
 
-    selectUser(user) {
-      this.currentUser = user;
+    selectContract(contract) {
+      this.currentContract = contract;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         order: this.currentFilter,
-        type: this.currentUser,
+        type: this.currentContract,
       });
     },
 
