@@ -185,8 +185,9 @@ const destroy = (id) => {
             :key="cellIndex"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'role'">
-              
+            <div v-if="cellIndex === 'geolocation'">
+              {{ typeof cell === 'object' ? (((((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, ' | ')).replace('latitude', 'Latitud')).replace('longitude','Longitud')).replace('null','Sin locación') : String(cell).replace(/[{}]/g, '') }}
+
             </div>
             <div v-else>
               {{ cell }}

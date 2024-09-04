@@ -6,7 +6,7 @@ const props = defineProps({
   contracts: Object,
   pagination: Object,
   success: String,
-  totalTicketsCount: Number,
+  totalContractsCount: Number,
 });
 
 const { contracts, success } = toRefs(props);
@@ -21,8 +21,8 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["Id", "Usuarios", "Plan", "Dirección", "Latitud","Longitud",];
-const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
+const headers = ["Id", "Usuarios", "Plan Internet", "Dirección", "Geolocación", "Acciones"];
+const filters = ["id", "usuario","plan internet", "dirección"];
 
 </script>
 
@@ -54,16 +54,16 @@ const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
               />
             </svg>
 
-            Crear Tickets
+            Crear contrato
           </Link>
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalTicketsCount > 0">
+        <div v-if="props.totalContractsCount > 0">
           <!-- Esta es el inicio de la tabla -->
-          <base-table-tickets
+          <base-table-contracts
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -71,14 +71,14 @@ const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-tickets>
+          ></base-table-contracts>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="tickets.data.length > 0"
-            :links="tickets.links"
+            v-if="contracts.data.length > 0"
+            :links="contracts.links"
             :pagination="pagination"
-            :current="tickets.current_page"
-            :total="tickets.last_page"
+            :current="contracts.current_page"
+            :total="contracts.last_page"
             :data="{
               q: q,
               order: order,
@@ -93,106 +93,37 @@ const filters = ["id", "user_id","plan_id", "address", "latitude", 'longitude'];
           </h2>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
-          <h2>No hay Tickets para mostrar</h2>
+          <h2>No hay Contratos para mostrar</h2>
         </div>
       </div>
     </template>
   </dashboard-base>
 </template>
-
-/*
-  // Variable global para el mapa y los marcadores
-  var map;
-  var markers = [];
-
-  // Definir la función para inicializar el mapa
-  function initMap() {
-      // Crear el mapa con un centro y zoom inicial
-      map = new google.maps.Map(document.getElementById('map-container'), {
-          zoom: 8,
-          center: {lat: 4.134282, lng: -73.637742} // Establecer un centro predeterminado como punto de partida
-      });
-
-      // Cargar las coordenadas iniciales
-      var sedeCoordinates = {!! json_encode($sedeCoordinates) !!};
-      addMarkers(sedeCoordinates);
-  }
-
-  // Función para agregar marcadores al mapa
-  function addMarkers(sedeCoordinates) {
-      clearMarkers(); // Limpiar los marcadores existentes
-      sedeCoordinates.forEach(function(coordinate) {
-          var parts = coordinate.split(',');
-          var lat = parseFloat(parts[0]);
-          var lng = parseFloat(parts[1]);
-
-          var marker = new google.maps.Marker({
-              position: {lat: lat, lng: lng},
-              map: map
-          });
-          markers.push(marker);
-      });
-  }
-
-  // Función para limpiar los marcadores del mapa
-function clearMarkers() {
-    markers.forEach(function(marker) {
-        marker.setMap(null);
-    });
-    markers = [];
-}
-
-// Agregar un event listener para el formulario de búsqueda
-  document.getElementById('searchForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevenir el envío del formulario
-
-      // Hacer la solicitud de búsqueda (ajustar según sea necesario para tu configuración)
-      var formData = new FormData(this);
-      var searchParams = new URLSearchParams(formData).toString();
-
-      fetch('{{ route("agendas.index") }}?' + searchParams)
-          .then(response => response.json())
-          .then(data => {
-              // Actualizar los datos de la tabla y los marcadores del mapa
-              updateTable(data.agendas);
-              updateMap(data.sedeCoordinates);
-          });
-  });
-
-  function updateTable(agendas) {
-      // Actualizar la tabla de resultados (implementar según tu estructura de tabla)
-      // Aquí debes agregar la lógica para actualizar la tabla con los nuevos datos
-  }
-  function updateMap(sedeCoordinates){
-    addMarkers(sedeCoordinates);
-  }
-*/
-
 <script>
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableTickets from "@/Components/Base/BaseTableTickets.vue";
+import BaseTableContracts from "@/Components/Base/BaseTableContracts.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTableTickets,
+    BaseTableContracts,
     BasePagination,
   },
 
   props: {
-    tickets: Object,
+    contracts: Object,
     pagination: Object,
     success: String,
-    totalTicketsCount: Number,
+    totalContractsCount: Number,
   },
 
   data() {
     return {
-      rows: this.tickets.data,
+      rows: this.contracts.data,
       q: "",
       order: "id",
       type: "todos",
@@ -200,7 +131,7 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("tickets");
+      const link = route("contracts");
 
       console.log(props.searchQuery);
 
@@ -212,8 +143,16 @@ export default {
         this.order = "id";
       }
 
-      if (this.order === "status") {
-        this.order = "status";
+      if (this.order === "usuario") {
+        this.order = "user_id";
+      }
+
+      if (this.order === "plan internet") {
+        this.order = "plan_id";
+      }
+
+      if (this.order === "dirección") {
+        this.order = "address";
       }
       
       this.$inertia.get(
@@ -224,9 +163,9 @@ export default {
     },
   },
   watch: {
-    tickets() {
+    contracts() {
       const toast = useToast();
-      this.rows = this.tickets.data;
+      this.rows = this.contracts.data;
       if (this.success) {
         toast.success(this.success, {
           position: POSITION.TOP_CENTER,

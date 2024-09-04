@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -7,111 +7,130 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
-  ticket: Object,
+  contract: Object,
 });
 
 const form = useForm({
-  subject: "",
-  description: "",
-  status: '0',
+  user_id: 0,
+  plan_id: 0,
+  address: "",
+  geolocation:{
+    latitude: "",
+    longitude:"",
+  },
 });
-
+const lat = ref(null);
+const lng = ref(null); 
 onMounted(() => {
-  if (props.ticket) {
-    form.subject = props.ticket.subject || "";
-    form.description = props.ticket.description || "";
-    form.status = props.ticket.status || '0';
+  if (props.contract) {
+    form.user_id = props.contract.user_id || "0";
+    form.plan_id = props.contract.plan_id || "0";
+    form.address = props.contract.address || "";
+    lat.value = form.geolocation.latitude = props.contract.geolocation.latitude ||  "0";
+    lng.value = form.geolocation.longitude = props.contract.geolocation.longitude || "0";
   }
 });
 
-const submit = () => {
-  form.put(route("tickets.update", { id: props.ticket.id }));
+const handlePositionClicked = (position) => {
+  form.geolocation.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
+  form.geolocation.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
 };
 
-const seleccionar = (valor) => {
-  form.status = valor.toString();
+const submit = () => {
+  form.put(route("contracts.update", { id: props.contract.id }));
 };
+
 </script>
 
 
 <template>
   <div class="flex justify-center border flex-col m-5 p-10 bg-white">
     <h2 class="flex justify-center">
-      Actualizar estado del ticket
+      Actualizar contrato
     </h2>
 
-    <div class="mt-4">
-        <div class="flex justify-center mt-5">
-          <button
-            @click="seleccionar('0')"
-            :class="{
-              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
-              'bg-red-500 hover:bg-red-500 text-white': form.status === '0',
-            }"
-          >
-            Pendiente
-          </button>
-          <button
-            @click="seleccionar('1')"
-            :class="{
-              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
-              'bg-yellow-500 hover:bg-yellow-500 text-white': form.status === '1',
-            }"
-          >
-            En espera
-          </button>
-          <button
-            @click="seleccionar('2')"
-            :class="{
-              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
-              'bg-blue-500 hover:bg-blue-500 text-white': form.status === '2',
-            }"
-          >
-            Trabajando
-          </button>
-          <button
-            @click="seleccionar('3')"
-            :class="{
-              
-              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
-              'bg-green-500 hover:bg-green-500 text-white': form.status === '3',
-            }"
-          >
-            Solucionado
-          </button>
-        </div>
-      </div>
   </div>
   <div class="mt-5 pl-5 pr-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
-        <InputLabel for="subject" value="Asunto" />
+        <InputLabel for="user_id" value="ID del Usuario" />
         <TextInput
-          id="subject"
-          v-model="form.subject"
+          id="user_id"
+          v-model="form.user_id"
           type="text"
           class="mt-1 block w-full"
           required
           autofocus
-          autocomplete="subject"
+          autocomplete="user_id"
         />
-        <InputError class="mt-2" :message="form.errors.subject" />
+        <InputError class="mt-2" :message="form.errors.user_id" />
       </div>
 
       <div class="mt-4">
-        <InputLabel for="description" value="Descripción" />
-        <textarea
-          id="description"
-          v-model="form.description"
+        <InputLabel for="plan_id" value="ID del plan" />
+        <TextInput
+          id="plan_id"
+          v-model="form.plan_id"
           type="text"
           class="mt-1 block w-full"
           required
-          autocomplete="description"
-          style="height: 250px; resize: none; border-radius: 1.5%;"
+          autofocus
+          autocomplete="plan_id"
         />
+        <InputError class="mt-2" :message="form.errors.plan_id" />
       </div>
 
-      <input type="" id="status" :value="form.status" readonly />
+      <div class="mt-4">
+        <InputLabel for="address" value="Dirección" />
+        <TextInput
+          id="address"
+          v-model="form.address"
+          type="text"
+          class="mt-1 block w-full"
+          required
+          autocomplete="address"
+          autofocus
+        />
+        <InputError class="mt-2" :message="form.errors.address" />
+      </div>
+      <div class="mt-4">
+        <p>Ubicación
+        </p>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="mt-4">
+          <InputLabel for="latitude" value="Latitude" />
+          <TextInput
+            id="latitude"
+            v-model="form.geolocation.latitude"
+            readonly 
+            class="mt-1 block w-full"
+            autocomplete="latitude"
+          />
+          <InputError class="mt-2" :message="form.errors.latitude" />
+        </div>
+
+        <div class="mt-4">
+          <InputLabel for="longitude" value="Longitude" />
+          <TextInput
+            id="longitude"
+            v-model="form.geolocation.longitude"
+            readonly 
+            class="mt-1 block w-full"
+            autocomplete="longitude"
+          />
+          <InputError class="mt-2" :message="form.errors.longitude" />
+        </div>
+
+      </div>
+      <div class="flex mt-4">
+        <GoogleMaps
+        :lat="parseInt(lat)"
+        :lng="parseInt(lng)"
+         @otherPos_clicked="handlePositionClicked" />
+      </div>
+      
 
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
@@ -128,13 +147,13 @@ const seleccionar = (valor) => {
 
 
 <script>
+import GoogleMaps from '@/Components/GoogleMaps.vue'
 export default {
-  props: ["ticket"],
-  data() {
-    return {
-      modificarPassword: false,
-    };
-  },
+  props: ["contract"],
+  components: {
+        GoogleMaps
+    },
+  
 };
 </script>
 

@@ -33,15 +33,27 @@ export default {
       await loader.load()
       map.value = new google.maps.Map(mapDiv.value, {
         center: currPos.value,
-        zoom: 8
+        zoom: 9
       })
+      marker.value = new google.maps.Marker({
+          position: currPos.value,
+          map: map.value,
+          draggable: true
+        })
 
+      marker.value = new google.maps.Marker({
+        position: currPos.value,
+        map: map.value,
+        title: "Tu ubicación actual",
+        draggable: true
+      });
       // Manejar clics en el mapa para colocar o mover el marcador
       clickListener = map.value.addListener('click', ({ latLng }) => {
         otherPos.value = {
           lat: latLng.lat(),
           lng: latLng.lng()
         }
+
 
         // Si ya existe un marcador, mueve su posición
         if (marker.value) {

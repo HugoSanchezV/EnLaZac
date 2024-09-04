@@ -27,7 +27,6 @@ onMounted(() => {
     form.admin = props.user.admin || 0;
   }
 });
-
 const submit = () => {
   form.put(route("usuarios.update", { id: props.user.id }), {
     onFinish: () => form.reset("password", "password_confirmation"),
@@ -116,6 +115,7 @@ const seleccionar = (valor) => {
         />
         <InputError class="mt-2" :message="form.errors.email" />
       </div>
+
 
       <div class="flex justify-between items-center gap-2 mt-5">
         <p>Editar Password</p>

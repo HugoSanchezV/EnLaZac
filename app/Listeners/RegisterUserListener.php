@@ -2,15 +2,13 @@
 
 namespace App\Listeners;
 
+use App\Events\RegisterUserEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use App\Models\User;
-use App\Notifications\TicketNotification;
 use Illuminate\Support\Facades\Notification;
-use App\Events\TicketEvent;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
-class TicketListener
+class RegisterUserListener
 {
     /**
      * Create the event listener.
@@ -23,7 +21,7 @@ class TicketListener
     /**
      * Handle the event.
      */
-    public function handle(TicketEvent $event): void
+    public function handle(RegisterUserEvent $event): void
     {
         User::whereIn('admin', [1, 2, 3, 4])
         // Excluir al usuario que realizó la orden

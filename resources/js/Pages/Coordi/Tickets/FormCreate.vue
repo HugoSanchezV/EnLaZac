@@ -47,7 +47,7 @@ const seleccionar = (valor) => {
       </div>
 
       <div class="mt-4">
-        <InputLabel for="decription" value="Descripción" />
+        <InputLabel for="description" value="Descripción" />
         <textarea
           id="description"
           v-model="form.description"

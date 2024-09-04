@@ -2,9 +2,9 @@
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div class="flex justify-between">
-        <h2>Editar ticket</h2>
+        <h2>Editar contrato</h2>
         <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">{{
-          nombre
+      
         }}</span>
         
       </div>
@@ -13,7 +13,7 @@
     <template v-slot:content>
       <div class="flex justify-center items-center w-full h-full">
         <div class="p-8 rounded-lg w-1/2">
-          <FormUpdate :ticket="ticket"/>
+          <FormUpdate :contract="contract"/>
         </div>
       </div>
     </template>
@@ -30,11 +30,7 @@ export default {
     DashboardBase,
   },
   props: {
-    ticket: {
-      type: Object,
-      required: true,
-    },
-    nombre: {
+    contract: {
       type: Object,
       required: true,
     },

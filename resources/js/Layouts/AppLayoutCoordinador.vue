@@ -39,7 +39,15 @@ const logout = () => {
     font-size: 18px;
     position: relative;
 }
-
+.notifications-container {
+    max-height: 300px;
+    overflow-y: auto;
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #fff;
+    scroll-behavior: smooth;
+}
 .notification-count {
     background-color: rgb(255, 0, 0);
     color: white;
@@ -190,32 +198,61 @@ const logout = () => {
                                     </template>
                                 </Dropdown>
                             </div>
-                            <!-- Notifications -->
+                            <!-- Notifications 
          
                             <div class="ms-3 relative">
                                 <div class="notification-dropdown">
-                                    <button class="notification-button" onclick="toggleDropdown()">
-                                        <i class="fas fa-bell"></i>
-                                        <span class="notification-count">3</span>
-                                    </button>
-                                    <div id="dropdown-content" class="dropdown-content">
-                                        <div class="dropdown-header">Notificaciones no leídas</div>
-                                        <a href="#" class="dropdown-item">
-                                            <i class="fas fa-envelope"></i> 4 new messages
-                                            <span class="time">3 mins ago</span>
+                                <button class="notification-button" @click="toggleDropdown">
+                                    <i class="fas fa-bell"></i>
+                                    <span v-if="unreadNotifications.length > 0" class="notification-count">
+                                    {{ unreadNotifications.length }}
+                                    </span>
+                                </button>
+                                <div v-if="dropdownOpen" id="dropdown-content" class="dropdown-content">
+                                    <div class="dropdown-header">Notificaciones no leídas</div>
+                                    <div v-if="unreadNotifications.length > 0">
+                                        <a v-for="notification in unreadNotifications" :key="notification.id" href="#" class="dropdown-item">
+                                            <i class="fas fa-envelope"></i> {{notification.data}}
+                                             <span class="time">{{ notification.created_at}}</span>
+                                            
                                         </a>
-                                        <a href="#" class="dropdown-item">
-                                            <i class="fas fa-users"></i> 8 friend requests
-                                            <span class="time">12 hours ago</span>
-                                        </a>
-                                        <a href="#" class="dropdown-item">
-                                            <i class="fas fa-file"></i> 3 new reports
-                                            <span class="time">2 days ago</span>
-                                        </a>
-                                        <div class="dropdown-footer">
-                                            <a href="#">View all notifications</a>
-                                        </div>
                                     </div>
+                                    <div v-else>
+                                      <p>No tienes notificaciones no leídas</p>
+                                    </div>
+                                    <div class="dropdown-footer">
+                                        <a href="#">Ver todas las notificaciones</a>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>-->
+                            <div class="ms-3 relative">
+                                <div class="notification-dropdown">
+                                <button class="notification-button" @click="toggleDropdown">
+                                    <i class="fas fa-bell"></i>
+                                    <span v-if="unreadNotifications.length > 0" class="notification-count">
+                                    {{ unreadNotifications.length }}
+                                    </span>
+                                </button>
+                                <div v-if="dropdownOpen" id="dropdown-content" class="dropdown-content">
+                                    <div class="dropdown-header">Notificaciones no leídas</div>
+                                    <div v-if="unreadNotifications.length > 0" class="notifications-container">
+                                    <Link v-for="notification in unreadNotifications" :key="notification.id"
+                                        :href="route('tickets.show', notification.data.id)"
+                                        class="dropdown-item"
+                                        @click.prevent="handleNotificationClick(notification)">
+                                        
+                                        <i class="fas fa-envelope"></i> Nuevo ticket No. {{ notification.data.id }}
+                                        <span class="time">{{ notification.created_at }}</span>
+                                    </Link>
+                                    </div>
+                                    <div v-else>
+                                    <p>No tienes notificaciones no leídas</p>
+                                    </div>
+                                    <div class="dropdown-footer">
+                                    <a href="#">Ver todas las notificaciones</a>
+                                    </div>
+                                </div>
                                 </div>
                             </div>
 
@@ -389,8 +426,7 @@ const logout = () => {
 
             <!-- Page Content -->
             <main>
-                <GoogleMaps>
-                </GoogleMaps>
+                
 
                 <slot />
             </main>
@@ -398,12 +434,57 @@ const logout = () => {
     </div>
 </template>
 <script>
-import GoogleMaps from '../Pages/Coordi/Tickets/GoogleMaps.vue';
-export default {
-    components: {
-        GoogleMaps
-    }
-}
+import axios from 'axios';
 
+export default {
+  data() {
+    return {
+      unreadNotifications: [],
+      dropdownOpen: false
+    };
+  },
+  methods: {
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+      if (this.dropdownOpen) {
+        this.fetchUnreadNotifications();
+      }
+    },
+    fetchUnreadNotifications() {
+      axios.get('/notifications/unread')
+        .then(response => {
+          this.unreadNotifications = response.data;
+        })
+        .catch(error => {
+          console.error('Error al obtener las notificaciones:', error);
+        });
+    },
+    handleNotificationClick(notification) {
+      this.markAsRead(notification.id, notification.data.id);
+    },
+    markAsRead(notificationId, ticketID) {
+      axios.post(`/notifications/read/${notificationId}`)
+        .then(response => {
+          if (response.data.status === 'success') {
+            this.unreadNotifications = this.unreadNotifications.filter(
+              notification => notification.id !== notificationId
+            );
+          }
+        })
+        .catch(error => {
+          console.error('Error al marcar la notificación como leída:', error);
+        });
+    },
+  },
+  mounted() {
+    this.fetchUnreadNotifications(); // Cargar notificaciones al montar el componente
+  },
+  filters: {
+    timeAgo(value) {
+      const date = new Date(value);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    }
+  }
+}
 </script>
 

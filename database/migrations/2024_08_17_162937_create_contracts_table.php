@@ -16,8 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id'); // Llave foránea a users
             $table->unsignedBigInteger('plan_id'); // Llave foránea a plans
             $table->string('address'); // Dirección del contrato
-            $table->decimal('latitude', 10, 7); // Latitud (hasta 7 decimales para precisión)
-            $table->decimal('longitude', 10, 7); // Longitud (hasta 7 decimales para precisión)
+            $table->json('geolocation'); // Ubicacion de tipo JSON para poner la Latitud y la Longitud
             $table->timestamps(); // Campos created_at y updated_at
         });
     }

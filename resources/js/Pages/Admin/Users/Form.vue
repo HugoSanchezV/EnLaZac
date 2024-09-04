@@ -1,9 +1,12 @@
 <script setup>
-import { router, useForm } from "@inertiajs/vue3";
+import { router, useForm} from "@inertiajs/vue3";
+import {ref, onMounted} from 'vue';
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
+
+
 
 const form = useForm({
   name: "",
@@ -11,6 +14,10 @@ const form = useForm({
   email: "",
   password: "",
   password_confirmation: "",
+  coordinates:{
+    latitude: "",
+    longitude:"",
+  },
   admin: 0,
 });
 
@@ -23,6 +30,30 @@ const submit = () => {
   });
 };
 
+const handlePositionClicked = (position) => {
+  form.coordinates.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
+  form.coordinates.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
+};
+const lat = ref(null);
+const lng = ref(null); 
+onMounted(() => {
+  if(navigator.geolocation){
+    var success = function(position){
+      lat.value = form.coordinates.latitude = position.coords.latitude.toFixed(6),
+      lng.value = form.coordinates.longitude = position.coords.longitude.toFixed(6);
+    }
+
+    navigator.geolocation.getCurrentPosition(success, function(msg)
+    {
+    console.error( msg );
+    });
+  }
+});
+const getCurrentLocation = () =>
+{
+   form.coordinates.latitude = lat.value,
+   form.coordinates.longitude = lng.value;
+}
 const seleccionar = (valor) => {
   form.admin = Number(valor);
 };
@@ -130,6 +161,7 @@ const seleccionar = (valor) => {
         />
         <InputError class="mt-2" :message="form.errors.password_confirmation" />
       </div>
+      
 
       <input type="hidden" id="admin" :value="form.admin" readonly />
 
@@ -145,3 +177,78 @@ const seleccionar = (valor) => {
     </form>
   </div>
 </template>
+
+
+<script>
+export default {
+  props: ["user"],
+  data() {
+    return {
+      ubicacionManual: false,
+    };
+  },
+};
+
+</script>
+
+<style scoped>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 17px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>

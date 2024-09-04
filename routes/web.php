@@ -7,6 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\InventorieDevicesController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\NotificationController;
 use App\Models\Ticket;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -69,15 +71,17 @@ Route::middleware([
     Route::put('/inventorie/devices/update/{device}',          [InventorieDevicesController::class, 'update'])->name('inventorie.devices.update');
     Route::delete('/inventorie/devices/delete/{device}',          [InventorieDevicesController::class, 'destroy'])->name('inventorie.devices.destroy');
     //Tickets coordi
-    Route::get('/tickets',                 [TicketController::class, 'index'])->name('tickets');
-    Route::get('/tickets/create',          [TicketController::class, 'create'])->name('tickets.create');
-    Route::get('/tickets/show/{id}',          [TicketController::class, 'show'])->name('tickets.show');
-    Route::post('/tickets/store',          [TicketController::class, 'store'])->name('tickets.store');
-    Route::get('/tickets/edit/{id}',       [TicketController::class, 'edit'])->name('tickets.edit');
-    Route::put('/tickets/update/{id}',     [TicketController::class, 'update'])->name('tickets.update');
-    Route::delete('/tickets/delete/{id}',  [TicketController::class, 'destroy'])->name('tickets.destroy');
-    Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
+    Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
+    Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
+    Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
+    Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
+    Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
+    Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
+    Route::post('/tickets/statusUpdate/{id}',[TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
 
+    Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
+    Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
     //Tickets user
     //Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
     //Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
@@ -85,11 +89,20 @@ Route::middleware([
     //Contracts Coordi
     Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
     Route::get('/contracts/create',          [ContractController::class, 'create'])->name('contracts.create');
-    Route::get('/contracts/show/{id}',          [ContractController::class, 'show'])->name('contracts.show');
+    Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
     Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
     Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
     Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
     Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
+
+    //Planes de internet
+    Route::get('/plans',                     [PlanController::class, 'index'])->name('plans');
+    Route::get('/plans/create',              [PlanController::class, 'create'])->name('plans.create');
+    Route::get('/plans/show/{id}',           [PlanController::class, 'show'])->name('plans.show');
+    Route::post('/plans/store',              [PlanController::class, 'store'])->name('plans.store');
+    Route::get('/plans/edit/{id}',           [PlanController::class, 'edit'])->name('plans.edit');
+    Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
+    Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

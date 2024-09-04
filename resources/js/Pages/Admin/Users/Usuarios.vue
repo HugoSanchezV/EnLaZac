@@ -21,7 +21,7 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
+const headers = ["id", "Nombre", "Alias", "Email", "Rol","Acciones"];
 const filters = ["id", "nombre", "alias", "email"];
 </script>
 
