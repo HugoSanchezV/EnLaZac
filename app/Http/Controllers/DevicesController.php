@@ -50,22 +50,20 @@ class DevicesController extends Controller
         $validatedData = $request->validated();
 
         try {
-            DB::transaction(function () use ($validatedData, $request) {
+            DB::transaction(function () use ($validatedData) {
 
                 $routerOSService = RouterOSService::getInstance();
-                $routerOSService->connect($request->router_id);
+                $routerOSService->connect($validatedData['router_id']);
 
                 $response = $routerOSService->executeCommand('/ip/firewall/address-list/add', [
                     'list' => 'MOROSOS',
                     'address' => $validatedData['address'],
                     'comment' => $validatedData['comment'],
-                    //'disable' => 'yes'
                 ]);
 
                 $routerOSService->disconnect();
 
                 if (!empty($response)) {
-
                     Device::create([
                         'device_internal_id' => $response,
                         'router_id' => $validatedData['router_id'],
@@ -78,18 +76,15 @@ class DevicesController extends Controller
                         'creation_time' => now(),
                     ]);
 
-                    $router = Router::findOrFail($request->router_id);
+                    $router = Router::findOrFail($validatedData['router_id']);
                     $router->total_devices += 1;
                     $router->enable_devices += 1;
                     $router->save();
-
-                    return redirect()->route('routers.devices', ['router' => $request->router_id])
-                        ->with('success', 'El dispositivo ha sido agregado con éxito');
-                } else {
-                    return redirect()->route('routers.devices', ['router' => $request->router_id])
-                        ->with('error', 'Error al añadir la dirección, inténtalo más tarde');
                 }
             });
+
+            return redirect()->route('routers.devices', ['router' => $request->router_id])
+                ->with('success', 'El dispositivo ha sido agregado con éxito');
         } catch (Exception $e) {
             return redirect()->route('routers.devices', ['router' => $request->router_id])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
@@ -177,87 +172,41 @@ class DevicesController extends Controller
             $routerOSService->connect($device->router_id);
 
             try {
-                $response = $routerOSService->executeCommand(
-                    '/ip/firewall/address-list/remove',
-                    [
-                        '.id' => $device->device_internal_id,
-                    ]
-                );
 
-                if (isset($response['!trap'])) {
-                    throw new \Exception('Error en la eliminación de la dirección en RouterOS');
-                }
+                DB::transaction(function () use ($device, $routerOSService) {
+                    $router =  $device->router;
 
-                $device->delete();
+                    if (!$router->disabled) {
+                        $router->enable_devices -= 1;
+                    }
+                    $router->total_devices -= 1;
+                    $router->save();
+                    $device->delete();
+
+                    $response = $routerOSService->executeCommand(
+                        '/ip/firewall/address-list/remove',
+                        [
+                            '.id' => $device->device_internal_id,
+                        ]
+                    );
+
+                    if (isset($response['!trap'])) {
+                        throw new \Exception('Error en la eliminación de la dirección en RouterOS');
+                    }
+                });
 
                 return redirect()->route('routers.devices', ['router' => $device->router_id])
                     ->with('success', 'El dispositivo ha sido eliminado con éxito');
             } catch (\Exception $e) {
-                return redirect()->route('routers.devices', ['router' => $$device->router_id])
+                return redirect()->route('routers.devices', ['router' => $device->router_id])
                     ->with('error', 'Error al eliminar la dirección: ' . $e->getMessage());
             } finally {
                 $routerOSService->disconnect();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->route('routers.devices', ['router' => $device->router_id])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
-    }
-
-
-
-    public function setDeviceStatus2(Device $device)
-    {
-        $device = Device::findOrFail($device->id);
-        $router = $device->router;
-
-        $state = 1;
-        $action = "";
-        $commandAction = "";
-
-
-        if ($device->disabled) {
-            $state = 0;
-            $commandAction = "no";
-            $action = "activar";
-        } else {
-            $state = 1;
-            $commandAction = "yes";
-            $action = "desactivar";
-        }
-
-
-
-        $device->disabled = $state;
-
-        ///////////////////////////////////////////////////////////////////////
-        $router = Router::findOrFail($router->id);
-
-        $ip = $router->ip_address;
-        $user = $router->user;
-        $password = Crypt::decrypt($router->password);
-
-        $API = new RouterosAPI();
-
-        $API->debug(false);
-        //////////////////////////////////////////////////////////////////////////
-
-        //dd($device->device_internal_id);
-        if ($API->connect($ip, $user, $password)) {
-            $API->comm('/ip/firewall/address-list/set', [
-                '.id' => $device->device_internal_id,
-                'disabled' => $commandAction
-            ]);
-
-            $device->disabled = $state;
-            $device->update();
-        } else {
-            $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
-            return Redirect::route('routers.devices')->with('error', $message);
-        }
-
-        $message = $action . ' ' . $device->address . ' realizado con éxito';
-        return Redirect::route('routers.devices', $router)->with('success', $message);
     }
 
     public function setDeviceStatus(Device $device)
@@ -268,12 +217,13 @@ class DevicesController extends Controller
         $state = 1;
         $action = "";
         $commandAction = "";
-
+        $increment_enable_devices = -1;
 
         if ($device->disabled) {
             $state = 0;
             $commandAction = "no";
             $action = "activar";
+            $increment_enable_devices = 1;
         } else {
             $state = 1;
             $commandAction = "yes";
@@ -291,19 +241,30 @@ class DevicesController extends Controller
             $routerOSService = RouterOSService::getInstance();
             $routerOSService->connect($router->id);
 
-            $routerOSService->executeCommand(
-                '/ip/firewall/address-list/set',
-                [
-                    '.id' => $device->device_internal_id,
-                    'disabled' => $commandAction
-                ]
-            );
+            DB::transaction(function () use (
+                $routerOSService,
+                $device,
+                $router,
+                $commandAction,
+                $state,
+                $increment_enable_devices,
+            ) {
+                $routerOSService->executeCommand(
+                    '/ip/firewall/address-list/set',
+                    [
+                        '.id' => $device->device_internal_id,
+                        'disabled' => $commandAction
+                    ]
+                );
 
-            $routerOSService->disconnect();
+                $routerOSService->disconnect();
 
-            $device->disabled = $state;
-            $device->update();
-        } catch (Exception $e) {
+                $device->disabled = $state;
+                $router->enable_devices += $increment_enable_devices;
+                $router->save();
+                $device->update();
+            });
+        } catch (\Exception $e) {
             $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
             return Redirect::route('routers.devices')->with('error', $message);
         }

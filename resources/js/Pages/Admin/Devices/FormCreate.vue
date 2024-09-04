@@ -98,7 +98,7 @@ const submit = () => {
   
   form.post(route("devices.store"), {
     onSuccess: () => {
-      router.back();
+      // window.history.back()
     },
   });
 };

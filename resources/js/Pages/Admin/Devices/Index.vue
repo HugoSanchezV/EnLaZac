@@ -6,15 +6,25 @@ const props = defineProps({
   routers: Object,
   pagination: Object,
   success: String,
+  error: String,
   totalRoutersCount: Number,
 });
 
-const { routers, success } = toRefs(props);
+const { routers, success, error } = toRefs(props);
 const toast = useToast();
 
 watch(success, (newValue) => {
   if (newValue) {
     toast.success(newValue, {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+  }
+});
+
+watch(error, (newValue) => {
+  if (newValue) {
+    toast.error(newValue, {
       position: POSITION.TOP_CENTER,
       draggable: true,
     });
@@ -110,6 +120,7 @@ export default {
     routers: Object,
     pagination: Object,
     success: String,
+    error: String,
     totalRoutersCount: Number,
   },
 
@@ -163,6 +174,13 @@ export default {
     const toast = useToast();
     if (this.success) {
       toast.success(this.success, {
+        position: POSITION.TOP_CENTER,
+        draggable: true,
+      });
+    }
+
+    if (this.error) {
+      toast.error(this.error, {
         position: POSITION.TOP_CENTER,
         draggable: true,
       });
