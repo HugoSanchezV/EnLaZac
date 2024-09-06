@@ -64,7 +64,7 @@ const logout = () => {
     position: absolute;
     right: 0;
     background-color: white;
-    min-width: 250px;
+    min-width: 500px;
     box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
     z-index: 1;
     border-radius: 5px;
@@ -237,14 +237,34 @@ const logout = () => {
                                 <div v-if="dropdownOpen" id="dropdown-content" class="dropdown-content">
                                     <div class="dropdown-header">Notificaciones no leídas</div>
                                     <div v-if="unreadNotifications.length > 0" class="notifications-container">
-                                    <Link v-for="notification in unreadNotifications" :key="notification.id"
+
+                                    <div v-for="notification in unreadNotifications" :key="notification.id">
+                                        <div v-if="notification.type == 'App\\Notifications\\TicketNotification'">
+
+                                            <Link  :href="route('tickets.show', notification.data.id)"
+                                                class="dropdown-item"
+                                                @click.prevent="handleNotificationClick(notification)">
+                                                <i class="fas fa-envelope"></i> Nuevo ticket No. {{ notification.data.id }}
+                                                <span class="time">{{ notification.created_at }}</span>
+                                            </Link>
+                                        </div>
+                                        <div v-else>
+                                            <Link  
+                                                class="dropdown-item"
+                                                @click.prevent="handleNotificationClick(notification)">
+                                                <i class="fas fa-envelope"></i> Nuevo usuario registrado id {{ notification.data.id }}
+                                                <span class="time">{{ notification.created_at }}</span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                <!--    <Link v-for="notification in unreadNotifications" :key="notification.id"
                                         :href="route('tickets.show', notification.data.id)"
                                         class="dropdown-item"
                                         @click.prevent="handleNotificationClick(notification)">
                                         
                                         <i class="fas fa-envelope"></i> Nuevo ticket No. {{ notification.data.id }}
                                         <span class="time">{{ notification.created_at }}</span>
-                                    </Link>
+                                    </Link>-->
                                     </div>
                                     <div v-else>
                                     <p>No tienes notificaciones no leídas</p>

@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\Ticket;
 
-class TicketNotification extends Notification
+class TicketNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -29,7 +29,7 @@ class TicketNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
     }
 
     /**
@@ -38,9 +38,11 @@ class TicketNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                ->subject('Nuevo Ticket Generado')
+                ->greeting('Hola ' . $notifiable->name . ',')
+                ->line('Se ha generado un nuevo ticket: ' . $this->ticket->subject)
+                ->action('Ver Ticket', url('/tickets/show/' . $this->ticket->id))
+                ->line('!');
     }
 
     /**
