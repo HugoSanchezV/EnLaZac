@@ -2,24 +2,23 @@
 
 namespace App\Notifications;
 
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\Ticket;
+use App\Models\User;
 
-class TicketNotification extends Notification
+class RegisterUserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public $ticket;
-    public function __construct(Ticket $ticket)
+    public $user;
+    public function __construct(User $user)
     {
-        $this->ticket = $ticket; 
+        $this -> user = $user;
     }
 
     /**
@@ -29,7 +28,8 @@ class TicketNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+        //return ['mail'];
     }
 
     /**
@@ -38,9 +38,12 @@ class TicketNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                ->subject('Nuevo Ticket Generado')
+                ->greeting('Hola ' . $notifiable->name . ',')
+                ->line('Han creado un usuario nuevo: ' . $this->user->name)
+                ->line('Con el ID: '.$this->user->id)
+                ->action('Ver Usuario', url('/usuarios/show/' . $this->user->id))
+                ->line('!');
     }
 
     /**
@@ -51,11 +54,9 @@ class TicketNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'id' => $this->ticket->id,
-            'subject' =>  $this->ticket->subject,
-            'created_at' => $this->ticket ->created_at,
-            'user_id' => $this->ticket->user_id,
-            'name' => $this->ticket->user->name
+            'id' => $this->user->id,
+            'name' =>  $this->user->name,
+            'created_at' => $this->user ->created_at,
         ];
     }
 }

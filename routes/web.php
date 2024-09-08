@@ -9,7 +9,6 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
-use App\Models\Ticket;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

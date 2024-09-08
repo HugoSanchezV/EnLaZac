@@ -6,6 +6,7 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Events\RegisterUserEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -85,10 +86,13 @@ class UserController extends Controller
             'password' => Hash::make($validatedData['password']),
             'admin' => $validatedData['admin'],
         ]);
-
+        self::make_register_notification($user);
         return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');
     }
 
+    static function make_register_notification($user){
+        event(new RegisterUserEvent($user));
+    }
     public function edit($id)
     {
         $user = User::findOrFail($id);
