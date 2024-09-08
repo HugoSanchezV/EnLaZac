@@ -11,8 +11,11 @@ const props = defineProps({
 });
 
 const form = useForm({
-  user_id: 0,
-  plan_id: 0,
+  user_id: "0",
+  plan_id: "0",
+  start_date: "",
+  end_date: "",
+  active: "0",
   address: "",
   geolocation:{
     latitude: "",
@@ -26,8 +29,15 @@ onMounted(() => {
     form.user_id = props.contract.user_id || "0";
     form.plan_id = props.contract.plan_id || "0";
     form.address = props.contract.address || "";
+    form.start_date = props.contract.start_date || "";
+    form.end_date = props.contract.end_date || "";
+    form.active = props.contract.active || "0";
     lat.value = form.geolocation.latitude = props.contract.geolocation.latitude ||  "0";
     lng.value = form.geolocation.longitude = props.contract.geolocation.longitude || "0";
+  }
+
+  if(form.active == true){
+    document.getElementById('activated').checked = true;
   }
 });
 
@@ -37,6 +47,12 @@ const handlePositionClicked = (position) => {
 };
 
 const submit = () => {
+  if (document.getElementById('activated').checked) {
+    form.active = true;
+  } else {
+    form.active = false;
+  }
+
   form.put(route("contracts.update", { id: props.contract.id }));
 };
 
@@ -78,6 +94,45 @@ const submit = () => {
           autocomplete="plan_id"
         />
         <InputError class="mt-2" :message="form.errors.plan_id" />
+      </div>
+
+      <div class="mt-4 flex justify-between">
+        <div>
+          <InputLabel for="start_date" value="Fecha de Inicio" />
+          <TextInput
+            id="start_date"
+            v-model="form.start_date"
+            type="date"
+            class="mt-1 block w-full"
+            required
+            autofocus
+            autocomplete="start_date"
+          />
+          <InputError class="mt-2" :message="form.errors.start_date" />
+        </div>
+        <div>
+          <InputLabel for="end_date" value="Fecha de Terminación" />
+          <TextInput
+            id="end_date"
+            v-model="form.end_date"
+            type="date"
+            class="mt-1 block w-full"
+            required
+            autofocus
+            autocomplete="end_date"
+          />
+          <InputError class="mt-2" :message="form.errors.end_date" />
+        </div>
+          
+      </div>
+
+      <div class="mt-4 flex gap-4">
+        <InputLabel for="active" value="¿Contrato Activo?" />
+        <label class="switch">
+          <input type="checkbox" id="activated"/>
+          <span class="slider round"></span>
+        </label>
+
       </div>
 
       <div class="mt-4">

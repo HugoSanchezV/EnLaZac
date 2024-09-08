@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id(); // Id autoincremental
             $table->unsignedBigInteger('user_id'); // Llave foránea a users
             $table->unsignedBigInteger('plan_id'); // Llave foránea a plans
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->boolean('active');
             $table->string('address'); // Dirección del contrato
             $table->json('geolocation'); // Ubicacion de tipo JSON para poner la Latitud y la Longitud
             $table->timestamps(); // Campos created_at y updated_at

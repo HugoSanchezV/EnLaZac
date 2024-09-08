@@ -189,6 +189,9 @@ const destroy = (id) => {
               {{ typeof cell === 'object' ? (((((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, ' | ')).replace('latitude', 'Latitud')).replace('longitude','Longitud')).replace('null','Sin locación') : String(cell).replace(/[{}]/g, '') }}
 
             </div>
+            <div v-else-if="cellIndex === 'active'">
+              {{ cell === 0 ? "OFF": "ON" }} 
+            </div>
             <div v-else>
               {{ cell }}
             </div>

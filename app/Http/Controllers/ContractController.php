@@ -23,6 +23,9 @@ class ContractController extends Controller
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('user_id', 'like', "%$search%")
                     ->orWhere('plan_id', 'like', "%$search%")
+                    ->orWhere('start_date', 'like', "%$search%")
+                    ->orWhere('end_date', 'like', "%$search%")
+                    ->orWhere('active', 'like', "%$search%")
                     ->orWhere('address', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
@@ -39,6 +42,9 @@ class ContractController extends Controller
                 'id' => $item->id,
                 'user_id' => $item->user_id,
                 'plan_id' => $item->plan_id,
+                'start_date' => $item->start_date,
+                'end_date' => $item->end_date,
+                'active' => $item->active,
                 'address' => $item->address,
                 'geolocation' => $item -> geolocation ?[
                     'latitude' => $item->geolocation['latitude'] ?? null,
@@ -85,6 +91,9 @@ class ContractController extends Controller
         $contract = Contract::create([
             'user_id' => $validatedData['user_id'],
             'plan_id' => $validatedData['plan_id'],
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+            'active' => $validatedData['active'],
             'address' => $validatedData['address'],
             'geolocation' => $validatedData['geolocation'],
         ]);
