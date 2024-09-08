@@ -18,6 +18,10 @@ const props = defineProps({
   device: {
     type: Object,
   },
+
+  inv_devices: {
+    type: Object,
+  },
 });
 </script>
 
@@ -42,6 +46,7 @@ const props = defineProps({
             :users="users"
             :router="router"
             :device="device"
+            :inv_devices="inv_devices"
           />
         </div>
       </div>

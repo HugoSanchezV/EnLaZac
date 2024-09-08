@@ -123,6 +123,13 @@ class InventorieDevicesController extends Controller
         $device = InventorieDevice::findOrFail($id);
         $device->delete();
         return redirect()->route('inventorie.devices.index')
-                     ->with('success', 'Dispositivo Eliminado Con Éxito');
+            ->with('success', 'Dispositivo Eliminado Con Éxito');
+    }
+
+    public static    function changeStateDevice($id, $state = 0)
+    {
+        $device = InventorieDevice::findOrFail($id);
+        $device->state = $state;
+        $device->save();
     }
 }

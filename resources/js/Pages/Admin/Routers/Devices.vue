@@ -1,5 +1,5 @@
   <script setup>
-import { toRefs, watch } from "vue";
+import { toRefs, watch, ref } from "vue";
 import { useToast, POSITION } from "vue-toastification";
 
 const props = defineProps({
@@ -7,10 +7,13 @@ const props = defineProps({
   pagination: Object,
   success: String,
   totalDevicesCount: Number,
+  users: Object,
+  inv_devices: Object,
 });
 
-const { devices, success } = toRefs(props);
+const { devices, success, users} = toRefs(props);
 const toast = useToast();
+// let inv_devices_ref = ref(inv_devices.value);
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -22,6 +25,13 @@ watch(success, (newValue) => {
 
   newValue = "";
 });
+
+// watch(inv_devices, (newValue) => {
+//   // Aquí puedes realizar acciones cuando inv_devices cambie.
+//   console.log(newValue)
+//   inv_devices_ref = ref(newValue)
+//   console.log(inv_devices_ref)
+// });
 
 const headers = [
   "id",
@@ -88,6 +98,8 @@ const filters = [
           :show="true"
           :edit="true"
           :del="true"
+          :users="users"
+          :inv_devices="inv_devices_ref"
           @search="search"
         >
         </device-table>
@@ -103,6 +115,7 @@ const filters = [
             type: '',
           }"
         ></base-pagination>
+        
         <h2 v-else class="flex justify-center mt-4 bg-gray-400 text-white py-2">
           No se encontró ningún resultado de "{{ q }}"
         </h2>
@@ -134,11 +147,13 @@ export default {
     pagination: Object,
     success: String,
     totalDevicesCount: Number,
+    inv_devices: Object,
   },
 
   data() {
     return {
       rows: this.devices.data,
+      inv_devices_ref: this.inv_devices,
       q: "",
       order: "id",
       type: "todos",
@@ -163,7 +178,7 @@ export default {
 
   watch: {
     devices() {
-      const toast = useToast();
+      // const toast = useToast();
       this.rows = this.devices.data;
       // if (this.success) {
       //   toast.success(this.success, {
@@ -172,8 +187,13 @@ export default {
       //   });
       // }
     },
-  },
 
+    inv_devices() {
+      this.inv_devices_ref = this.inv_devices
+    }
+    
+  },
+ 
   beforeMount() {
     const toast = useToast();
     if (this.success) {

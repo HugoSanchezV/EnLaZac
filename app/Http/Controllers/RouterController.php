@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Router\StoreRouterRequest;
 use App\Http\Requests\Router\UpdateRouterRequest;
 use App\Models\Device;
+use App\Models\InventorieDevice;
 use App\Models\Network;
 use App\Models\Router;
 use App\Models\RouterosAPI;
+use App\Models\User;
 use App\Services\RouterOSService;
 use App\Services\RouterService;
 use DateTime;
@@ -202,7 +204,6 @@ class RouterController extends Controller
             }
 
             $routerOSService->disconnect();
-            
         } catch (Exception $e) {
             return Redirect::route('routers')->with('error', $e->getMessage());
         }
@@ -261,23 +262,32 @@ class RouterController extends Controller
         }
 
         // Paginación
-        $devices = $query->paginate(8)->through(function ($item) {
-            return [
-                'id' => $item->id,
-                'device_internal_id' => $item->device_internal_id,
-                //'router_id' => $item->router_id,
-                'device_id' => $item->device_id,
-                'user_id' => $item->user_id,
-                'comment' => $item->comment,
-                //'list' => $item->list,
-                'address' => $item->address,
-                'disabled' => $item->disabled,
-            ];
-        });
+        $devices = $query
+            ->with('inventorieDevice:id,mac_address')
+            ->with('user:id,name')
+            ->paginate(8)
+            ->through(function ($item) {
+
+                //$item->user->makeHidden('profile_photo_url');
+
+                return [
+                    'id' => $item->id,
+                    'device_internal_id' => $item->device_internal_id,
+                    //'router_id' => $item->router_id,
+                    'device_id' => $item->inventorieDevice,
+                    'user_id' => $item->user,
+                    'comment' => $item->comment,
+                    //'list' => $item->list,
+                    'address' => $item->address,
+                    'disabled' => $item->disabled,
+                ];
+            });
 
         //dd($devices);
         // Conteo total de dispositivos
         $totalDevicesCount = $router->devices()->count();
+        $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
+        $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
         return Inertia::render('Admin/Routers/Devices', [
             'devices' => $devices,
@@ -290,6 +300,8 @@ class RouterController extends Controller
             ],
             'success' => session('success') ?? null,
             'totalDevicesCount' => $totalDevicesCount,
+            'users' => $users,
+            'inv_devices' => $inv_devices,
         ]);
     }
 }

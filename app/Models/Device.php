@@ -26,4 +26,12 @@ class Device extends Model
     public function router() {
         return $this->belongsTo(Router::class);
     }
+
+    public function inventorieDevice() {
+        return $this->belongsTo(InventorieDevice::class, 'id');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -18,7 +18,13 @@ const props = defineProps({
   router: {
     type: Object,
   },
-  device: { // Datos del dispositivo que se está editando
+  device: {
+    // Datos del dispositivo que se está editando
+    type: Object,
+    default: () => ({}),
+  },
+  inv_devices: {
+    // Datos del dispositivo que se está editando
     type: Object,
     default: () => ({}),
   },
@@ -27,7 +33,7 @@ const props = defineProps({
 const devicesCount = props.devices.length;
 
 let user_active = ref(!!props.device.user_id); // Activa el checkbox si ya hay un usuario asignado
-let device_active = ref(!!props.device.device); // Activa el checkbox si ya hay un dispositivo asignado
+let device_active = ref(!!props.device.device_id); // Activa el checkbox si ya hay un dispositivo asignado
 
 const setUserStatus = () => {
   user_active.value = !user_active.value;
@@ -43,7 +49,9 @@ const getIpAvalible = (devices) => {
     parseInt(device.address.split(".").pop())
   );
 
-  return allIps.filter((ip) => !usedIps.includes(ip) || props.device.address.split(".").pop() == ip);
+  return allIps.filter(
+    (ip) => !usedIps.includes(ip) || props.device.address.split(".").pop() == ip
+  );
 };
 
 const ips = ref([]);
@@ -56,10 +64,10 @@ watch(
 );
 
 const form = useForm({
-  address: props.device.address ? props.device.address.split('.').pop() : "", // Carga la parte final de la IP actual
+  address: props.device.address ? props.device.address.split(".").pop() : "", // Carga la parte final de la IP actual
   comment: props.device.comment || "",
   user: props.device.user_id || "",
-  device: props.device.device || "",
+  device: props.device.device_id || "",
   router_id: props.device.router_id || route().params.router,
 });
 
@@ -197,6 +205,10 @@ const seleccionar = (valor) => {
             required
           >
             <option value="">Selecciona un Dispositivo</option>
+
+            <option v-for="item in inv_devices" :key="item.id" :value="item.id">
+              {{ item.id + ' - ' + item.mac_address }}
+            </option>
             <!-- Opciones para dispositivos aquí -->
           </select>
         </div>

@@ -50,17 +50,76 @@ const setDeviceStatus = (row) => {
   router.patch(url, () => {});
 };
 
-const isModalOpen = ref(false);
+const isModalOpen = ref({});
+const isModalDeviceOpen = ref({});
 
-const openModal = () => {
-  isModalOpen.value = true;
+const openModal = (id) => {
+  isModalOpen.value[id] = true;
 };
 
-const confirmSelection = () => {
-  emit('selectUser', selectedUser.value);
-  closeModal();
+const closeModal = (id) => {
+  isModalOpen.value[id] = false;
 };
 
+const openDeviceModal = (id) => {
+  isModalDeviceOpen.value[id] = true;
+};
+
+const closeDeviceModal = (id) => {
+  isModalDeviceOpen.value[id] = false;
+};
+
+const confirmSelectionDevice = (row, select) => {
+  if (select.selectId === null) {
+    const toast = useToast();
+    toast.error("Selecciona un dispositivo", {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+  } else {
+    const url = route("devices.update", row.id);
+
+    let user_id = null;
+
+    if (row.user_id) {
+      user_id = row.user_id;
+    }
+    router.put(url, {
+      address: row.address,
+      router_id: route().params.router,
+      comment: row.comment,
+      user_id: user_id,
+      device_id: select.selectId,
+    });
+    closeModal();
+  }
+};
+
+const confirmSelectionUser = (row, select) => {
+  if (select.selectId === null) {
+    const toast = useToast();
+    toast.error("Selecciona un usuario", {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+  } else {
+    const url = route("devices.update", row.id);
+
+    let device_id = null;
+
+    if (row.device_id) {
+      device_id = row.device_id;
+    }
+    router.put(url, {
+      address: row.address,
+      router_id: route().params.router,
+      comment: row.comment,
+      user_id: select.selectId,
+      device_id: device_id,
+    });
+    closeModal();
+  }
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -253,7 +312,6 @@ const confirmSelection = () => {
         />
       </div>
     </div>
-
     <table class="w-full text-sm text-left text-gray-500 p-10">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
@@ -296,33 +354,75 @@ const confirmSelection = () => {
             </div>
 
             <div v-else-if="cellIndex === 'device_id'">
-              <div v-if="cell === null">
-                <Link
-                  href="#"
+              <div v-if="cell === null && inv_devices.length > 0">
+                <button
+                  @click="openDeviceModal(row.id)"
                   class="flex justify-center items-center gap-1 border border-gray-500 bg-white-500 hover:bg-slate-600 py-1 px-2 rounded-md text-slate-600 hover:text-white sm:mb-0 mb-1"
                 >
                   Asignar Dispositivo
-                </Link>
+                </button>
+
+                <modal-users
+                  :show="isModalDeviceOpen[row.id]"
+                  @close="closeDeviceModal(row.id)"
+                  @selectData="confirmSelectionDevice(row, $event)"
+                  :data="inv_devices"
+                  :id="row.id"
+                  :title="
+                    'Selecciona un dispositivo del inventario para la conexión ' +
+                    row.address
+                  "
+                  item-text="mac_address"
+                >
+                </modal-users>
               </div>
               <div v-else>
-                {{ cell }}
+                <div v-if="cell !== null">
+                  <Link :href="route('inventorie.devices.show', cell.id)" class="cursor-pointer">
+                    {{ cell.mac_address }}
+                  </Link>
+                </div>
+                <div v-else>
+                  <span class="bg-slate-500 py-1 px-2 rounded-md text-white"
+                    >Sin dispositvos</span
+                  >
+                </div>
               </div>
             </div>
 
             <div v-else-if="cellIndex === 'user_id'">
-              <div v-if="cell === null">
+              <div v-if="cell === null && users.length > 0">
                 <button
-                  @click="openModal"
+                  @click="openModal(row.id)"
                   class="flex justify-center items-center gap-1 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:bg-teal-600 py-1 px-2 rounded-md hover:text-white sm:mb-0 mb-1"
                 >
                   Asignar usuario
                 </button>
 
-                <modal-users :show="isModalOpen" @close="isModalOpen = false">
+                <modal-users
+                  :show="isModalOpen[row.id]"
+                  @close="closeModal(row.id)"
+                  @selectData="confirmSelectionUser(row, $event)"
+                  :data="users"
+                  :id="row.id"
+                  :title="
+                    'Selecciona un usuario para la conexión ' + row.address
+                  "
+                  item-text="name"
+                >
                 </modal-users>
               </div>
               <div v-else>
-                {{ cell }}
+                <div v-if="cell !== null">
+                  <Link :href="route('usuarios.show', cell.id)" class="cursor-pointer">
+                    {{ cell.name }}
+                  </Link>
+                </div>
+                <div v-else>
+                  <span class="bg-slate-500 py-1 px-2 rounded-md text-white"
+                    >Sin Usuarios</span
+                  >
+                </div>
               </div>
             </div>
             <!-- <div v-if="cellIndex === 'sync'">
@@ -385,10 +485,12 @@ const confirmSelection = () => {
 
               <Link
                 v-if="edit"
-                :href="route('devices.edit', {
-                  'router': route().params.router,
-                  'device': row.id
-                })"
+                :href="
+                  route('devices.edit', {
+                    router: route().params.router,
+                    device: row.id,
+                  })
+                "
                 class="flex items-center gap-1 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -474,6 +576,16 @@ export default {
       type: Boolean,
       required: true,
     },
+
+    users: {
+      type: Object,
+      required: true,
+    },
+
+    inv_devices: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -483,11 +595,18 @@ export default {
       currentFilter: "id",
       currentUser: "todos",
       typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
+      inv_devices_ref: this.inv_devices,
     };
+  },
+
+  watch: {
+    inv_devices() {
+      this.inv_devices_ref = this.inv_devices;
+    },
   },
   computed: {
     filteredRows() {
-      return this.rows
+      return this.rows;
     },
   },
   methods: {

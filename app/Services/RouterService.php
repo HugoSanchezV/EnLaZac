@@ -24,4 +24,22 @@ class RouterService
             return !in_array($device['.id'], array_column($db_devices, '.id'));
         })->all();
     }
+
+    public function getDevicesWithInventorieDevices($devices): array
+    {
+        foreach ($devices as $device) {
+            $device->inventorieDevice = $device->inventorieDevice;
+        }
+
+        return $devices;
+    }
+
+    public function getDevicesWithUsers($devices): array
+    {
+        foreach ($devices as $device) {
+            $device->user = $device->user;
+        }
+
+        return $devices;
+    }
 }

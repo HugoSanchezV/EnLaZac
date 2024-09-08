@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Device\StoreDeviceRequest;
 use App\Http\Requests\Device\UpdateDeviceRequest;
 use App\Models\Device;
+use App\Models\InventorieDevice;
 use App\Models\Router;
 use App\Models\RouterosAPI;
 use App\Models\User;
@@ -110,6 +111,14 @@ class DevicesController extends Controller
 
         $users = User::select('id', 'name', 'email')->where('admin', '==', '0')->get();
 
+        $inv_devices = InventorieDevice::select('id', 'mac_address')->where('state', '0');
+
+        if ($device->device_id) {
+            $inv_devices->orWhere('id', $device->device_id);
+        }
+
+        $inv_devices = $inv_devices->get();
+
         return Inertia::render('Admin/Devices/Edit', [
             'devices' => $devices,
             'users' => $users,
@@ -119,11 +128,7 @@ class DevicesController extends Controller
                 'initial_device_ip' => '172.17.24.'
             ],
             'device' => $device,
-        ]);
-
-        return Inertia::render('Admin/Devices/Edit', [
-            'router' => $router,
-            'deviece' => $device
+            'inv_devices' => $inv_devices
         ]);
     }
 
@@ -135,25 +140,40 @@ class DevicesController extends Controller
         $device = Device::findOrFail($id);
 
         try {
-            $routerOSService = RouterOSService::getInstance();
-            $routerOSService->connect($request->router_id);
 
-            $response = $routerOSService->executeCommand('/ip/firewall/address-list/set', [
-                '.id' => $device->device_internal_id,
-                'address' => $validatedData['address'],
-                'comment' => $validatedData['comment'],
-                //'disable' => 'yes'
-            ]);
+            DB::transaction(function () use ($device, $validatedData, $request) {
 
-            $routerOSService->disconnect();
+                if (($validatedData['address'] !== $device->address)
+                    || ($validatedData['comment'] !== $device->comment)
+                ) {
+                    $routerOSService = RouterOSService::getInstance();
+                    $routerOSService->connect($request->router_id);
 
-            $device->update([
-                'device_id' => $validatedData['device_id'] ?? null,
-                'user_id' => $validatedData['user_id'] ?? null,
-                'comment' => $validatedData['comment'],
-                'address' => $validatedData['address'],
-                //'disabled' => $validatedData['disabled'] ?? false,
-            ]);
+                    $routerOSService->executeCommand('/ip/firewall/address-list/set', [
+                        '.id' => $device->device_internal_id,
+                        'address' => $validatedData['address'],
+                        'comment' => $validatedData['comment'],
+                        //'disable' => 'yes'
+                    ]);
+
+                    $routerOSService->disconnect();
+                }
+
+                if (isset($validatedData['device_id'])) {
+                    if ($validatedData['device_id'] !== $device->device_id) {
+                        InventorieDevicesController::changeStateDevice($device->device_id, '0');
+                    }
+                    InventorieDevicesController::changeStateDevice($validatedData['device_id'], '1');
+                }
+
+                $device->update([
+                    'device_id' => $validatedData['device_id'] ?? null,
+                    'user_id' => $validatedData['user_id'] ?? null,
+                    'comment' => $validatedData['comment'] ?? $device->comment,
+                    'address' => $validatedData['address'] ?? $device->address,
+                ]);
+            });
+
 
             return redirect()->route('routers.devices', ['router' => $device->router_id])
                 ->with('success', 'El dispositivo ha sido actualizado con éxito');

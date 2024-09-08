@@ -24,7 +24,7 @@ class StoreDeviceRequest extends FormRequest
     {
         return [
             'router_id' => ['required', 'exists:routers,id'],
-            'device_id' => ['nullable', 'exists:inventorie_devices,id'],
+            'device_id' => ['nullable', 'exists:inventorie_devices,id', Rule::unique('devices', 'device_id')],
             'user_id' => ['nullable', 'exists:users,id'],
             'comment' => ['nullable', 'string', 'max:255'],
             'address' => ['required', 'ip', Rule::unique('devices', 'address')],

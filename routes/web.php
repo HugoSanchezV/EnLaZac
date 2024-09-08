@@ -35,6 +35,7 @@ Route::middleware([
 
     // Usuarios
     Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
+    Route::get('/usuarios/{user}',                 [UserController::class, 'show'])->name('usuarios.show');
     Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
     Route::post('/usuarios/store',          [UserController::class, 'store'])->name('usuarios.store');
     Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])->name('usuarios.edit');
@@ -65,6 +66,7 @@ Route::middleware([
 
     // inventorie_devices
     Route::get('/inventorie/devices',                 [InventorieDevicesController::class, 'index'])->name('inventorie.devices.index');
+    Route::get('/inventorie/devices/{inventorieDevice}', [InventorieDevicesController::class, 'show'])->name('inventorie.devices.show');
     Route::get('/inventorie/devices/create',          [InventorieDevicesController::class, 'create'])->name('inventorie.devices.create');
     Route::post('/inventorie/devices/store',          [InventorieDevicesController::class, 'store'])->name('inventorie.devices.store');
     Route::get('/inventorie/devices/edit/{device}',          [InventorieDevicesController::class, 'edit'])->name('inventorie.devices.edit');
@@ -78,7 +80,7 @@ Route::middleware([
     Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
     Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
     Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
-    Route::post('/tickets/statusUpdate/{id}',[TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
+    Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
 
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);

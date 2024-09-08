@@ -15,4 +15,8 @@ class InventorieDevice extends Model
         'description',
         'brand',
     ];
+
+    public function device() {
+        return $this->hasOne(Device::class);
+    }
 }
