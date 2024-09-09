@@ -21,7 +21,7 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
+//const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = ["id", "usuario","plan internet","fecha de inicio","fecha de terminación","¿activo?", "dirección"];
 
 const headers = [
@@ -32,7 +32,7 @@ const headers = [
   "Geolocación",
   "Acciones",
 ];
-const filters = ["id", "usuario", "plan internet", "dirección"];
+//const filters = ["id", "usuario", "plan internet", "dirección"];
 </script>
 
 <template>
