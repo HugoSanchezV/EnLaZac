@@ -28,8 +28,8 @@ class ContractController extends Controller
             });
         }
 
-        if ($request->order) {
-            $query->orderBy($request->order, 'asc');
+        if ($request->attribute) {
+            $query->orderBy($request->attribute, $request->order);
         } else {
             $query->orderBy('id', 'asc');
         }
@@ -40,7 +40,7 @@ class ContractController extends Controller
                 'user_id' => $item->user_id,
                 'plan_id' => $item->plan_id,
                 'address' => $item->address,
-                'geolocation' => $item -> geolocation ?[
+                'geolocation' => $item->geolocation ? [
                     'latitude' => $item->geolocation['latitude'] ?? null,
                     'longitude' => $item->geolocation['longitude'] ?? null,
                 ] : null,
@@ -48,7 +48,7 @@ class ContractController extends Controller
             ];
         });
 
-        
+
         $totalContractsCount = Contract::count();
 
         return Inertia::render('Coordi/Contracts/Contracts', [
@@ -61,7 +61,7 @@ class ContractController extends Controller
                 'total' => $contract->total(),
             ],
             'success' => session('success') ?? null,
-            'totalContractsCount' => $totalContractsCount 
+            'totalContractsCount' => $totalContractsCount
         ]);
     }
     //Muestra la información del contrato y del usuario en específico
@@ -80,7 +80,7 @@ class ContractController extends Controller
     }
 
     public function store(StoreContractRequest $request)
-    {   
+    {
         $validatedData = $request->validated();
         $contract = Contract::create([
             'user_id' => $validatedData['user_id'],
@@ -90,8 +90,6 @@ class ContractController extends Controller
         ]);
 
         return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
-
-        
     }
 
     public function edit($id)
@@ -103,7 +101,7 @@ class ContractController extends Controller
         ]);
     }
 
-    
+
     public function update(UpdateContractRequest $request, $id)
     {
         $contract = Contract::findOrFail($id);
@@ -112,12 +110,11 @@ class ContractController extends Controller
         $contract->update($validatedData);
         return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
     }
-    
+
     public function destroy($id)
     {
         $contract = Contract::findOrFail($id);
         $contract->delete();
         return Redirect::route('contracts')->with('success', 'Contrato Eliminado Con Éxito');
     }
-   
 }

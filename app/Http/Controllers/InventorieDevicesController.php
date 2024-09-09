@@ -28,8 +28,8 @@ class InventorieDevicesController extends Controller
             });
         }
 
-        if ($request->order) {
-            $query->orderBy($request->order, 'asc');
+        if ($request->attribute) {
+            $query->orderBy($request->attribute, $request->order);
         } else {
             $query->orderBy('id', 'asc');
         }

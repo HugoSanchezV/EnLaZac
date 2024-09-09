@@ -21,7 +21,15 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["SYNC", "id", "usuario", "ip", "Dipositivos", "Disp. Activos","Acciones"];
+const headers = [
+  "SYNC",
+  "id",
+  "usuario",
+  "ip",
+  "Dipositivos",
+  "Disp. Activos",
+  "Acciones",
+];
 const filters = ["id", "usuario", "ip"];
 </script>
 
@@ -77,8 +85,9 @@ const filters = ["id", "usuario", "ip"];
           :total="routers.last_page"
           :data="{
             q: q,
-            order: order,
             type: type,
+            order: order,
+            attribute: attribute,
           }"
         ></base-pagination>
         <h2 v-else class="flex justify-center mt-4 bg-gray-400 text-white py-2">
@@ -119,7 +128,7 @@ export default {
     return {
       rows: this.routers.data,
       q: "",
-      order: "id",
+      attribute: "id",
       type: "todos",
     };
   },
@@ -129,20 +138,26 @@ export default {
       const link = route("routers");
 
       this.q = props.searchQuery;
-      this.order = props.order;
+      this.attribute = props.attribute;
       this.type = props.type;
+      this.order = props.order;
 
-      if (this.order === "usuario") {
-        this.order = "user";
+      if (this.attribute === "usuario") {
+        this.attribute = "user";
       }
 
-      if (this.order === "ip") {
-        this.order = "ip_address";
+      if (this.attribute === "ip") {
+        this.attribute = "ip_address";
       }
 
       this.$inertia.get(
         link,
-        { q: this.q, order: this.order, type: this.type },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },

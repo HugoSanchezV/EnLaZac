@@ -36,8 +36,8 @@ class UserController extends Controller
             });
         }
 
-        if ($request->order) {
-            $query->orderBy($request->order, 'asc');
+        if ($request->attribute) {
+            $query->orderBy($request->attribute, $request->order);
         } else {
             $query->orderBy('id', 'asc');
         }
@@ -71,6 +71,7 @@ class UserController extends Controller
 
     public function create()
     {
+        dd('hola');
         return Inertia::render('Admin/Users/Create', [
             'user' => Auth::user(),
         ]);

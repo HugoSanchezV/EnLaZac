@@ -76,9 +76,10 @@ const filters = ["id", "mac address", "descripción", "marca"];
           :current="devices.current_page"
           :total="devices.last_page"
           :data="{
-            q: '',
-            order: '',
-            type: '',
+            q: q,
+            type: type,
+            order: order,
+            attribute: attribute,
           }"
         ></base-pagination>
         <h2 v-else class="flex justify-center mt-4 bg-gray-400 text-white py-2">
@@ -118,8 +119,9 @@ export default {
     return {
       rows: this.devices.data,
       q: "",
-      order: "id",
+      attribute: "id",
       type: "todos",
+      order: "ASC",
     };
   },
 
@@ -128,26 +130,32 @@ export default {
       const link = route("inventorie.devices.index", route().params.router);
 
       this.q = props.searchQuery;
-      this.order = props.order;
+      this.attribute = props.attribute;
       this.type = props.type;
+      this.order = props.order;
 
-      if (props.order === "mac address") {
-        this.order = "mac_address";
+      if (props.attribute === "mac address") {
+        this.attribute = "mac_address";
       }
 
-      if (props.order === "descripción") {
-        this.order = "description";
+      if (props.attribute === "descripción") {
+        this.attribute = "description";
       }
 
-      if (props.order === "marca") {
-        this.order = "brand";
+      if (props.attribute === "marca") {
+        this.attribute = "brand";
       }
 
-      console.log(props.type)
+      console.log(props.type);
 
       this.$inertia.get(
         link,
-        { q: this.q, order: this.order, type: this.type },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },

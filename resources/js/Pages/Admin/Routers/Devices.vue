@@ -11,7 +11,7 @@ const props = defineProps({
   inv_devices: Object,
 });
 
-const { devices, success, users} = toRefs(props);
+const { devices, success, users } = toRefs(props);
 const toast = useToast();
 // let inv_devices_ref = ref(inv_devices.value);
 
@@ -110,12 +110,13 @@ const filters = [
           :current="devices.current_page"
           :total="devices.last_page"
           :data="{
-            q: '',
-            order: '',
-            type: '',
+            q: q,
+            type: type,
+            order: order,
+            attribute: attribute,
           }"
         ></base-pagination>
-        
+
         <h2 v-else class="flex justify-center mt-4 bg-gray-400 text-white py-2">
           No se encontró ningún resultado de "{{ q }}"
         </h2>
@@ -155,8 +156,9 @@ export default {
       rows: this.devices.data,
       inv_devices_ref: this.inv_devices,
       q: "",
-      order: "id",
+      attribute: "id",
       type: "todos",
+      order: "ASC",
     };
   },
 
@@ -165,12 +167,18 @@ export default {
       const link = route("routers.devices", route().params.router);
 
       this.q = props.searchQuery;
-      this.order = props.order;
+      this.attribute = props.attribute;
       this.type = props.type;
+      this.order = props.order;
 
       this.$inertia.get(
         link,
-        { q: this.q, order: this.order, type: this.type },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },
@@ -189,11 +197,10 @@ export default {
     },
 
     inv_devices() {
-      this.inv_devices_ref = this.inv_devices
-    }
-    
+      this.inv_devices_ref = this.inv_devices;
+    },
   },
- 
+
   beforeMount() {
     const toast = useToast();
     if (this.success) {

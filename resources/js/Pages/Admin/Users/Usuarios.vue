@@ -80,8 +80,9 @@ const filters = ["id", "nombre", "alias", "email"];
             :total="users.last_page"
             :data="{
               q: q,
-              order: order,
+              attribute: attribute,
               type: type,
+              order: order,
             }"
           ></base-pagination>
           <h2
@@ -126,8 +127,9 @@ export default {
     return {
       rows: this.users.data,
       q: "",
-      order: "id",
+      attribute: "id",
       type: "todos",
+      order: "ASC",
     };
   },
 
@@ -147,14 +149,13 @@ export default {
         }
       }
 
-      console.log(props.searchQuery);
-
       this.q = props.searchQuery;
-      this.order = props.order;
+      this.attribute = props.attribute;
       this.type = props.type;
+      this.order = props.order;
 
-      if (this.order === "nombre") {
-        this.order = "name";
+      if (this.attribute === "nombre") {
+        this.attribute = "name";
       }
 
       if (this.type === "cliente") {
@@ -167,7 +168,7 @@ export default {
 
       this.$inertia.get(
         link,
-        { q: this.q, order: this.order, type: this.type },
+        { q: this.q, attribute: this.attribute, type: this.type, order:this.order },
         { preserveState: true, replace: true }
       );
     },

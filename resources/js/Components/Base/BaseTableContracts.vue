@@ -5,6 +5,8 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "./BaseQuestion.vue";
 
+import FilterOrderBase from "./FilterOrderBase.vue";
+
 // ACCION DE ELIMINAR
 const destroy = (id) => {
   const toast = useToast();
@@ -47,6 +49,15 @@ const destroy = (id) => {
     >
       <!-- incio de filtros -->
       <div class="flex gap-2">
+        <filter-order-base
+          :list="[
+            { id: 0, order: 'ASC' },
+            { id: 1, order: 'DESC' },
+          ]"
+          name="order"
+          @elementSelected="orderSelect"
+        >
+        </filter-order-base>
         <div>
           <button
             id="dropdownRadioButton"
@@ -162,7 +173,7 @@ const destroy = (id) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          
+
           <th
             v-for="(header, index) in headers"
             :key="index"
@@ -180,14 +191,23 @@ const destroy = (id) => {
           class="bg-white border-b hover:bg-gray-100"
         >
           <td></td>
-        <td
+          <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'geolocation'">
-              {{ typeof cell === 'object' ? (((((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, ' | ')).replace('latitude', 'Latitud')).replace('longitude','Longitud')).replace('null','Sin locación') : String(cell).replace(/[{}]/g, '') }}
-
+              {{
+                typeof cell === "object"
+                  ? JSON.stringify(cell)
+                      .replace(/[{}""]/g, "")
+                      .replace(/[:]/g, ": ")
+                      .replace(/[,]/g, " | ")
+                      .replace("latitude", "Latitud")
+                      .replace("longitude", "Longitud")
+                      .replace("null", "Sin locación")
+                  : String(cell).replace(/[{}]/g, "")
+              }}
             </div>
             <div v-else>
               {{ cell }}
@@ -313,6 +333,7 @@ export default {
       dropdownOpen2: false,
       currentFilter: "id",
       currentContract: "todos",
+      currentOrder: "ASC",
     };
   },
   computed: {
@@ -341,7 +362,7 @@ export default {
       this.toggleDropdown();
       this.$emit("search", {
         searchQuery: this.searchQuery,
-        order: this.currentFilter,
+        attribute: this.currentFilter,
         type: this.currentContract,
       });
     },
@@ -351,8 +372,18 @@ export default {
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
-        order: this.currentFilter,
+        attribute: this.currentFilter,
         type: this.currentContract,
+      });
+    },
+
+    orderSelect(newOrder) {
+      this.currentOrder = newOrder;
+      this.$emit("search", {
+        searchQuery: this.searchQuery,
+        attribute: this.currentFilter,
+        type: this.currentUser,
+        order: this.currentOrder,
       });
     },
 

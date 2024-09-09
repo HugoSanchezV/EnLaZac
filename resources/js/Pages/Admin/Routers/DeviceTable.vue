@@ -7,6 +7,7 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import ModalUsers from "../Components/ModalUsers.vue";
 
+import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 // ACCION DE ELIMINAR
 const destroy = (id) => {
   const toast = useToast();
@@ -128,6 +129,15 @@ const confirmSelectionUser = (row, select) => {
     >
       <!-- incio de filtros -->
       <div class="flex gap-2">
+        <filter-order-base
+          :list="[
+            { id: 0, order: 'ASC' },
+            { id: 1, order: 'DESC' },
+          ]"
+          name="order"
+          @elementSelected="orderSelect"
+        >
+        </filter-order-base>
         <div>
           <button
             id="dropdownRadioButton"
@@ -378,7 +388,10 @@ const confirmSelectionUser = (row, select) => {
               </div>
               <div v-else>
                 <div v-if="cell !== null">
-                  <Link :href="route('inventorie.devices.show', cell.id)" class="cursor-pointer">
+                  <Link
+                    :href="route('inventorie.devices.show', cell.id)"
+                    class="cursor-pointer"
+                  >
                     {{ cell.mac_address }}
                   </Link>
                 </div>
@@ -414,7 +427,10 @@ const confirmSelectionUser = (row, select) => {
               </div>
               <div v-else>
                 <div v-if="cell !== null">
-                  <Link :href="route('usuarios.show', cell.id)" class="cursor-pointer">
+                  <Link
+                    :href="route('usuarios.show', cell.id)"
+                    class="cursor-pointer"
+                  >
                     {{ cell.name }}
                   </Link>
                 </div>
@@ -594,6 +610,7 @@ export default {
       dropdownOpen2: false,
       currentFilter: "id",
       currentUser: "todos",
+      currentOrder:"ASC",
       typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
       inv_devices_ref: this.inv_devices,
     };
@@ -623,8 +640,9 @@ export default {
       this.toggleDropdown();
       this.$emit("search", {
         searchQuery: this.searchQuery,
-        order: this.currentFilter,
+        attribute: this.currentFilter,
         type: this.currentUser,
+        order: this.currentOrder
       });
     },
 
@@ -633,8 +651,19 @@ export default {
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
-        order: this.currentFilter,
+        attribute: this.currentFilter,
         type: this.currentUser,
+        order: this.currentOrder
+      });
+    },
+
+    orderSelect(newOrder) {
+      this.currentOrder = newOrder;
+      this.$emit("search", {
+        searchQuery: this.searchQuery,
+        attribute: this.currentFilter,
+        type: this.currentUser,
+        order: this.currentOrder,
       });
     },
 

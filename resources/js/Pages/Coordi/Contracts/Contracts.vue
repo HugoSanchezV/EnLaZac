@@ -21,9 +21,15 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["Id", "Usuarios", "Plan Internet", "Dirección", "Geolocación", "Acciones"];
-const filters = ["id", "usuario","plan internet", "dirección"];
-
+const headers = [
+  "Id",
+  "Usuarios",
+  "Plan Internet",
+  "Dirección",
+  "Geolocación",
+  "Acciones",
+];
+const filters = ["id", "usuario", "plan internet", "dirección"];
 </script>
 
 <template>
@@ -81,6 +87,7 @@ const filters = ["id", "usuario","plan internet", "dirección"];
             :total="contracts.last_page"
             :data="{
               q: q,
+              attribute: attribute,
               order: order,
               type: type,
             }"
@@ -125,8 +132,9 @@ export default {
     return {
       rows: this.contracts.data,
       q: "",
-      order: "id",
+      attribute: "id",
       type: "todos",
+      order: "ASC",
     };
   },
   methods: {
@@ -136,28 +144,34 @@ export default {
       console.log(props.searchQuery);
 
       this.q = props.searchQuery;
-      this.order = props.order;
+      this.attribute = props.attribute;
       this.type = props.type;
+      this.order = props.order;
 
-      if (this.order === "id") {
-        this.order = "id";
+      if (this.attribute === "id") {
+        this.attribute = "id";
       }
 
-      if (this.order === "usuario") {
-        this.order = "user_id";
+      if (this.attribute === "usuario") {
+        this.attribute = "user_id";
       }
 
-      if (this.order === "plan internet") {
-        this.order = "plan_id";
+      if (this.attribute === "plan internet") {
+        this.attribute = "plan_id";
       }
 
-      if (this.order === "dirección") {
-        this.order = "address";
+      if (this.attribute === "dirección") {
+        this.attribute = "address";
       }
-      
+
       this.$inertia.get(
         link,
-        { q: this.q, order: this.order, type: this.type },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },
