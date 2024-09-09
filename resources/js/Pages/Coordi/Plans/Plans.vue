@@ -20,10 +20,26 @@ watch(success, (newValue) => {
     });
   }
 });
-                                //  [   Burst Limit   ]  [Burst Threshold]  [   Burst Time   ] [   Limite At   ] [   Max Limit   ]
-const headers = ["Id", "Descripción", "Burst Limit", "Burst Threshold", "Burst Time", "Limite At", "Max Limit", "Acciones"];
-const filters = ["id", "descriptions","burst_limit", "burst_threshold", "burst_time", 'limite_at', 'max_limit'];
-
+//  [   Burst Limit   ]  [Burst Threshold]  [   Burst Time   ] [   Limite At   ] [   Max Limit   ]
+const headers = [
+  "Id",
+  "Descripción",
+  "Burst Limit",
+  "Burst Threshold",
+  "Burst Time",
+  "Limite At",
+  "Max Limit",
+  "Acciones",
+];
+const filters = [
+  "id",
+  "descriptions",
+  "burst_limit",
+  "burst_threshold",
+  "burst_time",
+  "limite_at",
+  "max_limit",
+];
 </script>
 
 <template>
@@ -81,8 +97,9 @@ const filters = ["id", "descriptions","burst_limit", "burst_threshold", "burst_t
             :total="plans.last_page"
             :data="{
               q: q,
-              order: order,
+              attribute: attribute,
               type: type,
+              order: order,
             }"
           ></base-pagination>
           <h2
@@ -126,8 +143,9 @@ export default {
     return {
       rows: this.plans.data,
       q: "",
-      order: "id",
+      attribute: "id",
       type: "todos",
+      order: "ASC",
     };
   },
   methods: {
@@ -137,20 +155,26 @@ export default {
       console.log(props.searchQuery);
 
       this.q = props.searchQuery;
-      this.order = props.order;
+      this.attribute = props.attribute;
       this.type = props.type;
+      this.order = props.order;
 
-      if (this.order === "id") {
-        this.order = "id";
+      if (this.attribute === "id") {
+        this.attribute = "id";
       }
 
-      if (this.order === "status") {
-        this.order = "status";
+      if (this.attribute === "status") {
+        this.attribute = "status";
       }
-      
+
       this.$inertia.get(
         link,
-        { q: this.q, order: this.order, type: this.type },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },

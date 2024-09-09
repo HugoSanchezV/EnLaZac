@@ -21,9 +21,23 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["Id", "Asunto", "Descripción", "Estado", "Cliente","Creación", "Acciones"];
-const filters = ["id", "asunto","descripción", "estado", "usuario", 'creación'];
-
+const headers = [
+  "Id",
+  "Asunto",
+  "Descripción",
+  "Estado",
+  "Cliente",
+  "Creación",
+  "Acciones",
+];
+const filters = [
+  "id",
+  "asunto",
+  "descripción",
+  "estado",
+  "usuario",
+  "creación",
+];
 </script>
 
 <template>
@@ -81,6 +95,7 @@ const filters = ["id", "asunto","descripción", "estado", "usuario", 'creación'
             :total="tickets.last_page"
             :data="{
               q: q,
+              attribute: attribute,
               order: order,
               type: type,
             }"
@@ -126,8 +141,9 @@ export default {
     return {
       rows: this.tickets.data,
       q: "",
-      order: "id",
+      attribute: "id",
       type: "todos",
+      order: "ASC",
     };
   },
   methods: {
@@ -137,33 +153,38 @@ export default {
       console.log(props.searchQuery);
 
       this.q = props.searchQuery;
-      this.order = props.order;
+      this.attribute = props.attribute;
       this.type = props.type;
 
-      if (this.order === "id") {
-        this.order = "id";
+      if (this.attribute === "id") {
+        this.attribute = "id";
       }
-      if (this.order === "asunto") {
-        this.order = "subject";
-      }
-
-      if (this.order === "descripción") {
-        this.order = "description";
+      if (this.attribute === "asunto") {
+        this.attribute = "subject";
       }
 
-      if (this.order === "estado") {
-        this.order = "status";
+      if (this.attribute === "descripción") {
+        this.attribute = "description";
       }
-      if (this.order === "usuario") {
-        this.order = "user_id";
+
+      if (this.attribute === "estado") {
+        this.attribute = "status";
       }
-      if (this.order === "creación") {
-        this.order = "created_at";
+      if (this.attribute === "usuario") {
+        this.attribute = "user_id";
       }
-      
+      if (this.attribute === "creación") {
+        this.attribute = "created_at";
+      }
+
       this.$inertia.get(
         link,
-        { q: this.q, order: this.order, type: this.type },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },

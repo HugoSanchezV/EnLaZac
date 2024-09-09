@@ -5,6 +5,8 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "./BaseQuestion.vue";
 
+import FilterOrderBase from "./FilterOrderBase.vue";
+
 // ACCION DE ELIMINAR
 const destroy = (id) => {
   const toast = useToast();
@@ -39,7 +41,6 @@ const destroy = (id) => {
     }
   );
 };
-
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -48,6 +49,15 @@ const destroy = (id) => {
     >
       <!-- incio de filtros -->
       <div class="flex gap-2">
+        <filter-order-base
+          :list="[
+            { id: 0, order: 'ASC' },
+            { id: 1, order: 'DESC' },
+          ]"
+          name="order"
+          @elementSelected="orderSelect"
+        >
+        </filter-order-base>
         <div>
           <button
             id="dropdownRadioButton"
@@ -163,7 +173,7 @@ const destroy = (id) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          
+
           <th
             v-for="(header, index) in headers"
             :key="index"
@@ -180,16 +190,22 @@ const destroy = (id) => {
           :key="rowIndex"
           class="bg-white border-b hover:bg-gray-100"
         >
-          <div>
-            
-          </div>
-        <td
+          <div></div>
+          <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
-            {{ typeof cell === 'object' ? ((((JSON.stringify(cell).replace(/[{}""]/g, '')).replace(/[:]/g, ': ')).replace(/[,]/g, ' | ')).replace('_limits', '')).replace('_limits','') : String(cell).replace(/[{}]/g, '') }}
-        
+            {{
+              typeof cell === "object"
+                ? JSON.stringify(cell)
+                    .replace(/[{}""]/g, "")
+                    .replace(/[:]/g, ": ")
+                    .replace(/[,]/g, " | ")
+                    .replace("_limits", "")
+                    .replace("_limits", "")
+                : String(cell).replace(/[{}]/g, "")
+            }}
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4">
@@ -311,6 +327,7 @@ export default {
       dropdownOpen2: false,
       currentFilter: "id",
       currentContract: "todos",
+      currentOrder: "ASC",
     };
   },
   computed: {
@@ -339,8 +356,9 @@ export default {
       this.toggleDropdown();
       this.$emit("search", {
         searchQuery: this.searchQuery,
-        order: this.currentFilter,
+        attribute: this.currentFilter,
         type: this.currentContract,
+        order: this.currentOrder,
       });
     },
 
@@ -349,8 +367,19 @@ export default {
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
-        order: this.currentFilter,
+        attribute: this.currentFilter,
         type: this.currentContract,
+        order: this.currentOrder,
+      });
+    },
+
+    orderSelect(newOrder) {
+      this.currentOrder = newOrder;
+      this.$emit("search", {
+        searchQuery: this.searchQuery,
+        attribute: this.currentFilter,
+        type: this.currentUser,
+        order: this.currentOrder,
       });
     },
 
