@@ -41,18 +41,22 @@ onMounted(() => {
   }
 });
 
+const updateStatus = () =>{
+  if (document.getElementById('activated').checked) {
+    form.active = true;
+    console.log(form.active);
+  } else {
+    form.active = false;
+    console.log(form.active);
+  }
+
+}
 const handlePositionClicked = (position) => {
   form.geolocation.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
   form.geolocation.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
 };
 
 const submit = () => {
-  if (document.getElementById('activated').checked) {
-    form.active = true;
-  } else {
-    form.active = false;
-  }
-
   form.put(route("contracts.update", { id: props.contract.id }));
 };
 
@@ -129,7 +133,8 @@ const submit = () => {
       <div class="mt-4 flex gap-4">
         <InputLabel for="active" value="¿Contrato Activo?" />
         <label class="switch">
-          <input type="checkbox" id="activated"/>
+          <input type="checkbox" id="activated" 
+          @click="updateStatus"/>
           <span class="slider round"></span>
         </label>
 
