@@ -21,6 +21,9 @@ watch(success, (newValue) => {
   }
 });
 
+const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
+const filters = ["id", "usuario","plan internet","fecha de inicio","fecha de terminación","¿activo?", "dirección"];
+
 const headers = [
   "Id",
   "Usuarios",
@@ -158,6 +161,18 @@ export default {
 
       if (this.attribute === "plan internet") {
         this.attribute = "plan_id";
+      }
+
+      if (this.order === "fecha de inicio") {
+        this.order = "start_date";
+      }
+
+      if (this.order === "fecha de terminación") {
+        this.order = "end_date";
+      }
+
+      if (this.order === "¿activo?") {
+        this.order = "active";
       }
 
       if (this.attribute === "dirección") {

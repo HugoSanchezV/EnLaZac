@@ -9,6 +9,9 @@ import TextInput from "@/Components/TextInput.vue";
 const form = useForm({
   user_id: "",
   plan_id: "",
+  start_date: "",
+  end_date: "",
+  active: "",
   address: "",
   geolocation:{
     latitude: "",
@@ -40,19 +43,20 @@ const getCurrentLocation = () =>
    form.geolocation.latitude = lat,
    form.geolocation.longitude = lng;
 }
+
 const submit = () => {
+  var miCheckbox = document.getElementById('activated');
+  if (miCheckbox.checked) {
+    form.active = true;
+  } else {
+    form.active = false;
+  }
   form.post(route("contracts.store"));
 };
 
 </script>
 
 <template>
-  <div class="flex justify-center border flex-col m-5 p-10 bg-white">
-    <h2 class="flex justify-center">
-      Crea un nuevo contrato
-    </h2>
-  </div>
-
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
@@ -82,6 +86,44 @@ const submit = () => {
         />
         <InputError class="mt-2" :message="form.errors.plan_id" />
       </div>
+      <div class="mt-4 flex justify-between">
+        <div>
+          <InputLabel for="start_date" value="Fecha de Inicio" />
+          <TextInput
+            id="start_date"
+            v-model="form.start_date"
+            type="date"
+            class="mt-1 block w-full"
+            required
+            autofocus
+            autocomplete="start_date"
+          />
+          <InputError class="mt-2" :message="form.errors.start_date" />
+        </div>
+        <div>
+          <InputLabel for="end_date" value="Fecha de Terminación" />
+          <TextInput
+            id="end_date"
+            v-model="form.end_date"
+            type="date"
+            class="mt-1 block w-full"
+            required
+            autofocus
+            autocomplete="end_date"
+          />
+          <InputError class="mt-2" :message="form.errors.end_date" />
+        </div>
+          
+      </div>
+
+      <div class="mt-4 flex gap-4">
+        <InputLabel for="active" value="¿Contrato Activo?" />
+        <label class="switch">
+          <input type="checkbox" id="activated"/>
+          <span class="slider round"></span>
+        </label>
+
+      </div>
 
       <div class="mt-4">
         <InputLabel for="address" value="Dirección" />
@@ -96,6 +138,7 @@ const submit = () => {
         />
         <InputError class="mt-2" :message="form.errors.address" />
       </div>
+
       <div class="mt-4">
         <p>Su ubicación actual será tomada de manera automática 
           para obtener la locación del cliente o ingrese la ubicación manualmente. 
@@ -137,7 +180,6 @@ const submit = () => {
           />
           <InputError class="mt-2" :message="form.errors.longitude" />
         </div>
-
       </div>
       <div v-if="ubicacionManual" class="flex mt-4">
         <GoogleMaps

@@ -209,6 +209,9 @@ const destroy = (id) => {
                   : String(cell).replace(/[{}]/g, "")
               }}
             </div>
+            <div v-else-if="cellIndex === 'active'">
+              {{ cell === 0 ? "OFF": "ON" }} 
+            </div>
             <div v-else>
               {{ cell }}
             </div>

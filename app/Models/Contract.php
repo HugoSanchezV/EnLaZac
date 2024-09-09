@@ -14,6 +14,9 @@ class Contract extends Model
         'id',
         'user_id',
         'plan_id',
+        'start_date',
+        'end_date',
+        'active',
         'address',
         'geolocation',
     ];
