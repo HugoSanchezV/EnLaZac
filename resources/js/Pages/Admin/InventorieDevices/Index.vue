@@ -23,8 +23,15 @@ watch(success, (newValue) => {
   newValue = "";
 });
 
-const headers = ["id", "mac address", "descripción", "marca", "acciones"];
-const filters = ["id", "mac address", "descripción", "marca"];
+const headers = [
+  "state",
+  "id",
+  "mac address",
+  "descripción",
+  "marca",
+  "acciones",
+];
+const filters = ["state", "id", "mac address", "descripción", "marca"];
 </script>
 
 <template>

@@ -36,6 +36,7 @@ class InventorieDevicesController extends Controller
 
         $devices = $query->latest()->paginate(8)->through(function ($item) {
             return [
+                'state' => $item->state,
                 'id' => $item->id,
                 'mac_address' => $item->mac_address,
                 'description' => $item->description,

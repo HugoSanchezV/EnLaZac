@@ -71,7 +71,6 @@ class UserController extends Controller
 
     public function create()
     {
-        dd('hola');
         return Inertia::render('Admin/Users/Create', [
             'user' => Auth::user(),
         ]);

@@ -192,32 +192,63 @@ const destroy = (id) => {
             :key="cellIndex"
             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'sync'">
-              <Link
-                v-if="edit"
-                :href="route('inventorie.devices.edit', row.id)"
-                class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
-                :class="
-                  row.sync
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : ' bg-orange-500 hover:bg-orange-600'
-                "
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                  />
-                </svg>
-              </Link>
+            <div v-if="cellIndex === 'state'">
+              <div v-if="cell === 0" class="bg-blue-300 rounded-md">
+                <div class="flex justify-center items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M14.5 1A4.5 4.5 0 0 0 10 5.5V9H3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1.5V5.5a3 3 0 1 1 6 0v2.75a.75.75 0 0 0 1.5 0V5.5A4.5 4.5 0 0 0 14.5 1Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+
+                  <span>Disponible</span>
+                </div>
+              </div>
+              <div v-else-if="cell === 1" class="bg-green-300 rounded-md">
+                <div class="flex justify-center items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  En Uso
+                  <span></span>
+                </div>
+              </div>
+              <div v-else-if="cell === 2" class="bg-yellow-300 rounded-md">
+                <div class="flex justify-center items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M14.5 10a4.5 4.5 0 0 0 4.284-5.882c-.105-.324-.51-.391-.752-.15L15.34 6.66a.454.454 0 0 1-.493.11 3.01 3.01 0 0 1-1.618-1.616.455.455 0 0 1 .11-.494l2.694-2.692c.24-.241.174-.647-.15-.752a4.5 4.5 0 0 0-5.873 4.575c.055.873-.128 1.808-.8 2.368l-7.23 6.024a2.724 2.724 0 1 0 3.837 3.837l6.024-7.23c.56-.672 1.495-.855 2.368-.8.096.007.193.01.291.01ZM5 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
+                      clip-rule="evenodd"
+                    />
+                    <path
+                      d="M14.5 11.5c.173 0 .345-.007.514-.022l3.754 3.754a2.5 2.5 0 0 1-3.536 3.536l-4.41-4.41 2.172-2.607c.052-.063.147-.138.342-.196.202-.06.469-.087.777-.067.128.008.257.012.387.012ZM6 4.586l2.33 2.33a.452.452 0 0 1-.08.09L6.8 8.214 4.586 6H3.309a.5.5 0 0 1-.447-.276l-1.7-3.402a.5.5 0 0 1 .093-.577l.49-.49a.5.5 0 0 1 .577-.094l3.402 1.7A.5.5 0 0 1 6 3.31v1.277Z"
+                    />
+                  </svg>
+                  <span>En Reparación</span>
+                </div>
+              </div>
             </div>
             <div v-else>{{ cell }}</div>
           </td>
