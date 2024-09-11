@@ -66,8 +66,8 @@ watch(
 const form = useForm({
   address: props.device.address ? props.device.address.split(".").pop() : "", // Carga la parte final de la IP actual
   comment: props.device.comment || "",
-  user: props.device.user_id || "",
-  device: props.device.device_id || "",
+  user_id: props.device.user_id || "",
+  device_id: props.device.device_id || "",
   router_id: props.device.router_id || route().params.router,
 });
 
@@ -75,11 +75,11 @@ const submit = () => {
   form.address = props.router.initial_device_ip + form.address;
 
   if (!user_active.value) {
-    form.user = null;
+    form.user_id = null;
   }
 
   if (!device_active.value) {
-    form.device = null;
+    form.device_id = null;
   }
 
   form.put(route("devices.update", props.device.id), {
@@ -149,7 +149,7 @@ const seleccionar = (valor) => {
 
       <div class="mt-4">
         <div class="flex justify-between">
-          <InputLabel for="user" value="Usuario" />
+          <InputLabel for="user_id" value="Usuario" />
 
           <label class="inline-flex items-center cursor-pointer">
             <input
@@ -165,8 +165,8 @@ const seleccionar = (valor) => {
         </div>
         <div v-if="user_active">
           <select
-            id="user"
-            v-model="form.user"
+            id="user_id"
+            v-model="form.user_id"
             class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
             required
           >
@@ -184,7 +184,7 @@ const seleccionar = (valor) => {
 
       <div class="mt-4">
         <div class="flex justify-between">
-          <InputLabel for="device" value="Dispositivo" />
+          <InputLabel for="device_id" value="Dispositivo" />
           <label class="inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -199,8 +199,8 @@ const seleccionar = (valor) => {
         </div>
         <div v-if="device_active">
           <select
-            id="device"
-            v-model="form.device"
+            id="device_id"
+            v-model="form.device_id"
             class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
             required
           >

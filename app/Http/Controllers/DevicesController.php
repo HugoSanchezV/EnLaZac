@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Device\StoreDeviceRequest;
 use App\Http\Requests\Device\UpdateDeviceRequest;
 use App\Models\Device;
+use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
 use App\Models\Router;
 use App\Models\RouterosAPI;
 use App\Models\User;
 use App\Services\RouterOSService;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -135,13 +137,13 @@ class DevicesController extends Controller
 
     public function update(UpdateDeviceRequest $request, $id)
     {
+        //dd('Holaaaaaaaaaaaaaaaaaaaaaaaaaa');
         $validatedData = $request->validated();
 
         $device = Device::findOrFail($id);
 
         try {
-
-            DB::transaction(function () use ($device, $validatedData, $request) {
+            DB::transaction(function () use ($device, $validatedData, $request, $id) {
 
                 if (($validatedData['address'] !== $device->address)
                     || ($validatedData['comment'] !== $device->comment)
@@ -160,10 +162,25 @@ class DevicesController extends Controller
                 }
 
                 if (isset($validatedData['device_id'])) {
-                    if ($validatedData['device_id'] !== $device->device_id) {
+                    if (isset($device->device_id) && $validatedData['device_id'] !== $device->device_id) {
                         InventorieDevicesController::changeStateDevice($device->device_id, '0');
+
+                        DeviceHistorie::create([
+                            'state' => 0,
+                            'comment' => 'Se ha modificado el estado',
+                            'device_id' => $device->device_id,
+                            'user_id' => $device->user_id ?? null,
+                            'creator_id' => Auth::id(),
+                        ]);
                     }
                     InventorieDevicesController::changeStateDevice($validatedData['device_id'], '1');
+                    DeviceHistorie::create([
+                        'state' => 1,
+                        'comment' => 'Se ha modificado el estado',
+                        'device_id' => $validatedData['device_id'],
+                        'user_id' => $device->user_id ?? null,
+                        'creator_id' => Auth::id(),
+                    ]);
                 }
 
                 $device->update([
@@ -178,6 +195,7 @@ class DevicesController extends Controller
             return redirect()->route('routers.devices', ['router' => $device->router_id])
                 ->with('success', 'El dispositivo ha sido actualizado con éxito');
         } catch (Exception $e) {
+            dd($e->getMessage());
             return redirect()->route('routers.devices', ['router' => $device->router_id])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }

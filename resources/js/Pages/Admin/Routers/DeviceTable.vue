@@ -83,7 +83,7 @@ const confirmSelectionDevice = (row, select) => {
     let user_id = null;
 
     if (row.user_id) {
-      user_id = row.user_id;
+      user_id = row.user_id.id;
     }
     router.put(url, {
       address: row.address,
@@ -105,11 +105,10 @@ const confirmSelectionUser = (row, select) => {
     });
   } else {
     const url = route("devices.update", row.id);
-
     let device_id = null;
 
     if (row.device_id) {
-      device_id = row.device_id;
+      device_id = row.device_id.id;
     }
     router.put(url, {
       address: row.address,

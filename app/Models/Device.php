@@ -28,7 +28,7 @@ class Device extends Model
     }
 
     public function inventorieDevice() {
-        return $this->belongsTo(InventorieDevice::class, 'id');
+        return $this->belongsTo(InventorieDevice::class, 'device_id');
     }
 
     public function user() {
