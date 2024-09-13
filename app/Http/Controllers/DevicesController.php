@@ -310,4 +310,68 @@ class DevicesController extends Controller
         $message = $action . ' ' . $device->address . ' realizado con éxito';
         return Redirect::route('routers.devices', $router)->with('success', $message);
     }
+
+    public function setDeviceStatusContrato(Device $device)
+    {
+        $device = Device::findOrFail($device->id);
+        $router = $device->router;
+
+        $state = 1;
+        $action = "";
+        $commandAction = "";
+        $increment_enable_devices = -1;
+
+        if ($device->disabled) {
+            $state = 0;
+            $commandAction = "no";
+            $action = "activar";
+            $increment_enable_devices = 1;
+        } else {
+            $state = 1;
+            $commandAction = "yes";
+            $action = "desactivar";
+        }
+
+        $device->disabled = $state;
+
+        ///////////////////////////////////////////////////////////////////////
+        $router = Router::findOrFail($router->id);
+
+        //////////////////////////////////////////////////////////////////////////
+
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($router->id);
+
+            DB::transaction(function () use (
+                $routerOSService,
+                $device,
+                $router,
+                $commandAction,
+                $state,
+                $increment_enable_devices,
+            ) {
+                $routerOSService->executeCommand(
+                    '/ip/firewall/address-list/set',
+                    [
+                        '.id' => $device->device_internal_id,
+                        'disabled' => $commandAction
+                    ]
+                );
+
+                $routerOSService->disconnect();
+
+                $device->disabled = $state;
+                $router->enable_devices += $increment_enable_devices;
+                $router->save();
+                $device->update();
+            });
+        } catch (\Exception $e) {
+           // $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
+            //return Redirect::route('routers.devices')->with('error', $message);
+            dd("ERROR AL CAMBIAR EL ESTADO DE DISPOSITIVO: "+$e);
+        }
+      //  $message = $action . ' ' . $device->address . ' realizado con éxito';
+        //return Redirect::route('routers.devices', $router)->with('success', $message);
+    }
 }

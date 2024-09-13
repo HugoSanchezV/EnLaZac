@@ -2,23 +2,23 @@
 
 namespace App\Notifications;
 
+use App\Models\Contract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\User;
 
-class RegisterUserNotification extends Notification implements ShouldQueue
+class ContractWarningNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public $user;
-    public function __construct(User $user)
+    public $contract;
+    public function __construct(Contract $contract)
     {
-        $this -> user = $user;
+        $this -> contract = $contract;
     }
 
     /**
@@ -28,8 +28,7 @@ class RegisterUserNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
-        //return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -38,12 +37,10 @@ class RegisterUserNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                ->subject('Nuevo Usuario Registrado')
-                ->greeting('Hola ' . $notifiable->name . ',')
-                ->line('Han creado un usuario nuevo: ' . $this->user->name)
-                ->line('Con el ID: '.$this->user->id)
-                ->action('Ver Usuario', url('/usuarios/show/' . $this->user->id))
-                ->line('!');
+                    ->line('Se le notifica que en 2 días se termina su servicio de internet')
+                    //Botón para enviar hacia el modulo de pagos online
+                    ->action('Realizar pago online', url('/'))
+                    ->line('Se le surgiere realizar su pago a tiempo para evitar el corte del servicio');
     }
 
     /**
@@ -54,9 +51,7 @@ class RegisterUserNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'id' => $this->user->id,
-            'name' =>  $this->user->name,
-            'created_at' => $this->user ->created_at,
+            'end_date' => $this ->contract -> end_date,
         ];
     }
 }

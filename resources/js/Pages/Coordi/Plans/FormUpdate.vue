@@ -11,6 +11,7 @@ const props = defineProps({
 });
 
 const form = useForm({
+  name: "",
   description: "",  
 
   burst_limit: {
@@ -37,6 +38,7 @@ const form = useForm({
 
 onMounted(() => {
   if (props.plan) {
+    form.name = props.plan.name || "";
     form.description = props.plan.description || "";
 
     form.burst_limit.upload_limits = props.plan.burst_limit.upload_limits || 0;
@@ -63,13 +65,23 @@ const submit = () => {
 
 
 <template>
-  <div class="flex justify-center border flex-col m-5 p-10 bg-white">
-    <h2 class="flex justify-center">
-      Actualizar el Plan de Internet
-    </h2>
-  </div>
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
+
+      <div>
+        <InputLabel for="name" value="Nombre" />
+        <TextInput
+          id="name"
+          v-model="form.name"
+          type="text"
+          class="mt-1 block w-full"
+          required
+          autofocus
+          autocomplete="name"
+        />
+        <InputError class="mt-2" :message="form.errors.name" />
+      </div>
+      
       <div>
         <InputLabel for="description" value="Descripción" />
         <TextInput

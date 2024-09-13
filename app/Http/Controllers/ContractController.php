@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\User;
+use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
@@ -16,6 +18,7 @@ class ContractController extends Controller
     public function index(Request $request)
     {
         $query = Contract::query();
+
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -36,12 +39,13 @@ class ContractController extends Controller
         } else {
             $query->orderBy('id', 'asc');
         }
-
-        $contract = $query->latest()->paginate(8)->through(function ($item) {
+        $queryUser = User::query();
+        $queryPlan = Plan::query();
+        $contract = $query->with('user')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'user_id' => $item->user_id,
-                'plan_id' => $item->plan_id,
+                'user_id' => $item->user->name ?? 'None',
+                'plan_id' => $item->plan->name ?? 'None',
                 'start_date' => $item->start_date,
                 'end_date' => $item->end_date,
                 'active' => $item->active,
@@ -82,7 +86,13 @@ class ContractController extends Controller
 
     public function create()
     {
-        return Inertia::render('Coordi/Contracts/Create');
+        $users = User::select('id', 'name')->where('admin', '=', '0')->get();
+        $plans = Plan::select('id', 'name')->get();
+        return Inertia::render('Coordi/Contracts/Create',
+        [
+            'users' => $users,
+            'plans' => $plans,
+        ]);
     }
 
     public function store(StoreContractRequest $request)

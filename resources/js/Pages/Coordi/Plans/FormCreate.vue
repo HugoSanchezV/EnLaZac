@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const form = useForm({
+  name: "",
   description: "",  
 
   burst_limit: {
@@ -38,14 +39,22 @@ const submit = () => {
 </script>
 
 <template>
-  <div class="flex justify-center border flex-col m-5 p-10 bg-white">
-    <h2 class="flex justify-center">
-      Crea un nuevo plan de internet
-    </h2>
-  </div>
-
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
+      <div>
+        <InputLabel for="name" value="Nombre" />
+        <TextInput
+          id="name"
+          v-model="form.name"
+          type="text"
+          class="mt-1 block w-full"
+          required
+          autofocus
+          autocomplete="name"
+        />
+        <InputError class="mt-2" :message="form.errors.name" />
+      </div>
+      
       <div>
         <InputLabel for="description" value="Descripción" />
         <TextInput

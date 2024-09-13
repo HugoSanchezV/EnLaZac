@@ -23,6 +23,7 @@ watch(success, (newValue) => {
 //  [   Burst Limit   ]  [Burst Threshold]  [   Burst Time   ] [   Limite At   ] [   Max Limit   ]
 const headers = [
   "Id",
+  "Nombre",
   "Descripción",
   "Burst Limit",
   "Burst Threshold",
@@ -33,13 +34,15 @@ const headers = [
 ];
 const filters = [
   "id",
-  "descriptions",
+  "nombre",
+  "descripción",
   "burst_limit",
   "burst_threshold",
   "burst_time",
   "limite_at",
   "max_limit",
 ];
+
 </script>
 
 <template>
@@ -162,9 +165,11 @@ export default {
       if (this.attribute === "id") {
         this.attribute = "id";
       }
-
-      if (this.attribute === "status") {
-        this.attribute = "status";
+      if (this.order === "nombre") {
+        this.order = "name";
+      }
+      if (this.order === "descripción") {
+        this.order = "description";
       }
 
       this.$inertia.get(
@@ -177,7 +182,7 @@ export default {
         },
         { preserveState: true, replace: true }
       );
-    },
+    }
   },
   watch: {
     plans() {

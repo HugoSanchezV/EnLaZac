@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('plans', function (Blueprint $table) {
             $table->id()->primary();
+            $table->string('name');
             $table->string('description'); // Campo normal descripción
             $table->json('burst_limit'); // Campo JSON para los límites de subida
             $table->json('burst_threshold'); // Campo JSON para los límites de bajada

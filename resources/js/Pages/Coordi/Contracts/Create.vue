@@ -1,3 +1,14 @@
+<script setup>
+
+const props = defineProps({
+  users: {
+    type: Object,
+  },
+  plans: {
+    type: Object,
+  },
+});
+</script>
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
@@ -10,7 +21,7 @@
       <div class="flex justify-center items-center w-full h-full">
 
         <div class="p-8 rounded-lg w-1/2">
-            <Form/>
+            <Form :users="users" :plans = "plans"/>
         </div>
       </div>
     </template>

@@ -6,6 +6,9 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Event;
 use App\Events\TicketEvent;
 use App\Events\RegisterUserEvent;
+use App\Listeners\ContractWarningListener;
+use App\Events\ContractWarningEvent;
+use App\Listeners\ContractWarningListen;
 use App\Listeners\RegisterUserListener;
 use App\Listeners\TicketListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,7 +21,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         RegisterUserEvent::class =>[
             RegisterUserListener::class,
-        ]
+        ],
+        ContractWarningEvent::class => [
+            ContractWarningListener::class,
+        ],
     ];
     
     /**

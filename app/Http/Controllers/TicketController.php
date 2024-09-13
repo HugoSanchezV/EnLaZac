@@ -133,7 +133,7 @@ class TicketController extends Controller
         $ticket->save();
         
 
-        return redirect()->route('tickets')->with('success', 'Ticket Actualizado Con Éxito');
+        return redirect()->route('tickets')->with('success', 'Estado del Ticket Actualizado Con Éxito');
     }
     public function destroy($id)
     {
@@ -144,19 +144,6 @@ class TicketController extends Controller
 
     static function make_ticket_notification($ticket){
         event(new TicketEvent($ticket));
-    //      $creatorId = $ticket->user_id;
-
-    // // // Seleccionar usuarios donde 'admin' sea 1, 2, 3, o 4, excluyendo al creador del ticket
-    //      $users = User::whereIn('admin', [1, 2, 3, 4])
-    //                  ->where('id', '!=', $creatorId)
-    //                  ->get();
-        
-    //      // Enviar notificación a los usuarios seleccionados, excluyendo al creador del ticket
-    //      foreach ($users as $user) {
-    //          $user->notify(new TicketNotification($ticket));
-    //      }
-
-
     }
     //Para Usuarios mortales--------------------------------------------------------------------------
 

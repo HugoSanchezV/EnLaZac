@@ -66,8 +66,13 @@ class User extends Authenticatable
 
         ];
     }
-    public function tickets()
+    public function ticket()
     {
         return $this->hasMany(Ticket::class);
     }
+    public function contract() {
+
+        return $this->hasMany(Contract::class, 'user_id');
+    }
+    
 }

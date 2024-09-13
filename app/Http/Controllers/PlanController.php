@@ -21,6 +21,7 @@ class PlanController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
+                    ->orWhere('name', 'like', "%$search%")
                     ->orWhere('description', 'like', "%$search%")
                     ->orWhere('upload_limits->burst_limit', 'like', "%$search%")
                     ->orWhere('upload_limits->burst_threshold', 'like', "%$search%")
@@ -45,6 +46,7 @@ class PlanController extends Controller
         $plans = $query->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
+                'name' => $item->name,
                 'description' => $item->description,
 
                 'burst_limit' => $item->burst_limit ?[

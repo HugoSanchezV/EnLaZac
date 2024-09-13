@@ -1,10 +1,24 @@
 <script setup>
 import { router, useForm } from "@inertiajs/vue3";
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, toRefs} from 'vue';
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
+
+
+const props = defineProps({
+  users: {
+    type: Array,
+    default: () => [],
+  },
+  plans: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+const selectedUser = ref(null);
 
 const form = useForm({
   user_id: "",
@@ -43,7 +57,12 @@ const getCurrentLocation = () =>
    form.geolocation.latitude = lat,
    form.geolocation.longitude = lng;
 }
-
+const onDateChange= () =>{
+  // Imprimir la fecha seleccionada en la consola
+  const date = new Date(form.start_date);
+  date.setMonth(date.getMonth() + 1);
+  form.end_date = date.toISOString().split('T')[0];
+  }
 const submit = () => {
   var miCheckbox = document.getElementById('activated');
   if (miCheckbox.checked) {
@@ -61,29 +80,33 @@ const submit = () => {
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
         <InputLabel for="user_id" value="ID del Usuario" />
-        <TextInput
-          id="user_id"
-          v-model="form.user_id"
-          type="text"
-          class="mt-1 block w-full"
-          required
-          autofocus
-          autocomplete="user_id"
-        />
+        <div class="mt-2">
+            <select
+              v-model="form.user_id"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option value="null" selected>Selecciona una opción</option>
+              <option v-for="user in users" :key="user.id" :value="user.id">
+                  {{ user.id + " - " + user.name }}
+              </option>
+            </select>
+        </div>
         <InputError class="mt-2" :message="form.errors.user_id" />
       </div>
 
       <div class="mt-4">
         <InputLabel for="plan_id" value="ID del plan" />
-        <TextInput
-          id="plan_id"
-          v-model="form.plan_id"
-          type="text"
-          class="mt-1 block w-full"
-          required
-          autofocus
-          autocomplete="plan_id"
-        />
+        <div class="mt-2">
+            <select
+              v-model="form.plan_id"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option value="null" selected>Selecciona una opción</option>
+              <option v-for="plan in plans" :key="plan.id" :value="plan.id">
+                  {{ plan.id + " - " + plan.name }}
+              </option>
+            </select>
+        </div>
         <InputError class="mt-2" :message="form.errors.plan_id" />
       </div>
       <div class="mt-4 flex justify-between">
@@ -97,6 +120,7 @@ const submit = () => {
             required
             autofocus
             autocomplete="start_date"
+            @input="onDateChange"
           />
           <InputError class="mt-2" :message="form.errors.start_date" />
         </div>
@@ -206,7 +230,7 @@ const submit = () => {
           />
       </div>
       </div>
-
+      <p>Fecha seleccionada: {{ form.start_date }}</p>
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
           class="ms-4 flex items-center gap-2"
@@ -240,14 +264,17 @@ export default {
   components: {
         GoogleMaps
     },
-  props: ["contract"],
+  props: 
+    ["contract"],
+
   data() {
     return {
       ubicacionManual: false,
       form: {
         latitude: '',
-        longitude: ''
-      }
+        longitude: '',
+      },
+
     };
   },
 };

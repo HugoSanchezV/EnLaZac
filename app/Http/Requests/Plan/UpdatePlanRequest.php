@@ -23,6 +23,7 @@ class UpdatePlanRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => 'required|max:100',
             'description' => 'required|max:255',
 
             'burst_limit.upload_limits' => 'required|numeric',
@@ -46,6 +47,8 @@ class UpdatePlanRequest extends FormRequest
     public function messages()
     {
         return [
+            'name.required' => 'El nombre es un campo obligatorio.',
+            'name.max' => 'El nombre no puede tener más de 100 caracteres.',
             'description.required' => 'La descripción es un campo obligatorio.',
             'description.max' => 'La descripción no puede tener más de 255 caracteres.',
             'burst_limit.upload_limits.required' => 'El burst limit de subida es obligatorio.',
