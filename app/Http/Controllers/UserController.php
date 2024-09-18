@@ -7,6 +7,10 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Events\RegisterUserEvent;
+use App\Models\Contract;
+use App\Models\Device;
+use App\Models\Plan;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -75,7 +79,27 @@ class UserController extends Controller
             'user' => Auth::user(),
         ]);
     }
+    public function show($id)
+    {
+        $user = User::with('ticket', 'contract', 'device')->findOrFail($id);
+        
+        $contract = $user->contract->first();
+        $device = $user -> device -> first(); 
+        $plan = null; 
+        if(!is_null($contract))
+        {
+            $plan = Plan::find($contract->plan_id);
+        }
+        
 
+        return Inertia::render('Admin/Users/Show', [
+            'user' => $user,
+            'ticket' => $user->ticket,
+            'contract' => $contract,
+            'plan' => $plan,
+            'device' => $device,
+        ]);
+    }
     public function store(StoreUserRequest $request)
     {
         $validatedData = $request->validated();

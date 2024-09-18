@@ -343,7 +343,7 @@ const destroy = (id) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4">
               <Link
-                href="#"
+                :href="route('usuarios.show', row.id)"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
               >

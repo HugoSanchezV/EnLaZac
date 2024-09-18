@@ -209,6 +209,7 @@ const submit = () => {
         <GoogleMaps
         :lat="parseInt(lat)"
         :lng="parseInt(lng)"
+        :clic=true
          @otherPos_clicked="handlePositionClicked" />
       </div>
       

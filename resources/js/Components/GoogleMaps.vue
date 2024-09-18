@@ -14,6 +14,10 @@ export default {
     lng: {
       type: Number,
       required: true
+    },
+    clic: {
+      type: Boolean,
+      required: true,
     }
   },
   setup(props, { emit }) {
@@ -47,8 +51,10 @@ export default {
         title: "Tu ubicación actual",
         draggable: true
       });
-      // Manejar clics en el mapa para colocar o mover el marcador
-      clickListener = map.value.addListener('click', ({ latLng }) => {
+      if(props.clic)
+      {
+        // Manejar clics en el mapa para colocar o mover el marcador
+        clickListener = map.value.addListener('click', ({ latLng }) => {
         otherPos.value = {
           lat: latLng.lat(),
           lng: latLng.lng()
@@ -70,6 +76,10 @@ export default {
         // Emitir la posición clicada
         emit('otherPos_clicked', otherPos.value)
       })
+        
+      }
+      
+      
     })
 
     onUnmounted(async () => {
