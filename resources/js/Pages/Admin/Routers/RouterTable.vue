@@ -63,7 +63,7 @@ const destroy = (id) => {
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
             type="button"
           >
             <svg
@@ -109,7 +109,7 @@ const destroy = (id) => {
             id="dropdownRadio"
             class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
           >
-            <ul class="p-3 space-y-1 text-sm text-gray-700">
+            <ul class="p-3 space-y-1 text-xs text-gray-700">
               <li v-for="(filter, index) in filters" :key="index">
                 <div class="flex items-center p-2 rounded hover:bg-gray-100">
                   <input
@@ -123,7 +123,7 @@ const destroy = (id) => {
                   />
                   <label
                     :for="'filter-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                    class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
                     >{{ filter }}</label
                   >
                 </div>
@@ -252,7 +252,6 @@ const destroy = (id) => {
             v-for="(header, index) in headers"
             :key="index"
             scope="col"
-            class="px-6 py-3"
           >
             {{ header }}
           </th>
@@ -268,13 +267,12 @@ const destroy = (id) => {
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'sync'">
               <Link
                 v-if="edit"
                 :href="route('routers.sync', row.id)"
-                class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
+                class="flex gap-1 p-1.5 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
                 :class="
                   row.sync
                     ? 'bg-green-500 hover:bg-green-600'
@@ -287,7 +285,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -311,7 +309,7 @@ const destroy = (id) => {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
                   fill="currentColor"
-                  class="size-4"
+                  class="size-5"
                 >
                   <path
                     fill-rule="evenodd"
@@ -331,7 +329,7 @@ const destroy = (id) => {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
                   fill="currentColor"
-                  class="size-4"
+                  class="size-5"
                 >
                   <path
                     fill-rule="evenodd"
@@ -360,7 +358,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -383,7 +381,7 @@ const destroy = (id) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    class="size-5"
                   >
                     <path
                       stroke-linecap="round"

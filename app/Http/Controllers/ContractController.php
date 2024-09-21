@@ -8,6 +8,7 @@ use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -50,10 +51,10 @@ class ContractController extends Controller
                 'end_date' => $item->end_date,
                 'active' => $item->active,
                 'address' => $item->address,
-                'geolocation' => $item->geolocation ? [
-                    'latitude' => $item->geolocation['latitude'] ?? null,
-                    'longitude' => $item->geolocation['longitude'] ?? null,
-                ] : null,
+                // 'geolocation' => $item->geolocation ? [
+                //     'latitude' => $item->geolocation['latitude'] ?? null,
+                //     'longitude' => $item->geolocation['longitude'] ?? null,
+                // ] : null,
 
             ];
         });
@@ -88,11 +89,13 @@ class ContractController extends Controller
     {
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
-        return Inertia::render('Coordi/Contracts/Create',
-        [
-            'users' => $users,
-            'plans' => $plans,
-        ]);
+        return Inertia::render(
+            'Coordi/Contracts/Create',
+            [
+                'users' => $users,
+                'plans' => $plans,
+            ]
+        );
     }
 
     public function store(StoreContractRequest $request)

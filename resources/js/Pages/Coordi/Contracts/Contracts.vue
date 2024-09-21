@@ -32,7 +32,6 @@ const headers = [
   "Fecha de Terminación",
   "¿Activo?",
   "Dirección",
-  "Geolocación",
   "Acciones",
 ];
 //const filters = ["id", "usuario", "plan internet", "dirección"];

@@ -61,7 +61,7 @@ const destroy = (id) => {
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
             type="button"
           >
             <svg
@@ -121,7 +121,7 @@ const destroy = (id) => {
                   />
                   <label
                     :for="'filter-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                    class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
                     >{{ filter }}</label
                   >
                 </div>
@@ -174,7 +174,6 @@ const destroy = (id) => {
             v-for="(header, index) in headers"
             :key="index"
             scope="col"
-            class="px-6 py-3"
           >
             {{ header }}
           </th>
@@ -286,7 +285,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -309,7 +308,7 @@ const destroy = (id) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    class="size-5"
                   >
                     <path
                       stroke-linecap="round"

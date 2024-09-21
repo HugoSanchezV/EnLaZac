@@ -62,7 +62,7 @@ const destroy = (id) => {
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
             type="button"
           >
             <svg
@@ -122,7 +122,7 @@ const destroy = (id) => {
                   />
                   <label
                     :for="'filter-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                    class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
                     >{{ filter }}</label
                   >
                 </div>
@@ -169,7 +169,7 @@ const destroy = (id) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 p-2">
+    <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -178,7 +178,7 @@ const destroy = (id) => {
             v-for="(header, index) in headers"
             :key="index"
             scope="col"
-            class="px-6 py-3"
+
           >
             {{ header }}
           </th>
@@ -221,7 +221,7 @@ const destroy = (id) => {
               <Link
                 href="#"
                 v-if="show"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -229,7 +229,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -243,7 +243,7 @@ const destroy = (id) => {
               <Link
                 v-if="edit"
                 :href="route('contracts.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -251,7 +251,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -266,7 +266,7 @@ const destroy = (id) => {
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -274,7 +274,7 @@ const destroy = (id) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    class="size-5"
                   >
                     <path
                       stroke-linecap="round"
@@ -367,6 +367,7 @@ export default {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
         type: this.currentContract,
+        order: this.currentOrder,
       });
     },
 
@@ -377,6 +378,7 @@ export default {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
         type: this.currentContract,
+        order: this.currentOrder,
       });
     },
 

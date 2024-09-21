@@ -261,12 +261,12 @@ const nameCell = (cellIndex) => {
     >
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
-          <th></th>
+          <th>
+          </th>
           <th
             v-for="(header, index) in headers"
             :key="index"
             scope="col"
-            class="px-6 py-3"
           >
             {{ header }}
           </th>
@@ -360,13 +360,13 @@ const nameCell = (cellIndex) => {
               <Link
                 :href="route('usuarios.show', row.id)"
                 v-if="show"
-                class="flex text-sm items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 16 16"
                   fill="currentColor"
-                  class="size-4"
+                  class="size-5"
                 >
                   <path
                     fill-rule="evenodd"
@@ -380,7 +380,7 @@ const nameCell = (cellIndex) => {
               <Link
                 v-if="edit"
                 :href="route('usuarios.edit', row.id)"
-                class="flex items-center text-sm gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -411,7 +411,7 @@ const nameCell = (cellIndex) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    class="size-5"
                   >
                     <path
                       stroke-linecap="round"

@@ -62,7 +62,7 @@ const destroy = (id) => {
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
             type="button"
           >
             <svg
@@ -122,7 +122,7 @@ const destroy = (id) => {
                   />
                   <label
                     :for="'filter-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                    class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
                     >{{ filter }}</label
                   >
                 </div>
@@ -170,16 +170,10 @@ const destroy = (id) => {
     </div>
 
     <table class="w-full text-sm text-left text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-950">
         <tr>
           <th></th>
-
-          <th
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-            class="px-6 py-3"
-          >
+          <th class="px-2" v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -190,13 +184,13 @@ const destroy = (id) => {
           :key="rowIndex"
           class="bg-white border-b hover:bg-gray-100"
         >
-          <div></div>
+          <td></td>
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            {{
+            <!-- {{
               typeof cell === "object"
                 ? JSON.stringify(cell)
                     .replace(/[{}""]/g, "")
@@ -205,14 +199,50 @@ const destroy = (id) => {
                     .replace("_limits", "")
                     .replace("_limits", "")
                 : String(cell).replace(/[{}]/g, "")
-            }}
+            }} -->
+            <div v-if="typeof cell === 'object'" class="flex">
+              <span class="text-blue-600 flex">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  class="size-4"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 14a.75.75 0 0 0 .75-.75V4.56l1.22 1.22a.75.75 0 1 0 1.06-1.06l-2.5-2.5a.75.75 0 0 0-1.06 0l-2.5 2.5a.75.75 0 0 0 1.06 1.06l1.22-1.22v8.69c0 .414.336.75.75.75Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                {{ cell.upload_limits }}
+              </span>
+              <span class="text-green-600 flex">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  class="size-4"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 2a.75.75 0 0 1 .75.75v8.69l1.22-1.22a.75.75 0 1 1 1.06 1.06l-2.5 2.5a.75.75 0 0 1-1.06 0l-2.5-2.5a.75.75 0 1 1 1.06-1.06l1.22 1.22V2.75A.75.75 0 0 1 8 2Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+
+                {{ cell.upload_limits }}
+              </span>
+            </div>
+            <div v-else>
+              {{ cell }}
+            </div>
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
                 href="#"
                 v-if="show"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +250,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -234,7 +264,7 @@ const destroy = (id) => {
               <Link
                 v-if="edit"
                 :href="route('plans.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -242,7 +272,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -257,7 +287,7 @@ const destroy = (id) => {
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -265,7 +295,7 @@ const destroy = (id) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    class="size-5"
                   >
                     <path
                       stroke-linecap="round"

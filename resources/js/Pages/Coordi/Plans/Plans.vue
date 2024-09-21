@@ -25,11 +25,11 @@ const headers = [
   "Id",
   "Nombre",
   "Descripción",
-  "Burst Limit",
-  "Burst Threshold",
-  "Burst Time",
-  "Limite At",
-  "Max Limit",
+  "Burst Limit (Mb/s)",
+  "Burst Threshold (Mb/s)",
+  "Burst Time (S)",
+  "Limite At (Klb/s)",
+  "Max Limit (Mb/s)",
   "Acciones",
 ];
 const filters = [

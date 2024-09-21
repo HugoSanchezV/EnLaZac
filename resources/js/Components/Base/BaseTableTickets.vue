@@ -133,7 +133,7 @@ const editStatus = (id, estado) => {
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown1"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
             type="button"
           >
             <svg
@@ -193,7 +193,7 @@ const editStatus = (id, estado) => {
                   />
                   <label
                     :for="'filter-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                    class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
                     >{{ filter }}</label
                   >
                 </div>
@@ -248,7 +248,6 @@ const editStatus = (id, estado) => {
             v-for="(header, index) in headers"
             :key="index"
             scope="col"
-            class="px-6 py-3"
           >
             {{ header }}
           </th>
@@ -273,7 +272,7 @@ const editStatus = (id, estado) => {
                 <button
                   id="dropdownRadioButton"
                   @click="toggleDropdown(rowIndex)"
-                  class="uppercase w-full gap-2 inline-flex justify-between items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+                  class="uppercase w-full gap-2 inline-flex justify-between items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
                   type="button"
                 >
                   <div class="w-full">
@@ -412,7 +411,7 @@ const editStatus = (id, estado) => {
                         />
                         <label
                           :for="'type-radio-' + index"
-                          class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                          class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
                           >{{ type }}</label
                         >
                       </div>
@@ -434,7 +433,7 @@ const editStatus = (id, estado) => {
               <Link
                 :href="route('tickets.show', row.id)"
                 v-if="show"
-                class="btn-modal flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="btn-modal flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -442,7 +441,7 @@ const editStatus = (id, estado) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -451,12 +450,12 @@ const editStatus = (id, estado) => {
                   />
                 </svg>
 
-                Mostrar cliente
+                Mostrar
               </Link>
               <Link
                 v-if="edit"
                 :href="route('tickets.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -464,7 +463,7 @@ const editStatus = (id, estado) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -478,7 +477,7 @@ const editStatus = (id, estado) => {
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -486,7 +485,7 @@ const editStatus = (id, estado) => {
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="size-6"
+                    class="size-5"
                   >
                     <path
                       stroke-linecap="round"

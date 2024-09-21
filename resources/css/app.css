@@ -50,7 +50,7 @@ td {
 }
 
 th {
-    padding: 0.8rem;
+    padding: 0.8rem 0;
     background-color: rgb(229 231 235);
     display: none;
 }
