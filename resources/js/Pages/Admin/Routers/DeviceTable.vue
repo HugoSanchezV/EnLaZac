@@ -321,7 +321,7 @@ const confirmSelectionUser = (row, select) => {
         />
       </div>
     </div>
-    <table class="w-full text-sm text-left text-gray-500 p-10">
+    <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -346,10 +346,10 @@ const confirmSelectionUser = (row, select) => {
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+            class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'disabled'">
-              <label class="inline-flex items-center mb-5 cursor-pointer">
+              <label class="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   :checked="cell === 0"
@@ -476,7 +476,7 @@ const confirmSelectionUser = (row, select) => {
           </td>
 
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4">
+            <div class="sm:flex gap-4 flex actions">
               <Link
                 :href="route('routers.devices', row.id)"
                 class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -672,30 +672,3 @@ export default {
   },
 };
 </script>
-  
-  <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-th {
-  padding: 0.8rem;
-  background-color: rgb(229 231 235);
-}
-
-thead th:first-child {
-  border-top-left-radius: 0.25rem;
-}
-
-thead th:last-child {
-  border-top-right-radius: 0.25rem;
-}
-</style>
-  

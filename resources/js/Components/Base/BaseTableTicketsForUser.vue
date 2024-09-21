@@ -200,7 +200,7 @@ const destroy = (id) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 p-10">
+    <table class="w-full text-sm text-left text-gray-500 p-2">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -226,7 +226,7 @@ const destroy = (id) => {
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+            class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'status'">
               <h2
@@ -332,7 +332,7 @@ const destroy = (id) => {
           <!-- SELECTOR DE ESTADOS DE TICKET  -->
 
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4">
+            <div class="sm:flex gap-4 flex actions">
               <Link
                 v-if="edit"
                 :href="route('tickets.edit', row.id)"

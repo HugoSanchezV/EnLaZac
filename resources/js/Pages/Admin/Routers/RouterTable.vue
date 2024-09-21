@@ -244,7 +244,7 @@ const destroy = (id) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 p-10">
+    <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -301,7 +301,7 @@ const destroy = (id) => {
           </td>
 
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4">
+            <div class="sm:flex gap-4 flex flex-wrap actions">
               <Link
                 v-if="row.sync"
                 :href="route('devices.create', row.id)"
@@ -508,30 +508,4 @@ export default {
   },
 };
 </script>
-  
-  <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-th {
-  padding: 0.8rem;
-  background-color: rgb(229 231 235);
-}
-
-thead th:first-child {
-  border-top-left-radius: 0.25rem;
-}
-
-thead th:last-child {
-  border-top-right-radius: 0.25rem;
-}
-</style>
   
