@@ -41,6 +41,17 @@ const destroy = (id) => {
     }
   );
 };
+
+const nameCell = (cellIndex) => {
+  switch (cellIndex) {
+    case "name":
+      return "nombre".toUpperCase();
+    case "role":
+      return "rol".toUpperCase();
+    default:
+      return cellIndex.toUpperCase();
+  }
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -48,86 +59,88 @@ const destroy = (id) => {
       class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
     >
       <!-- incio de filtros -->
-      <div class="flex gap-2">
-        <filter-base
-          :list="[
-            { id: 0, order: 'ASC' },
-            { id: 1, order: 'DESC' },
-          ]"
-          name="order"
-          @elementSelected="orderSelect"
-        >
-        </filter-base>
-        <div>
-          <button
-            id="dropdownRadioButton"
-            @click="toggleDropdown"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-            type="button"
+      <div class="flex md:flex-row flex-col gap-2">
+        <div class="flex">
+          <filter-base
+            :list="[
+              { id: 0, order: 'ASC' },
+              { id: 1, order: 'DESC' },
+            ]"
+            name="order"
+            @elementSelected="orderSelect"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
+          </filter-base>
+          <div>
+            <button
+              id="dropdownRadioButton"
+              @click="toggleDropdown"
+              class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
+              type="button"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-              />
-            </svg>
-
-            <span class="bg-neutral-500 py-1 px-2 text-white rounded-md">
-              Ordenar
-            </span>
-
-            por {{ currentFilter }}
-            <svg
-              class="w-2.5 h-2.5 ms-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
                 stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                />
+              </svg>
 
-          <!-- Dropdown menu -->
-          <div
-            v-if="dropdownOpen"
-            id="dropdownRadio"
-            class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
-          >
-            <ul class="p-3 space-y-1 text-sm text-gray-700">
-              <li v-for="(filter, index) in filters" :key="index">
-                <div class="flex items-center p-2 rounded hover:bg-gray-100">
-                  <input
-                    :id="'filter-radio-' + index"
-                    type="radio"
-                    :value="filter"
-                    v-model="currentFilter"
-                    @click="selectFilter(filter)"
-                    name="filter-radio"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <label
-                    :for="'filter-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
-                    >{{ filter }}</label
-                  >
-                </div>
-              </li>
-            </ul>
+              <span class="bg-neutral-500 py-1 px-2 text-white rounded-md">
+                Ordenar
+              </span>
+
+              por {{ currentFilter }}
+              <svg
+                class="w-2.5 h-2.5 ms-2.5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 10 6"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 1 4 4 4-4"
+                />
+              </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div
+              v-if="dropdownOpen"
+              id="dropdownRadio"
+              class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
+            >
+              <ul class="p-3 space-y-1 text-xs text-gray-700">
+                <li v-for="(filter, index) in filters" :key="index">
+                  <div class="flex items-center p-2 rounded hover:bg-gray-100">
+                    <input
+                      :id="'filter-radio-' + index"
+                      type="radio"
+                      :value="filter"
+                      v-model="currentFilter"
+                      @click="selectFilter(filter)"
+                      name="filter-radio"
+                      class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
+                    />
+                    <label
+                      :for="'filter-radio-' + index"
+                      class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
+                      >{{ filter }}</label
+                    >
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -136,7 +149,7 @@ const destroy = (id) => {
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown2"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
             type="button"
           >
             <svg
@@ -196,7 +209,7 @@ const destroy = (id) => {
                   />
                   <label
                     :for="'type-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                    class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
                     >{{ type }}</label
                   >
                 </div>
@@ -243,7 +256,9 @@ const destroy = (id) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 p-10">
+    <table
+      class="w-full text-sm text-left text-gray-500 lg:table md:table"
+    >
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -261,13 +276,13 @@ const destroy = (id) => {
         <tr
           v-for="(row, rowIndex) in filteredRows"
           :key="rowIndex"
-          class="bg-white border-b hover:bg-gray-100"
+          class="bg-white md:border-b hover:bg-gray-100 lg:table-row md:table-row"
         >
           <td></td>
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+            class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'role'">
               <h2
@@ -341,24 +356,22 @@ const destroy = (id) => {
           </td>
 
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4">
+            <div class="sm:flex gap-2 actions">
               <Link
                 href="#"
                 v-if="show"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex text-sm items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  class="size-4"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+                    fill-rule="evenodd"
+                    d="M2 3.75A.75.75 0 0 1 2.75 3h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 3.75ZM2 8a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 8Zm0 4.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z"
+                    clip-rule="evenodd"
                   />
                 </svg>
 
@@ -367,7 +380,7 @@ const destroy = (id) => {
               <Link
                 v-if="edit"
                 :href="route('usuarios.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center text-sm gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -375,7 +388,7 @@ const destroy = (id) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-6"
+                  class="size-5"
                 >
                   <path
                     stroke-linecap="round"
@@ -390,7 +403,7 @@ const destroy = (id) => {
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -460,7 +473,7 @@ export default {
       dropdownOpen2: false,
       currentFilter: "id",
       currentUser: "todos",
-      currentOrder:"ASC",
+      currentOrder: "ASC",
       typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
     };
   },
@@ -492,17 +505,17 @@ export default {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
         type: this.currentUser,
-        order: this.currentOrder
+        order: this.currentOrder,
       });
     },
 
-    orderSelect(newOrder) { 
+    orderSelect(newOrder) {
       this.currentOrder = newOrder;
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
         type: this.currentUser,
-        order: this.currentOrder
+        order: this.currentOrder,
       });
     },
 
@@ -513,36 +526,10 @@ export default {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
         type: this.currentUser,
-        order: this.currentOrder
+        order: this.currentOrder,
       });
     },
   },
 };
 </script>
-  
-  <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-th {
-  padding: 0.8rem;
-  background-color: rgb(229 231 235);
-}
-
-thead th:first-child {
-  border-top-left-radius: 0.25rem;
-}
-
-thead th:last-child {
-  border-top-right-radius: 0.25rem;
-}
-</style>
   

@@ -169,7 +169,7 @@ const destroy = (id) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 p-10">
+    <table class="w-full text-sm text-left text-gray-500 p-2">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -194,7 +194,7 @@ const destroy = (id) => {
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+            class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'geolocation'">
               {{
@@ -217,7 +217,7 @@ const destroy = (id) => {
             </div>
           </td>
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4">
+            <div class="sm:flex gap-4 flex actions">
               <Link
                 href="#"
                 v-if="show"
@@ -396,30 +396,3 @@ export default {
   },
 };
 </script>
-  
-  <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-th {
-  padding: 0.8rem;
-  background-color: rgb(229 231 235);
-}
-
-thead th:first-child {
-  border-top-left-radius: 0.25rem;
-}
-
-thead th:last-child {
-  border-top-right-radius: 0.25rem;
-}
-</style>
-  

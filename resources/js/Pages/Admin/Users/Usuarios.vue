@@ -30,7 +30,7 @@ const filters = ["id", "nombre", "alias", "email"];
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Usuarios</h2>
+          <h4>Usuarios</h4>
         </div>
         <div>
           <Link

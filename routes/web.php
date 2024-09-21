@@ -9,6 +9,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PayController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -55,6 +56,8 @@ Route::middleware([
     Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
 
     // Devices
+    Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
+    Route::get('/devices/show',                  [DevicesController::class, 'show'])->name('devices.show');
     Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
     Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
     Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');
@@ -104,6 +107,8 @@ Route::middleware([
     Route::get('/plans/edit/{id}',           [PlanController::class, 'edit'])->name('plans.edit');
     Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
     Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
+
+    Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

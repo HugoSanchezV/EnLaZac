@@ -3,7 +3,7 @@
       <button
         id="dropdownRadioButton"
         @click="toggleDropdown"
-        class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+        class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
         type="button"
       >
         <svg
@@ -30,7 +30,7 @@
         id="dropdownRadio"
         class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
       >
-        <ul class="p-3 space-y-1 text-sm text-gray-700">
+        <ul class="p-3 space-y-1 text-xs text-gray-700">
           <li v-for="element in list" :key="element.id">
             <div class="flex items-center p-2 rounded hover:bg-gray-100">
               <input
@@ -44,7 +44,7 @@
               />
               <label
                 :for="element.id"
-                class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
+                class="w-full ms-2 text-xs font-medium text-gray-900 rounded uppercase cursor-pointer"
               >
                 {{ element.order }}
               </label>
