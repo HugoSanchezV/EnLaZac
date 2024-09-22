@@ -15,8 +15,6 @@ const props = defineProps({
     type: Object,
   },
 });
-
-
 </script>
 
 <template>
@@ -28,9 +26,9 @@ const props = defineProps({
     </template>
 
     <template v-slot:content>
-      <div class="flex justify-center items-center w-full h-full">
-        <div class="p-8 rounded-lg w-1/2">
-          <FormCreate :devices="devices"  :users="users" :router="router" />
+      <div class="flex justify-center w-full">
+        <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
+          <FormCreate :devices="devices" :users="users" :router="router" />
         </div>
       </div>
     </template>

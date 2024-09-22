@@ -104,7 +104,8 @@ const filters = [ "id", "usuario", "ip"];
 <script>
 import { Link } from "@inertiajs/vue3";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import RouterTable from "./RouterTable.vue";
+//import RouterTable from "./RouterTable.vue";
+import RouterTable from "../Routers/RouterTable.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {

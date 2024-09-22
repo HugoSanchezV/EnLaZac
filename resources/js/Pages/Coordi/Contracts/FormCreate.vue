@@ -77,7 +77,7 @@ const submit = () => {
 
 <template>
   <div class="mt-5">
-    <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
+    <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
         <InputLabel for="user_id" value="ID del Usuario" />
         <div class="mt-2">
