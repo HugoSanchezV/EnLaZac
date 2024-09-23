@@ -40,6 +40,23 @@ const destroy = (id) => {
     }
   );
 };
+
+const getTag = (cellIndex) => {
+  switch (cellIndex) {
+    case "ip_address":
+      return "ip";
+
+    case "mac_address":
+      return "mac";
+
+    case "description":
+      return "descripción";
+    case "brand":
+      return "marca";
+    default:
+      return cellIndex;
+  }
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -170,11 +187,7 @@ const destroy = (id) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          <th
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-          >
+          <th v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -249,7 +262,14 @@ const destroy = (id) => {
                 </div>
               </div>
             </div>
-            <div v-else>{{ cell }}</div>
+            <div v-else>
+              <div class="flex gap-1">
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+                {{ cell }}
+              </div>
+            </div>
           </td>
 
           <td class="flex items-stretch">

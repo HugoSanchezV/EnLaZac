@@ -80,6 +80,26 @@ const editStatus = (id, estado) => {
     }
   );
 };
+
+const getTag = (cellIndex) => {
+  switch (cellIndex) {
+    case "subject":
+      return "asunto";
+    case "ip_address":
+      return "ip";
+
+    case "description":
+      return "descripción";
+
+    case "user_id":
+      return "usuario";
+
+    case "created_at":
+      return "creado";
+    default:
+      return cellIndex;
+  }
+};
 </script>
 <style>
 .boton-modal label {
@@ -244,11 +264,7 @@ const editStatus = (id, estado) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          <th
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-          >
+          <th v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -420,7 +436,12 @@ const editStatus = (id, estado) => {
                 </div>
               </div>
               <div v-else>
-                {{ cell }}
+                <div class="flex gap-1">
+                  <span class="lg:hidden md:hidden block font-bold lowercase"
+                    >{{ getTag(cellIndex) }} :</span
+                  >
+                  {{ cell }}
+                </div>
               </div>
 
               <!-- Final dfrop nbuton  -->
@@ -546,8 +567,8 @@ export default {
       dropdownOpen1: false,
       dropdownOpen: {},
       currentFilter: "id",
-      currentUser: "todos", 
-      currentOrder: "ASC", 
+      currentUser: "todos",
+      currentOrder: "ASC",
       typeStatus: ["Pendiente", "En espera", "Trabajando", "Terminado"],
     };
   },
@@ -594,15 +615,15 @@ export default {
       });
     },
 
-    orderSelect(newOrder) { 
-    this.currentOrder = newOrder;
-    this.$emit("search", {
-      searchQuery: this.searchQuery,
-      attribute: this.currentFilter,
-      type: this.currentUser,
-      order: this.currentOrder
-    });
-},
+    orderSelect(newOrder) {
+      this.currentOrder = newOrder;
+      this.$emit("search", {
+        searchQuery: this.searchQuery,
+        attribute: this.currentFilter,
+        type: this.currentUser,
+        order: this.currentOrder,
+      });
+    },
 
     filterData() {
       console.log(this.searchQuery);

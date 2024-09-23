@@ -52,6 +52,14 @@ const nameCell = (cellIndex) => {
       return cellIndex.toUpperCase();
   }
 };
+
+const getTag = (cell) => {
+
+  if (cell === 'name') {
+    return 'Nombre'
+  } 
+  return cell
+}
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -256,18 +264,11 @@ const nameCell = (cellIndex) => {
       </div>
     </div>
 
-    <table
-      class="w-full text-sm text-left text-gray-500 lg:table md:table"
-    >
+    <table class="w-full text-sm text-left text-gray-500 lg:table md:table">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
-          <th>
-          </th>
-          <th
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-          >
+          <th></th>
+          <th v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -351,7 +352,10 @@ const nameCell = (cellIndex) => {
               <h2 v-else>{{ cell }}</h2>
             </div>
             <div v-else>
-              {{ cell }}
+              <div class="flex gap-1">
+                <span class="lg:hidden md:hidden block font-bold lowercase">{{ getTag(cellIndex) }}:</span>
+                {{ cell }}
+              </div>
             </div>
           </td>
 

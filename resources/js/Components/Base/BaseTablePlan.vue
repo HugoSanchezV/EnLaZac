@@ -41,6 +41,28 @@ const destroy = (id) => {
     }
   );
 };
+
+const getTag = (cellIndex) => {
+  switch (cellIndex) {
+    case "name":
+      return "usuarios";
+    case "description":
+      return "descripción";
+
+      case "burst_limit":
+        return "límite de ráfaga"
+      case "burst_threshold":
+        return "umbral de ráfaga"
+      case "burst_time":
+        return "tiempo de ráfaga"
+      case "limite_at":
+        return "limite"
+      case "max_limit":
+        return "limite máximo"
+      default:
+      return cellIndex;
+  }
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -173,7 +195,12 @@ const destroy = (id) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-950">
         <tr>
           <th></th>
-          <th class="px-2" v-for="(header, index) in headers" :key="index" scope="col">
+          <th
+            class="px-2"
+            v-for="(header, index) in headers"
+            :key="index"
+            scope="col"
+          >
             {{ header }}
           </th>
         </tr>
@@ -201,6 +228,9 @@ const destroy = (id) => {
                 : String(cell).replace(/[{}]/g, "")
             }} -->
             <div v-if="typeof cell === 'object'" class="flex">
+              <span class="lg:hidden md:hidden block font-bold lowercase"
+                >{{ getTag(cellIndex) }} :</span
+              >
               <span class="text-blue-600 flex">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -214,6 +244,7 @@ const destroy = (id) => {
                     clip-rule="evenodd"
                   />
                 </svg>
+
                 {{ cell.upload_limits }}
               </span>
               <span class="text-green-600 flex">
@@ -234,7 +265,12 @@ const destroy = (id) => {
               </span>
             </div>
             <div v-else>
-              {{ cell }}
+              <div class="flex gap-1">
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+                {{ cell }}
+              </div>
             </div>
           </td>
           <td class="flex items-stretch">

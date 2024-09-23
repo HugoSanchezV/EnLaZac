@@ -41,6 +41,26 @@ const destroy = (id) => {
     }
   );
 };
+
+const getTag = (cellIndex) => {
+  switch (cellIndex) {
+    case "subject":
+      return "asunto";
+    case "ip_address":
+      return "ip";
+
+    case "description":
+      return "descripción";
+
+    case "user_id":
+      return "usuario";
+
+    case "created_at":
+      return "creado";
+    default:
+      return cellIndex;
+  }
+};
 </script>
 <style>
 .boton-modal label {
@@ -204,11 +224,7 @@ const destroy = (id) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          <th
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-          >
+          <th v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -325,7 +341,12 @@ const destroy = (id) => {
               <h2 v-else>{{ cell }}</h2>
             </div>
             <div v-else>
-              {{ cell }}
+              <div class="flex gap-1">
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+                {{ cell }}
+              </div>
             </div>
           </td>
           <!-- SELECTOR DE ESTADOS DE TICKET  -->

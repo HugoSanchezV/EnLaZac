@@ -41,6 +41,30 @@ const destroy = (id) => {
     }
   );
 };
+
+const getTag = (cellIndex) => {
+  switch (cellIndex) {
+    case "user_id":
+      return "Usuario";
+      break;
+    case "plan_id":
+      return "Plan";
+      break;
+    case "start_date":
+      return "Inicio";
+      break;
+    case "end_date":
+      return "Fin";
+      break;
+
+    case "address":
+      return "Dirección";
+      break;
+    default:
+      return cellIndex;
+      break;
+  }
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -174,12 +198,7 @@ const destroy = (id) => {
         <tr>
           <th></th>
 
-          <th
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-
-          >
+          <th v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -210,10 +229,15 @@ const destroy = (id) => {
               }}
             </div>
             <div v-else-if="cellIndex === 'active'">
-              {{ cell === 0 ? "OFF": "ON" }} 
+              {{ cell === 0 ? "OFF" : "ON" }}
             </div>
             <div v-else>
-              {{ cell }}
+              <div class="flex gap-1">
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+                {{ cell }}
+              </div>
             </div>
           </td>
           <td class="flex items-stretch">

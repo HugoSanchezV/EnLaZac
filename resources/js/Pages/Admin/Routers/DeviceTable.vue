@@ -120,6 +120,28 @@ const confirmSelectionUser = (row, select) => {
     closeModal();
   }
 };
+
+const getTag = (cellIndex) => {
+  switch (cellIndex) {
+    case "user":
+      return "usuario";
+    case "device_internal_id":
+      return "id interno";
+
+    case "comment":
+      return "comentario";
+
+    case "address":
+      return "ip";
+    case "device_id":
+      return "Mac";
+
+    case "user_id":
+      return "usuario";
+    default:
+      return cellIndex;
+  }
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -325,11 +347,7 @@ const confirmSelectionUser = (row, select) => {
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          <th
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-          >
+          <th v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -386,12 +404,16 @@ const confirmSelectionUser = (row, select) => {
               </div>
               <div v-else>
                 <div v-if="cell !== null">
-                  <Link
-                    :href="route('inventorie.devices.show', cell.id)"
-                    class="cursor-pointer"
-                  >
-                    {{ cell.mac_address }}
-                  </Link>
+                  <div class="flex gap-1">
+                    <span class="lg:hidden md:hidden block font-bold lowercase"
+                      >{{ getTag(cellIndex) }} :</span
+                    ><Link
+                      :href="route('inventorie.devices.show', cell.id)"
+                      class="cursor-pointer"
+                    >
+                      {{ cell.mac_address }}
+                    </Link>
+                  </div>
                 </div>
                 <div v-else>
                   <span class="bg-slate-500 py-1 px-2 rounded-md text-white"
@@ -425,12 +447,17 @@ const confirmSelectionUser = (row, select) => {
               </div>
               <div v-else>
                 <div v-if="cell !== null">
-                  <Link
-                    :href="route('usuarios.show', cell.id)"
-                    class="cursor-pointer"
-                  >
-                    {{ cell.name }}
-                  </Link>
+                  <div class="flex gap-1">
+                    <span class="lg:hidden md:hidden block font-bold lowercase"
+                      >{{ getTag(cellIndex) }} :</span
+                    >
+                    <Link
+                      :href="route('usuarios.show', cell.id)"
+                      class="cursor-pointer"
+                    >
+                      {{ cell.name }}
+                    </Link>
+                  </div>
                 </div>
                 <div v-else>
                   <span class="bg-slate-500 py-1 px-2 rounded-md text-white"
@@ -469,7 +496,12 @@ const confirmSelectionUser = (row, select) => {
             <div v-else>
               <!-- v-if="cellIndex !== 'router_id'" -->
               <div>
-                {{ cell }}
+                <div class="flex gap-1">
+                  <span class="lg:hidden md:hidden block font-bold lowercase"
+                    >{{ getTag(cellIndex) }} :</span
+                  >
+                  {{ cell }}
+                </div>
               </div>
             </div>
           </td>
@@ -608,7 +640,7 @@ export default {
       dropdownOpen2: false,
       currentFilter: "id",
       currentUser: "todos",
-      currentOrder:"ASC",
+      currentOrder: "ASC",
       typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
       inv_devices_ref: this.inv_devices,
     };
@@ -640,7 +672,7 @@ export default {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
         type: this.currentUser,
-        order: this.currentOrder
+        order: this.currentOrder,
       });
     },
 
@@ -651,7 +683,7 @@ export default {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
         type: this.currentUser,
-        order: this.currentOrder
+        order: this.currentOrder,
       });
     },
 
