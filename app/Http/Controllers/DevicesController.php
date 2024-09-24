@@ -246,7 +246,68 @@ class DevicesController extends Controller
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
     }
+    
+    public function sendPing(Device $device)
+    {
+        
+        $device = Device::findOrFail($device->id);
+        $router = $device ->router;
 
+        $router = Router::findOrFail($router->id);
+        $API = RouterOSService::getInstance();
+
+        $API ->connect($router->id);
+        
+        $param = [
+            'address' => $device->address,
+            'count' => '4'
+        ];
+        $count = 0;
+
+        $result = $API->executeCommand('/ping', $param);
+        
+        foreach ($result as $ping) {
+            if(isset($ping['status']))
+            {
+                //$this->info($ping['status']);               
+            }else{
+                //$this->info("Correcto ping");
+                $count++;
+            }
+        }
+        $message = '';
+        $type = 'error';
+        switch($count)
+        {
+            case 0:
+                $message = "Perdida total de paquetes";
+                $type = 'error';
+                break;
+            case 1:
+                $message = "3 paquetes perdidos";
+                $type = 'warning';
+                break;
+            case 2:
+                $message = "2 paquetes perdidos";
+                $type = 'warning';
+                break;
+            case 3:
+                $message = "1 paquete perdido";
+                $type = 'warning';
+                break;
+            case 4:
+                $message = "Se han recibido todos lo paquetes exitosamente";
+                break;
+                
+        }
+        
+        $API->disconnect();
+
+        //dd($message);
+        return redirect()->route('routers.devices', ['router' => $device->router_id])
+        ->with('error', $message);
+
+    }
     public function setDeviceStatus(Device $device)
     {
         $device = Device::findOrFail($device->id);
@@ -369,7 +430,7 @@ class DevicesController extends Controller
         } catch (\Exception $e) {
            // $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
             //return Redirect::route('routers.devices')->with('error', $message);
-            dd("ERROR AL CAMBIAR EL ESTADO DE DISPOSITIVO: "+$e);
+            dd("ERROR AL CAMBIAR EL ESTADO DEL DISPOSITIVO: "+$e);
         }
       //  $message = $action . ' ' . $device->address . ' realizado con éxito';
         //return Redirect::route('routers.devices', $router)->with('success', $message);

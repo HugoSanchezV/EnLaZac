@@ -6,12 +6,14 @@ const props = defineProps({
   devices: Object,
   pagination: Object,
   success: String,
+  error: String,
+  warning: String,
   totalDevicesCount: Number,
   users: Object,
   inv_devices: Object,
 });
 
-const { devices, success, users } = toRefs(props);
+const { devices, success, error, warning, users } = toRefs(props);
 const toast = useToast();
 // let inv_devices_ref = ref(inv_devices.value);
 
@@ -23,6 +25,28 @@ watch(success, (newValue) => {
     });
   }
 
+  newValue = "";
+});
+
+watch(error, (newValue) => {
+  if (newValue) {
+    toast.error(newValue, {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+  }
+  
+  newValue = "";
+});
+
+watch(warning, (newValue) => {
+  if (newValue) {
+    toast.warning(newValue, {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+  }
+  
   newValue = "";
 });
 
@@ -147,6 +171,8 @@ export default {
     devices: Object,
     pagination: Object,
     success: String,
+    error:String,
+    warning: String,
     totalDevicesCount: Number,
     inv_devices: Object,
   },
@@ -205,6 +231,18 @@ export default {
     const toast = useToast();
     if (this.success) {
       toast.success(this.success, {
+        position: POSITION.TOP_CENTER,
+        draggable: true,
+      });
+    }if(this.error)
+    {
+      toast.error(this.error, {
+        position: POSITION.TOP_CENTER,
+        draggable: true,
+      });
+    }if(this.warning)
+    {
+      toast.warning(this.warning, {
         position: POSITION.TOP_CENTER,
         draggable: true,
       });

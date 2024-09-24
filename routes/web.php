@@ -65,7 +65,7 @@ Route::middleware([
     Route::delete('/devices/delete/{device}',          [DevicesController::class, 'destroy'])->name('devices.destroy');
     // -- status 
     Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
-
+    Route::get('/devices/set/device/ping/{device}',  [DevicesController::class, 'sendPing'])->name('devices.ping');
     // inventorie_devices
     Route::get('/inventorie/devices',                 [InventorieDevicesController::class, 'index'])->name('inventorie.devices.index');
     Route::get('/inventorie/devices/show/{inventorieDevice}', [InventorieDevicesController::class, 'show'])->name('inventorie.devices.show');
@@ -109,6 +109,8 @@ Route::middleware([
     Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
 
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
+
+    
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

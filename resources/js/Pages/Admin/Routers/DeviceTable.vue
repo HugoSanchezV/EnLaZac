@@ -530,6 +530,12 @@ const getTag = (cellIndex) => {
               </Link>
 
               <Link
+                :href="route('devices.ping', row.id)"
+                class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                Enviar Ping
+              </Link>
+              <Link
                 v-if="edit"
                 :href="
                   route('devices.edit', {

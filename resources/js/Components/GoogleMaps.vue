@@ -25,6 +25,7 @@ export default {
       lat: props.lat,
       lng: props.lng
     }))
+
     const otherPos = ref(null)
     const marker = ref(null) // Referencia para el marcador
 
@@ -33,59 +34,52 @@ export default {
     let map = ref(null)
     let clickListener = null
 
+    // Función para centrar el mapa en la posición actual
+    const centerMap = () => {
+      if (map.value) {
+        map.value.setCenter(currPos.value) // Centra el mapa en la posición actual
+        if (marker.value) {
+          marker.value.setPosition(currPos.value) // Mueve el marcador a la posición actual
+        }
+      }
+    }
+
     onMounted(async () => {
       await loader.load()
       map.value = new google.maps.Map(mapDiv.value, {
         center: currPos.value,
         zoom: 9
       })
-      marker.value = new google.maps.Marker({
-          position: currPos.value,
-          map: map.value,
-          draggable: true
-        })
 
+      // Crear el marcador en la posición actual
       marker.value = new google.maps.Marker({
         position: currPos.value,
         map: map.value,
         title: "Tu ubicación actual",
         draggable: true
-      });
-      if(props.clic)
-      {
-        // Manejar clics en el mapa para colocar o mover el marcador
-        clickListener = map.value.addListener('click', ({ latLng }) => {
-        otherPos.value = {
-          lat: latLng.lat(),
-          lng: latLng.lng()
-        }
-
-
-        // Si ya existe un marcador, mueve su posición
-        if (marker.value) {
-          marker.value.setPosition(otherPos.value)
-        } else {
-          // Si no existe un marcador, créalo
-          marker.value = new google.maps.Marker({
-            position: otherPos.value,
-            map: map.value,
-            draggable: true // Hacer que el marcador sea arrastrable
-          })
-        }
-
-        // Emitir la posición clicada
-        emit('otherPos_clicked', otherPos.value)
       })
-        
-      }
-      
-      
-    })
 
-    onUnmounted(async () => {
+      // Manejar clics en el mapa si se habilita la opción 'clic'
+      if (props.clic) {
+        clickListener = map.value.addListener('click', ({ latLng }) => {
+          otherPos.value = {
+            lat: latLng.lat(),
+            lng: latLng.lng()
+          }
+
+          // Si ya existe un marcador, mueve su posición
+          marker.value.setPosition(otherPos.value)
+
+          // Emitir la nueva posición clicada
+          emit('otherPos_clicked', otherPos.value)
+        })
+      }
+    })
+   
+    // Limpieza del evento al desmontar
+    onUnmounted(() => {
       if (clickListener) clickListener.remove()
     })
-
 
     return { mapDiv, otherPos, currPos }
   }
