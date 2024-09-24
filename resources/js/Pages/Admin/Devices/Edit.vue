@@ -29,7 +29,7 @@ const props = defineProps({
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div
-        class="text-center md:flex md:justify-between md:items-center md:gap-2"
+        class="text-center flex justify-between md:items-center md:gap-2"
       >
         <h2>Editar Dispositivo</h2>
         <span class="bg-cyan-500 py-1 px-2 text-white rounded-md">{{
@@ -39,8 +39,8 @@ const props = defineProps({
     </template>
 
     <template v-slot:content>
-      <div class="flex justify-center items-center w-full h-full">
-        <div class="p-8 rounded-lg w-1/2">
+      <div class="flex justify-center w-full">
+        <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
           <FormUpdate
             :devices="devices"
             :users="users"

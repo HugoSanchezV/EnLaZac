@@ -8,8 +8,8 @@
     </template>
 
     <template v-slot:content>
-      <div class="flex justify-center items-center w-full h-full">
-        <div class="p-8 rounded-lg w-1/2">
+      <div class="flex justify-center w-full">
+        <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
           <FormUpdate :user="user"/>
         </div>
       </div>
