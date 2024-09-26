@@ -702,4 +702,4 @@ export default {
     },
   },
 };
-</script>
+</script>``

@@ -1,6 +1,7 @@
   <script setup>
 import { toRefs, watch, ref } from "vue";
 import { useToast, POSITION } from "vue-toastification";
+import BaseExport from "@/Components/Base/Excel/BaseExport.vue";
 
 const props = defineProps({
   devices: Object,
@@ -54,6 +55,8 @@ const filters = [
   //"list",
   "address",
 ];
+
+const columns = ["id", "name"]
 </script>
 
   <template>
@@ -89,6 +92,7 @@ const filters = [
     </template>
 
     <template v-slot:content>
+      <base-export model="user" :columns="columns"></base-export>
       <div v-if="props.totalDevicesCount > 0">
         <!-- Esta es el inicio de la tabla -->
         <device-table

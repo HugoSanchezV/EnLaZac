@@ -320,7 +320,7 @@ const getTag = (cellIndex) => {
               <Link
                 v-if="row.sync"
                 :href="route('devices.create', row.id)"
-                class="flex items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-1 px-2 rounded-md sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

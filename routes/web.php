@@ -6,6 +6,7 @@ use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
@@ -109,6 +110,8 @@ Route::middleware([
     Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
 
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
+
+    Route::get('/excel/export/{model}', [ExcelController::class, 'export'])->name('excel.export');
 });
 
 Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');
