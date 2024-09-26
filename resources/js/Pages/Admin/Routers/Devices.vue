@@ -1,54 +1,20 @@
   <script setup>
 import { toRefs, watch, ref } from "vue";
-import { useToast, POSITION } from "vue-toastification";
+import { useToast, TYPE, POSITION } from "vue-toastification";
 
 const props = defineProps({
   devices: Object,
   pagination: Object,
-  success: String,
   error: String,
+  success: String,
+ 
   warning: String,
   totalDevicesCount: Number,
   users: Object,
   inv_devices: Object,
 });
 
-const { devices, success, error, warning, users } = toRefs(props);
-const toast = useToast();
-// let inv_devices_ref = ref(inv_devices.value);
-
-watch(success, (newValue) => {
-  if (newValue) {
-    toast.success(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-
-  newValue = "";
-});
-
-watch(error, (newValue) => {
-  if (newValue) {
-    toast.error(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-  
-  newValue = "";
-});
-
-watch(warning, (newValue) => {
-  if (newValue) {
-    toast.warning(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-  
-  newValue = "";
-});
+const {devices,  users } = toRefs(props);
 
 // watch(inv_devices, (newValue) => {
 //   // Aquí puedes realizar acciones cuando inv_devices cambie.
@@ -170,9 +136,6 @@ export default {
   props: {
     devices: Object,
     pagination: Object,
-    success: String,
-    error:String,
-    warning: String,
     totalDevicesCount: Number,
     inv_devices: Object,
   },
@@ -212,14 +175,7 @@ export default {
 
   watch: {
     devices() {
-      // const toast = useToast();
       this.rows = this.devices.data;
-      // if (this.success) {
-      //   toast.success(this.success, {
-      //     position: POSITION.TOP_CENTER,
-      //     draggable: true,
-      //   });
-      // }
     },
 
     inv_devices() {
@@ -229,21 +185,25 @@ export default {
 
   beforeMount() {
     const toast = useToast();
+   
     if (this.success) {
       toast.success(this.success, {
         position: POSITION.TOP_CENTER,
         draggable: true,
       });
-    }if(this.error)
-    {
+    }
+    if(this.error){
       toast.error(this.error, {
         position: POSITION.TOP_CENTER,
+        type: TYPE.WARNING,
         draggable: true,
       });
-    }if(this.warning)
+    }
+    if(this.warning)
     {
       toast.warning(this.warning, {
         position: POSITION.TOP_CENTER,
+        type: TYPE.WARNING,
         draggable: true,
       });
     }

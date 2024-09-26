@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ScheduleTask extends Model
+class ScheduledTask extends Model
 {
     use HasFactory;
     public $fillable =[

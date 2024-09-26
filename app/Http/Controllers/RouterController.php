@@ -9,11 +9,14 @@ use App\Models\InventorieDevice;
 use App\Models\Network;
 use App\Models\Router;
 use App\Models\RouterosAPI;
+use App\Models\ScheduledTask;
 use App\Models\User;
 use App\Services\RouterOSService;
 use App\Services\RouterService;
 use DateTime;
 use Exception;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -62,7 +65,9 @@ class RouterController extends Controller
                 'enable_devices' => $item->enable_devices,
             ];
         });
-
+        $scheduleTask = new ScheduledTaskController();
+        $schedule = $scheduleTask->status('1');
+       // dd($schedule);
         $totalRoutersCount = Router::count();
         //Admin/Routers/Index
         return Inertia::render('Admin/Routers/Index', [
@@ -76,6 +81,7 @@ class RouterController extends Controller
             ],
             'success' => session('success') ?? null,
             'totalRoutersCount' => $totalRoutersCount,
+            'schedule' => $schedule,
         ]);
     }
 
@@ -150,7 +156,50 @@ class RouterController extends Controller
         return Redirect::route('routers')->with('success', 'Router Eliminado Con Éxito');
     }
 
+    public function sendPing($id)
+    {
+        $router = Router::findOrFail($id);
+        $ip = $router -> ip_address;
+        $message = "Hola";
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $message = "Dirección IP no válida: " . $ip . "\n";
+          //  return false;
+        }
+    
+        // Determinar el comando 'ping' según el sistema operativo
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            // Comando para Windows
+            $pingResult = shell_exec("ping -n 4 " . escapeshellarg($ip));
+        } else {
+            // Comando para Linux/macOS
+            $pingResult = shell_exec("ping -c 4 " . escapeshellarg($ip));
+        }
+    
+        // Verificar si el ping fue exitoso (depende del SO)
+        if (stripos(PHP_OS, 'WIN') === 0) {
+            // Para Windows, verificar si se recibió el número completo de respuestas
 
+        
+            if (strpos($pingResult, 'recibidos = 4') == true) {
+                $message = "El dispositivo está en línea.\n";
+              //  return true;
+            } else {
+                $message = "El dispositivo no responde al ping.\n";
+               // return false;
+            }
+        } else {
+            // Para Linux/macOS, verificar si no hay pérdida de paquetes
+            if (strpos($pingResult, '0% packet loss') !== false) {
+                $message = "El dispositivo está en línea.\n";
+                //return true;
+            } else {
+                $message = "El dispositivo no responde al ping.\n";
+               // return false;
+            }
+        }
+
+        return Redirect::route('routers')->with('success', $message);
+    }
     public function sync($id)
     {
         try {
@@ -298,6 +347,8 @@ class RouterController extends Controller
                 'total' => $devices->total(),
             ],
             'success' => session('success') ?? null,
+            'error' => session('error') ?? null,
+            'warning' => session('warning') ?? null,
             'totalDevicesCount' => $totalDevicesCount,
             'users' => $users,
             'inv_devices' => $inv_devices,

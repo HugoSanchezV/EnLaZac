@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ScheduleTask;
+use App\Models\ScheduledTask;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -11,10 +11,10 @@ Artisan::command('inspire', function () {
         
 //Schedule de Ping-devices 
 Schedule::call(function(){
-    $task = ScheduleTask::where('task_name', 'ping-devices')->first();
+    $task = ScheduledTask::where('task_name', 'ping-routers')->first();
 
         if ($task && $task->enabled) {
-            Artisan::command('app:ping-devices');
+            Artisan::command('app:ping-routers');
         }
 })->everyThirtyMinutes();
 

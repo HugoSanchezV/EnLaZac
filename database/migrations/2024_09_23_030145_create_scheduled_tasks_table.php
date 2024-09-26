@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('scheduled_tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('task-name');
+            $table->string('task_name');
             $table->boolean('enabled')->default(false);
             $table->timestamps();
         });

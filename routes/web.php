@@ -10,6 +10,7 @@ use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
+use App\Http\Controllers\ScheduledTaskController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -54,7 +55,10 @@ Route::middleware([
     Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
     // -- devices
     Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
-
+    //
+    Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
+    //Automatización del ping para routers
+    Route::put('/routers/scheduled/ping/{id}',     [ScheduledTaskController::class, 'toggleTask'])->name('routers.scheduled.ping');
     // Devices
     Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
     Route::get('/devices/show',                  [DevicesController::class, 'show'])->name('devices.show');

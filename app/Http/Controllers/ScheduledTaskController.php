@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ScheduleTask;
+use App\Models\ScheduledTask;
 use Illuminate\Support\Facades\Schedule;
-class ScheduleTaskController extends Controller
+class ScheduledTaskController extends Controller
 {
-    public function toggleTask(Request $request, $id)
+    public function toggleTask($id)
     {
-        $task = ScheduleTask::find($id);
+        $task = ScheduledTask::find($id);
         if ($task) {
             $task->enabled = !$task->enabled;  // Alternar entre activado/desactivado
             $task->save();
@@ -19,9 +19,14 @@ class ScheduleTaskController extends Controller
 
         return redirect()->back()->with('error', 'No se encontró la tarea.');
     }
-    public function singlePing(Request $request, $id)
+    public function status($id)
     {
-        
+        $task = ScheduledTask::find($id);
+        if ($task) {
+            return $task->enabled;
+        }
+
+        return redirect()->back()->with('error', 'Error al mostrar el estado de la automatización del ping');
     }
     
 }

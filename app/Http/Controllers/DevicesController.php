@@ -276,7 +276,7 @@ class DevicesController extends Controller
             }
         }
         $message = '';
-        $type = 'error';
+        
         switch($count)
         {
             case 0:
@@ -297,15 +297,17 @@ class DevicesController extends Controller
                 break;
             case 4:
                 $message = "Se han recibido todos lo paquetes exitosamente";
+                $type = 'success';
                 break;
                 
         }
         
-        $API->disconnect();
 
-        //dd($message);
-        return redirect()->route('routers.devices', ['router' => $device->router_id])
-        ->with('error', $message);
+        $API->disconnect();
+ 
+        //dd(print_r($result));
+        return Redirect::route('routers.devices', ['router' => $device->router_id])
+        ->with($type, $message);
 
     }
     public function setDeviceStatus(Device $device)
