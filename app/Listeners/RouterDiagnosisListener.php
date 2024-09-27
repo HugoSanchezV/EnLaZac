@@ -28,7 +28,7 @@ class RouterDiagnosisListener
         // Excluir al usuario que realizó la orden
         ->each(function(User $user) use ($event) {
             // Enviar notificación a los usuarios seleccionados
-            Notification::send($user, new RouterDiagnosisNotification($event->router));
+            Notification::send($user, new RouterDiagnosisNotification($event->message));
         });
     }
 }

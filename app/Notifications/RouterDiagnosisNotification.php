@@ -8,14 +8,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RouterDiagnosisNotification extends Notification
+class RouterDiagnosisNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $router;
-    public function __construct(Router $router)
+    public $message;
+    public function __construct($message)
     {
-        $this->router = $router;
+
+        $this->message = $message;
     }
 
     /**
@@ -47,8 +48,7 @@ class RouterDiagnosisNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'id' => $this->router->id,
-            'ip_address' => $this->router->ip_address,
+            'message' => $this->message,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\RouterDiagnosisEvent;
 use App\Models\Router;
 use Illuminate\Console\Command;
 
@@ -25,22 +26,19 @@ class PingRouters extends Command
     public function handle()
     {
         $routers = Router::all();
+        $message = "";
 
         foreach($routers as $router)
         {
-            if(self::sendPing($router->ip_address))
-            {
-                self::enviarCorreo($router);
-                
-            }else{
-                
-            }
+            $message = "Router: ".$router->ip_address."\n Estado: ".$message;
         }
+      //  $this->info($message);
+        self::enviarCorreo($message);
     }
     public function sendPing($ip)
     {
         if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $message = "Dirección IP no válida: " . $ip . "\n";
+            "Dirección IP no válida: " . $ip . "\n";
           //  return false;
         }
     
@@ -59,27 +57,34 @@ class PingRouters extends Command
 
         
             if (strpos($pingResult, 'recibidos = 4') == true) {
-                $message = "El dispositivo está en línea.\n";
-                return true;
+                return "Todos los paquetes recibidos.\n";
+               // return true;
               //  return true;
-            } else {
-                $message = "El dispositivo no responde al ping.\n";
-                return false;
+            } else if (strpos($pingResult, 'recibidos = 3') == true) {
+                return "Se recibieron 3 paquetes.\n";
                // return false;
+               // return false;
+            }else if (strpos($pingResult, 'recibidos = 2') == true) {
+                return "Se recibieron 2 paquetes.\n";
+            }else if (strpos($pingResult, 'recibidos = 1') == true) {
+                return "Se recibió 1 paquete.\n";
+
+            }else{
+                return "Perdida total de paquetes.\n";
             }
         } else {
             // Para Linux/macOS, verificar si no hay pérdida de paquetes
             if (strpos($pingResult, '0% packet loss') !== false) {
-                $message = "El dispositivo está en línea.\n";
-                return true;
+                return "El dispositivo está en línea.\n";
+                //return true;
             } else {
-                $message = "El dispositivo no responde al ping.\n";
-                return false;
+               return  "El dispositivo no responde al ping.\n";
+                //return false;
             }
         }
 
     }
-    public function enviarCorreo(){
-
+    public function enviarCorreo($message){
+        event(new RouterDiagnosisEvent($message));
     }
 }

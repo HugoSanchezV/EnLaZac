@@ -18,10 +18,12 @@ class RouterDiagnosisEvent
     /**
      * Create a new event instance.
      */
-    public $router;
-    public function __construct(Router $router)
+    public $message;
+    public function __construct($message)
     {
-        $this->router = $router;
+    
+        $this->message = $message;
+
     }
 
     /**

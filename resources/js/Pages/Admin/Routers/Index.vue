@@ -1,5 +1,5 @@
 <script setup>
-import { router } from "@inertiajs/vue3";
+import { router,useForm } from "@inertiajs/vue3";
 import { onMounted, toRefs, watch } from "vue";
 import { useToast, POSITION, TYPE } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
@@ -11,11 +11,14 @@ const props = defineProps({
   totalRoutersCount: Number,
   schedule: Number,
 });
+
 onMounted(() => {
   if(props.schedule == true){
     document.getElementById('activated').checked = true;
   }
+  
 });
+
 
 const updateStatus = ( ) => {
   const toast = useToast();
@@ -32,6 +35,7 @@ const updateStatus = ( ) => {
 
       listeners: {
         accept: () => {
+         // event.stopPropagation();     // Evitar que el evento burbujee a otros elementos
           const url = route("routers.scheduled.ping", '1');
 
           router.put(url, () => {
@@ -39,12 +43,19 @@ const updateStatus = ( ) => {
               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
             };
           });
+      
+           const activatedCheckbox = document.getElementById('activated');
+            activatedCheckbox.checked = !props.success;
+
         },
+
         cancel: () =>{
-          alert(props.schedule);
-          const activatedCheckbox = document.getElementById('activated');
-          activatedCheckbox.checked = !activatedCheckbox.checked;
+         
+            const activatedCheckbox = document.getElementById('activated');
+            activatedCheckbox.checked = props.success;
+          
         }
+  
       },
 
     },
@@ -76,6 +87,7 @@ const headers = [
   "Disp. Activos",
   "Acciones",
 ];
+
 const filters = ["id", "usuario", "ip"];
 </script>
 
@@ -87,7 +99,7 @@ const filters = ["id", "usuario", "ip"];
           <h2>Routers</h2>
         </div>
         <div class="flex gap-2">
-          <div class="flex item-center justify-center gap-2">
+          <div v-if="props.routers.data.length != 0" class="flex item-center justify-center gap-2">
             <div style="align-content: center;">
               <p class="">Envio automático de ping</p>
             </div>
@@ -99,6 +111,7 @@ const filters = ["id", "usuario", "ip"];
                 class="sr-only peer"
                 id="activated"
                 @click="updateStatus"
+                v-model="isActived"
               />
               <div
                 class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-100 peer-focus:ring-gray-100 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-blue-400"
@@ -198,6 +211,7 @@ export default {
       q: "",
       attribute: "id",
       type: "todos",
+      isActived: false,
     };
   },
 

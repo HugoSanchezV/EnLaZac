@@ -13,10 +13,12 @@ Artisan::command('inspire', function () {
 Schedule::call(function(){
     $task = ScheduledTask::where('task_name', 'ping-routers')->first();
 
-        if ($task && $task->enabled) {
-            Artisan::command('app:ping-routers');
+        if ($task->enabled) {
+
+           Artisan::call('app:ping-routers');
         }
-})->everyThirtyMinutes();
+       // $this->info('dsad');*/
+})->everyFiveSeconds();
 
 Schedule::command('app:check-contracts')->daily();
-Schedule::command('app:ping-devices')->everyThirtyMinutes();
+//Schedule::command('app:ping-devices')->everyThirtyMinutes();
