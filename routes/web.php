@@ -60,8 +60,9 @@ Route::middleware([
         Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
         //
         Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
-        //Automatización del ping para routers
+        //-- Automatización del ping para routers
         Route::put('/routers/scheduled/ping/{id}',     [ScheduledTaskController::class, 'toggleTask'])->name('routers.scheduled.ping');
+       
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
         Route::get('/devices/show',                  [DevicesController::class, 'show'])->name('devices.show');
@@ -69,10 +70,11 @@ Route::middleware([
         Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
         Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');
         Route::put('/devices/update/{device}',          [DevicesController::class, 'update'])->name('devices.update');
-        Route::delete('/devices/delete/{device}',          [DevicesController::class, 'destroy'])->name('devices.destroy');
+        Route::delete('/devices/delete/{device}',          [DevicesController::class, 'destroy'])->name('devices.destroy');      
         // -- status 
         Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
         Route::get('/devices/set/device/ping/{device}',  [DevicesController::class, 'sendPing'])->name('devices.ping');
+        
         // inventorie_devices
         Route::get('/inventorie/devices',                 [InventorieDevicesController::class, 'index'])->name('inventorie.devices.index');
         Route::get('/inventorie/devices/show/{inventorieDevice}', [InventorieDevicesController::class, 'show'])->name('inventorie.devices.show');
@@ -81,22 +83,15 @@ Route::middleware([
         Route::get('/inventorie/devices/edit/{device}',          [InventorieDevicesController::class, 'edit'])->name('inventorie.devices.edit');
         Route::put('/inventorie/devices/update/{device}',          [InventorieDevicesController::class, 'update'])->name('inventorie.devices.update');
         Route::delete('/inventorie/devices/delete/{device}',          [InventorieDevicesController::class, 'destroy'])->name('inventorie.devices.destroy');
+        
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
-        Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
-        Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
-        Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
-        Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
-        Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
-        Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
         Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
 
+        //Leer y marcado como leída las notificaciones
         Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
         Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
-        //Tickets user
-        //Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
-        //Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
-
+       
         //Contracts Coordi
         Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
         Route::get('/contracts/create',          [ContractController::class, 'create'])->name('contracts.create');
@@ -115,7 +110,15 @@ Route::middleware([
         Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
     });
-
+    //Vista generales
+    Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
+    Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
+    Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
+    Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
+    Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
+    Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
+    Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
+    
     //Vistas del usuario
     Route::middleware(['rol:0'])->group(function(){
         Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');

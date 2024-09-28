@@ -26,16 +26,6 @@ const switchToTeam = (team) => {
     }
   );
 };
-const formattedDate = (dateCreation) => {
-      // Convertimos la fecha ISO a un objeto Date
-      const date = new Date(dateCreation);
-      
-      // Formateamos como "DD/MM/YYYY HH:mm"
-      const formattedDate = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-     // alert("");
-      return formattedDate;
-    }
-
 const logout = () => {
   router.post(route("logout"));
 };
@@ -47,7 +37,6 @@ const menuIsOpen = ref(false);
 const hello = () => {
   alert("hola");
 };
-
 const closeMenu = () => {
   menuIsOpen.value = false;
 };
@@ -55,6 +44,16 @@ const closeMenu = () => {
 const openMenu = () => {
   menuIsOpen.value = true;
 };
+const formattedDate = (dateCreation) => {
+      // Convertimos la fecha ISO a un objeto Date
+      const date = new Date(dateCreation);
+      
+      // Formateamos como "DD/MM/YYYY HH:mm"
+      const formattedDate = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+     // alert("");
+      return formattedDate;
+    }
+
 
 </script>
 
