@@ -41,8 +41,8 @@ Route::middleware([
     Route::post('/usuarios/store',          [UserController::class, 'store'])->name('usuarios.store');
     Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])->name('usuarios.edit');
     Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])->name('usuarios.update');
-    Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
-
+    Route::get('/usuarios/to/excel',  [UserController::class, 'excel'])->name('usuarios.excel');
+    
     //Routers
     // -- Resource 
     Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');

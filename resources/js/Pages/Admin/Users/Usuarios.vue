@@ -1,6 +1,7 @@
 <script setup>
 import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
+import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   users: Object,
@@ -11,6 +12,8 @@ const props = defineProps({
 
 const { users, success } = toRefs(props);
 const toast = useToast();
+
+const toRouteExport = 'usuarios.excel'
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -59,6 +62,9 @@ const filters = ["id", "nombre", "alias", "email"];
       </div>
     </template>
     <template v-slot:content>
+      
+      <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
+
       <div>
         <div v-if="props.totalUsersCount > 0">
           <!-- Esta es el inicio de la tabla -->

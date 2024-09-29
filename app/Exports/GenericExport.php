@@ -2,43 +2,61 @@
 
 namespace App\Exports;
 
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class GenericExport implements FromQuery, WithHeadings
+class GenericExport implements FromQuery, WithHeadings, WithMapping, WithStyles
 {
-    protected $model;
-    protected $columns;
+    protected $query;
+    protected $headings;
+    protected $mappingCallback;
 
-    /**
-     * Constructor para recibir el modelo y las columnas dinámicamente
-     */
-    public function __construct(Model $model, array $columns = ['*'])
+    public function __construct(Builder $query, array $headings, callable $mappingCallback)
     {
-        $this->model = $model;
-        $this->columns = $columns;
+        $this->query = $query;
+        $this->headings = $headings;
+        $this->mappingCallback = $mappingCallback;
     }
 
-    /**
-     * Define la consulta con las columnas específicas o todas las columnas si no se especifican
-     */
     public function query()
     {
-        return $this->model->newQuery()->select($this->columns);
+        return $this->query;
     }
 
-    /**
-     * Encabezados basados en las columnas proporcionadas
-     */
     public function headings(): array
     {
-        if ($this->columns === ['*']) {
-            // Si seleccionamos todas las columnas, obtenemos los nombres de los campos del modelo
-            return array_keys(\Schema::getColumnListing($this->model->getTable()));
-        }
+        return $this->headings;
+    }
 
-        // Si seleccionamos columnas específicas, usamos los nombres de esas columnas
-        return $this->columns;
+    public function map($item): array
+    {
+        return call_user_func($this->mappingCallback, $item);
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1 => [
+                'font' => [
+                    'bold' => true,
+                    'color' => ['argb' => 'FFFFFF'],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'color' => ['argb' => '494848'],
+                ],
+            ],
+        ];
+    }
+
+    public function afterSheet(Worksheet $sheet)
+    {
+        foreach ($sheet->getColumnIterator() as $column) {
+            $sheet->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
+        }
     }
 }

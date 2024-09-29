@@ -3,20 +3,15 @@ import { Link } from "@inertiajs/vue3";
 import { defineProps } from "vue";
 
 const props = defineProps({
-  model: String,
-  columns: Array,
-})
-
-
+  toRouteExport: String,
+});
+const urlEsxport = route(props.toRouteExport);
 </script>
 <template>
   <div class="flex justify-center md:justify-start pb-2 pr-2 gap-1">
-    <Link
+    <a
       class="py-2 px-3 bg-slate-600 text-white flex gap-1 justify-center text-sm hover:bg-slate-500 rounded-md"
-      :href="route('excel.export', {
-        model: model,
-        columns: columns,
-      })"
+      :href="urlEsxport"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +29,7 @@ const props = defineProps({
       </svg>
 
       Exportar
-    </Link>
+    </a>
 
     <Link
       class="py-2 px-3 bg-slate-600 text-white flex gap-1 justify-center text-sm hover:bg-slate-500 rounded-md"

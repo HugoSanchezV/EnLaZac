@@ -7,14 +7,14 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Events\RegisterUserEvent;
-use App\Models\Contract;
-use App\Models\Device;
+use App\Exports\GenericExport;
 use App\Models\Plan;
-use App\Models\Ticket;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -68,7 +68,7 @@ class UserController extends Controller
                 'total' => $users->total(),
             ],
             'success' => session('success') ?? null,
-            'totalUsersCount' => $totalUsersCount 
+            'totalUsersCount' => $totalUsersCount
         ]);
     }
 
@@ -82,15 +82,14 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('ticket', 'contract', 'device')->findOrFail($id);
-        
+
         $contract = $user->contract->first();
-        $device = $user -> device -> first(); 
-        $plan = null; 
-        if(!is_null($contract))
-        {
+        $device = $user->device->first();
+        $plan = null;
+        if (!is_null($contract)) {
             $plan = Plan::find($contract->plan_id);
         }
-        
+
 
         return Inertia::render('Admin/Users/Show', [
             'user' => $user,
@@ -114,7 +113,8 @@ class UserController extends Controller
         return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');
     }
 
-    static function make_register_notification($user){
+    static function make_register_notification($user)
+    {
         event(new RegisterUserEvent($user));
     }
     public function edit($id)
@@ -146,5 +146,32 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
         return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito');
+    }
+
+    public function excel()
+    {
+        $query = User::query()
+            ->where('admin', '!=', 1)
+            ->select('id', 'name', 'alias', 'email', 'admin');
+
+        $headings = [
+            'ID',
+            'Nombre',
+            'Alias',
+            'Email',
+            'Rol',
+        ];
+
+        $mappingCallback = function ($user) {
+            return [
+                $user->id,
+                $user->name,
+                $user->alias ?? 'Sin asignar',
+                $user->email,
+                UserService::getTypeUser($user->admin)
+            ];
+        };
+
+        return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'usuarios.xlsx');
     }
 }
