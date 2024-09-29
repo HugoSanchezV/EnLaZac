@@ -2,11 +2,9 @@
 
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
-use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
-use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
@@ -34,27 +32,6 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('DashboardBase');
     })->name('dashboard');
-    Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
-    Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
-    Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
-    Route::post('/usuarios/store',          [UserController::class, 'store'])->name('usuarios.store');
-    Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])->name('usuarios.edit');
-    Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])->name('usuarios.update');
-    Route::get('/usuarios/to/excel',  [UserController::class, 'excel'])->name('usuarios.excel');
-
-    //Routers
-    // -- Resource 
-    Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
-    Route::get('/routers/create',           [RouterController::class, 'create'])->name('routers.create');
-    Route::post('/routers/store',           [RouterController::class, 'store'])->name('routers.store');
-    Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');
-    Route::put('/routers/update/{id}',      [RouterController::class, 'update'])->name('routers.update');
-    Route::delete('/routers/delete/{id}',   [RouterController::class, 'destroy'])->name('routers.destroy');
-    // -- sync
-    Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
-    // -- devices
-    Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
-
 
     Route::middleware(['rol:1,2,3'])->group(function () {
         // Usuarios
@@ -65,6 +42,8 @@ Route::middleware([
         Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])->name('usuarios.edit');
         Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])->name('usuarios.update');
         Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
+        Route::get('/usuarios/to/excel',  [UserController::class, 'exportExcel'])->name('usuarios.excel');
+
 
         //Routers
         // -- Resource 
@@ -74,10 +53,13 @@ Route::middleware([
         Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');
         Route::put('/routers/update/{id}',      [RouterController::class, 'update'])->name('routers.update');
         Route::delete('/routers/delete/{id}',   [RouterController::class, 'destroy'])->name('routers.destroy');
+        Route::get('/routers/to/excel',  [RouterController::class, 'exportExcel'])->name('routers.excel');
+
         // -- sync
         Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
         // -- devices
         Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
+        Route::get('/routers/{router}/devices/to/excel',     [RouterController::class, 'devicesExportExcel'])->name('routers.devices.excel');
         //
         Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
         //-- Automatización del ping para routers
@@ -103,6 +85,7 @@ Route::middleware([
         Route::get('/inventorie/devices/edit/{device}',          [InventorieDevicesController::class, 'edit'])->name('inventorie.devices.edit');
         Route::put('/inventorie/devices/update/{device}',          [InventorieDevicesController::class, 'update'])->name('inventorie.devices.update');
         Route::delete('/inventorie/devices/delete/{device}',          [InventorieDevicesController::class, 'destroy'])->name('inventorie.devices.destroy');
+        Route::get('/inventorie/devices/to/excel',          [InventorieDevicesController::class, 'exportExcel'])->name('inventorie.devices.excel');
 
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
@@ -120,6 +103,8 @@ Route::middleware([
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
         Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
+        Route::get('/contracts/to/excel',  [ContractController::class, 'exportExcel'])->name('contracts.excel');
+
 
         //Planes de internet
         Route::get('/plans',                     [PlanController::class, 'index'])->name('plans');
@@ -147,9 +132,4 @@ Route::middleware([
 
 
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
-
-
-    Route::get('/excel/export/{model}', [ExcelController::class, 'export'])->name('excel.export');
 });
-
-Route::get('/test/api', [RouterosApiController::class, 'index'])->name('test.index');

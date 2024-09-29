@@ -3,28 +3,47 @@
 namespace App\Exports;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class GenericExport implements FromQuery, WithHeadings, WithMapping, WithStyles
+class GenericExport implements FromQuery, FromCollection, WithHeadings, WithMapping, WithStyles
 {
-    protected $query;
+    protected $data; // Puede ser una consulta o colección
     protected $headings;
     protected $mappingCallback;
 
-    public function __construct(Builder $query, array $headings, callable $mappingCallback)
+    public function __construct($data, array $headings, callable $mappingCallback)
     {
-        $this->query = $query;
+        $this->data = $data;
         $this->headings = $headings;
         $this->mappingCallback = $mappingCallback;
     }
 
+    // Implementación de FromQuery
     public function query()
     {
-        return $this->query;
+        if ($this->data instanceof Builder) {
+            return $this->data;
+        }
+
+        // Devolver una colección vacía si no es una consulta
+        return collect();
+    }
+
+    // Implementación de FromCollection
+    public function collection()
+    {
+        if ($this->data instanceof Collection) {
+            return $this->data;
+        }
+
+        // Devolver una colección vacía si no es una colección
+        return collect();
     }
 
     public function headings(): array

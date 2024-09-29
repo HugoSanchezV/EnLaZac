@@ -8,7 +8,12 @@ import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import ModalUsers from "../Components/ModalUsers.vue";
 
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
+import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 // ACCION DE ELIMINAR
+
+const toRouteExport = "routers.devices.excel";
+const urlComplete = route(toRouteExport, route().params.router);
+
 const destroy = (id) => {
   const toast = useToast();
 
@@ -145,6 +150,10 @@ const getTag = (cellIndex) => {
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <base-export-excel
+      :toRouteExport="toRouteExport"
+      :url-complete="urlComplete"
+    ></base-export-excel>
     <div
       class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
     >
@@ -231,82 +240,6 @@ const getTag = (cellIndex) => {
             </ul>
           </div>
         </div>
-
-        <!-- Drop button 2  -->
-        <!-- <div>
-          <button
-            id="dropdownRadioButton"
-            @click="toggleDropdown2"
-            class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-            type="button"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-              />
-            </svg>
-
-            <span class="bg-gray-400 py-1 px-2 text-white rounded-md">
-              Usuarios
-            </span>
-
-            tipo {{ currentUser }}
-            <svg
-              class="w-2.5 h-2.5 ms-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
-
-          <!-- Dropdown menu -->
-        <!-- <div
-            v-if="dropdownOpen2"
-            id="dropdownRadio2"
-            class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
-          >
-            <ul class="p-3 space-y-1 text-sm text-gray-700">
-              <li v-for="(type, index) in typeUsers" :key="index">
-                <div class="flex items-center p-2 rounded hover:bg-gray-100">
-                  <input
-                    :id="'type-radio-' + index"
-                    type="radio"
-                    :value="type"
-                    v-model="currentUser"
-                    @click="selectUser(type)"
-                    name="type-radio"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
-                  />
-                  <label
-                    :for="'type-radio-' + index"
-                    class="w-full ms-2 text-sm font-medium text-gray-900 rounded uppercase cursor-pointer"
-                    >{{ type }}</label
-                  >
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div> -->
-
-        <!-- Final dfrop nbuton  -->
       </div>
       <!-- final de filtros -->
       <div class="relative">
@@ -531,9 +464,10 @@ const getTag = (cellIndex) => {
 
               <Link
                 :href="route('devices.ping', row.id)"
-                class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
-                Enviar Ping
+                <span class="material-symbols-outlined"> network_ping </span>
+                Ping
               </Link>
               <Link
                 v-if="edit"

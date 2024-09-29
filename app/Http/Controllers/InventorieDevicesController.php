@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Http\Requests\InventorieDevice\StoreInventorieDeviceRequest;
 use App\Http\Requests\InventorieDevice\UpdateInventorieDeviceRequest;
 use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
 use App\Services\InventorieDeviceService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 class InventorieDevicesController extends Controller
 {
@@ -179,5 +181,36 @@ class InventorieDevicesController extends Controller
         $device = InventorieDevice::findOrFail($id);
         $device->state = $state;
         $device->save();
+    }
+
+    public function exportExcel()
+    {
+        $query = InventorieDevice::query();
+
+        $headings = [
+            'Estado',
+            'ID',
+            'Mac Address',
+            'Descripción',
+            'Marca',
+            'Agregado',
+            'Modificado',
+        ];
+
+        $mappingCallback = function ($device) {
+            return [
+                $device->state ? 'En uso' : 'Disponible',
+                $device->id,
+                $device->mac_address,
+                $device->description,
+                $device->brand,
+                $device->created_at,
+                $device->update_at,
+            ];
+        };
+
+        $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
+
+        return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Inventario de Dispositivos ' . $timestamp . '.xlsx');
     }
 }

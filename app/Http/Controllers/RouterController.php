@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
+use App\Exports\RouterDevicesExport;
 use App\Http\Requests\Router\StoreRouterRequest;
 use App\Http\Requests\Router\UpdateRouterRequest;
 use App\Models\Device;
@@ -20,8 +22,10 @@ use Symfony\Component\Process\Process;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RouterController extends Controller
 {
@@ -67,7 +71,7 @@ class RouterController extends Controller
         });
         $scheduleTask = new ScheduledTaskController();
         $schedule = $scheduleTask->status('1');
-       // dd($schedule);
+        // dd($schedule);
         $totalRoutersCount = Router::count();
         //Admin/Routers/Index
         return Inertia::render('Admin/Routers/Index', [
@@ -159,13 +163,13 @@ class RouterController extends Controller
     public function sendPing($id)
     {
         $router = Router::findOrFail($id);
-        $ip = $router -> ip_address;
+        $ip = $router->ip_address;
         $message = "Hola";
         if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $message = "Dirección IP no válida: " . $ip . "\n";
-          //  return false;
+            //  return false;
         }
-    
+
         // Determinar el comando 'ping' según el sistema operativo
         if (stripos(PHP_OS, 'WIN') === 0) {
             // Comando para Windows
@@ -174,18 +178,18 @@ class RouterController extends Controller
             // Comando para Linux/macOS
             $pingResult = shell_exec("ping -c 4 " . escapeshellarg($ip));
         }
-    
+
         // Verificar si el ping fue exitoso (depende del SO)
         if (stripos(PHP_OS, 'WIN') === 0) {
             // Para Windows, verificar si se recibió el número completo de respuestas
 
-        
+
             if (strpos($pingResult, 'recibidos = 4') == true) {
                 $message = "El dispositivo está en línea.\n";
-              //  return true;
+                //  return true;
             } else {
                 $message = "El dispositivo no responde al ping.\n";
-               // return false;
+                // return false;
             }
         } else {
             // Para Linux/macOS, verificar si no hay pérdida de paquetes
@@ -194,7 +198,7 @@ class RouterController extends Controller
                 //return true;
             } else {
                 $message = "El dispositivo no responde al ping.\n";
-               // return false;
+                // return false;
             }
         }
 
@@ -353,5 +357,64 @@ class RouterController extends Controller
             'users' => $users,
             'inv_devices' => $inv_devices,
         ]);
+    }
+
+    public function exportExcel()
+    {
+        $query = Router::query();
+
+        $headings = [
+            'ID',
+            'Usuario',
+            'IP',
+            'Dispositivos',
+            'Disp. Activos',
+        ];
+
+        $mappingCallback = function ($contract) {
+            return [
+                'id' => $contract->id,
+                'usuario' => $contract->user ?? 'None',
+                'ip' => $contract->ip_address ?? 'None',
+                'dispositivos' => $contract->total_devices ?? 'None',
+                'disp. activos' => $contract->enable_devices,
+            ];
+        };
+
+        return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'routers.xlsx');
+    }
+
+    public function devicesExportExcel(Router $router)
+    {
+        $dataRouter = Router::with(['devices.user', 'devices.inventorieDevice'])->findOrFail($router->id);
+        // es el metodo devies que pertenece a router
+        $query = $dataRouter->devices;
+
+        $headings = [
+            'ID',
+            'Internal ID',
+            'Device ID',
+            'Device Mac',
+            'User ID',
+            'User Name',
+            'Comment',
+            'IP Address',
+            'Status',
+        ];
+
+        $mappingCallback = function ($device) {
+            return [
+                $device->id,
+                $device->device_internal_id ?? 'Sin asignar',
+                $device->inventorieDevice->id ?? 'Sin asignar',
+                $device->inventorieDevice->mac_address ?? 'Sin asignar',
+                $device->user_id ?? 'Sin asignar',
+                $device->user->name ?? 'Sin asignar',
+                $device->comment,
+                $device->address,
+                $device->disabled ? 'Inactivo' : 'Activo',
+            ];
+        };
+        return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Dispositivos de Router ' . $router->ip_address . '.xlsx');
     }
 }

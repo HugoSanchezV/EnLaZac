@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Models\Contract;
 use App\Models\User;
 use App\Models\Plan;
@@ -12,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ContractController extends Controller
 {
@@ -138,5 +140,36 @@ class ContractController extends Controller
         $contract = Contract::findOrFail($id);
         $contract->delete();
         return Redirect::route('contracts')->with('success', 'Contrato Eliminado Con Éxito');
+    }
+
+    public function exportExcel()
+    {
+        $query = Contract::with(['user', 'plan']);
+
+        $headings = [
+            'ID',
+            'cliente id',
+            'cliente',
+            'Plan',
+            'Fecha incio',
+            'Fecha Fin',
+            'Estado',
+            'Dirección',
+        ];
+
+        $mappingCallback = function ($contract) {
+            return [
+                'id' => $contract->id,
+                'cliente id' => $contract->user->id ?? 'None',
+                'cliente' => $contract->user->name ?? 'None',
+                'plan' => $contract->plan->name ?? 'None',
+                'fecha incio' => $contract->start_date,
+                'fecha Fin' => $contract->end_date,
+                'estado' => $contract->active ? 'Activo' : 'Inactivo',
+                'dirección' => $contract->address,
+            ];
+        };
+
+        return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'contratos.xlsx');
     }
 }

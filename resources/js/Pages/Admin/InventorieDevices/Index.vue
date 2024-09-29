@@ -1,6 +1,7 @@
 <script setup>
 import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
+import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   devices: Object,
@@ -11,6 +12,7 @@ const props = defineProps({
 
 const { devices, success } = toRefs(props);
 const toast = useToast();
+const toRouteExport = "inventorie.devices.excel";
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -65,6 +67,7 @@ const filters = ["state", "id", "mac address", "descripción", "marca"];
 
     <template v-slot:content>
       <div v-if="props.totalDevicesCount > 0">
+        <base-export-excel :to-route-export="toRouteExport"></base-export-excel>
         <!-- Esta es el inicio de la tabla -->
         <inventorie-table
           :headers="headers"

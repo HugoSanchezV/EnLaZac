@@ -1,8 +1,9 @@
 <script setup>
-import { router,useForm } from "@inertiajs/vue3";
+import { router, useForm } from "@inertiajs/vue3";
 import { onMounted, toRefs, watch } from "vue";
 import { useToast, POSITION, TYPE } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
+import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   routers: Object,
@@ -13,14 +14,12 @@ const props = defineProps({
 });
 
 onMounted(() => {
-  if(props.schedule == true){
-    document.getElementById('activated').checked = true;
+  if (props.schedule == true) {
+    document.getElementById("activated").checked = true;
   }
-  
 });
 
-
-const updateStatus = ( ) => {
+const updateStatus = () => {
   const toast = useToast();
 
   toast(
@@ -35,29 +34,24 @@ const updateStatus = ( ) => {
 
       listeners: {
         accept: () => {
-         // event.stopPropagation();     // Evitar que el evento burbujee a otros elementos
-          const url = route("routers.scheduled.ping", '1');
+          // event.stopPropagation();     // Evitar que el evento burbujee a otros elementos
+          const url = route("routers.scheduled.ping", "1");
 
           router.put(url, () => {
             onError: (error) => {
               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
             };
           });
-      
-           const activatedCheckbox = document.getElementById('activated');
-            activatedCheckbox.checked = !props.success;
 
+          const activatedCheckbox = document.getElementById("activated");
+          activatedCheckbox.checked = !props.success;
         },
 
-        cancel: () =>{
-         
-            const activatedCheckbox = document.getElementById('activated');
-            activatedCheckbox.checked = props.success;
-          
-        }
-  
+        cancel: () => {
+          const activatedCheckbox = document.getElementById("activated");
+          activatedCheckbox.checked = props.success;
+        },
       },
-
     },
     {
       type: TYPE.INFO,
@@ -68,6 +62,7 @@ const updateStatus = ( ) => {
 };
 const { routers, success } = toRefs(props);
 const toast = useToast();
+const toRouteExport = 'routers.excel'
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -98,14 +93,16 @@ const filters = ["id", "usuario", "ip"];
         <div>
           <h2>Routers</h2>
         </div>
-        <div class="flex gap-2">
-          <div v-if="props.routers.data.length != 0" class="flex item-center justify-center gap-2">
-            <div style="align-content: center;">
-              <p class="">Envio automático de ping</p>
+        <div class="flex gap-2 flex-col md:flex-row">
+          <div
+            v-if="props.routers.data.length != 0"
+            class="flex item-center justify-center gap-2 bg-slate-200 py-1 px-2 rounded-md"
+          >
+            <div>
+              <p>Ping Automático</p>
             </div>
-            
+
             <label class="inline-flex items-center cursor-pointer">
-              
               <input
                 type="checkbox"
                 class="sr-only peer"
@@ -122,7 +119,7 @@ const filters = ["id", "usuario", "ip"];
             <Link
               :href="route('routers.create')"
               method="get"
-              class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+              class="flex justify-start md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -141,12 +138,12 @@ const filters = ["id", "usuario", "ip"];
             </Link>
           </div>
         </div>
-        
-        
       </div>
     </template>
     <template v-slot:content>
       <div v-if="totalRoutersCount > 0">
+        <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
+
         <!-- Esta es el inicio de la tabla -->
         <router-table
           :headers="headers"

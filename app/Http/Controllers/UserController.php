@@ -148,7 +148,7 @@ class UserController extends Controller
         return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito');
     }
 
-    public function excel()
+    public function exportExcel()
     {
         $query = User::query()
             ->where('admin', '!=', 1)

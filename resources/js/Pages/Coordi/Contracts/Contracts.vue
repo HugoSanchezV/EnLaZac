@@ -1,6 +1,7 @@
 <script setup>
 import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
+import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   contracts: Object,
@@ -11,6 +12,7 @@ const props = defineProps({
 
 const { contracts, success } = toRefs(props);
 const toast = useToast();
+const toRouteExport = 'contracts.excel'
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -22,7 +24,15 @@ watch(success, (newValue) => {
 });
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
-const filters = ["id", "usuario","plan internet","fecha de inicio","fecha de terminación","¿activo?", "dirección"];
+const filters = [
+  "id",
+  "usuario",
+  "plan internet",
+  "fecha de inicio",
+  "fecha de terminación",
+  "¿activo?",
+  "dirección",
+];
 
 const headers = [
   "Id",
@@ -73,6 +83,7 @@ const headers = [
     <template v-slot:content>
       <div>
         <div v-if="props.totalContractsCount > 0">
+          <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <!-- Esta es el inicio de la tabla -->
           <base-table-contracts
             :headers="headers"

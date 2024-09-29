@@ -13,7 +13,7 @@ const props = defineProps({
 const { users, success } = toRefs(props);
 const toast = useToast();
 
-const toRouteExport = 'usuarios.excel'
+const toRouteExport = "usuarios.excel";
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -24,7 +24,7 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["id", "Nombre", "Alias", "Email", "Rol","Acciones"];
+const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
 const filters = ["id", "nombre", "alias", "email"];
 </script>
 
@@ -62,11 +62,10 @@ const filters = ["id", "nombre", "alias", "email"];
       </div>
     </template>
     <template v-slot:content>
-      
-      <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
-
       <div>
         <div v-if="props.totalUsersCount > 0">
+          <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
+
           <!-- Esta es el inicio de la tabla -->
           <base-table-users
             :headers="headers"
@@ -174,7 +173,12 @@ export default {
 
       this.$inertia.get(
         link,
-        { q: this.q, attribute: this.attribute, type: this.type, order:this.order },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },

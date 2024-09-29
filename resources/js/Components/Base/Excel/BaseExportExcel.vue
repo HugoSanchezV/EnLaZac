@@ -1,17 +1,27 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
 
 const props = defineProps({
   toRouteExport: String,
+  urlComplete: {
+    type: String,
+    default: null,
+  },
 });
-const urlEsxport = route(props.toRouteExport);
+const urlEsxport = ref("");
+
+if (props.urlComplete) {
+  urlEsxport.value = props.urlComplete;
+} else {
+  urlEsxport.value = route(props.toRouteExport);
+}
 </script>
 <template>
   <div class="flex justify-center md:justify-start pb-2 pr-2 gap-1">
     <a
-      class="py-2 px-3 bg-slate-600 text-white flex gap-1 justify-center text-sm hover:bg-slate-500 rounded-md"
       :href="urlEsxport"
+      class="py-2 px-3 bg-slate-600 text-white flex gap-1 justify-center text-sm hover:bg-slate-500 rounded-md"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -33,6 +43,7 @@ const urlEsxport = route(props.toRouteExport);
 
     <Link
       class="py-2 px-3 bg-slate-600 text-white flex gap-1 justify-center text-sm hover:bg-slate-500 rounded-md"
+      href="#"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
