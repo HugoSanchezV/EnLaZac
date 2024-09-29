@@ -2,14 +2,14 @@
 
 namespace App\Listeners;
 
-use App\Events\RegisterUserEvent;
+use App\Events\RouterDiagnosisEvent;
+use App\Models\User;
+use App\Notifications\RouterDiagnosisNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use App\Notifications\RegisterUserNotification;
 use Illuminate\Support\Facades\Notification;
-use App\Models\User;
 
-class RegisterUserListener
+class RouterDiagnosisListener
 {
     /**
      * Create the event listener.
@@ -22,13 +22,13 @@ class RegisterUserListener
     /**
      * Handle the event.
      */
-    public function handle(RegisterUserEvent $event): void
+    public function handle(RouterDiagnosisEvent $event): void
     {
         User::whereIn('admin', [1, 2, 3, 4])
         // Excluir al usuario que realizó la orden
         ->each(function(User $user) use ($event) {
             // Enviar notificación a los usuarios seleccionados
-            Notification::send($user, new RegisterUserNotification($event->user));
+            Notification::send($user, new RouterDiagnosisNotification($event->message));
         });
     }
 }

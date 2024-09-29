@@ -240,21 +240,28 @@ const logout = () => {
 
                                     <div v-for="notification in unreadNotifications" :key="notification.id">
                                         <div v-if="notification.type == 'App\\Notifications\\TicketNotification'">
-
-                                            <Link  :href="route('tickets.show', notification.data.id)"
-                                                class="dropdown-item"
-                                                @click.prevent="handleNotificationClick(notification)">
-                                                <i class="fas fa-envelope"></i> Nuevo ticket No. {{ notification.data.id }}
-                                                <span class="time">{{ notification.created_at }}</span>
-                                            </Link>
+                                        <Link  :href="route('tickets.show', notification.data.id)"
+                                            class="dropdown-item"
+                                            @click.prevent="handleNotificationClick(notification)">
+                                            <i class="fas fa-envelope"></i> Nuevo ticket No. {{ notification.data.id }}
+                                            <span class="time">{{ notification.created_at }}</span>
+                                        </Link>
+                                        </div>
+                                        <div v-else-if="notification.type == 'App\\Notifications\\RouterDiagnosisNotification'">
+                                        <Link  
+                                            class="dropdown-item"
+                                            @click.prevent="handleNotificationClick(notification)">
+                                            <i class="fas fa-envelope"></i> Ping: {{ notification.data.message }}
+                                            <span class="time">{{ notification.created_at }}</span>
+                                        </Link>
                                         </div>
                                         <div v-else>
-                                            <Link  
-                                                class="dropdown-item"
-                                                @click.prevent="handleNotificationClick(notification)">
-                                                <i class="fas fa-envelope"></i> Nuevo usuario registrado id {{ notification.data.id }}
-                                                <span class="time">{{ notification.created_at }}</span>
-                                            </Link>
+                                        <Link  
+                                            class="dropdown-item"
+                                            @click.prevent="handleNotificationClick(notification)">
+                                            <i class="fas fa-envelope"></i> Nuevo usuario registrado id {{ notification.data.id }}
+                                            <span class="time">{{ notification.created_at }}</span>
+                                        </Link>
                                         </div>
                                     </div>
                                 <!--    <Link v-for="notification in unreadNotifications" :key="notification.id"

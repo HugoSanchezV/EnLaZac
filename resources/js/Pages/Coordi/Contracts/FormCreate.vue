@@ -34,28 +34,35 @@ const form = useForm({
 });
 
 const handlePositionClicked = (position) => {
-  form.geolocation.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
-  form.geolocation.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
+  form.geolocation.latitude = position.lat.toFixed(10); // Asignar la latitud con precisión
+  form.geolocation.longitude = position.lng.toFixed(10); // Asignar la longitud con precisión
 };
 const lat = ref(null);
 const lng = ref(null); 
-onMounted(() => {
+const getPosition = () =>{
   if(navigator.geolocation){
     var success = function(position){
-      lat.value = form.geolocation.latitude = position.coords.latitude.toFixed(6),
-      lng.value = form.geolocation.longitude = position.coords.longitude.toFixed(6);
+      lat.value = form.geolocation.latitude = position.coords.latitude.toFixed(10),
+      lng.value = form.geolocation.longitude = position.coords.longitude.toFixed(10);
     }
-
+  
     navigator.geolocation.getCurrentPosition(success, function(msg)
     {
     console.error( msg );
     });
   }
+}
+onMounted(() => {
+  getPosition();
 });
 const getCurrentLocation = () =>
 {
    form.geolocation.latitude = lat,
    form.geolocation.longitude = lng;
+   console.log("Lat: "+lat.value+", Log: "+lng.value);
+   console.log("sacados en este momento");
+    getPosition();
+    console.log("Lat: "+lat.value+", Log: "+lng.value);
 }
 const onDateChange= () =>{
   // Imprimir la fecha seleccionada en la consola

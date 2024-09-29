@@ -26,7 +26,6 @@ const switchToTeam = (team) => {
     }
   );
 };
-
 const logout = () => {
   router.post(route("logout"));
 };
@@ -38,7 +37,6 @@ const menuIsOpen = ref(false);
 const hello = () => {
   alert("hola");
 };
-
 const closeMenu = () => {
   menuIsOpen.value = false;
 };
@@ -46,9 +44,106 @@ const closeMenu = () => {
 const openMenu = () => {
   menuIsOpen.value = true;
 };
+const formattedDate = (dateCreation) => {
+      // Convertimos la fecha ISO a un objeto Date
+      const date = new Date(dateCreation);
+      
+      // Formateamos como "DD/MM/YYYY HH:mm"
+      const formattedDate = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+     // alert("");
+      return formattedDate;
+    }
+
 
 </script>
 
+<style>
+.notification-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    position: relative;
+}
+.notifications-container {
+    max-height: 300px;
+    overflow-y: auto;
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #fff;
+    scroll-behavior: smooth;
+}
+.notification-count {
+    background-color: rgb(255, 0, 0);
+    color: white;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 50%;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 500px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.dropdown-header {
+    background-color: #ffffff;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px solid #ccc;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
+}
+
+.time {
+    font-size: 12px;
+    color: gray;
+}
+
+.dropdown-footer {
+    padding: 10px;
+    text-align: center;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ccc;
+}
+
+.dropdown-footer a {
+    text-decoration: none;
+    color: rgb(188, 137, 255);
+}
+
+.notification-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+</style>
 <template>
   
   <div class="flex h-screen">
@@ -201,7 +296,58 @@ const openMenu = () => {
                     </template>
                   </Dropdown>
                 </div>
+      <!-- Notifications-->
+                            <div class="ms-3 relative">
+                                <div class="notification-dropdown">
+                                <button class="notification-button" @click="toggleDropdown">
+                                    <i class="fas fa-bell"></i>
+                                    <span v-if="unreadNotifications.length > 0" class="notification-count">
+                                    {{ unreadNotifications.length }}
+                                    </span>
+                                </button>
+                                <div v-if="dropdownOpen" id="dropdown-content" class="dropdown-content">
+                                    <div class="dropdown-header">Notificaciones no leídas</div>
+                                    <div v-if="unreadNotifications.length > 0" class="notifications-container">
 
+                                    <div v-for="notification in unreadNotifications" :key="notification.id">
+                                        <div v-if="notification.type == 'App\\Notifications\\TicketNotification'">
+
+                                            <Link  :href="route('tickets.show', notification.data.id)"
+                                                class="dropdown-item"
+                                                @click.prevent="handleNotificationClick(notification)">
+                                                <i class="fas fa-envelope"></i> Nuevo ticket No. {{ notification.data.id }}
+                                                <span class="time">{{ notification.created_at }}</span>
+                                            </Link>
+                                        </div>
+                                        <div v-else-if="notification.type == 'App\\Notifications\\RouterDiagnosisNotification'">
+                                          <Link  
+                                                :href = "route('routers')"
+                                                class="dropdown-item"
+                                                @click.prevent="handleNotificationClick(notification)">
+                                                <i class="fas fa-envelope"></i> Ping: {{ notification.data.message }}
+                                                <span class="time">{{ formattedDate(notification.created_at) }}</span>
+                                            </Link>
+                                        </div>
+                                        <div v-else>
+                                            <Link  
+                                                :href = "router('user.show',notification.data.id)"
+                                                class="dropdown-item"
+                                                @click.prevent="handleNotificationClick(notification)">
+                                                <i class="fas fa-envelope"></i> Nuevo usuario registrado id {{ notification.data.id }}
+                                                <span class="time">{{ notification.created_at }}</span>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div v-else>
+                                    <p>No tienes notificaciones no leídas</p>
+                                    </div>
+                                    <div class="dropdown-footer">
+                                    <a href="#">Ver todas las notificaciones</a>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
                 <!-- Settings Dropdown -->
                 <div class="ms-3 relative">
                   <Dropdown align="right" width="48">
@@ -431,3 +577,57 @@ const openMenu = () => {
     </div>
   </div>
 </template>
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      unreadNotifications: [],
+      dropdownOpen: false
+    };
+  },
+  methods: {
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+      if (this.dropdownOpen) {
+        this.fetchUnreadNotifications();
+      }
+    },
+    fetchUnreadNotifications() {
+      axios.get('/notifications/unread')
+        .then(response => {
+          this.unreadNotifications = response.data;
+        })
+        .catch(error => {
+          console.error('Error al obtener las notificaciones:', error);
+        });
+    },
+    handleNotificationClick(notification) {
+      this.markAsRead(notification.id, notification.data.id);
+    },
+    markAsRead(notificationId, ticketID) {
+      axios.post(`/notifications/read/${notificationId}`)
+        .then(response => {
+          if (response.data.status === 'success') {
+            this.unreadNotifications = this.unreadNotifications.filter(
+              notification => notification.id !== notificationId
+            );
+          }
+        })
+        .catch(error => {
+          console.error('Error al marcar la notificación como leída:', error);
+        });
+    },
+  },
+  mounted() {
+    this.fetchUnreadNotifications(); // Cargar notificaciones al montar el componente
+  },
+  filters: {
+    timeAgo(value) {
+      const date = new Date(value);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    }
+  }
+}
+</script>
