@@ -59,10 +59,7 @@ const getCurrentLocation = () =>
 {
    form.geolocation.latitude = lat,
    form.geolocation.longitude = lng;
-   console.log("Lat: "+lat.value+", Log: "+lng.value);
-   console.log("sacados en este momento");
     getPosition();
-    console.log("Lat: "+lat.value+", Log: "+lng.value);
 }
 const onDateChange= () =>{
   // Imprimir la fecha seleccionada en la consola

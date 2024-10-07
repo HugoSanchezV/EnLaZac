@@ -5,14 +5,18 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
-const form = useForm({
-  subject: "",
-  description: "",  
+const props = defineProps({
+  users: {
+    type: Array,
+    default: () => [],
+  },
 });
 
-
-
-
+const form = useForm({
+  subject: "",
+  description: "", 
+  user_id:"", 
+});
 
 const submit = () => {
   form.post(route("tickets.store"));
@@ -29,10 +33,25 @@ const seleccionar = (valor) => {
       Crea un nuevo ticket de soporte técnico
     </h2>
   </div>
-
+  
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
-      <div>
+      <div v-if="$page.props.auth.user.admin == 1">
+        <div>
+          <InputLabel for="user_id" value="Id del usuario" />
+          <select
+              v-model="form.user_id"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option value="null" selected>Selecciona una opción</option>
+              <option v-for="user in users" :key="user.id" :value="user.id">
+                  {{ user.id + " - " + user.name }}
+              </option>
+            </select>
+        </div>
+        
+      </div>
+      <div class="mt-4">
         <InputLabel for="subject" value="Asunto" />
         <TextInput
           id="subject"
@@ -59,6 +78,8 @@ const seleccionar = (valor) => {
         />
         <InputError class="mt-2" :message="form.errors.description" />
       </div>
+      
+    
 
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton

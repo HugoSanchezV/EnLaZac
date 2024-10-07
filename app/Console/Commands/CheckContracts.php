@@ -4,10 +4,12 @@ namespace App\Console\Commands;
 
 use App\Events\ContractWarningEvent;
 use App\Http\Controllers\DevicesController;
+use App\Http\Controllers\ExtraChargeController;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\Contract;
 use App\Models\Device;
+use App\Models\ExtraCharge;
 use App\Models\User;
 
 class CheckContracts extends Command
@@ -37,12 +39,12 @@ class CheckContracts extends Command
         $mesT = Carbon::today()->month;
         $anoT = Carbon::today()->year;
 
-        //$this->info('DIA DE HOY : '.$diaT);
+        $this->info('DIA DE HOY : '.$diaT);
 
-
+        //END_DATE es igual a la fecha de corte
         $contractTerms = Contract::where('end_date', '<=',$today)->get();
         //INSERTAR CONSULTA DE PAGOS
-
+        $this->info($contractTerms);
 
         //INSERTAR CONDICION PARA SABER SI EL USUARIO HA PAGADO
         foreach($contractTerms as $contract){
@@ -61,9 +63,13 @@ class CheckContracts extends Command
 
                     }elseif ($endDate->day == $diaT)
                     {
+                        
                         //Cortar internet
                         $this->info('SE VA A DESCONECTAR');
                         self::disconectUser($contract);
+                        //Generar cargo
+
+                        self::Extra_charge($contract);
                     }
                 }
             }
@@ -71,6 +77,20 @@ class CheckContracts extends Command
         }
         $this->info('Se han verificado los contratos.');
 
+    }
+    public function extra_charge($contract)
+    {
+        $controller = new ExtraChargeController();
+        $cargo = new ExtraCharge();
+
+        //Set data
+        $cargo->contract_id = $contract->id;
+        $cargo->description = "No pagó antes del día de corte";
+        $cargo->amount = 50;
+        $cargo->paid = false;
+        
+        //$this->info($cargo);
+        $controller->store($cargo);
     }
     public function sendEmail($contract)
     {

@@ -5,12 +5,15 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   mounted() {
     paypal
       .Buttons({
         createOrder: async (data, actions) => {
-          const response = await axios.post("/api/paypal/create-order");
+         // alert("bien");
+          const response = await axios.post('/api/paypal/create-order');
+          ///alert("bien");
           return response.data.id;
         },
 
@@ -26,7 +29,7 @@ export default {
         },
 
         onError: (err) => {
-          console.error(err);
+          console.error("Error aqui: "+err.message);
           alert("Error en el proceso de pago.");
         },
       })

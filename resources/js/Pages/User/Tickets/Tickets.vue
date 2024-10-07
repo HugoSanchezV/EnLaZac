@@ -26,7 +26,6 @@ const headers = [
   "Asunto",
   "Descripción",
   "Estado",
-  "Cliente",
   "Creación",
   "Acciones",
 ];

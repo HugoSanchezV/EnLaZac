@@ -11,9 +11,6 @@ const form = useForm({
 });
 
 
-
-
-
 const submit = () => {
   form.post(route("tickets.store"), {
     onFinish: () => form.reset("password", "password_confirmation"),

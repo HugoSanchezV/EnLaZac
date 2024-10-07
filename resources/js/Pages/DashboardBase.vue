@@ -46,6 +46,7 @@ const layoutComponent = computed(() => {
             'bg-transparent shadow-none': !applyStyles,
           }"
         >
+          
           <slot name="content"></slot>
         </div>
       </div>

@@ -23,12 +23,6 @@ class TicketController extends Controller
     {
         $query = Ticket::query();
 
-        //if ($request->type !== null && $request->type !== 'todos') {
-        //    $query->where('admin', '=', $request->type);
-       // }
-
-        //$query->where('admin', '!=', 1);
-
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
@@ -54,7 +48,7 @@ class TicketController extends Controller
                 'subject' => $item->subject,
                 'description' => $item->description,
                 'status' => $item->status,
-                'user_id' =>  $item->user_id,
+                'user_id' =>  $item->user->name,
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];
         });
@@ -87,12 +81,27 @@ class TicketController extends Controller
 
     public function create()
     {
-        return Inertia::render('Coordi/Tickets/Create');
+        $users = User::select('id', 'name')->where('admin', '=', '0')->get();
+        
+        return Inertia::render(
+            'Coordi/Tickets/Create',
+            [
+                'users' => $users,
+            ]
+        );
     }
 
     public function store(StoreTicketRequest $request)
-    {   $user_id = Auth::id();
+    {
+        if($request->user_id == null){
+            $user_id = Auth::id();
+        }else{
+            $user_id = $request->user_id;
+        }
+        
         $validatedData = $request->validated();
+
+       // print('HOLAAA');
         $ticket = Ticket::create([
             'subject' => $validatedData['subject'],
             'description' => $validatedData['description'],
@@ -101,9 +110,7 @@ class TicketController extends Controller
 
        self::make_ticket_notification($ticket);
 
-        return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
-
-        
+        return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');    
     }
 
     public function edit($id)
@@ -147,7 +154,7 @@ class TicketController extends Controller
     }
     //Para Usuarios mortales--------------------------------------------------------------------------
 
-    public function index2(Request $request)
+    public function index_user(Request $request)
     {
         $userId = Auth::id(); // Obtén el ID del usuario autenticado
         $query = Ticket::query();
@@ -183,7 +190,7 @@ class TicketController extends Controller
                 'subject' => $item->subject,
                 'description' => $item->description,
                 'status' => $item->status,
-                'user_id' =>  $item->user_id,
+ //               'user_id' =>  $item->user_id,
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];
         });
