@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
+<<<<<<< Updated upstream
+=======
+use App\Http\Controllers\PingController;
+use App\Http\Controllers\RouterosApiController;
+>>>>>>> Stashed changes
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
@@ -10,6 +15,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\ScheduledTaskController;
+use App\Http\Controllers\StatisticsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,12 +35,13 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('DashboardBase');
-    })->name('dashboard');
+   // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
     Route::middleware(['rol:1,2,3'])->group(function () {
         // Usuarios
+
+        Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
         Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
@@ -64,6 +71,12 @@ Route::middleware([
         Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
         //-- Automatización del ping para routers
         Route::put('/routers/scheduled/ping/{id}',     [ScheduledTaskController::class, 'toggleTask'])->name('routers.scheduled.ping');
+<<<<<<< Updated upstream
+=======
+       //-- Historial de los pings
+       Route::get('/pings',                  [PingController::class, 'index'])->name('pings');
+       Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');      
+>>>>>>> Stashed changes
 
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
@@ -90,7 +103,13 @@ Route::middleware([
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
         Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
-
+        Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
+        Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
+        Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
+        Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
+        Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
+        Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
+        Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
         //Leer y marcado como leída las notificaciones
         Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
         Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
@@ -114,6 +133,7 @@ Route::middleware([
         Route::get('/plans/edit/{id}',           [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
+        
     });
     //Vista generales
     Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
@@ -125,11 +145,26 @@ Route::middleware([
     Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
 
     //Vistas del usuario
+<<<<<<< Updated upstream
     Route::middleware(['rol:0'])->group(function () {
         Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
+=======
+    Route::middleware(['rol:0'])->group(function(){
+     /*   Route::get('/dashboard', function () {
+            return Inertia::render('DashboardBase');
+        })->name('dashboard');
+     */   
+        Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
+        Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store.usuario');
+>>>>>>> Stashed changes
     });
 
 
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
+<<<<<<< Updated upstream
+=======
+    
+    
+>>>>>>> Stashed changes
 });
