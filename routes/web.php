@@ -2,11 +2,8 @@
 
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
-<<<<<<< Updated upstream
-=======
 use App\Http\Controllers\PingController;
 use App\Http\Controllers\RouterosApiController;
->>>>>>> Stashed changes
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
@@ -71,12 +68,9 @@ Route::middleware([
         Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
         //-- Automatización del ping para routers
         Route::put('/routers/scheduled/ping/{id}',     [ScheduledTaskController::class, 'toggleTask'])->name('routers.scheduled.ping');
-<<<<<<< Updated upstream
-=======
        //-- Historial de los pings
        Route::get('/pings',                  [PingController::class, 'index'])->name('pings');
        Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');      
->>>>>>> Stashed changes
 
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
@@ -151,11 +145,6 @@ Route::middleware([
     Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
 
     //Vistas del usuario
-<<<<<<< Updated upstream
-    Route::middleware(['rol:0'])->group(function () {
-        Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets');
-        Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store');
-=======
     Route::middleware(['rol:0'])->group(function(){
      /*   Route::get('/dashboard', function () {
             return Inertia::render('DashboardBase');
@@ -163,14 +152,10 @@ Route::middleware([
      */   
         Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store.usuario');
->>>>>>> Stashed changes
     });
 
 
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
-<<<<<<< Updated upstream
-=======
     
     
->>>>>>> Stashed changes
 });
