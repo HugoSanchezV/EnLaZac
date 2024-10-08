@@ -8,6 +8,7 @@ class PayPalController extends Controller
 {
     public function createOrder()
     {
+        //dd("AHORA");
         $paypalModule = new PayPalClient;
         $paypalModule->setApiCredentials(config('paypal'));
         
@@ -36,7 +37,7 @@ class PayPalController extends Controller
         $paypalModule->setAccessToken($token);
 
         $response = $paypalModule->capturePaymentOrder($request->orderID);
-
+       
         if ($response['status'] === 'COMPLETED') {
             return response()->json(['status' => 'success']);
         }

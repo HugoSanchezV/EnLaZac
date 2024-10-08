@@ -15,16 +15,19 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $admin): Response
+    public function handle(Request $request, Closure $next, ...$admin): Response
     {
         //return dd($admin);
         if (Auth::check()) {
             // Verificar si el usuario tiene el rol requerido
-            if (Auth::user()->admin == $admin) {
+           // dd("checo ");
+            if (in_array(Auth::user()->admin, $admin)) {
                 return $next($request); // Continuar con la solicitud
             }
             
+            
         }
-        return redirect('/dashboard')->with('error', 'No tienes acceso a esta sección.');
+        //dd("eh: ".Auth::user()->admin.":".$admin);
+        return redirect('/dashboard')->with('success', 'No tienes acceso a esta sección.');
     }
 }
