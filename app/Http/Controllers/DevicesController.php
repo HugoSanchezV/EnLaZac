@@ -2,30 +2,88 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Http\Requests\Device\StoreDeviceRequest;
 use App\Http\Requests\Device\UpdateDeviceRequest;
 use App\Models\Device;
 use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
 use App\Models\Router;
-use App\Models\RouterosAPI;
 use App\Models\User;
 use App\Services\RouterOSService;
+use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DevicesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // Trabajamos con Eloquent directamente, sin getQuery()
+        $query = Device::with(['inventorieDevice:id,mac_address', 'user:id,name', 'router:id,ip_address']);
+
+        // Filtro por parámetros de búsqueda si existen
+        if ($request->has('q')) {
+            $search = $request->input('q');
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%$search%")
+                    ->orwhere('device_internal_id', 'like', "%$search%")
+                    ->orWhere('device_id', 'like', "%$search%")
+                    ->orWhere('comment', 'like', "%$search%")
+                    ->orWhere('address', 'like', "%$search%")
+                    ->orWhere('disabled', 'like', "%$search%");
+            });
+        }
+
+        // Ordenación
+        if ($request->attribute) {
+            $query->orderBy($request->attribute, $request->order);
+        } else {
+            $query->orderBy('id', 'asc');
+        }
+
+        // Paginación
+        $devices = $query->paginate(8)->through(function ($item) {
+            return [
+                'id' => $item->id,
+                //'device_internal_id' => $item->device_internal_id,
+                'device_id' => $item->inventorieDevice,
+                'user_id' => $item->user,
+                'comment' => $item->comment,
+                'address' => $item->address,
+                'router' => $item->router,
+                'disabled' => $item->disabled,
+            ];
+        });
+
+        // Otros datos adicionales (usuarios y dispositivos de inventario)
+        $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
+        $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
+
+        return Inertia::render('Admin/AllDevices/Index', [
+            'devices' => $devices,
+            'pagination' => [
+                'links' => $devices->links()->elements[0],
+                'next_page_url' => $devices->nextPageUrl(),
+                'prev_page_url' => $devices->previousPageUrl(),
+                'per_page' => $devices->perPage(),
+                'total' => $devices->total(),
+            ],
+            'success' => session('success') ?? null,
+            'error' => session('error') ?? null,
+            'warning' => session('warning') ?? null,
+            'totalDevicesCount' => 4,
+            'users' => $users,
+            'inv_devices' => $inv_devices,
+        ]);
     }
 
     /**
@@ -105,7 +163,7 @@ class DevicesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Router $router, Device $device)
+    public function edit(Router $router, Device $device, $path = 'Admin/Devices/Edit')
     {
         $device = Device::findOrFail($device->id);
 
@@ -121,7 +179,7 @@ class DevicesController extends Controller
 
         $inv_devices = $inv_devices->get();
 
-        return Inertia::render('Admin/Devices/Edit', [
+        return Inertia::render($path, [
             'devices' => $devices,
             'users' => $users,
             'router' => [
@@ -134,10 +192,14 @@ class DevicesController extends Controller
         ]);
     }
 
-
-    public function update(UpdateDeviceRequest $request, $id)
+    public function device_all_edit(Router $router, Device $device, $path = 'Admin/AllDevices/Edit')
     {
-        //dd('Holaaaaaaaaaaaaaaaaaaaaaaaaaa');
+        return $this->edit($router, $device, $path);
+    }
+
+
+    public function update(UpdateDeviceRequest $request, $id, $url = 'routers.devices')
+    {
         $validatedData = $request->validated();
 
         $device = Device::findOrFail($id);
@@ -192,17 +254,21 @@ class DevicesController extends Controller
             });
 
 
-            return redirect()->route('routers.devices', ['router' => $device->router_id])
+            return redirect()->route($url, ['router' => $device->router_id])
                 ->with('success', 'El dispositivo ha sido actualizado con éxito');
         } catch (Exception $e) {
-            dd($e->getMessage());
-            return redirect()->route('routers.devices', ['router' => $device->router_id])
+            return redirect()->route($url, ['router' => $device->router_id])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
     }
 
+    public function device_all_update(UpdateDeviceRequest $request, $id, $url = 'devices')
+    {
+        return $this->update($request, $id, $url);
+    }
 
-    public function destroy($id)
+
+    public function destroy($id, $url = 'routers.devices')
     {
         $device = Device::findOrFail($id);
         try {
@@ -233,31 +299,36 @@ class DevicesController extends Controller
                     }
                 });
 
-                return redirect()->route('routers.devices', ['router' => $device->router_id])
+                return redirect()->route($url, ['router' => $device->router_id])
                     ->with('success', 'El dispositivo ha sido eliminado con éxito');
             } catch (\Exception $e) {
-                return redirect()->route('routers.devices', ['router' => $device->router_id])
+                return redirect()->route($url, ['router' => $device->router_id])
                     ->with('error', 'Error al eliminar la dirección: ' . $e->getMessage());
             } finally {
                 $routerOSService->disconnect();
             }
         } catch (\Exception $e) {
-            return redirect()->route('routers.devices', ['router' => $device->router_id])
+            return redirect()->route($url, ['router' => $device->router_id])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
     }
-    
-    public function sendPing(Device $device)
+
+    public function device_all_destroy($id, $url = 'devices')
     {
-        
+        return $this->destroy($id, $url);
+    }
+
+    public function sendPing(Device $device, $url = 'routers.devices')
+    {
+
         $device = Device::findOrFail($device->id);
-        $router = $device ->router;
+        $router = $device->router;
 
         $router = Router::findOrFail($router->id);
         $API = RouterOSService::getInstance();
 
-        $API ->connect($router->id);
-        
+        $API->connect($router->id);
+
         $param = [
             'address' => $device->address,
             'count' => '4'
@@ -265,20 +336,18 @@ class DevicesController extends Controller
         $count = 0;
 
         $result = $API->executeCommand('/ping', $param);
-        
+
         foreach ($result as $ping) {
-            if(isset($ping['status']))
-            {
+            if (isset($ping['status'])) {
                 //$this->info($ping['status']);               
-            }else{
+            } else {
                 //$this->info("Correcto ping");
                 $count++;
             }
         }
         $message = '';
-        
-        switch($count)
-        {
+
+        switch ($count) {
             case 0:
                 $message = "Perdida total de paquetes";
                 $type = 'error';
@@ -299,18 +368,22 @@ class DevicesController extends Controller
                 $message = "Se han recibido todos lo paquetes exitosamente";
                 $type = 'success';
                 break;
-                
         }
-        
+
 
         $API->disconnect();
- 
-        //dd(print_r($result));
-        return Redirect::route('routers.devices', ['router' => $device->router_id])
-        ->with($type, $message);
 
+        //dd(print_r($result));
+        return Redirect::route($url, ['router' => $device->router_id])
+            ->with($type, $message);
     }
-    public function setDeviceStatus(Device $device)
+
+    public function sendAllPing(Device $device, $url = 'devices')
+    {
+        return $this->sendPing($device, $url);
+    }
+
+    public function setDeviceStatus(Device $device, $url = 'routers.devices')
     {
         $device = Device::findOrFail($device->id);
         $router = $device->router;
@@ -367,11 +440,16 @@ class DevicesController extends Controller
             });
         } catch (\Exception $e) {
             $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
-            return Redirect::route('routers.devices')->with('error', $message);
+            return Redirect::route($url)->with('error', $message);
         }
 
         $message = $action . ' ' . $device->address . ' realizado con éxito';
-        return Redirect::route('routers.devices', $router)->with('success', $message);
+        return Redirect::route($url, $router)->with('success', $message);
+    }
+
+    public function AllsetDeviceStatus(Device $device, $url = 'devices')
+    {
+        return $this->setDeviceStatus($device, $url);
     }
 
     public function setDeviceStatusContrato(Device $device)
@@ -430,11 +508,51 @@ class DevicesController extends Controller
                 $device->update();
             });
         } catch (\Exception $e) {
-           // $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
+            // $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
             //return Redirect::route('routers.devices')->with('error', $message);
-            dd("ERROR AL CAMBIAR EL ESTADO DEL DISPOSITIVO: "+$e);
+            dd("ERROR AL CAMBIAR EL ESTADO DEL DISPOSITIVO: " + $e);
         }
-      //  $message = $action . ' ' . $device->address . ' realizado con éxito';
+        //  $message = $action . ' ' . $device->address . ' realizado con éxito';
         //return Redirect::route('routers.devices', $router)->with('success', $message);
+    }
+
+    public function allDevicesExportExcel()
+    {
+        $dataRouter = Device::with(['user', 'inventorieDevice', 'router']);
+        // es el metodo devies que pertenece a router
+        $query = $dataRouter;
+
+
+        $headings = [
+            'ID',
+            'Internal ID',
+            'ID Usuario',
+            'Usuario',
+            'Comentario',
+            'ID Inventario',
+            'IP Dispositivo',
+            'MAC Dispositivo',
+            'ID Router',
+            'IP Router',
+            'Estado',
+        ];
+
+        $mappingCallback = function ($device) {
+            // dd($device);
+            return [
+                $device->id,
+                $device->device_internal_id ?? 'Sin asignar',
+                $device->user->id ?? '-',
+                $device->user->name ?? '-',
+                $device->comment ?? '',
+                $device->inventorieDevice->id ?? '-',
+                $device->address ?? '-',
+                $device->inventorieDevice->mac_address ?? '-',
+                $device->router->id,
+                $device->router->ip_address,
+                $device->disabled ? 'Inactivo' : 'Activo',
+            ];
+        };
+        return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Dispositivos de Router.xlsx');
     }
 }

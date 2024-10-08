@@ -123,7 +123,7 @@ const menuItems = ref([
     icon: "cloud", // ejemplo de path de SVG
     subItems: [
       { name: "Routers", route: "routers" },
-      { name: "Dispositivos", route: "devices.show" },
+      { name: "Dispositivos", route: "devices" },
       { name: "Planes", route: "plans" },
     ],
   },
@@ -134,7 +134,7 @@ const menuItems = ref([
     icon: "store", // ejemplo de path de SVG
     subItems: [
       { name: "Dispositivos Inv.", route: "inventorie.devices.index" },
-      { name: "Historial", route: "dashboard" },
+      { name: "Historial de Inv.", route: "dashboard" },
     ],
   },
   {

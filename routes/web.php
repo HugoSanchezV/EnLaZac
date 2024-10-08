@@ -71,11 +71,17 @@ Route::middleware([
         Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
         Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
         Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');
+        Route::get('/devices/{router}/all/edit/{device}',          [DevicesController::class, 'device_all_edit'])->name('devices.all.edit');
         Route::put('/devices/update/{device}',          [DevicesController::class, 'update'])->name('devices.update');
+        Route::put('/devices/all/update/{device}',          [DevicesController::class, 'device_all_update'])->name('devices.all.update');
         Route::delete('/devices/delete/{device}',          [DevicesController::class, 'destroy'])->name('devices.destroy');
-        // -- status 
+        Route::delete('/devices/all/delete/{device}',          [DevicesController::class, 'device_all_destroy'])->name('devices.all.destroy');
+        // -- device red
         Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
+        Route::patch('/devices/all/set/device/status/{device}',     [DevicesController::class, 'AllsetDeviceStatus'])->name('devices.all.set.status');
         Route::get('/devices/set/device/ping/{device}',  [DevicesController::class, 'sendPing'])->name('devices.ping');
+        Route::get('/devices/all/set/device/ping/{device}',  [DevicesController::class, 'sendAllPing'])->name('devices.all.ping');
+        Route::get('/devices/all/to/excel',     [DevicesController::class, 'allDevicesExportExcel'])->name('devices.all.excel');
 
         // inventorie_devices
         Route::get('/inventorie/devices',                 [InventorieDevicesController::class, 'index'])->name('inventorie.devices.index');

@@ -3,26 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Exports\GenericExport;
-use App\Exports\RouterDevicesExport;
 use App\Http\Requests\Router\StoreRouterRequest;
 use App\Http\Requests\Router\UpdateRouterRequest;
 use App\Models\Device;
 use App\Models\InventorieDevice;
 use App\Models\Network;
 use App\Models\Router;
-use App\Models\RouterosAPI;
-use App\Models\ScheduledTask;
 use App\Models\User;
 use App\Services\RouterOSService;
 use App\Services\RouterService;
 use DateTime;
 use Exception;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;

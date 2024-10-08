@@ -1,5 +1,5 @@
-  <script setup>
-import { toRefs, watch, ref } from "vue";
+<script setup>
+import { toRefs, watch, ref, onMounted } from "vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 const props = defineProps({
@@ -7,14 +7,14 @@ const props = defineProps({
   pagination: Object,
   error: String,
   success: String,
- 
+
   warning: String,
   totalDevicesCount: Number,
   users: Object,
   inv_devices: Object,
 });
 
-const {devices,  users, success } = toRefs(props);
+const { devices, users, success } = toRefs(props);
 
 // watch(inv_devices, (newValue) => {
 //   // Aquí puedes realizar acciones cuando inv_devices cambie.
@@ -22,7 +22,6 @@ const {devices,  users, success } = toRefs(props);
 //   inv_devices_ref = ref(newValue)
 //   console.log(inv_devices_ref)
 // });
-
 watch(success, (newValue) => {
   if (newValue) {
     const toast = useToast();
@@ -33,16 +32,16 @@ watch(success, (newValue) => {
   }
 });
 
-
 const headers = [
   "id",
-  "device_internal_id",
+  // "ID Interno",
   //"router_id",
   "device_id",
   "user_id",
   "comment",
   // "list",
   "address",
+  "Router",
   "Enable",
   "acciones",
 ];
@@ -56,7 +55,7 @@ const filters = [
   "address",
 ];
 
-const columns = ["id", "name"]
+const columns = ["id", "name"];
 </script>
 
   <template>
@@ -68,7 +67,7 @@ const columns = ["id", "name"]
         </div>
         <div>
           <Link
-            :href="route('devices.create', route().params.router)"
+            :href="route('routers')"
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
@@ -84,7 +83,6 @@ const columns = ["id", "name"]
                 clip-rule="evenodd"
               />
             </svg>
-
             Nueva Conexión
           </Link>
         </div>
@@ -166,7 +164,7 @@ export default {
 
   methods: {
     search(props) {
-      const link = route("routers.devices", route().params.router);
+      const link = route("devices");
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
@@ -198,22 +196,21 @@ export default {
 
   beforeMount() {
     const toast = useToast();
-   
+
     if (this.success) {
       toast.success(this.success, {
         position: POSITION.TOP_CENTER,
         draggable: true,
       });
     }
-    if(this.error){
+    if (this.error) {
       toast.error(this.error, {
         position: POSITION.TOP_CENTER,
         type: TYPE.WARNING,
         draggable: true,
       });
     }
-    if(this.warning)
-    {
+    if (this.warning) {
       toast.warning(this.warning, {
         position: POSITION.TOP_CENTER,
         type: TYPE.WARNING,
