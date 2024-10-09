@@ -134,7 +134,7 @@ const menuItems = ref([
     icon: "store", // ejemplo de path de SVG
     subItems: [
       { name: "Dispositivos Inv.", route: "inventorie.devices.index" },
-      { name: "Historial de Inv.", route: "dashboard" },
+      { name: "Historial de Inv.", route: "historieDevices.index" },
     ],
   },
   {

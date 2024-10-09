@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('pings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('router_id')->constrained('routers');
+            $table->foreignId('router_id')->constrained('routers')->onDelete('cascade');
             $table->string('content');
             $table->timestamps();
 
-            $table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
+            //$table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
         });
     }
 

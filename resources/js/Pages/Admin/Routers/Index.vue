@@ -62,7 +62,7 @@ const updateStatus = () => {
 };
 const { routers, success } = toRefs(props);
 const toast = useToast();
-const toRouteExport = 'routers.excel'
+const toRouteExport = "routers.excel";
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -89,7 +89,7 @@ const filters = ["id", "usuario", "ip"];
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
-      <div class="flex justify-between">
+      <div class="flex justify-between flex-col md:flex-row">
         <div>
           <h2>Routers</h2>
         </div>
@@ -98,8 +98,11 @@ const filters = ["id", "usuario", "ip"];
             v-if="props.routers.data.length != 0"
             class="flex item-center justify-center gap-2 bg-slate-200 py-1 px-2 rounded-md"
           >
+            <span class="material-symbols-outlined">
+              precision_manufacturing
+            </span>
             <div>
-              <p>Ping Automático</p>
+              <p>Ping Auto</p>
             </div>
 
             <label class="inline-flex items-center cursor-pointer">
@@ -119,29 +122,17 @@ const filters = ["id", "usuario", "ip"];
             <Link
               :href="route('pings')"
               method="get"
-              class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
-              ><svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-                class="size-4"
-              >
-                <path d="M6 6v4h4V6H6Z" />
-                <path
-                  fill-rule="evenodd"
-                  d="M5.75 1a.75.75 0 0 0-.75.75V3a2 2 0 0 0-2 2H1.75a.75.75 0 0 0 0 1.5H3v.75H1.75a.75.75 0 0 0 0 1.5H3v.75H1.75a.75.75 0 0 0 0 1.5H3a2 2 0 0 0 2 2v1.25a.75.75 0 0 0 1.5 0V13h.75v1.25a.75.75 0 0 0 1.5 0V13h.75v1.25a.75.75 0 0 0 1.5 0V13a2 2 0 0 0 2-2h1.25a.75.75 0 0 0 0-1.5H13v-.75h1.25a.75.75 0 0 0 0-1.5H13V6.5h1.25a.75.75 0 0 0 0-1.5H13a2 2 0 0 0-2-2V1.75a.75.75 0 0 0-1.5 0V3h-.75V1.75a.75.75 0 0 0-1.5 0V3H6.5V1.75A.75.75 0 0 0 5.75 1ZM11 4.5a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V5a.5.5 0 0 1 .5-.5h6Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-
-              Historial de pings
+              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+            >
+              <span class="material-symbols-outlined"> network_ping </span>
+              Historial
             </Link>
           </div>
           <div>
             <Link
               :href="route('routers.create')"
               method="get"
-              class="flex justify-start md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"

@@ -7,6 +7,7 @@ use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\DeviceHistoriesController;
 use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
@@ -32,7 +33,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-   // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
     Route::middleware(['rol:1,2,3'])->group(function () {
         // Usuarios
@@ -68,9 +69,9 @@ Route::middleware([
         Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
         //-- Automatización del ping para routers
         Route::put('/routers/scheduled/ping/{id}',     [ScheduledTaskController::class, 'toggleTask'])->name('routers.scheduled.ping');
-       //-- Historial de los pings
-       Route::get('/pings',                  [PingController::class, 'index'])->name('pings');
-       Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');      
+        //-- Historial de los pings
+        Route::get('/pings',                  [PingController::class, 'index'])->name('pings');
+        Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');
 
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
@@ -99,6 +100,8 @@ Route::middleware([
         Route::put('/inventorie/devices/update/{device}',          [InventorieDevicesController::class, 'update'])->name('inventorie.devices.update');
         Route::delete('/inventorie/devices/delete/{device}',          [InventorieDevicesController::class, 'destroy'])->name('inventorie.devices.destroy');
         Route::get('/inventorie/devices/to/excel',          [InventorieDevicesController::class, 'exportExcel'])->name('inventorie.devices.excel');
+
+        Route::get('/inventorie/devices/histories',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
 
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
@@ -133,7 +136,6 @@ Route::middleware([
         Route::get('/plans/edit/{id}',           [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
-        
     });
     //Vista generales
     Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
@@ -145,17 +147,15 @@ Route::middleware([
     Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
 
     //Vistas del usuario
-    Route::middleware(['rol:0'])->group(function(){
-     /*   Route::get('/dashboard', function () {
+    Route::middleware(['rol:0'])->group(function () {
+        /*   Route::get('/dashboard', function () {
             return Inertia::render('DashboardBase');
         })->name('dashboard');
-     */   
+     */
+       // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+
         Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store.usuario');
+        Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
     });
-
-
-    Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
-    
-    
 });
