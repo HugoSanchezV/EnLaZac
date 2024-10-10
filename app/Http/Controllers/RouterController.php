@@ -157,45 +157,52 @@ class RouterController extends Controller
     {
         $router = Router::findOrFail($id);
         $ip = $router->ip_address;
-        $message = "Hola";
-        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-            $message = "Dirección IP no válida: " . $ip . "\n";
-            //  return false;
-        }
+       // $message = "Hola";
+       try{
 
-        // Determinar el comando 'ping' según el sistema operativo
-        if (stripos(PHP_OS, 'WIN') === 0) {
-            // Comando para Windows
-            $pingResult = shell_exec("ping -n 4 " . escapeshellarg($ip));
-        } else {
-            // Comando para Linux/macOS
-            $pingResult = shell_exec("ping -c 4 " . escapeshellarg($ip));
-        }
-
-        // Verificar si el ping fue exitoso (depende del SO)
-        if (stripos(PHP_OS, 'WIN') === 0) {
-            // Para Windows, verificar si se recibió el número completo de respuestas
-
-
-            if (strpos($pingResult, 'recibidos = 4') == true) {
-                $message = "El dispositivo está en línea.\n";
-                //  return true;
-            } else {
-                $message = "El dispositivo no responde al ping.\n";
-                // return false;
+            if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+                $message = "Dirección IP no válida: " . $ip . "\n";
+                //  return false;
             }
-        } else {
-            // Para Linux/macOS, verificar si no hay pérdida de paquetes
-            if (strpos($pingResult, '0% packet loss') !== false) {
-                $message = "El dispositivo está en línea.\n";
-                //return true;
-            } else {
-                $message = "El dispositivo no responde al ping.\n";
-                // return false;
-            }
-        }
 
-        return Redirect::route('routers')->with('success', $message);
+            // Determinar el comando 'ping' según el sistema operativo
+            if (stripos(PHP_OS, 'WIN') === 0) {
+                // Comando para Windows
+                $pingResult = shell_exec("ping -n 4 " . escapeshellarg($ip));
+            } else {
+                // Comando para Linux/macOS
+                $pingResult = shell_exec("ping -c 4 " . escapeshellarg($ip));
+            }
+
+            // Verificar si el ping fue exitoso (depende del SO)
+            if (stripos(PHP_OS, 'WIN') === 0) {
+                // Para Windows, verificar si se recibió el número completo de respuestas
+
+
+                if (strpos($pingResult, 'recibidos = 4') == true) {
+                    $message = "El dispositivo está en línea.\n";
+                    //  return true;
+                } else {
+                    $message = "El dispositivo no responde al ping.\n";
+                    // return false;
+                }
+            } else {
+                // Para Linux/macOS, verificar si no hay pérdida de paquetes
+                if (strpos($pingResult, '0% packet loss') !== false) {
+                    $message = "El dispositivo está en línea.\n";
+                    //return true;
+                } else {
+                    $message = "El dispositivo no responde al ping.\n";
+                    // return false;
+                }
+            }
+
+            return Redirect::route('routers')->with('success', $message);
+       }catch(Exception $e)
+       {
+        return Redirect::route('routers')->with('error', $e->getMessage());
+       }
+        
     }
     public function sync($id)
     {
@@ -333,7 +340,8 @@ class RouterController extends Controller
         $totalDevicesCount = $router->devices()->count();
         $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
-
+        
+      
         return Inertia::render('Admin/Routers/Devices', [
             'devices' => $devices,
             'pagination' => [
@@ -349,6 +357,8 @@ class RouterController extends Controller
             'totalDevicesCount' => $totalDevicesCount,
             'users' => $users,
             'inv_devices' => $inv_devices,
+            'router' => $router->id,
+            
         ]);
     }
 

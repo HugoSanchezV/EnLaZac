@@ -65,7 +65,7 @@ class CheckContracts extends Command
                     {
                         
                         //Cortar internet
-                        $this->info('SE VA A DESCONECTAR');
+                       // $this->info('SE VA A DESCONECTAR');
                         self::disconectUser($contract);
                         //Generar cargo
 

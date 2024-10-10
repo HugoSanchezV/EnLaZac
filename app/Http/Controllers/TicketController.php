@@ -69,6 +69,8 @@ class TicketController extends Controller
             'totalTicketsCount' => $totalTicketsCount 
         ]);
     }
+
+    
     //Muestra la información del ticket y del usuario en específico
     public function show($id)
     {

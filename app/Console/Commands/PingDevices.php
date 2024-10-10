@@ -3,15 +3,18 @@
 namespace App\Console\Commands;
 
 use App\Models\Device;
+use App\Models\ExtraCharge;
 use App\Models\Router;
 use App\Services\RouterOSService;
+use DragonCode\Support\Facades\Helpers\Arr;
+use Exception;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PingDevices extends Command
 {
-    protected $signature = 'app:ping-devices';
+    protected $signature = 'app:ping-devices {id}';
 
     /**
      * The console command description.
@@ -25,6 +28,18 @@ class PingDevices extends Command
      */
     public function handle()
     {
+        $id = $this->argument('id');
+
+        $cargo = new ExtraCharge();
+
+        //Set data
+        $cargo->contract_id = 1;
+        $cargo->description = "No pagó antes del día de corte";
+        $cargo->amount = 50;
+        $cargo->paid = false;
+        
+        $this->info( ($cargo));
+        /*
         $router = Router::select('id', 'ip_address','user') -> get();
 
         $device = Device::select('id','router_id', 'address', 'disabled') ->get();
@@ -34,9 +49,9 @@ class PingDevices extends Command
         foreach($router as $r)
         {
             self::routerDevice($r, $device);
-        }
+        }*/
     }
-    public function routerDevice($r, $device)
+    private function routerDevice($r, $device)
     {
        $disableDevice = 0;
         foreach($device as $d)
@@ -55,7 +70,7 @@ class PingDevices extends Command
             }
             
         }
-        print("Dispositivos desconectados: ".$disableDevice);
+       // print("Dispositivos desconectados: ".$disableDevice);
         return $disableDevice;
 
         
@@ -63,28 +78,33 @@ class PingDevices extends Command
     private function pingDevice($r, $ip)
     {
         // Ejecutar el comando ping
-        $API = RouterOSService::getInstance();
-
-        $API->connect($r->id);
         
-        $params = [
-                'address' => $ip,  // Dirección IP del dispositivo al que deseas hacer ping
-                'count' => '4'     // Número de paquetes a enviar
-            ];
+        try{
+            $API = RouterOSService::getInstance();
+            $API->connect($r->id);
+            
+            $params = [
+                    'address' => $ip,  // Dirección IP del dispositivo al que deseas hacer ping
+                    'count' => '4'     // Número de paquetes a enviar
+                ];
 
-            $result = $API->executeCommand('/ping', $params);
-      
-            foreach ($result as $ping) {
-                $this->info($ping['host']);
-                if(isset($ping['status']))
-                {
-                    $this->info($ping['status']);
+                $result = $API->executeCommand('/ping', $params);
+        
+                foreach ($result as $ping) {
+                    $this->info($ping['host']);
+                    if(isset($ping['status']))
+                    {
+                        $this->info($ping['status']);
 
-                }else{
-                    $this->info("Correcto ping");
+                    }else{
+                        $this->info("Correcto ping");
+                    }
                 }
-            }
-            $API->disconnect();
+                $API->disconnect();
+        }catch(Exception $e){
+
+
+        }
     }
 }
                 

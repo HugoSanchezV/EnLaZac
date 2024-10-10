@@ -51,6 +51,7 @@ const formattedDate = (dateCreation) => {
     font-size: 18px;
     position: relative;
 }
+
 .notifications-container {
     max-height: 300px;
     overflow-y: auto;
@@ -60,6 +61,7 @@ const formattedDate = (dateCreation) => {
     background-color: #fff;
     scroll-behavior: smooth;
 }
+
 .notification-count {
     background-color: rgb(255, 0, 0);
     color: white;
@@ -77,7 +79,7 @@ const formattedDate = (dateCreation) => {
     right: 0;
     background-color: white;
     min-width: 500px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 5px;
     overflow: hidden;
@@ -122,6 +124,47 @@ const formattedDate = (dateCreation) => {
 
 .notification-dropdown:hover .dropdown-content {
     display: block;
+}
+
+/* Media Query para dispositivos móviles */
+@media (max-width: 768px) {
+    .dropdown-content {
+        position: absolute;
+        left: 50%; /* Centra el dropdown respecto al contenedor */
+        transform: translateX(-50%); /* Mueve el dropdown para que esté centrado */
+        min-width: 300px; /* Reducimos el ancho a 80% para hacerlo más compacto */
+        max-width: 400px; /* Ancho máximo del dropdown en dispositivos móviles */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Reducimos la sombra */
+        border-radius: 5px; /* Mantenemos el border-radius para pantallas pequeñas */
+    }
+
+    .dropdown-header {
+        padding: 8px;
+    }
+
+    .dropdown-item {
+        flex-direction: column;
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .notifications-container {
+        display: flex;
+        gap: 2rem;
+        max-height: 200px; /* Reducimos la altura del contenedor en dispositivos móviles */
+    }
+
+    .dropdown-footer {
+        padding: 8px;
+    }
+
+    .notification-button {
+        font-size: 16px; /* Ajustamos el tamaño del botón en móviles */
+    }
+
+    .notification-count {
+        font-size: 10px; /* Ajustamos el tamaño del contador */
+    }
 }
 
 </style>

@@ -264,7 +264,7 @@ const getTag = (cell) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 lg:table md:table">
+    <table  class="w-full text-sm text-left text-gray-500 lg:table md:table">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -483,9 +483,13 @@ export default {
   },
   computed: {
     filteredRows() {
-      // if (!this.searchQuery) {
+      //SUSSS
+
       return this.rows;
-      //}
+      //CLAVE: 123
+     if (this.searchQuery) {
+      
+      }
       // return this.rows.filter((row) =>
       //   row.some((cell) =>
       //     cell.toString().toLowerCase().includes(this.searchQuery.toLowerCase())

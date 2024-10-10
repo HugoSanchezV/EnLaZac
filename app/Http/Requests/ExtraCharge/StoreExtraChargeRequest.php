@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\ExtraChange;
+namespace App\Http\Requests\ExtraCharge;
 
 use Illuminate\Foundation\Http\FormRequest;
 

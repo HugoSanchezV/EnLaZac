@@ -7,12 +7,16 @@ use App\Http\Requests\Device\StoreDeviceRequest;
 use App\Http\Requests\Device\UpdateDeviceRequest;
 use App\Models\Device;
 use App\Models\DeviceHistorie;
+use App\Models\ExtraCharge;
 use App\Models\InventorieDevice;
 use App\Models\Router;
 use App\Models\User;
+use App\Models\DeviceStatus;
+use App\Models\PingDeviceHistorie;
 use App\Services\RouterOSService;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -312,72 +316,158 @@ class DevicesController extends Controller
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
     }
-
     public function device_all_destroy($id, $url = 'devices')
     {
         return $this->destroy($id, $url);
     }
+    public function pingAllDevice(Router $router)
+    {
+        $device = Device::where('router_id', $router->id)
+                ->where('disabled', '!=', 1)
+                ->get();
+       // dd($device);
+        $pingController = new PingDeviceHistorieController();
+        $pingDevice = new PingDeviceHistorie();
+        $count = 0;
+        $fail = 0;
+        $status = new DeviceStatus();
+        $devicesStatus = [];
+        try{
+            $API = RouterOSService::getInstance();
+            $API->connect($router->id);
+            foreach($device as $d)
+            {
+                    $params = [
+                        'address' => $d->address,  // Dirección IP del dispositivo al que deseas hacer ping
+                        'count' => '4'     // Número de paquetes a enviar
+                    ];
+    
+                    $result = $API->executeCommand('/ping', $params);
+                    
+                    foreach ($result as $ping) {
+                        
+                        if(!isset($ping['status']))
+                        {
+                           $count++;
+                        }
+                    }
+                    $message = '';
+            
+                    switch($count)
+                    {
+                        case 0:
+                            $message = "Perdida total de paquetes";
+                            $fail++;
+                            break;
+                        case 1:
+                            $message = "3 paquetes perdidos";
+                            $fail++;
+                            break;
+                        case 2:
+                            $message = "2 paquetes perdidos";
+                            $fail++;
+                            break;
+                        case 3:
+                            $message = "1 paquete perdido";
+                            break;
+                        case 4:
+                            $message = "Se han recibido todos lo paquetes exitosamente";
+                            break;    
+                    }
+                    $pingDevice->device_id = $d->id;
+                    $pingDevice->router_id = $router->id;
+                    $pingDevice->status = $message;
+                    $pingController->create($pingDevice);
+                    //dd('Primer ping: '.$d -> id);
+                 
+            }
+            $API->disconnect();
+            
+            if($fail != 0)
+            {   
+                return Redirect::route('routers.devices',['router' => $router->id])
+                ->with('success', 'Se encontraron fallas en alguno de los dispositivos');
+            }else{
+                return Redirect::route('routers.devices',['router' => $router->id])
+                ->with('success', 'Todos los dispositivos operan correctamente');
+            }
 
-    public function sendPing(Device $device, $url = 'routers.devices')
+        }catch(Exception $e)
+        {
+            return Redirect::route('routers.devices',['router' => $router->id])->with('error', 'Se produjo un error: '.$e);
+        }
+      
+    }
+    public function sendPing(Device $device)
     {
 
         $device = Device::findOrFail($device->id);
         $router = $device->router;
 
         $router = Router::findOrFail($router->id);
-        $API = RouterOSService::getInstance();
 
-        $API->connect($router->id);
+        try
+        {
+            $API = RouterOSService::getInstance();
 
-        $param = [
-            'address' => $device->address,
-            'count' => '4'
-        ];
-        $count = 0;
+            $API ->connect($router->id);
+            
+            $param = [
+                'address' => $device->address,
+                'count' => '4'
+            ];
+            $count = 0;
 
-        $result = $API->executeCommand('/ping', $param);
-
-        foreach ($result as $ping) {
-            if (isset($ping['status'])) {
-                //$this->info($ping['status']);               
-            } else {
-                //$this->info("Correcto ping");
-                $count++;
+            $result = $API->executeCommand('/ping', $param);
+            
+            foreach ($result as $ping) {
+                if(isset($ping['status']))
+                {
+                    //$this->info($ping['status']);               
+                }else{
+                    //$this->info("Correcto ping");
+                    $count++;
+                }
             }
-        }
-        $message = '';
+            $message = '';
+            
+            switch($count)
+            {
+                case 0:
+                    $message = "Perdida total de paquetes";
+                    $type = 'error';
+                    break;
+                case 1:
+                    $message = "3 paquetes perdidos";
+                    $type = 'warning';
+                    break;
+                case 2:
+                    $message = "2 paquetes perdidos";
+                    $type = 'warning';
+                    break;
+                case 3:
+                    $message = "1 paquete perdido";
+                    $type = 'warning';
+                    break;
+                case 4:
+                    $message = "Se han recibido todos lo paquetes exitosamente";
+                    $type = 'success';
+                    break;
+                    
+            }
+            
 
-        switch ($count) {
-            case 0:
-                $message = "Perdida total de paquetes";
-                $type = 'error';
-                break;
-            case 1:
-                $message = "3 paquetes perdidos";
-                $type = 'warning';
-                break;
-            case 2:
-                $message = "2 paquetes perdidos";
-                $type = 'warning';
-                break;
-            case 3:
-                $message = "1 paquete perdido";
-                $type = 'warning';
-                break;
-            case 4:
-                $message = "Se han recibido todos lo paquetes exitosamente";
-                $type = 'success';
-                break;
-        }
-
-
-        $API->disconnect();
-
-        //dd(print_r($result));
-        return Redirect::route($url, ['router' => $device->router_id])
+            $API->disconnect();
+    
+            return Redirect::route('routers.devices', ['router' => $device->router_id])
             ->with($type, $message);
+        }catch(Exception $e)
+        {
+            return Redirect::route('routers.devices', ['router' => $device->router_id])
+            ->with('error', $e);
+        }
     }
-
+    
     public function sendAllPing(Device $device, $url = 'devices')
     {
         return $this->sendPing($device, $url);

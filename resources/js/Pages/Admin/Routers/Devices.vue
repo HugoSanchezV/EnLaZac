@@ -5,6 +5,12 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 const props = defineProps({
   devices: Object,
   pagination: Object,
+<<<<<<< Updated upstream
+=======
+  error: String,
+  success: String,
+  warning: String,
+>>>>>>> Stashed changes
   totalDevicesCount: Number,
   users: Object,
   inv_devices: Object,
@@ -36,7 +42,6 @@ const filters = [
 
 const columns = ["id", "name"]
 </script>
-
   <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
@@ -45,6 +50,18 @@ const columns = ["id", "name"]
           <h2>Dispositivos</h2>
         </div>
         <div>
+          <Link
+            :href="route('devices.all.ping',route().params.router)"
+            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
+            
+            Ping a dispositivos
+          </Link>
+          <Link
+            :href="route('device.ping.historie')"
+            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
+            
+            Historial de pings
+          </Link>
           <Link
             :href="route('devices.create', route().params.router)"
             method="get"

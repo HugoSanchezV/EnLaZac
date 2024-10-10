@@ -11,17 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pings', function (Blueprint $table) {
+        Schema::create('ping_device_histories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('device_id')->constrained('devices')->onDelete('cascade');
             $table->foreignId('router_id')->constrained('routers')->onDelete('cascade');
-            $table->string('content');
+            $table->string('status');
             $table->timestamps();
-
-<<<<<<< Updated upstream
-            //$table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
-=======
-          //  $table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
->>>>>>> Stashed changes
         });
     }
 
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pings');
+        Schema::dropIfExists('ping_device_histories');
     }
 };

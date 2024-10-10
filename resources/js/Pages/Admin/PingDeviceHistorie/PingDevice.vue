@@ -3,10 +3,12 @@ import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
 
 const props = defineProps({
-  pings: Object,
+  pingDevice: Object,
   pagination: Object,
   success: String,
-  totalPingsCount: Number,
+  totalPingDeviceCount: Number,
+  totalDeviceFail: Number,
+  users: Object,
 });
 
 const { pings, success } = toRefs(props);
@@ -21,8 +23,8 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["id", "Router", "Contenido", "Fecha", "Acciones"];
-const filters = ["id", "router", "contenido", "fecha"];
+const headers = ["id", "dispositivo", "router", "dirección", "estado", "creado", "acciones"];
+const filters = ["id", "dispositivo","router", "dirección", "estado", "creado"];
 </script>
 
 <template>
@@ -30,30 +32,32 @@ const filters = ["id", "router", "contenido", "fecha"];
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h4>Ping automatizados</h4>
+          <h4>Pings a dispositivos</h4>
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalPingsCount > 0">
+        <div v-if="props.totalPingDeviceCount > 0">
           <!-- Esta es el inicio de la tabla -->
-          <base-table-pings
+          <base-table-ping-device
             :headers="headers"
             :rows="rows"
+            :users="users"
+            :totalDeviceFail= "totalDeviceFail"
             :filters="filters"
             :show="true"
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-pings>
+          ></base-table-ping-device>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="pings.data.length > 0"
-            :links="pings.links"
+            v-if="pingDevice.data.length > 0"
+            :links="pingDevice.links"
             :pagination="pagination"
-            :current="pings.current_page"
-            :total="pings.last_page"
+            :current="pingDevice.current_page"
+            :total="pingDevice.last_page"
             :data="{
               q: q,
               attribute: attribute,
@@ -81,27 +85,28 @@ import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTablePings from "@/Components/Base/BaseTablePings.vue";
+import BaseTablePingDevice from "./BaseTablePingDevice.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTablePings,
+    BaseTablePingDevice,
     BasePagination,
   },
 
   props: {
-    pings: Object,
+    pingDevice: Object,
     pagination: Object,
     success: String,
-    totalPingsCount: Number,
+    totalPingDeviceCount: Number,
+    users: Object,
   },
 
   data() {
     return {
-      rows: this.pings.data,
+      rows: this.pingDevice.data,
       q: "",
       attribute: "id",
       type: "todos",
@@ -111,23 +116,30 @@ export default {
 
   methods: {
     search(props) {
-      const link = route("pings");
+      const link = route("pingDevice");
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
 
+      if (this.attribute === "dispositivo") {
+        this.attribute = "device_id";
+      }
       if (this.attribute === "router") {
         this.attribute = "router_id";
       }
 
-      if (this.attribute === "contenido") {
-        this.attribute = "content";
+      if (this.attribute === "dirección") {
+        this.attribute = "address";
       }
 
-      if (this.attribute === "Fecha") {
-        this.attribute = "created_at";
+      if (this.attribute === "estado") {
+        this.attribute = "status";
+      }
+
+      if (this.attribute === "creado") {
+        this.attribute = "create_at";
       }
 
       this.$inertia.get(
@@ -139,7 +151,7 @@ export default {
   },
 
   watch: {
-    pings() {
+    pingDevice() {
       const toast = useToast();
       this.rows = this.pings.data;
       if (this.success) {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\ExtraChange;
+namespace App\Http\Requests\ExtraCharge;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateExtraChangeRequest extends FormRequest
+class UpdateExtraChargeRequest extends FormRequest
 {
     /**
      * Determine if the ticket is authorized to make this request.
