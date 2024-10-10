@@ -1,27 +1,15 @@
 <script setup>
-import { toRefs, watch } from "vue";
-import { useToast, POSITION } from "vue-toastification";
+import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   contracts: Object,
   pagination: Object,
-  success: String,
   totalContractsCount: Number,
 });
 
-const { contracts, success } = toRefs(props);
-const toast = useToast();
-const toRouteExport = 'contracts.excel'
-
-watch(success, (newValue) => {
-  if (newValue) {
-    toast.success(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-});
+const { contracts } = toRefs(props);
+const toRouteExport = "contracts.excel";
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
@@ -140,7 +128,6 @@ export default {
   props: {
     contracts: Object,
     pagination: Object,
-    success: String,
     totalContractsCount: Number,
   },
 
@@ -206,25 +193,8 @@ export default {
   },
   watch: {
     contracts() {
-      const toast = useToast();
       this.rows = this.contracts.data;
-      if (this.success) {
-        toast.success(this.success, {
-          position: POSITION.TOP_CENTER,
-          draggable: true,
-        });
-      }
     },
-  },
-
-  beforeMount() {
-    const toast = useToast();
-    if (this.success) {
-      toast.success(this.success, {
-        position: POSITION.TOP_CENTER,
-        draggable: true,
-      });
-    }
   },
 };
 </script>

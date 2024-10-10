@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('state')->nullable();
             $table->text('comment')->nullable();
-            $table->foreignId('device_id')->constrained('inventorie_devices')->onDelete('cascade');
+            $table->foreignId('device_id')->nullable()->constrained('inventorie_devices')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('creator_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();

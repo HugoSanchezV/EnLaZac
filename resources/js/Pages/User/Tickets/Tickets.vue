@@ -1,25 +1,13 @@
 <script setup>
-import { toRefs, watch } from "vue";
-import { useToast, POSITION } from "vue-toastification";
+import { toRefs } from "vue";
 
 const props = defineProps({
   tickets: Object,
   pagination: Object,
-  success: String,
   totalTicketsCount: Number,
 });
 
-const { tickets, success } = toRefs(props);
-const toast = useToast();
-
-watch(success, (newValue) => {
-  if (newValue) {
-    toast.success(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-});
+const { tickets } = toRefs(props);
 
 const headers = [
   "Id",
@@ -246,25 +234,8 @@ export default {
   },
   watch: {
     tickets() {
-      const toast = useToast();
       this.rows = this.tickets.data;
-      if (this.success) {
-        toast.success(this.success, {
-          position: POSITION.TOP_CENTER,
-          draggable: true,
-        });
-      }
     },
-  },
-
-  beforeMount() {
-    const toast = useToast();
-    if (this.success) {
-      toast.success(this.success, {
-        position: POSITION.TOP_CENTER,
-        draggable: true,
-      });
-    }
   },
 };
 </script>

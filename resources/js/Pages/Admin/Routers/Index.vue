@@ -8,7 +8,6 @@ import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 const props = defineProps({
   routers: Object,
   pagination: Object,
-  success: String,
   totalRoutersCount: Number,
   schedule: Number,
 });
@@ -60,18 +59,8 @@ const updateStatus = () => {
     }
   );
 };
-const { routers, success } = toRefs(props);
-const toast = useToast();
+const { routers } = toRefs(props);
 const toRouteExport = "routers.excel";
-
-watch(success, (newValue) => {
-  if (newValue) {
-    toast.success(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-});
 
 const headers = [
   "SYNC",
@@ -96,14 +85,12 @@ const filters = ["id", "usuario", "ip"];
         <div class="flex gap-2 flex-col md:flex-row">
           <div
             v-if="props.routers.data.length != 0"
-            class="flex item-center justify-center gap-2 bg-slate-200 py-1 px-2 rounded-md"
+            class="flex item-center justify-center gap-2 bg-slate-200 py-2 px-3 rounded-md text-sm items-center"
           >
             <span class="material-symbols-outlined">
               precision_manufacturing
             </span>
-            <div>
-              <p>Ping Auto</p>
-            </div>
+            <div>Ping Auto.</div>
 
             <label class="inline-flex items-center cursor-pointer">
               <input
@@ -114,7 +101,7 @@ const filters = ["id", "usuario", "ip"];
                 v-model="isActived"
               />
               <div
-                class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-100 peer-focus:ring-gray-100 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-blue-400"
+                class="relative w-9 h-5 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-100 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-blue-400"
               ></div>
             </label>
           </div>
@@ -132,7 +119,7 @@ const filters = ["id", "usuario", "ip"];
             <Link
               :href="route('routers.create')"
               method="get"
-              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2.5 px-3 text-sm rounded-md"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
@@ -259,23 +246,7 @@ export default {
     routers() {
       const toast = useToast();
       this.rows = this.routers.data;
-      if (this.success) {
-        toast.success(this.success, {
-          position: POSITION.TOP_CENTER,
-          draggable: true,
-        });
-      }
     },
-  },
-
-  beforeMount() {
-    const toast = useToast();
-    if (this.success) {
-      toast.success(this.success, {
-        position: POSITION.TOP_CENTER,
-        draggable: true,
-      });
-    }
   },
 };
 </script>

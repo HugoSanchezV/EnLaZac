@@ -1,29 +1,15 @@
 <script setup>
-import { toRefs, watch } from "vue";
-import { useToast, POSITION } from "vue-toastification";
+import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   devices: Object,
   pagination: Object,
-  success: String,
   totalDevicesCount: Number,
 });
 
-const { devices, success } = toRefs(props);
-const toast = useToast();
+const { devices } = toRefs(props);
 const toRouteExport = "inventorie.devices.excel";
-
-watch(success, (newValue) => {
-  if (newValue) {
-    toast.success(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-
-  newValue = "";
-});
 
 const headers = [
   "state",
@@ -156,7 +142,6 @@ export default {
         this.attribute = "brand";
       }
 
-      console.log(props.type);
 
       this.$inertia.get(
         link,
@@ -175,16 +160,6 @@ export default {
     devices() {
       this.rows = this.devices.data;
     },
-  },
-
-  beforeMount() {
-    const toast = useToast();
-    if (this.success) {
-      toast.success(this.success, {
-        position: POSITION.TOP_CENTER,
-        draggable: true,
-      });
-    }
   },
 };
 </script>

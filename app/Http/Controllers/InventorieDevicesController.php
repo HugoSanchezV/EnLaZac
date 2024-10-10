@@ -142,10 +142,10 @@ class InventorieDevicesController extends Controller
                 'user_id' => $device->user_id ?? null,
                 'creator_id' => Auth::id(),
             ]);
+            return redirect()->route('inventorie.devices.index')->with('success', 'Dispositivo Actualizado Con Éxito');
         } catch (\Exception $e) {
             return redirect()->route('inventorie.devices.index')->with('error', 'Hubo un error al intentar modificar el registro');
         }
-        return redirect()->route('inventorie.devices.index')->with('success', 'Dispositivo Actualizado Con Éxito');
     }
 
     /**
