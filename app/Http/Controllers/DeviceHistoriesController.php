@@ -69,11 +69,11 @@ class DeviceHistoriesController extends Controller
                 'prev_page_url' => $histories->previousPageUrl(),
                 'per_page' => $histories->perPage(),
                 'total' => $histories->total(),
-            ],
+        ],
             'success' => session('success') ?? null,
             'error' => session('error') ?? null,
             'warning' => session('warning') ?? null,
-            //'totalDevicesCount' => 4,
+            'totalHistoriesCount' => DeviceHistorie::count(),
             // 'users' => $users,
             // 'inv_devices' => $inv_devices,
         ]);

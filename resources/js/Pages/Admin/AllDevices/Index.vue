@@ -71,6 +71,7 @@ const columns = ["id", "name"];
     <template v-slot:content>
       <div v-if="props.totalDevicesCount > 0">
         <!-- Esta es el inicio de la tabla -->
+         {{  props.totalDevicesCount }}
         <device-table
           :headers="headers"
           :rows="rows"
@@ -102,7 +103,7 @@ const columns = ["id", "name"];
         </h2>
       </div>
       <div v-else>
-        <h2>No hay datos para mostrar</h2>
+        <h2>No hay dispositivos para mostrar</h2>
       </div>
     </template>
   </dashboard-base>

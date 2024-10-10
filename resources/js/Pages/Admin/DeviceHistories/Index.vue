@@ -5,9 +5,10 @@ import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 const props = defineProps({
   histories: Object,
   pagination: Object,
+  totalHistoriesCount: Number,
 });
 
-const { histories } = toRefs(props);
+const { histories, totalHistoriesCount } = toRefs(props);
 const toRouteExport = "historieDevices.excel";
 
 const headers = [
@@ -42,7 +43,7 @@ const filters = [
     </template>
 
     <template v-slot:content>
-      <div v-if="props.histories.data.length > 0">
+      <div v-if="totalHistoriesCount > 0">
         <base-export-excel :to-route-export="toRouteExport"></base-export-excel>
         <!-- Esta es el inicio de la tabla -->
         <inventorie-table

@@ -80,7 +80,7 @@ class DevicesController extends Controller
             'success' => session('success') ?? null,
             'error' => session('error') ?? null,
             'warning' => session('warning') ?? null,
-            'totalDevicesCount' => 4,
+            'totalDevicesCount' => Device::count(),
             'users' => $users,
             'inv_devices' => $inv_devices,
         ]);
