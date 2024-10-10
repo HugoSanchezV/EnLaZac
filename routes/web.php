@@ -102,6 +102,8 @@ Route::middleware([
         Route::get('/inventorie/devices/to/excel',          [InventorieDevicesController::class, 'exportExcel'])->name('inventorie.devices.excel');
 
         Route::get('/inventorie/devices/histories',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
+        Route::delete('/inventorie/devices/histories/{device}/delete',          [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');
+        Route::get('/inventorie/devices/histories/to/excel',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
 
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
@@ -152,7 +154,7 @@ Route::middleware([
             return Inertia::render('DashboardBase');
         })->name('dashboard');
      */
-       // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+        // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
         Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store.usuario');

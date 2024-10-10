@@ -11,7 +11,7 @@ const props = defineProps({
 
 const { histories, success } = toRefs(props);
 const toast = useToast();
-const toRouteExport = "contracts.excel";
+const toRouteExport = "historieDevices.excel";
 
 watch(success, (newValue) => {
   if (newValue) {
@@ -21,18 +21,28 @@ watch(success, (newValue) => {
     });
   }
 
-  newValue = "";
+  success.value = "";
 });
 
 const headers = [
+  "state",
   "id",
   "comment",
   "mac address",
   "user",
   "creator",
+  "date",
   "acciones",
 ];
-const filters = ["id", "comment", "device_id", "user_id", "creator_id"];
+const filters = [
+  "id",
+  "comment",
+  "device_id",
+  "user_id",
+  "creator_id",
+  "state",
+  "created_at",
+];
 </script>
 
 <template>
@@ -110,7 +120,7 @@ export default {
       q: "",
       attribute: "id",
       type: "todos",
-      order: "ASC",
+      order: "DESC",
     };
   },
 
@@ -123,17 +133,17 @@ export default {
       this.type = props.type;
       this.order = props.order;
 
-    //   if (props.attribute === "mac address") {
-    //     this.attribute = "mac_address";
-    //   }
+      //   if (props.attribute === "mac address") {
+      //     this.attribute = "mac_address";
+      //   }
 
-    //   if (props.attribute === "descripción") {
-    //     this.attribute = "description";
-    //   }
+      //   if (props.attribute === "descripción") {
+      //     this.attribute = "description";
+      //   }
 
-    //   if (props.attribute === "marca") {
-    //     this.attribute = "brand";
-    //   }
+      //   if (props.attribute === "marca") {
+      //     this.attribute = "brand";
+      //   }
 
       console.log(props.type);
 

@@ -2,32 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
 use Illuminate\Http\Request;
 use Exception;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DeviceHistoriesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index2($device_id = null)
-    // {
-    //     //
-    //     $histories = null;
-    //     if (isset($device_id)) {
-    //         $histories =  DeviceHistorie::where('device_id', $device_id)->with('inventorieDevice', 'user')->get;
-    //     } else {
-    //         // dd('Entraste al nuevo metodo para ver el historial ');
-    //         $histories =  DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name'])->get();
-    //         dd($histories);
-    //     }
-
-    //     return Inertia::render('Admin/DeviceHistories/Index', $histories);
-    // }
-
     public function index(Request $request)
     {
         $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
@@ -46,6 +30,7 @@ class DeviceHistoriesController extends Controller
                     ->orWhereHas('creator', function ($q) use ($search) {
                         $q->where('name', 'like', "%$search%");
                     });
+                // ->orWhereRaw("DATE_FORMAT(created_at, '%e %M, %Y, %l:%i %p') like ?", ["%$search%"]);
             });
         }
 
@@ -53,18 +38,22 @@ class DeviceHistoriesController extends Controller
         if ($request->attribute) {
             $query->orderBy($request->attribute, $request->order);
         } else {
-            $query->orderBy('id', 'asc');
+            $query->orderBy('id', 'desc');
         }
 
         // Paginación
         $histories = $query->paginate(8)->through(function ($item) {
             return [
+                'state' => $item->state,
                 'id' => $item->id,
                 //'device_internal_id' => $item->device_internal_id,
                 'comment' => $item->comment,
                 'device' => $item->inventorieDevice,
                 'user' => $item->user,
                 'creator' => $item->creator,
+                'date' => \Carbon\Carbon::parse($item->created_at)
+                    ->locale('es')
+                    ->translatedFormat('j F, Y, g:i a'),
             ];
         });
 
@@ -113,12 +102,57 @@ class DeviceHistoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DeviceHistorie $deviceHistorie)
+    public function destroy($id)
     {
         try {
-            $deviceHistorie->destroy;
+            $deviceHistorie = DeviceHistorie::findOrFail($id);
+            $deviceHistorie->delete();
+            return redirect()->route('historieDevices.index')
+                ->with('success', 'El dispositivo ha sido eliminado con éxito');
         } catch (Exception $e) {
-            throw new \Exception('Error al actulizar la historia');
+            return redirect()->route('historieDevices.index')
+                ->with('error', 'Error al intentar eliminar registro');
         }
+    }
+
+    public function exportExcel()
+    {
+        $data = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
+
+        $query = $data;
+
+        $headings = [
+            'ID',
+            'Comment',
+            'ID Inventorie Device',
+            'Mac Address',
+            'ID User',
+            'User',
+            'ID Creator',
+            'Creator',
+            'State',
+            'Created_at',
+            'Date format',
+        ];
+
+        $mappingCallback = function ($historie) {
+            // dd($historie);
+            return [
+                $historie->id,
+                $historie->comment,
+                $historie->inventorieDevice->id ?? '-',
+                $historie->inventorieDevice->mac_address ?? '-',
+                $historie->user->id ?? '-',
+                $historie->user->name ?? '-',
+                $historie->creator->id ?? '-',
+                $historie->creator->name ?? '-',
+                $historie->state ? 'En uso' : 'Disponible',
+                $historie->created_at,
+                \Carbon\Carbon::parse($historie->created_at)
+                    ->locale('es')
+                    ->translatedFormat('j F, Y, g:i a'),
+            ];
+        };
+        return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Hisotrial de dispositivos.xlsx');
     }
 }

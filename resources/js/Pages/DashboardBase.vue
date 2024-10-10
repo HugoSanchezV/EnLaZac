@@ -7,6 +7,7 @@ import AppLayoutUser from "@/Layouts/AppLayoutUser.vue";
 import AppLayoutEmpleado from "@/Layouts/AppLayoutEmpleado.vue";
 import AppLayoutTecnico from "@/Layouts/AppLayoutTecnico.vue";
 import AppLayoutCoordinador from "@/Layouts/AppLayoutCoordinador.vue";
+import useGeneralNotifications from "@/Components/Base/hooks/useGeneralFlashNotifications";
 
 const { props } = usePage();
 const authenticatedUser = props.auth.user; // Aquí accedes al usuario autenticado
@@ -27,6 +28,8 @@ const layoutComponent = computed(() => {
       return AppLayoutUser;
   }
 });
+
+useGeneralNotifications();
 </script>
 
 <template>
@@ -46,7 +49,6 @@ const layoutComponent = computed(() => {
             'bg-transparent shadow-none': !applyStyles,
           }"
         >
-          
           <slot name="content"></slot>
         </div>
       </div>

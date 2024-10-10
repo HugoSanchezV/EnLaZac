@@ -13,7 +13,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class GenericExport implements FromQuery, FromCollection, WithHeadings, WithMapping, WithStyles
 {
-    protected $data; // Puede ser una consulta o colección
+    protected $data; 
     protected $headings;
     protected $mappingCallback;
 
@@ -24,25 +24,22 @@ class GenericExport implements FromQuery, FromCollection, WithHeadings, WithMapp
         $this->mappingCallback = $mappingCallback;
     }
 
-    // Implementación de FromQuery
+    
     public function query()
     {
         if ($this->data instanceof Builder) {
             return $this->data;
         }
 
-        // Devolver una colección vacía si no es una consulta
         return collect();
     }
 
-    // Implementación de FromCollection
     public function collection()
     {
         if ($this->data instanceof Collection) {
             return $this->data;
         }
 
-        // Devolver una colección vacía si no es una colección
         return collect();
     }
 

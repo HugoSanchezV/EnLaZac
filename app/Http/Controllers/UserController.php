@@ -68,6 +68,7 @@ class UserController extends Controller
                 'total' => $users->total(),
             ],
             'success' => session('success') ?? null,
+            'error' => session('error') ?? null,
             'totalUsersCount' => $totalUsersCount
         ]);
     }
@@ -138,14 +139,14 @@ class UserController extends Controller
         }
 
         $user->update($validatedData);
-        return redirect()->route('usuarios')->with('success', 'Usuario Actualizado Con Éxito');
+        return Redirect::route('usuarios')->with('success', 'Usuario Actualizado Con Éxito');
     }
 
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
-        return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito');
+        return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito ');
     }
 
     public function exportExcel()

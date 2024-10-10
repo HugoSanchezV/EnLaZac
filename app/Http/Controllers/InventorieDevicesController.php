@@ -160,7 +160,7 @@ class InventorieDevicesController extends Controller
                 DeviceHistorie::create([
                     'state' => null,
                     'comment' => 'Se ha Eliminado el Dispositivo',
-                    'inv_device_id' => $id,
+                    'device_id' => $id,
                     'user_id' => $device->user_id ?? null,
                     'creator_id' => Auth::id(),
                 ]);

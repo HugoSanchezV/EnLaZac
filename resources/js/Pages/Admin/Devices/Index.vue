@@ -30,9 +30,8 @@ watch(error, (newValue) => {
     });
   }
 });
-
-const headers = [ "SYNC", "id", "usuario", "ip", "Acciones"];
-const filters = [ "id", "usuario", "ip"];
+const headers = ["SYNC", "id", "usuario", "ip", "Acciones"];
+const filters = ["id", "usuario", "ip"];
 </script>
 
 <template>
