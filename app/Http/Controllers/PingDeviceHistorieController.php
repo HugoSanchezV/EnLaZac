@@ -20,6 +20,7 @@ class PingDeviceHistorieController extends Controller
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('device_id', 'like', "%$search%")
                     ->orWhere('router_id', 'like', "%$search%")
+                    ->orWhere('user_id', 'like', "%$search%")
                     ->orWhere('status', 'like', "%$search%")
                     ->orWhere('created_at','like', "%$search%");
                 // Puedes agregar más campos si es necesario
@@ -38,6 +39,7 @@ class PingDeviceHistorieController extends Controller
                 'device_id' => $item->device_id,
                 'router_id' => $item->router_id,
                 'address' => $item->device->address,
+                'user_id' => $item->user->name,
                 'status' => $item->status,
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];

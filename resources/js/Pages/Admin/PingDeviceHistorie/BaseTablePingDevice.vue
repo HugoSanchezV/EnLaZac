@@ -74,14 +74,14 @@ const closeDeviceModal = (id) => {
 };
 
 const confirmSelectionTecnico = (row, select) => {
-  /*if (select.selectId === null) {
+  if (select.selectId === null) {
     const toast = useToast();
     toast.error("Selecciona un tecnico", {
       position: POSITION.TOP_CENTER,
       draggable: true,
     });
   } else {
-    const url = route("devices.update", row.id);
+    const url = route("ping.device.update", row.id);
     let device_id = null;
 
     if (row.device_id) {
@@ -95,7 +95,7 @@ const confirmSelectionTecnico = (row, select) => {
       device_id: device_id,
     });
     closeModal();
-  }*/
+  }
 };
 </script>
 <style>
@@ -320,9 +320,9 @@ const confirmSelectionTecnico = (row, select) => {
 
                 Mostrar
               </Link> -->
-            {{ users }}
               <div v-if="users.length > 0">
                 <button 
+                class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 @click="openDeviceModal(row.id)">
                   Seleccionar Técnico
                 </button>

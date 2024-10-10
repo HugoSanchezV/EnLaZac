@@ -35,16 +35,10 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-<<<<<<< Updated upstream
-    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-
-    Route::middleware(['rol:1,2,3'])->group(function () {
-=======
    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
    Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
    //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
->>>>>>> Stashed changes
         // Usuarios
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
@@ -152,13 +146,10 @@ Route::middleware([
         Route::get('/plans/edit/{id}',           [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
-<<<<<<< Updated upstream
-=======
         
     
         Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
         Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
->>>>>>> Stashed changes
     });
 
     //MIDDLEWARE DEMÁS USUARIOS
@@ -186,23 +177,8 @@ Route::middleware([
         Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets.usuario');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.usuario.store');
 
-<<<<<<< Updated upstream
-    //Vistas del usuario
-    Route::middleware(['rol:0'])->group(function () {
-        /*   Route::get('/dashboard', function () {
-            return Inertia::render('DashboardBase');
-        })->name('dashboard');
-     */
-        // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-
-        Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
-        Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store.usuario');
-        Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
-    });
-=======
     });
 
 
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
->>>>>>> Stashed changes
 });

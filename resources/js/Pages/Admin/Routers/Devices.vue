@@ -5,12 +5,9 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 const props = defineProps({
   devices: Object,
   pagination: Object,
-<<<<<<< Updated upstream
-=======
   error: String,
   success: String,
   warning: String,
->>>>>>> Stashed changes
   totalDevicesCount: Number,
   users: Object,
   inv_devices: Object,
