@@ -42,43 +42,52 @@ const columns = ["id", "name"]
   <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
-      <div class="flex justify-between">
-        <div>
+      <div class="flex justify-between flex-col md:flex-row">
+        <div class="md:mb-10">
           <h2>Dispositivos</h2>
         </div>
-        <div>
-          <Link
-            :href="route('devices.all.ping',route().params.router)"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
-            
-            Ping a dispositivos
-          </Link>
-          <Link
-            :href="route('device.ping.historie')"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
-            
-            Historial de pings
-          </Link>
-          <Link
-            :href="route('devices.create', route().params.router)"
-            method="get"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              class="size-4"
+        <div >
+          <div>
+            <Link
+              :href="route('devices.all.ping',route().params.router)"
+              class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
+              
+              Ping a dispositivos
+            </Link>
+          </div>
+          <div>
+            <Link
+              :href="route('router.device.ping.historie', route().params.router)"
+              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
+              
+              Historial de pings
+            </Link>
+          </div>
+          <div>
+            <Link
+              :href="route('devices.create', route().params.router)"
+              method="get"
+              class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
             >
-              <path
-                fill-rule="evenodd"
-                d="M2 2.75A.75.75 0 0 1 2.75 2C8.963 2 14 7.037 14 13.25a.75.75 0 0 1-1.5 0c0-5.385-4.365-9.75-9.75-9.75A.75.75 0 0 1 2 2.75Zm0 4.5a.75.75 0 0 1 .75-.75 6.75 6.75 0 0 1 6.75 6.75.75.75 0 0 1-1.5 0C8 10.35 5.65 8 2.75 8A.75.75 0 0 1 2 7.25ZM3.5 11a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
-                clip-rule="evenodd"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                class="size-4"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M2 2.75A.75.75 0 0 1 2.75 2C8.963 2 14 7.037 14 13.25a.75.75 0 0 1-1.5 0c0-5.385-4.365-9.75-9.75-9.75A.75.75 0 0 1 2 2.75Zm0 4.5a.75.75 0 0 1 .75-.75 6.75 6.75 0 0 1 6.75 6.75.75.75 0 0 1-1.5 0C8 10.35 5.65 8 2.75 8A.75.75 0 0 1 2 7.25ZM3.5 11a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
+                  clip-rule="evenodd"
+                />
+              </svg>
 
-            Nueva Conexión
-          </Link>
+              Nueva Conexión
+            </Link>
+          </div>
+          
+          
+          
         </div>
       </div>
     </template>

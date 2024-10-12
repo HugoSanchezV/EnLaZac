@@ -16,7 +16,7 @@ class ContractWarningListener
      */
     public function __construct()
     {
-        //
+        
     }
 
     /**
@@ -24,12 +24,8 @@ class ContractWarningListener
      */
     public function handle(ContractWarningEvent  $event): void
     {
-     //   dd("Eh puto");
         $user = User::where('id', '=', $event->contract->user_id)->get();
-        //Verifica si existe el usuario
+
         Notification::send($user, new ContractWarningNotification($event->contract));
-    
-        
-       
     }
 }

@@ -24,7 +24,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("pingDevice.destroy", id);
+          const url = route("device.ping.historie.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -52,6 +52,8 @@ const getTag = (cellIndex) => {
       return "router";
     case "address":
       return "dirección";
+    case "user_id":
+      return "encargado";
 
     case "status":
       return "estado";
@@ -73,6 +75,7 @@ const closeDeviceModal = (id) => {
   isModalDeviceOpen.value[id] = false;
 };
 
+
 const confirmSelectionTecnico = (row, select) => {
   if (select.selectId === null) {
     const toast = useToast();
@@ -81,20 +84,20 @@ const confirmSelectionTecnico = (row, select) => {
       draggable: true,
     });
   } else {
-    const url = route("ping.device.update", row.id);
-    let device_id = null;
-
-    if (row.device_id) {
-      device_id = row.device_id.id;
-    }
-    router.put(url, {
-      address: row.address,
-      router_id: route().params.router,
-      comment: row.comment,
+    const url = route("device.ping.historie.update", row.id);
+    console.log({
+      router_id: row.router_id,
+      device_id: row.device_id,
       user_id: select.selectId,
-      device_id: device_id,
+      status: row.status,
     });
-    closeModal();
+    router.put(url, {
+      router_id: row.router_id,
+      device_id: row.device_id,
+      user_id: select.selectId,
+      status: row.status,
+    });
+    closeDeviceModal();
   }
 };
 </script>

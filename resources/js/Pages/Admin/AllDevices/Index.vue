@@ -44,6 +44,15 @@ const columns = ["id", "name"];
         <div>
           <h2>Dispositivos</h2>
         </div>
+        <div class="flex gap-2 flex-col md:flex-row">
+          <div>
+            <Link
+              :href="route('device.ping.historie')"
+              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
+              
+              Historial de pings
+            </Link>
+          </div>
         <div>
           <Link
             :href="route('routers')"
@@ -65,13 +74,13 @@ const columns = ["id", "name"];
             Nueva Conexión
           </Link>
         </div>
+        </div>
       </div>
     </template>
 
     <template v-slot:content>
       <div v-if="props.totalDevicesCount > 0">
         <!-- Esta es el inicio de la tabla -->
-         {{  props.totalDevicesCount }}
         <device-table
           :headers="headers"
           :rows="rows"
