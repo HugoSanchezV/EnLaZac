@@ -38,9 +38,9 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-   // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-   Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-   //MIDLEWARE ADMINISTRADOR
+    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+    Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+    //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
@@ -188,7 +188,7 @@ Route::middleware([
 
     //MIDDLEWARE DEL CLIENTE
     Route::middleware(['rol:0'])->group(function () {
-        Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets.usuario');
+        Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.usuario.store');
     });
 

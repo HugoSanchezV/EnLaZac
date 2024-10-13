@@ -1,14 +1,12 @@
 <template>
-    <dashboard-base>
-        
-    </dashboard-base>
+  <dashboard-base> </dashboard-base>
 </template> 
 
 <script>
-import DashboardBase from '../DashboardBase.vue';
+import DashboardBase from "../DashboardBase.vue";
 export default {
-    components: {
-        DashboardBase
-    }
-}
+  components: {
+    DashboardBase,
+  },
+};
 </script>
