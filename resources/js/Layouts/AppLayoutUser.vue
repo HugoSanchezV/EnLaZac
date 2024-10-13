@@ -56,7 +56,7 @@ const logout = () => {
                   :href="route('dashboard')"
                   :active="route().current('dashboard')"
                 >
-                  Dashboard
+                  Inicio
                 </NavLink>
                 <NavLink
                   :href="route('pays')"
