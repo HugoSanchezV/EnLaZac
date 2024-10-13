@@ -8,8 +8,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Events\RegisterUserEvent;
 use App\Exports\GenericExport;
+use App\Imports\UserImport;
 use App\Models\Plan;
 use App\Services\UserService;
+use Dotenv\Exception\ValidationException;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -174,5 +177,29 @@ class UserController extends Controller
         };
 
         return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'usuarios.xlsx');
+    }
+
+    public function importExcel(Request $request)
+    {
+        try {
+            $file = $request->excel;
+            Excel::import(new UserImport, $file);
+            return Redirect::route('usuarios')->with('success', 'Archivo Importado Con Éxito ');
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+            foreach ($failures as $failure) {
+                $rows = $failure->row(); // Fila donde ocurrió el error
+                // $attribute = $failure->attribute(); // Nombre del campo con error
+                // $errors = $failure->errors(); // Lista de errores para este campo
+                // $values = $failure->values(); // Valores originales de esa fila
+
+                // Aquí puedes hacer algo como registrar los errores, mostrarlos al usuario, etc.
+                // Por ejemplo, podrías registrar los errores en una variable de sesión o en un log
+
+                return redirect()->back()->with($rows);
+            }
+        } catch (Exception $e) {
+            return Redirect::route('usuarios')->with('error', 'Error al Importar ' . $e->getMessage());
+        }
     }
 }

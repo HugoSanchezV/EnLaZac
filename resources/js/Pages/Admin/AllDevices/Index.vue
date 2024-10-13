@@ -1,5 +1,5 @@
 <script setup>
-import { toRefs} from "vue";
+import { toRefs } from "vue";
 
 const props = defineProps({
   devices: Object,
@@ -71,7 +71,6 @@ const columns = ["id", "name"];
     <template v-slot:content>
       <div v-if="props.totalDevicesCount > 0">
         <!-- Esta es el inicio de la tabla -->
-         {{  props.totalDevicesCount }}
         <device-table
           :headers="headers"
           :rows="rows"

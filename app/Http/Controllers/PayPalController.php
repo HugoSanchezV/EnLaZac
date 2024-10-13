@@ -8,7 +8,6 @@ class PayPalController extends Controller
 {
     public function createOrder()
     {
-        //dd("AHORA");
         $paypalModule = new PayPalClient;
         $paypalModule->setApiCredentials(config('paypal'));
         

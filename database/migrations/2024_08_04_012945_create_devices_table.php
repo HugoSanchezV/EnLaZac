@@ -25,12 +25,12 @@ return new class extends Migration
             $table->time("creation_time");
             $table->boolean("disabled")->default(true);
 
-            $table->softDeletes();
+            // $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
-            $table->foreign('device_id')->references('id')->on('inventorie_devices')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('device_id')->references('id')->on('inventorie_devices')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->dropForeign(['user_id']);
         });
 
-        
+
         //Schema::dropIfExists('routers');
         Schema::dropIfExists('devices');
     }

@@ -1,6 +1,7 @@
 <script setup>
 import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
+import BaseImportExcel from "@/Components/Base/Excel/BaseImportExcel.vue";
 
 const props = defineProps({
   devices: Object,
@@ -9,7 +10,9 @@ const props = defineProps({
 });
 
 const { devices } = toRefs(props);
+
 const toRouteExport = "inventorie.devices.excel";
+const toImportRoute = "historieDevices.import.excel";
 
 const headers = [
   "state",
@@ -20,6 +23,7 @@ const headers = [
   "acciones",
 ];
 const filters = ["state", "id", "mac address", "descripción", "marca"];
+const headingsImport = "mac, descripción, marca";
 </script>
 
 <template>
@@ -53,7 +57,19 @@ const filters = ["state", "id", "mac address", "descripción", "marca"];
 
     <template v-slot:content>
       <div v-if="props.totalDevicesCount > 0">
-        <base-export-excel :to-route-export="toRouteExport"></base-export-excel>
+        <div class="flex justify-center md:justify-start">
+          <base-export-excel
+            :to-route-export="toRouteExport"
+          ></base-export-excel>
+
+          <base-import-excel
+            @click="openModal"
+            :toImportRoute="toImportRoute"
+            :headings="headingsImport"
+          >
+          </base-import-excel>
+        </div>
+
         <!-- Esta es el inicio de la tabla -->
         <inventorie-table
           :headers="headers"
@@ -141,7 +157,6 @@ export default {
       if (props.attribute === "marca") {
         this.attribute = "brand";
       }
-
 
       this.$inertia.get(
         link,

@@ -5,18 +5,12 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 const props = defineProps({
   devices: Object,
   pagination: Object,
-<<<<<<< Updated upstream
-=======
-  error: String,
-  success: String,
-  warning: String,
->>>>>>> Stashed changes
   totalDevicesCount: Number,
   users: Object,
   inv_devices: Object,
 });
 
-const {devices,  users } = toRefs(props);
+const { devices, users } = toRefs(props);
 
 const headers = [
   "id",
@@ -40,32 +34,32 @@ const filters = [
   "address",
 ];
 
-const columns = ["id", "name"]
+const columns = ["id", "name"];
 </script>
   <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
-      <div class="flex justify-between">
+      <div class="block md:flex md:justify-between ">
         <div>
           <h2>Dispositivos</h2>
         </div>
-        <div>
+        <div class="block md:flex gap-1">
           <Link
-            :href="route('devices.all.ping',route().params.router)"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
-            
+            :href="route('devices.all.ping', route().params.router)"
+            class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md mb-1 md:mb-0"
+          >
             Ping a dispositivos
           </Link>
           <Link
             :href="route('device.ping.historie')"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
-            
+            class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md mb-1 md:mb-0"
+          >
             Historial de pings
           </Link>
           <Link
             :href="route('devices.create', route().params.router)"
             method="get"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+            class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md mb-1 md:mb-0"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Exports\GenericExport;
 use App\Http\Requests\InventorieDevice\StoreInventorieDeviceRequest;
 use App\Http\Requests\InventorieDevice\UpdateInventorieDeviceRequest;
+use App\Imports\InventorieDeviceImport;
 use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
 use App\Services\InventorieDeviceService;
 use Carbon\Carbon;
+use Dotenv\Exception\ValidationException;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 
 class InventorieDevicesController extends Controller
@@ -212,5 +216,30 @@ class InventorieDevicesController extends Controller
         $timestamp = Carbon::now()->format('Y-m-d_H-i-s');
 
         return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Inventario de Dispositivos ' . $timestamp . '.xlsx');
+    }
+
+    public function importExcel(Request $request)
+    {
+        // dd('Inventario de dispositivos');
+        try {
+            $file = $request->excel;
+            Excel::import(new InventorieDeviceImport, $file);
+            return Redirect::route('inventorie.devices.index')->with('success', 'Archivo Importado Con Éxito ');
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+            foreach ($failures as $failure) {
+                $rows = $failure->row(); // Fila donde ocurrió el error
+                // $attribute = $failure->attribute(); // Nombre del campo con error
+                // $errors = $failure->errors(); // Lista de errores para este campo
+                // $values = $failure->values(); // Valores originales de esa fila
+
+                // Aquí puedes hacer algo como registrar los errores, mostrarlos al usuario, etc.
+                // Por ejemplo, podrías registrar los errores en una variable de sesión o en un log
+
+                return redirect()->back()->with($rows);
+            }
+        } catch (Exception $e) {
+            return Redirect::route('inventorie.devices.index')->with('error', 'Error al Importar ' . $e->getMessage());
+        }
     }
 }

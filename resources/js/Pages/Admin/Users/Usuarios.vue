@@ -1,6 +1,7 @@
 <script setup>
 import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
+import BaseImportExcel from "@/Components/Base/Excel/BaseImportExcel.vue";
 
 const props = defineProps({
   users: Object,
@@ -10,9 +11,11 @@ const props = defineProps({
 
 const { users } = toRefs(props);
 const toRouteExport = "usuarios.excel";
+const toImportRoute = "usuarios.import.excel";
 
 const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
 const filters = ["id", "nombre", "alias", "email"];
+const headingsImport = "nombre, alias, email, password, role";
 </script>
 
 <template>
@@ -51,7 +54,17 @@ const filters = ["id", "nombre", "alias", "email"];
     <template v-slot:content>
       <div>
         <div v-if="props.totalUsersCount > 0">
-          <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
+          <div class="flex justify-center md:justify-start">
+            <base-export-excel
+              :toRouteExport="toRouteExport"
+            ></base-export-excel>
+            <base-import-excel
+              @click="openModal"
+              :toImportRoute="toImportRoute"
+              :headings="headingsImport"
+            >
+            </base-import-excel>
+          </div>
 
           <!-- Esta es el inicio de la tabla -->
           <base-table-users
@@ -94,8 +107,6 @@ const filters = ["id", "nombre", "alias", "email"];
 
 <script>
 import { Link } from "@inertiajs/vue3";
-import { useToast, POSITION } from "vue-toastification";
-
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import BaseTableUsers from "@/Components/Base/BaseTableUsers.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";

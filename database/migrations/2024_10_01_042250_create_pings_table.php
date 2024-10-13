@@ -17,11 +17,7 @@ return new class extends Migration
             $table->string('content');
             $table->timestamps();
 
-<<<<<<< Updated upstream
-            //$table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
-=======
           //  $table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
->>>>>>> Stashed changes
         });
     }
 

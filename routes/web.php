@@ -12,9 +12,12 @@ use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
+use App\Http\Controllers\PayPalSettingController;
 use App\Http\Controllers\PingDeviceHistorieController;
 use App\Http\Controllers\ScheduledTaskController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatisticsController;
+use App\Models\InventorieDevice;
 use App\Models\PingDeviceHistorie;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -35,16 +38,10 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-<<<<<<< Updated upstream
     // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-
-    Route::middleware(['rol:1,2,3'])->group(function () {
-=======
-   // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-   Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-   //MIDLEWARE ADMINISTRADOR
+    Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+    //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
->>>>>>> Stashed changes
         // Usuarios
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
@@ -54,6 +51,7 @@ Route::middleware([
         Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])->name('usuarios.update');
         Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
         Route::get('/usuarios/to/excel',  [UserController::class, 'exportExcel'])->name('usuarios.excel');
+        Route::post('/usuarios/import/excel',  [UserController::class, 'importExcel'])->name('usuarios.import.excel');
 
 
         //Routers
@@ -65,6 +63,7 @@ Route::middleware([
         Route::put('/routers/update/{id}',      [RouterController::class, 'update'])->name('routers.update');
         Route::delete('/routers/delete/{id}',   [RouterController::class, 'destroy'])->name('routers.destroy');
         Route::get('/routers/to/excel',  [RouterController::class, 'exportExcel'])->name('routers.excel');
+        Route::post('/routers/import/excel',  [RouterController::class, 'importExcel'])->name('routers.import.excel');
 
         // -- sync
         Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
@@ -79,7 +78,7 @@ Route::middleware([
         Route::get('/pings',                  [PingController::class, 'index'])->name('pings');
         Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');
 
-    
+
 
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
@@ -115,14 +114,14 @@ Route::middleware([
         Route::put('/inventorie/devices/update/{device}',          [InventorieDevicesController::class, 'update'])->name('inventorie.devices.update');
         Route::delete('/inventorie/devices/delete/{device}',          [InventorieDevicesController::class, 'destroy'])->name('inventorie.devices.destroy');
         Route::get('/inventorie/devices/to/excel',          [InventorieDevicesController::class, 'exportExcel'])->name('inventorie.devices.excel');
+        Route::post('/inventorie/devices/histories/import/excel',          [InventorieDevicesController::class, 'importExcel'])->name('historieDevices.import.excel');
 
         Route::get('/inventorie/devices/histories',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
         Route::delete('/inventorie/devices/histories/{device}/delete',          [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');
         Route::get('/inventorie/devices/histories/to/excel',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
-
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
-        Route::post('/tickets/statusUpdate/{id}',[TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
+        Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
         Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
         Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
         Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
@@ -131,7 +130,7 @@ Route::middleware([
         Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
         Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
         //Leer y marcado como leída las notificaciones
-       
+
 
         //Contracts Coordi
         Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
@@ -152,57 +151,44 @@ Route::middleware([
         Route::get('/plans/edit/{id}',           [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
-<<<<<<< Updated upstream
-=======
-        
-    
+
+
         Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
         Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
->>>>>>> Stashed changes
+
+
+        // Settings
+        Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
+        Route::get('/sistema/configuracion/paypal',      [PayPalSettingController::class, 'edit'])->name('settings.paypal.edit');
+        Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
     });
 
     //MIDDLEWARE DEMÁS USUARIOS
     Route::middleware(['rol:2,3'])->group(function () {
         // Usuarios
-      /*  Route::get('/dashboard', function () {
+        /*  Route::get('/dashboard', function () {
             return Inertia::render('DashboardBase');
         })->name('dashboard');*/
-       // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+        // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
     });
 
 
     //Vista generales
-  /*  Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
+    /*  Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
     Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
     Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
     Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
     Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
     Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');*/
-    
+
     //MIDDLEWARE DEL CLIENTE
     Route::middleware(['rol:0'])->group(function () {
         Route::get('/tickets/usuario',                 [TicketController::class, 'index2'])->name('tickets.usuario');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.usuario.store');
-
-<<<<<<< Updated upstream
-    //Vistas del usuario
-    Route::middleware(['rol:0'])->group(function () {
-        /*   Route::get('/dashboard', function () {
-            return Inertia::render('DashboardBase');
-        })->name('dashboard');
-     */
-        // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-
-        Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
-        Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.store.usuario');
-        Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
-    });
-=======
     });
 
 
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
->>>>>>> Stashed changes
 });

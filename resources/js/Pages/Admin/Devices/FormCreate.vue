@@ -18,6 +18,11 @@ const props = defineProps({
   router: {
     type: Object,
   },
+  inv_devices: {
+    // Datos del dispositivo que se está editando
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 let network_value = ref("");
@@ -95,7 +100,7 @@ const submit = () => {
   if (!device_active.value) {
     form.device_id = null;
   }
-  
+
   form.post(route("devices.store"), {
     onSuccess: () => {
       // window.history.back()
@@ -245,6 +250,9 @@ const seleccionar = (valor) => {
             required
           >
             <option value="">Selecciona un Dispositivo</option>
+            <option v-for="item in inv_devices" :key="item.id" :value="item.id">
+              {{ item.id + " - " + item.mac_address }}
+            </option>
           </select>
         </div>
         <p v-else class="text-gray-500 text-sm">

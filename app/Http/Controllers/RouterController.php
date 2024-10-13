@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\GenericExport;
 use App\Http\Requests\Router\StoreRouterRequest;
 use App\Http\Requests\Router\UpdateRouterRequest;
+use App\Imports\RouterImport;
 use App\Models\Device;
 use App\Models\InventorieDevice;
 use App\Models\Network;
@@ -157,8 +158,8 @@ class RouterController extends Controller
     {
         $router = Router::findOrFail($id);
         $ip = $router->ip_address;
-       // $message = "Hola";
-       try{
+        // $message = "Hola";
+        try {
 
             if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                 $message = "Dirección IP no válida: " . $ip . "\n";
@@ -198,11 +199,9 @@ class RouterController extends Controller
             }
 
             return Redirect::route('routers')->with('success', $message);
-       }catch(Exception $e)
-       {
-        return Redirect::route('routers')->with('error', $e->getMessage());
-       }
-        
+        } catch (Exception $e) {
+            return Redirect::route('routers')->with('error', $e->getMessage());
+        }
     }
     public function sync($id)
     {
@@ -340,8 +339,8 @@ class RouterController extends Controller
         $totalDevicesCount = $router->devices()->count();
         $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
-        
-      
+
+
         return Inertia::render('Admin/Routers/Devices', [
             'devices' => $devices,
             'pagination' => [
@@ -358,7 +357,7 @@ class RouterController extends Controller
             'users' => $users,
             'inv_devices' => $inv_devices,
             'router' => $router->id,
-            
+
         ]);
     }
 
@@ -419,5 +418,30 @@ class RouterController extends Controller
             ];
         };
         return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Dispositivos de Router ' . $router->ip_address . '.xlsx');
+    }
+
+    public function importExcel(Request $request)
+    {
+        // dd('Inventario de dispositivos');
+        try {
+            $file = $request->excel;
+            Excel::import(new RouterImport, $file);
+            return Redirect::route('routers')->with('success', 'Archivo Importado Con Éxito ');
+        } catch (ValidationException $e) {
+            $failures = $e->failures();
+            foreach ($failures as $failure) {
+                $rows = $failure->row(); // Fila donde ocurrió el error
+                // $attribute = $failure->attribute(); // Nombre del campo con error
+                // $errors = $failure->errors(); // Lista de errores para este campo
+                // $values = $failure->values(); // Valores originales de esa fila
+
+                // Aquí puedes hacer algo como registrar los errores, mostrarlos al usuario, etc.
+                // Por ejemplo, podrías registrar los errores en una variable de sesión o en un log
+
+                return redirect()->back()->with($rows);
+            }
+        } catch (Exception $e) {
+            return Redirect::route('routers')->with('error', 'Error al Importar ' . $e->getMessage());
+        }
     }
 }

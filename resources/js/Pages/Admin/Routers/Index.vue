@@ -4,6 +4,7 @@ import { onMounted, toRefs, watch } from "vue";
 import { useToast, POSITION, TYPE } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
+import BaseImportExcel from "@/Components/Base/Excel/BaseImportExcel.vue";
 
 const props = defineProps({
   routers: Object,
@@ -61,6 +62,7 @@ const updateStatus = () => {
 };
 const { routers } = toRefs(props);
 const toRouteExport = "routers.excel";
+const toImportRoute = "routers.import.excel"
 
 const headers = [
   "SYNC",
@@ -73,6 +75,7 @@ const headers = [
 ];
 
 const filters = ["id", "usuario", "ip"];
+const headingsImport = "usuario, direccion, password"
 </script>
 
 <template>
@@ -142,7 +145,18 @@ const filters = ["id", "usuario", "ip"];
     </template>
     <template v-slot:content>
       <div v-if="totalRoutersCount > 0">
-        <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
+        <div class="flex justify-center md:justify-start">
+          <base-export-excel
+            :to-route-export="toRouteExport"
+          ></base-export-excel>
+
+          <base-import-excel
+            @click="openModal"
+            :toImportRoute="toImportRoute"
+            :headings="headingsImport"
+          >
+          </base-import-excel>
+        </div>
 
         <!-- Esta es el inicio de la tabla -->
         <router-table
