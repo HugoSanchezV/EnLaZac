@@ -43,20 +43,22 @@ const columns = ["id", "name"];
         <div class="md:mb-10">
           <h2>Dispositivos</h2>
         </div>
-        <div >
-          <div>
+        <div class="block md:flex gap-1">
+          <div class="mb-1 md:mb-0">
             <Link
-              :href="route('devices.all.ping',route().params.router)"
-              class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
-              
+              :href="route('devices.all.ping', route().params.router)"
+              class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+            >
               Ping a dispositivos
             </Link>
           </div>
           <div>
             <Link
-              :href="route('router.device.ping.historie', route().params.router)"
-              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md">
-              
+              :href="
+                route('router.device.ping.historie', route().params.router)
+              "
+              class="flex justify-center md:justify-between items-center mb-1 md:mb-0 gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+            >
               Historial de pings
             </Link>
           </div>
@@ -64,7 +66,7 @@ const columns = ["id", "name"];
             <Link
               :href="route('devices.create', route().params.router)"
               method="get"
-              class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+              class="flex justify-center items-center gap-2 mb-1 md:mb-0 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -82,9 +84,6 @@ const columns = ["id", "name"];
               Nueva Conexión
             </Link>
           </div>
-          
-          
-          
         </div>
       </div>
     </template>
