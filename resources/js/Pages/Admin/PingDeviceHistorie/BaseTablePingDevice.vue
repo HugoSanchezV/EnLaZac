@@ -24,7 +24,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("pingDevice.destroy", id);
+          const url = route("device.ping.historie.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -52,6 +52,8 @@ const getTag = (cellIndex) => {
       return "router";
     case "address":
       return "dirección";
+    case "user_id":
+      return "encargado";
 
     case "status":
       return "estado";
@@ -73,29 +75,30 @@ const closeDeviceModal = (id) => {
   isModalDeviceOpen.value[id] = false;
 };
 
+
 const confirmSelectionTecnico = (row, select) => {
-  /*if (select.selectId === null) {
+  if (select.selectId === null) {
     const toast = useToast();
     toast.error("Selecciona un tecnico", {
       position: POSITION.TOP_CENTER,
       draggable: true,
     });
   } else {
-    const url = route("devices.update", row.id);
-    let device_id = null;
-
-    if (row.device_id) {
-      device_id = row.device_id.id;
-    }
-    router.put(url, {
-      address: row.address,
-      router_id: route().params.router,
-      comment: row.comment,
+    const url = route("device.ping.historie.update", row.id);
+    console.log({
+      router_id: row.router_id,
+      device_id: row.device_id,
       user_id: select.selectId,
-      device_id: device_id,
+      status: row.status,
     });
-    closeModal();
-  }*/
+    router.put(url, {
+      router_id: row.router_id,
+      device_id: row.device_id,
+      user_id: select.selectId,
+      status: row.status,
+    });
+    closeDeviceModal();
+  }
 };
 </script>
 <style>
@@ -320,9 +323,9 @@ const confirmSelectionTecnico = (row, select) => {
 
                 Mostrar
               </Link> -->
-            {{ users }}
               <div v-if="users.length > 0">
                 <button 
+                class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 @click="openDeviceModal(row.id)">
                   Seleccionar Técnico
                 </button>

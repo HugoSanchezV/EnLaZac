@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('content');
             $table->timestamps();
 
-          //  $table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
+            //$table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
         });
     }
 

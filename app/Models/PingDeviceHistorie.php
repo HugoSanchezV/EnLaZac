@@ -11,12 +11,21 @@ class PingDeviceHistorie extends Model
     protected $fillable = [
         'device_id',
         'router_id',
-        'status',
-        'created_at'
+        'user_id',  
+        'status'
     ];
 
     public function device()
     {
         return $this->belongsTo(Device::class);
+    }
+    public function router()
+    {
+        return $this->belongsTo(Router::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

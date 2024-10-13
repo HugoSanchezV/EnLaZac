@@ -23,8 +23,8 @@ watch(success, (newValue) => {
   }
 });
 
-const headers = ["id", "dispositivo", "router", "dirección", "estado", "creado", "acciones"];
-const filters = ["id", "dispositivo","router", "dirección", "estado", "creado"];
+const headers = ["id", "dispositivo", "router", "dirección", "encargado", "estado", "creado", "acciones"];
+const filters = ["id", "dispositivo","router", "dirección", "encargado", "estado", "creado"];
 </script>
 
 <template>
@@ -141,6 +141,10 @@ export default {
       if (this.attribute === "creado") {
         this.attribute = "create_at";
       }
+      
+      if (this.attribute === "encargado") {
+        this.attribute = "user_id";
+      }
 
       this.$inertia.get(
         link,
@@ -153,7 +157,7 @@ export default {
   watch: {
     pingDevice() {
       const toast = useToast();
-      this.rows = this.pings.data;
+      this.rows = this.pingDevices.data;
       if (this.success) {
         toast.success(this.success, {
           position: POSITION.TOP_CENTER,

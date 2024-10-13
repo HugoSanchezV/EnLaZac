@@ -38,9 +38,9 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-    Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-    //MIDLEWARE ADMINISTRADOR
+   // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+   Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+   //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
@@ -102,6 +102,9 @@ Route::middleware([
         Route::get('/devices/all/to/excel',     [DevicesController::class, 'allDevicesExportExcel'])->name('devices.all.excel');
         //Ping Devices Historie
         Route::get('/devices/ping/historie',     [PingDeviceHistorieController::class, 'index'])->name('device.ping.historie');
+        Route::get('/routers/{router}/devices/ping/historie',     [PingDeviceHistorieController::class, 'index2'])->name('router.device.ping.historie');
+        Route::put('/devices/ping/historie/update/{pingDeviceHistorie}',     [PingDeviceHistorieController::class, 'update'])->name('device.ping.historie.update');
+        Route::delete('/devices/ping/historie/delete/{id}',     [PingDeviceHistorieController::class, 'destroy'])->name('device.ping.historie.destroy');
 
 
 

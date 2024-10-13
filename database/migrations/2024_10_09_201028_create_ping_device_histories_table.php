@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('device_id')->constrained('devices')->onDelete('cascade');
             $table->foreignId('router_id')->constrained('routers')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');;
             $table->string('status');
             $table->timestamps();
         });
