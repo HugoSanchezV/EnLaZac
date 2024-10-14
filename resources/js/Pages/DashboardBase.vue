@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
-import Chart from 'chart.js/auto'
 import AppLayoutAdmin from "@/Layouts/AppLayoutAdmin.vue";
 import AppLayoutUser from "@/Layouts/AppLayoutUser.vue";
 import AppLayoutEmpleado from "@/Layouts/AppLayoutEmpleado.vue";
