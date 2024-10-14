@@ -18,10 +18,11 @@ class RouterService
         })->all();
     }
 
+
     public function getDevicesNotInDatabase($devices, $db_devices): array
     {
         return collect($devices)->filter(function ($device) use ($db_devices) {
-            return !in_array($device['.id'], array_column($db_devices, '.id'));
+            return !collect($db_devices)->pluck('device_internal_id')->contains($device['.id']);
         })->all();
     }
 

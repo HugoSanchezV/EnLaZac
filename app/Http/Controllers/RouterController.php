@@ -224,10 +224,14 @@ class RouterController extends Controller
                 ]
             );
 
-            $db_devices = Device::all();
+            $db_devices = Device::where('router_id', $id)->get();
 
-            if (empty($users) && empty($db_devices)) {
+            if (!empty($users) && !empty($db_devices)) {
                 $users = $this->routerService->getDevicesNotInDatabase($users, $db_devices);
+                
+                if(empty($users)) {
+                    return Redirect::route('routers')->with('success', 'El router se encuntra actualizado, todos los id conciden con la base de datos');
+                }
             }
 
             $total_devices = count($users);

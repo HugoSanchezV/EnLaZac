@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('networks', function (Blueprint $table) {
             $table->id();
             // router de la tabla router
-            $table->unsignedBigInteger('router_id'); 
-            
+            $table->unsignedBigInteger('router_id');
+
             $table->string("address");
             $table->ipAddress("network");
             $table->timestamps();
 
-            $table->foreign('router_id')->references('id')->on('routers');
+            $table->foreign('router_id')->references('id')->on('routers')->onDelete('cascade');
         });
     }
 

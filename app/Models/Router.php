@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Router extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+    // use SoftDeletes;
 
     protected $fillable = [
         'sync',
@@ -18,11 +18,13 @@ class Router extends Model
         'password',
     ];
 
-    public function devices() {
+    public function devices()
+    {
         return $this->hasMany(Device::class, 'router_id');
     }
 
-    public function networks() {
+    public function networks()
+    {
         return $this->hasMany(Network::class, 'router_id');
     }
 }
