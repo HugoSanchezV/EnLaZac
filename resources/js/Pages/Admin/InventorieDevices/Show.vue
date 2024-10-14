@@ -4,8 +4,8 @@
       <template v-slot:namePage>
         <div class="flex justify-between">
           <h2>Información del ticket</h2>
-          <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">Ticket No. {{
-            ticket.id
+          <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">InventorieDevices No. {{
+            inventorieDevices.id
           }}</span>
           
         </div>
@@ -34,7 +34,7 @@ export default {
     DashboardBase,
   },
   props: {
-    ticket: {
+    inventorieDevices: {
       type: Object,
       required: true,
     },

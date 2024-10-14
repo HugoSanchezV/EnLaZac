@@ -82,7 +82,7 @@ Route::middleware([
 
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
-        Route::get('/devices/show',                  [DevicesController::class, 'show'])->name('devices.show');
+        Route::get('/devices/show/{id}',                  [DevicesController::class, 'show'])->name('devices.show');
         Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
         Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
         Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');

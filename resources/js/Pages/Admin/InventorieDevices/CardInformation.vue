@@ -2,7 +2,7 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
 const props = defineProps({
-    device: {
+    inventorieDevices: {
         type: Object,
         required: true,  // El usuario es obligatorio
     },
@@ -16,8 +16,8 @@ const props = defineProps({
   <div class="bg-white shadow-md rounded-lg border border-gray-200">
     <!-- Encabezado de la tarjeta de información del usuario -->
     <div class="px-6 py-4 bg-gray-50">
-      <h3 class="text-lg leading-6 font-semibold text-gray-800">Información del Usuario</h3>
-      <p class="mt-1 text-sm text-gray-500">Detalles sobre el contrato y el dispositivo asignado</p>
+      <h3 class="text-lg leading-6 font-semibold text-gray-800">Inventario de dispositivos</h3>
+      <p class="mt-1 text-sm text-gray-500">Detalles sobre el inventario de dispositivos</p>
     </div>
     <!-- Contenido del contrato del usuario -->
     <div class="border-t border-gray-100 px-6 py-4">
@@ -27,51 +27,39 @@ const props = defineProps({
         <!-- Muestra el nombre del usuario -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Id</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.id }}</dd>
+          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.id }}</dd>
         </div>
 
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">id dispositivo interno</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.device_internal_id}}</dd>
-        </div>
-
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">id router</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.router_id }}</dd>
-        </div>
-
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">lista</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.list }}</dd>
-        </div>
-
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Direccion</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.address }}</dd>
+          <dt class="text-sm font-medium text-gray-600">mac direccion</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.mac_address}}</dd>
         </div>
 
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">estado</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.disabled }}</dd>
-        </div>
-
-        <!-- Muestra el email del usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">id dispositivo</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.inventorieDevice.id === null ?? 'Sin asignar'}}</dd>
-
-        </div>
-
-        
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">id usuario</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.user_id}}</dd>
+          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.state }}</dd>
         </div>
 
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">id usuario</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ device.user.name}}</dd>
+          <dt class="text-sm font-medium text-gray-600">Descripcion</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.description }}</dd>
         </div>
+
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Marca</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.brand }}</dd>
+        </div>
+
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Creacion</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.created_at }}</dd>
+        </div>
+
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Actualizacion</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.updated_at}}</dd>
+        </div>
+
       </dl>
     </div>
   </div>
