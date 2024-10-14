@@ -110,7 +110,7 @@ Route::middleware([
 
         // inventorie_devices
         Route::get('/inventorie/devices',                 [InventorieDevicesController::class, 'index'])->name('inventorie.devices.index');
-        Route::get('/inventorie/devices/show/{inventorieDevice}', [InventorieDevicesController::class, 'show'])->name('inventorie.devices.show');
+        Route::get('/inventorie/devices/show/{id}', [InventorieDevicesController::class, 'show'])->name('inventorie.devices.show');
         Route::get('/inventorie/devices/create',          [InventorieDevicesController::class, 'create'])->name('inventorie.devices.create');
         Route::post('/inventorie/devices/store',          [InventorieDevicesController::class, 'store'])->name('inventorie.devices.store');
         Route::get('/inventorie/devices/edit/{device}',          [InventorieDevicesController::class, 'edit'])->name('inventorie.devices.edit');

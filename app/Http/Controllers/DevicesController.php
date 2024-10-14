@@ -175,7 +175,11 @@ class DevicesController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $devices = Devices::with('devices')->findOrFail($id);
+
+        return Inertia::render('Admin/Devices/Show', [
+            'devices' => $devices,
+        ]);
     }
 
     /**
