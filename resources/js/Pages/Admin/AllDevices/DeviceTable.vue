@@ -157,10 +157,10 @@ const getTag = (cellIndex) => {
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <base-export-excel
+    <!-- <base-export-excel
       :toRouteExport="toRouteExport"
       :url-complete="urlComplete"
-    ></base-export-excel>
+    ></base-export-excel> -->
     <div
       class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
     >

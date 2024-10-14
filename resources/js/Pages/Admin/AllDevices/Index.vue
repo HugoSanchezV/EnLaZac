@@ -1,5 +1,7 @@
 <script setup>
 import { toRefs } from "vue";
+import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
+import BaseImportExcel from "@/Components/Base/Excel/BaseImportExcel.vue";
 
 const props = defineProps({
   devices: Object,
@@ -10,6 +12,10 @@ const props = defineProps({
 });
 
 const { devices, users } = toRefs(props);
+const toRouteExport = "devices.all.excel";
+const toImportRoute = "devices.import.excel";
+const headingsImport =
+  "id interno, id disposotivo, id usuario, comentario, direccion, id router, desactivado (0 | 1) \n (Si no hay relacion dejar vacio, el router es obligatorio)";
 
 const headers = [
   "id",
@@ -83,6 +89,16 @@ const columns = ["id", "name"];
 
     <template v-slot:content>
       <div v-if="props.totalDevicesCount > 0">
+        <div class="flex justify-center md:justify-start">
+          <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
+          <base-import-excel
+            @click="openModal"
+            :toImportRoute="toImportRoute"
+            :headings="headingsImport"
+          >
+          </base-import-excel>
+        </div>
+
         <!-- Esta es el inicio de la tabla -->
         <device-table
           :headers="headers"

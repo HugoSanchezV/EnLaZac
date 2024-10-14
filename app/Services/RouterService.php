@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Network;
+use App\Models\Router;
+
 class RouterService
 {
     public function filterNetworksByPrefix($addresses, $networkPrefix): array
@@ -16,6 +19,10 @@ class RouterService
         return collect($devices)->filter(function ($device) use ($db_network) {
             return !in_array($device['network'], $db_network);
         })->all();
+    }
+
+    public function  isNetworkCorrect(Router $router, $network) {
+        $router_networks = $router->netoworks();
     }
 
 
