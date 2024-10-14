@@ -4,8 +4,8 @@
       <template v-slot:namePage>
         <div class="flex justify-between">
           <h2>Información del ticket</h2>
-          <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">Devices No. {{
-            devices.id
+          <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">Router No. {{
+            router.id
           }}</span>
           
         </div>
@@ -13,7 +13,7 @@
       <template v-slot:content>
         <div class="flex justify-center items-center w-full h-full">
           <div class="p-8 rounded-lg w-1/2">
-            <CardInformation :devices="devices"/>
+            <CardInformation :router="router"/>
           </div>
         </div>
       </template>
@@ -34,7 +34,7 @@ export default {
     DashboardBase,
   },
   props: {
-    devices: {
+    router: {
       type: Object,
       required: true,
     },

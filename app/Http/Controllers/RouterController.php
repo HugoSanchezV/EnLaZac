@@ -113,11 +113,18 @@ class RouterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id) {}
+    public function show($id) 
+    {
+        $router = Router::with('router')->findOrFail($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+        return Inertia::render('Admin/Routers/Show', [
+            'router' => $router,
+        ]);
+
+
+    }
+
+    
     public function edit($id)
     {
         $router = Router::findOrFail($id);

@@ -13,7 +13,7 @@
       <template v-slot:content>
         <div class="flex justify-center items-center w-full h-full">
           <div class="p-8 rounded-lg w-1/2">
-            <CardInformation :ticket="ticket"/>
+            <CardInformation :inventorieDevices="inventorieDevices"/>
           </div>
         </div>
       </template>
