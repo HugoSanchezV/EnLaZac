@@ -2,8 +2,22 @@
 
 import { onMounted, nextTick  } from "vue";
 import { usePage } from "@inertiajs/vue3";
+import Chart from 'chart.js/auto';
+import { defineProps } from "vue";
 
-const { props } = usePage();
+const props = defineProps({
+    index: Number,
+    target:  Array,
+       
+        upload_rate: Array,
+     
+        download_rate: Array,
+       
+        upload_byte: Array,
+
+        download_byte: Array,
+      
+})
 onMounted( async () =>{
     await nextTick();
     const ctxRate = document.getElementById('myChartRate'+props.index);
@@ -75,8 +89,8 @@ onMounted( async () =>{
             <canvas :id="'myChartRate'+ index"></canvas>
             <canvas :id="'myChartByte'+ index"></canvas>
         </div>
-    </div>{{ index }}
-</template>
+    </div>
+    </template>
 <script>
 export default {
     props: {
