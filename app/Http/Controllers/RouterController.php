@@ -179,7 +179,7 @@ class RouterController extends Controller
             if (stripos(PHP_OS, 'WIN') === 0) {
                 // Para Windows, verificar si se recibió el número completo de respuestas
 
-
+             //   dd($pingResult);
                 if (strpos($pingResult, 'recibidos = 4') == true) {
                     $message = "El dispositivo está en línea.\n";
                     //  return true;
