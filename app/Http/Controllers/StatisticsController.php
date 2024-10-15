@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class StatisticsController extends Controller
 {
+    public $route = [];
 
     public function show()
     {
@@ -73,6 +74,7 @@ class StatisticsController extends Controller
             'download_rate' =>$download_rate,
             'upload_byte' =>$upload_byte,
             'download_byte' =>$download_byte,
+            'routers' => $this->route,
             
         ]);
     }
@@ -94,20 +96,21 @@ class StatisticsController extends Controller
             try{   
 
                 $routerOSService = RouterOSService::getInstance();
-                $trafficDat = $routerOSService->getQueueTraffic($r->id); 
-                $trafficData[] = $trafficDat;
-                $trafficData[] = $trafficDat;
-
+                $trafficDat = $routerOSService->getQueueTraffic($r->id);
+                if(!is_null($trafficDat)){
+                    $trafficData[] = $trafficDat;
+                    $this->route [] = $r->id;
+                }
             } catch (Exception $e) {
                 return Redirect::route('dashboard')->with('error', $e->getMessage());
             }
         }
-        return ($trafficData);
+        return $trafficData;
     }
     public function activeContract()
     {return Contract::where('active','1')->count();}
     public function userCount()
-    {return User::all()->count();}
+    {return User::where('admin','0')->count();}
 
     public function morrososCount()
     {return (Device::where('list','MOROSOS'))->count();}
