@@ -31,7 +31,7 @@ const props = defineProps({
         </div>
 
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">mac direccion</dt>
+          <dt class="text-sm font-medium text-gray-600">direccion de la mac</dt>
           <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.mac_address}}</dd>
         </div>
 
@@ -50,15 +50,6 @@ const props = defineProps({
           <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.brand }}</dd>
         </div>
 
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Creacion</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.created_at }}</dd>
-        </div>
-
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Actualizacion</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ inventorieDevices.updated_at}}</dd>
-        </div>
 
       </dl>
     </div>

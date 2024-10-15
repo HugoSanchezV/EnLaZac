@@ -57,7 +57,7 @@ Route::middleware([
         //Routers
         // -- Resource 
         Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
-        Route::get('/routers/show/{id}',        [RoutersController::class, 'show'])->name('routers.show');
+        Route::get('/routers/show/{id}',        [RouterController::class, 'show'])->name('routers.show');
         Route::get('/routers/create',           [RouterController::class, 'create'])->name('routers.create');
         Route::post('/routers/store',           [RouterController::class, 'store'])->name('routers.store');
         Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');

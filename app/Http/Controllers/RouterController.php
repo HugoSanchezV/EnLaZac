@@ -115,7 +115,7 @@ class RouterController extends Controller
      */
     public function show($id) 
     {
-        $router = Router::with('router')->findOrFail($id);
+        $router = Router::findOrFail($id);
 
         return Inertia::render('Admin/Routers/Show', [
             'router' => $router,

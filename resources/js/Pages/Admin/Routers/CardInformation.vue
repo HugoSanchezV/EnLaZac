@@ -56,11 +56,6 @@ const props = defineProps({
         </div>
 
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Contraseña</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ router.password}}</dd>
-        </div>
-
-        <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Routers creados</dt>
           <dd class="mt-1 text-sm text-gray-900">{{ router.created_at}}</dd>
         </div>
