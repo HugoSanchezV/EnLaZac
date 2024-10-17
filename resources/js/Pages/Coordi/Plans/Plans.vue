@@ -13,6 +13,7 @@ const { plans } = toRefs(props);
 const headers = [
   "Id",
   "Nombre",
+  'Precio',
   "Descripción",
   "Burst Limit (Mb/s)",
   "Burst Threshold (Mb/s)",
@@ -25,6 +26,7 @@ const filters = [
   "id",
   "nombre",
   "descripción",
+  'precio',
   "burst_limit",
   "burst_threshold",
   "burst_time",
@@ -147,7 +149,9 @@ export default {
       if (this.order === "descripción") {
         this.order = "description";
       }
-
+      if (this.order === "precio") {
+        this.order = "price";
+      }     
       this.$inertia.get(
         link,
         {

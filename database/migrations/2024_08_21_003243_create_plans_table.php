@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id()->primary();
             $table->string('name');
             $table->string('description'); // Campo normal descripción
+            $table->decimal('price');
             $table->json('burst_limit'); // Campo JSON para los límites de subida
             $table->json('burst_threshold'); // Campo JSON para los límites de bajada
             $table->json('burst_time'); // Campo JSON para los límites de bajada

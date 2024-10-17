@@ -23,6 +23,7 @@ class PlanController extends Controller
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('name', 'like', "%$search%")
                     ->orWhere('description', 'like', "%$search%")
+                    ->orWhere('price', 'like', "%$search%")
                     ->orWhere('upload_limits->burst_limit', 'like', "%$search%")
                     ->orWhere('upload_limits->burst_threshold', 'like', "%$search%")
                     ->orWhere('upload_limits->burst_time', 'like', "%$search%")
@@ -48,7 +49,7 @@ class PlanController extends Controller
                 'id' => $item->id,
                 'name' => $item->name,
                 'description' => $item->description,
-
+                'price' => $item->price,
                 'burst_limit' => $item->burst_limit ?[
                     'upload_limits' => $item->burst_limit['upload_limits'] ?? null,
                     'download_limits' => $item->burst_limit['download_limits'] ?? null,

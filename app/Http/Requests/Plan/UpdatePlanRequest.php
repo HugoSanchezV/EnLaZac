@@ -25,6 +25,7 @@ class UpdatePlanRequest extends FormRequest
         return [
             'name' => 'required|max:100',
             'description' => 'required|max:255',
+            'price' => 'required|numeric',
 
             'burst_limit.upload_limits' => 'required|numeric',
             'burst_limit.download_limits' => 'required|numeric',
@@ -51,6 +52,8 @@ class UpdatePlanRequest extends FormRequest
             'name.max' => 'El nombre no puede tener más de 100 caracteres.',
             'description.required' => 'La descripción es un campo obligatorio.',
             'description.max' => 'La descripción no puede tener más de 255 caracteres.',
+            'price.required' => 'El precio es un campo obligatorio.',
+            'price.numeric' => 'El campo :attribute debe ser un número.',
             'burst_limit.upload_limits.required' => 'El burst limit de subida es obligatorio.',
             'burst_threshold.upload_limits.required' => 'El burst threshold de subida es obligatorio.',
             'burst_time.upload_limits.required' => 'El burst time de subida es obligatorio.',

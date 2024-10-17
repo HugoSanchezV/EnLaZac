@@ -11,8 +11,6 @@ class Service extends Model
     public $fillable =[
         'id',
         'contract_id',
-        'charge',
         'mounths',
-        'total',
     ];
 }

@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExtraCharge;
+use App\Models\Charge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\ExtraChange\StoreExtraChargeRequest;
+use App\Http\Requests\ExtraChange\StoreChargeRequest;
 use Inertia\Inertia;
 
-class ExtraChargeController extends Controller
+class ChargeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ExtraCharge::query();
+        $query = Charge::query();
 
         //if ($request->type !== null && $request->type !== 'todos') {
         //    $query->where('admin', '=', $request->type);
@@ -49,7 +49,7 @@ class ExtraChargeController extends Controller
         });
 
         
-        $totalChargesCount = ExtraCharge::count();
+        $totalChargesCount = Charge::count();
 
         return Inertia::render('Coordi/Tickets/Tickets', [
             'charges' => $charges,
@@ -65,9 +65,9 @@ class ExtraChargeController extends Controller
         ]);
     }
 
-    public function store(ExtraCharge $request)
+    public function store(Charge $request)
     {   
-        $charge = ExtraCharge::create([
+        $charge = Charge::create([
             'contract_id' => $request->contract_id,
             'description' => $request->description,
             'amount' => $request->amount,

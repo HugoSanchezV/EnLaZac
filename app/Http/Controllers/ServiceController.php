@@ -17,9 +17,7 @@ class ServiceController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('contract_id', 'like', "%$search%")
-                    ->orWhere('charge', 'like', "%$search%")
-                    ->orWhere('mounths', 'like', "%$search%")
-                    ->orWhere('total', 'like', "%$search%");
+                    ->orWhere('mounths', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -34,9 +32,7 @@ class ServiceController extends Controller
             return [
                 'id' => $item->id,
                 'contract_id' => $item->contract_id,
-                'charge' => $item->charge,
                 'mounths' => $item->mounths,
-                'total' =>  $item->total,
             ];
         });
 

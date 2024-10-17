@@ -18,7 +18,7 @@ const props = defineProps({
   },
 });
 
-const selectedUser = ref(null);
+//const selectedUser = ref(null);
 
 const form = useForm({
   user_id: "",
@@ -54,6 +54,21 @@ const getPosition = () =>{
 }
 onMounted(() => {
   getPosition();
+  // Obtener el input de fecha
+  const datePicker = document.getElementById('start_date');
+
+  // Inicializar el valor con el día 5 del mes actual
+  const today = new Date();
+  //alert(today);
+  datePicker.value = setDayToFive(today);
+
+  // Escuchar los cambios del input
+  datePicker.addEventListener('change', function(event) {
+      // Obtener la fecha seleccionada por el usuario
+      const selectedDate = new Date(event.target.value);
+      // Forzar el día 5 en la fecha seleccionada
+      event.target.value = setDayToFive(selectedDate);});
+
 });
 const getCurrentLocation = () =>
 {
@@ -77,6 +92,17 @@ const submit = () => {
   form.post(route("contracts.store"));
 };
 
+
+
+
+
+ // Función para siempre seleccionar el día 5 del mes
+ function setDayToFive(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
+            const day = '05'; // Forzar el día 5
+            return `${year}-${month}-${day}`;
+        }
 </script>
 
 <template>
@@ -235,7 +261,6 @@ const submit = () => {
           />
       </div>
       </div>
-      <p>Fecha seleccionada: {{ form.start_date }}</p>
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
           class="ms-4 flex items-center gap-2"

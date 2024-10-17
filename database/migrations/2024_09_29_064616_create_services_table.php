@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('contract_id')->nullable()->constrained('contracts');
-            $table->decimal('charge');
+            $table->foreignId('contract_id')->constrained('contracts');
             $table->integer('mouths');
-            $table->decimal('total');
             $table->timestamps();
         });
     }

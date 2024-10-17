@@ -8,6 +8,7 @@ class Plan extends Model
     public $fillable =[
         'id',
         'name',
+        'price',
         'description',
         'burst_limit',
         'burst_threshold',
