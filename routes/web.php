@@ -100,7 +100,7 @@ Route::middleware([
         //Route::get('/devices/{router}/show/ping/status',       [DevicesController::class, 'showPingDevice'])->name('devices.show.all.ping');
         //Route::get('/devices/all/set/device/ping/{device}',  [DevicesController::class, 'sendAllPing'])->name('devices.all.ping');
         Route::get('/devices/all/to/excel',     [DevicesController::class, 'allDevicesExportExcel'])->name('devices.all.excel');
-    Route::get('/devices/all/import/excel',     [DevicesController::class, 'allDevicesImportExcel'])->name('devices.import.excel');
+        Route::post('/devices/all/import/excel',     [DevicesController::class, 'allDevicesImportExcel2'])->name('devices.import.excel');
         //Ping Devices Historie
         Route::get('/devices/ping/historie',     [PingDeviceHistorieController::class, 'index'])->name('device.ping.historie');
         Route::get('/routers/{router}/devices/ping/historie',     [PingDeviceHistorieController::class, 'index2'])->name('router.device.ping.historie');
