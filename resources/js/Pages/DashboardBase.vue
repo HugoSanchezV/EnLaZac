@@ -32,6 +32,64 @@ const layoutComponent = computed(() => {
 
 useGeneralNotifications();
 </script>
+<style>
+.frame-stats{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas iguales */
+    gap: 10px;
+  }
+  .graficas{
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .graphic-container{
+
+    /* justify-content: center; */
+    width: 100%;
+  }
+  .rate, .byte{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 99%;
+  }
+  .frame-content{
+    width: 14rem;
+    height: 14rem;
+  }
+@media (min-width: 1450px) {
+  .frame-stats{
+    display: flex;
+    justify-content: space-between;
+    max-width: 100%;
+  }
+  .frame{
+    width: 15rem;
+    /* border: 1px solid #000000; */
+  }
+  .graficas{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .rate, .byte{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+  .graphic-container{
+   display: block;
+   width: 100%;
+
+  }
+  canvas{
+    width: 50%;
+  }
+
+}
+
+</style>
 
 <template>
   <component :is="layoutComponent" title="Dashboard">
@@ -46,14 +104,14 @@ useGeneralNotifications();
         <div
           class="overflow-hidden sm:rounded-lg"
           :class="{
-            'bg-gray-100 shadow-xl sm:rounded-lg': applyStyles,
+            'bg-gray-100  sm:rounded-lg': applyStyles,
             'bg-transparent shadow-none': !applyStyles,
           }"
         >
           <slot name="content">
-            <div class="frame-stats flex gap-4">
+            <div class="frame-stats flex gap-4 w-full">
                <div class="frame">
-                  <div class="w-fit rounded-[25px] bg-white p-8 aspect">
+                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
                       <div class="h-12">
                         <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">person</span>
                       </div>
@@ -67,8 +125,8 @@ useGeneralNotifications();
                   </div>
                 </div>
 
-                <div class="frame ">
-                  <div class="w-fit rounded-[25px] bg-white p-8 aspect">
+                <div class="frame">
+                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
                       <div class="h-12">
                         <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">contract</span>
                       </div>
@@ -83,7 +141,7 @@ useGeneralNotifications();
                 </div>
 
                 <div class="frame">
-                  <div class="w-fit rounded-[25px] bg-white p-8 aspect">
+                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
                       <div class="h-12">
                         <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">confirmation_number</span>
                       </div>
@@ -97,10 +155,9 @@ useGeneralNotifications();
                   </div>
                 </div>
                 <div class="frame">
-                  <div class="w-fit rounded-[25px] bg-white p-8 aspect">
+                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
                       <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">confirmation_number</span>
-                      </div>
+                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">account_circle</span>                      </div>
                       <div class="my-2">
                           <h2 class="text-4xl font-bold"><span>{{ userCount }}</span></h2>
                       </div>
@@ -112,17 +169,28 @@ useGeneralNotifications();
                 </div>
               
             </div>
-            <div v-for="(targetItem, index) in target" :key="index" >
-              <h2>Router</h2><span>{{ index }}</span>
-              <Graphics
-                :target = "targetItem"
-                :upload_rate = "upload_rate[index]"
-                :download_rate = "download_rate[index]"
-                :upload_byte = "upload_byte[index]"
-                :download_byte = "download_byte[index]"
-                :index = "index"
-              />
+            <div class="mt-20 flex justify-center">
+              <div class="pt-3 pb-3 pl-5 pr-5 rounded-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-gray-50">
+                <h2 class="text-2xl">Estadísticas de velocidad y consumo</h2>
+              </div>
+              
             </div>
+            <div class="mt-5" v-for="(targetItem, index) in target" :key="index" >
+              <div class="flex gap-1 mb-3">
+                <h2 class="text-blue-500 text-2xl">Router</h2><span class="text-blue-500 text-2xl">{{ routers[index] }}</span>
+              </div>
+              <div class="graphic-container">
+                  <Graphics
+                  :target = "targetItem"
+                  :upload_rate = "upload_rate[index]"
+                  :download_rate = "download_rate[index]"
+                  :upload_byte = "upload_byte[index]"
+                  :download_byte = "download_byte[index]"
+                  :index = "index"
+                />
+              </div>
+            </div>
+              
           </slot>
         </div>
       </div>
@@ -165,6 +233,9 @@ export default {
       type: Array,
     },
     download_byte: {
+      type: Array,
+    },
+    routers: {
       type: Array,
     }
   },

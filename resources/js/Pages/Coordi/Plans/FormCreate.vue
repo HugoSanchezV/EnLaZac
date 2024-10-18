@@ -8,7 +8,7 @@ import TextInput from "@/Components/TextInput.vue";
 const form = useForm({
   name: "",
   description: "",  
-
+  price: "",
   burst_limit: {
     upload_limits: "",
     download_limits: "",
@@ -67,6 +67,20 @@ const submit = () => {
           autocomplete="description"
         />
         <InputError class="mt-2" :message="form.errors.description" />
+      </div>
+
+      <div>
+        <InputLabel for="price" value="Precio" />
+        <TextInput
+          id="price"
+          v-model="form.price"
+          type="text"
+          class="mt-1 block w-full"
+          required
+          autofocus
+          autocomplete="price"
+        />
+        <InputError class="mt-2" :message="form.errors.price" />
       </div>
       <!-- BURST LIMIT-->
        <div>

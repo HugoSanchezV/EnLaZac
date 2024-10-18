@@ -57,6 +57,7 @@ Route::middleware([
         //Routers
         // -- Resource 
         Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
+        Route::get('/routers/show/{id}',        [RouterController::class, 'show'])->name('routers.show');
         Route::get('/routers/create',           [RouterController::class, 'create'])->name('routers.create');
         Route::post('/routers/store',           [RouterController::class, 'store'])->name('routers.store');
         Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');
@@ -82,7 +83,7 @@ Route::middleware([
 
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
-        Route::get('/devices/show',                  [DevicesController::class, 'show'])->name('devices.show');
+        Route::get('/devices/show/{id}',                  [DevicesController::class, 'show'])->name('devices.show');
         Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
         Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
         Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');
@@ -111,7 +112,7 @@ Route::middleware([
 
         // inventorie_devices
         Route::get('/inventorie/devices',                 [InventorieDevicesController::class, 'index'])->name('inventorie.devices.index');
-        Route::get('/inventorie/devices/show/{inventorieDevice}', [InventorieDevicesController::class, 'show'])->name('inventorie.devices.show');
+        Route::get('/inventorie/devices/show/{id}', [InventorieDevicesController::class, 'show'])->name('inventorie.devices.show');
         Route::get('/inventorie/devices/create',          [InventorieDevicesController::class, 'create'])->name('inventorie.devices.create');
         Route::post('/inventorie/devices/store',          [InventorieDevicesController::class, 'store'])->name('inventorie.devices.store');
         Route::get('/inventorie/devices/edit/{device}',          [InventorieDevicesController::class, 'edit'])->name('inventorie.devices.edit');

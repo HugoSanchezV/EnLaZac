@@ -176,9 +176,13 @@ class DevicesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
+    public function show(string $id){
+    
+        $devices = Device::with('user','router')->findOrFail($id);
+
+        return Inertia::render('Admin/Devices/Show', [
+            'devices' => $devices,
+        ]);
     }
 
     /**

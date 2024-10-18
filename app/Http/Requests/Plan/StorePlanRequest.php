@@ -24,7 +24,7 @@ class StorePlanRequest extends FormRequest
         return [
             'name' => 'required|max:100',
             'description' => 'required|max:255',
-
+            'price' => 'required|numeric',
             'burst_limit.upload_limits' => 'required|numeric',
             'burst_limit.download_limits' => 'required|numeric',
 
@@ -49,6 +49,8 @@ class StorePlanRequest extends FormRequest
             'name.required' => 'El nombre es un campo obligatorio.',
             'name.max' => 'El nombre no puede tener más de 100 caracteres.',
             'description.required' => 'La descripción es un campo obligatorio.',
+            'price.required' => 'El precio es un campo obligatorio.',
+            'price.numeric' => 'El campo :attribute debe ser un número.',
             'description.max' => 'La descripción no puede tener más de 255 caracteres.',
             'burst_limit.upload_limits.required' => 'El burst limit de subida es obligatorio.',
             'burst_threshold.upload_limits.required' => 'El burst threshold de subida es obligatorio.',

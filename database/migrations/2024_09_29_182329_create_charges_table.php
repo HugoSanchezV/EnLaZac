@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('extra_charges', function (Blueprint $table) {
+        Schema::create('charges', function (Blueprint $table) {
             $table->id();
             $table->foreignId('contract_id')->constrained('contracts');
             $table->string('description');
