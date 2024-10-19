@@ -14,6 +14,7 @@ const props = defineProps({
 const { devices, users } = toRefs(props);
 const toRouteExport = "devices.all.excel";
 const toImportRoute = "devices.import.excel";
+//const toImportRouteSecond = "devices.to.local.import.excel";
 const headingsImport =
   "id interno, id disposotivo, id usuario, comentario, direccion, id router, desactivado (0 | 1) \n (Si no hay relacion dejar vacio, el router es obligatorio)";
 
@@ -94,6 +95,7 @@ const columns = ["id", "name"];
           <base-import-excel-devices
             @click="openModal"
             :toImportRoute="toImportRoute"
+            :to-import-route-second="toImportRouteSecond"
             :headings="headingsImport"
           >
           </base-import-excel-devices>

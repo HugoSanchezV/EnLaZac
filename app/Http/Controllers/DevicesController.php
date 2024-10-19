@@ -176,9 +176,10 @@ class DevicesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id){
-    
-        $devices = Device::with('user','router')->findOrFail($id);
+    public function show(string $id)
+    {
+
+        $devices = Device::with('user', 'router')->findOrFail($id);
 
         return Inertia::render('Admin/Devices/Show', [
             'devices' => $devices,
@@ -673,7 +674,9 @@ class DevicesController extends Controller
     {
         try {
             $file = $request->excel;
-            Excel::import(new AllDeviceImport($this->deviceService), $file);
+            $local = filter_var($request->local, FILTER_VALIDATE_BOOLEAN);;
+            // dd($local);
+            Excel::import(new AllDeviceImport($this->deviceService, $local), $file);
             return Redirect::route('devices')->with('success', 'Archivo Importado Con Éxito ');
         } catch (\Exception $e) {
             return Redirect::route('devices')->with('error', 'Error al Importar, ' . $e->getMessage());

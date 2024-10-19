@@ -14,22 +14,21 @@ use Illuminate\Support\Facades\DB;
 
 class DeviceService
 {
-    public function createDevice(array $row)
+    public function createDevice(array $row, bool $local)
     {
         try {
-            DB::transaction(function () use ($row) {
+            DB::transaction(function () use ($row, $local) {
 
                 try {
-                    $inv_device = InventorieDevice::findOrFail($row['device_id']); // Sin get()
+                    if (isset($row['device_id'])) {
+                        $inv_device = InventorieDevice::findOrFail($row['device_id']); // Sin get()
+                        // dd($inv_device->state); 
 
-
-                    // dd($inv_device->state); 
-
-                    if ($inv_device->state === 1) {
-                        throw new Exception('Dispositivo está ocupado.');
+                        if ($inv_device->state === 1) {
+                            throw new Exception('Dispositivo está ocupado.');
+                        }
                     }
                 } catch (\Exception $e) {
-                    dd($e->getMessage());
                     throw new Exception(' Dispositivo no encontrado en Inv. u ocupado');
                 }
 
@@ -44,15 +43,30 @@ class DeviceService
                     '?address' => $row['address'],  // Filtro por la IP específica
                 ]);
 
+
+                $disabled = 1;
+
                 if (!empty($find)) {
-                    throw new Exception(' La ip '  . $row['address'] . ' ya está ocupada');
+                    if ($local) {
+                        if (!($find[0]['.id'] === $row['device_internal_id'])) {
+                            throw new Exception(' La ip '  . $row['address'] . ' usa '
+                                . $row['device_internal_id'] . ', pero esto no coincide con los Ids internos');
+                        }
+                        $disabled = $find[0]['disabled'] ? 0 : 1;
+                    } else {
+                        throw new Exception(' La ip '  . $row['address'] . ' ya está ocupada');
+                    }
                 }
 
-                $response = $routerOSService->executeCommand('/ip/firewall/address-list/add', [
-                    'list' => 'MOROSOS',
-                    'address' => $row['address'],
-                    'comment' => $row['comment'],
-                ]);
+                if (!$local) {
+                    $response = $routerOSService->executeCommand('/ip/firewall/address-list/add', [
+                        'list' => 'MOROSOS',
+                        'address' => $row['address'],
+                        'comment' => $row['comment'],
+                    ]);
+                } else {
+                    $response = $row['device_internal_id'];
+                }
 
                 // Desconectar RouterOS
                 $routerOSService->disconnect();
@@ -78,7 +92,7 @@ class DeviceService
                         'list' => 'MOROSOS',
                         'address' => $row['address'],
                         'creation_time' => now(),
-                        'disabled' => 1,
+                        'disabled' => $row['disabled'] ?? $disabled,
                     ]);
 
                     // Actualizar los contadores en el router

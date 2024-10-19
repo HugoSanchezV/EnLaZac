@@ -5,6 +5,7 @@ import NoticeForImport from "./NoticeForImport.vue";
 
 const props = defineProps({
   toImportRoute: String,
+  //toImportRouteSecond: String,
   urlComplete: {
     type: String,
     default: null,
@@ -14,12 +15,16 @@ const props = defineProps({
 });
 
 const urlImport = ref("");
+//const urlImportSecond = ref("");
 
 if (props.urlComplete) {
   urlImport.value = props.urlComplete;
 } else {
   urlImport.value = route(props.toImportRoute);
 }
+
+//urlImportSecond.value = route(props.toImportRouteSecond);
+
 // console.log("Estas en el boton ");
 // console.log(urlImport.value);
 const isModalOpen = ref(false);

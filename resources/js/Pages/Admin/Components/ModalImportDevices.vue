@@ -119,6 +119,7 @@ const warning = computed(() => {
 });
 
 const closeModal = () => {
+  useUserRoute.value = false;
   emit("close");
 };
 
@@ -131,8 +132,7 @@ const form = reactive({
 
 // Función para determinar la ruta según el estado del switch
 const getRoute = () => {
-  // verde //rojo
-  return useUserRoute.value ? props.toImportRoute : props.toImportRoute;
+  return props.toImportRoute;
 };
 
 const submitForm = () => {
@@ -142,11 +142,11 @@ const submitForm = () => {
   if (file) {
     // Añadir el archivo a FormData
     formData.append("excel", file);
+    formData.append("local", !useUserRoute.value);
 
     // Obtener la ruta dinámicamente
     const route = getRoute();
-
-    // alert(route)
+    // alert(route);
     // Enviar la solicitud con Inertia
     router.post(route, formData, {
       forceFormData: true, // Para asegurar que se envíe como FormData
