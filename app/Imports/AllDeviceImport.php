@@ -9,10 +9,11 @@ use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpParser\Node\Expr\Cast\Bool_;
 
-class AllDeviceImport implements ToModel, WithHeadingRow
+class AllDeviceImport implements ToModel, WithHeadingRow, WithBatchInserts
 {
     protected $service;
     protected bool $local;
@@ -98,5 +99,10 @@ class AllDeviceImport implements ToModel, WithHeadingRow
         }
 
         return $validator->validated();
+    }
+
+    public function batchSize(): int
+    {
+        return 200;
     }
 }
