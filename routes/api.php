@@ -8,5 +8,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('paypal/create-order', [PayPalController::class, 'createOrder']);
+Route::post('/paypal/create-order', [PayPalController::class, 'createOrder']);
                                                     

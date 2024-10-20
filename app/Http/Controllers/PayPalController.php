@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class PayPalController extends Controller
 {
-    public function createOrder()
+    public function createOrder($amount)
     {
         $paypalModule = new PayPalClient;
         $paypalModule->setApiCredentials(config('paypal'));
@@ -18,8 +18,8 @@ class PayPalController extends Controller
             "purchase_units" => [
                 [
                     "amount" => [
-                        "currency_code" => "USD",  
-                        "value" => "100.00" 
+                        "currency_code" => "MXN",  
+                        "value" => $amount 
                     ]
                 ]
             ]

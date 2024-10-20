@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Requests\ExtraCharge;
+namespace App\Http\Requests\Charge;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateExtraChargeRequest extends FormRequest
+class StoreChargeRequest extends FormRequest
 {
     /**
-     * Determine if the ticket is authorized to make this request.
+     * Determine if the change is authorized to make this request.
      */
     public function authorize(): bool
     {
@@ -23,16 +22,20 @@ class UpdateExtraChargeRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'contract_id' => 'required|exists:contracts,id',
             'description' => 'required|max:255',
 
             'amount' => 'required|numeric',
             'paid' => 'required|boolean',
+            'date_paid' => 'nullable',
         ];
     }
 
     public function messages()
     {
         return [
+            'contract_id.required' => 'El id del contrato es un campo obligatorio.',
+            'contract_id.exists' => 'Debe existir contrato',
             'description.required' => 'La descripción es un campo obligatorio.',
             'description.max' => 'La descripción no puede tener más de 255 caracteres.',
             'amount.required' => 'El monto es un campo obligatorio',

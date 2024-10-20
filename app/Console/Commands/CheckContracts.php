@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Events\ContractWarningEvent;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\ChargeController;
+use App\Http\Controllers\InterestsController;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\Contract;
@@ -94,29 +95,32 @@ class CheckContracts extends Command
     {
         $controller = new ChargeController();
         $cargo = new Charge();
-
+        $controllerInterest = new InterestsController();
         //Set data
+        $interest = $controllerInterest->getInterest(1);
+
         $cargo->contract_id = $contract->id;
         $cargo->description = "No pago el servicio durante el mes";
-        $cargo->amount = 50;
+        $cargo->amount = $interest->amount;
         $cargo->paid = false;
         
         //$this->info($cargo);
-        $controller->store($cargo);
+        $controller->store_schedule($cargo);
     }
     public function extra_charge($contract)
     {
         $controller = new ChargeController();
         $cargo = new Charge();
-
+        $controllerInterest = new InterestsController();
+        $interest = $controllerInterest->getInterest(1);
         //Set data
         $cargo->contract_id = $contract->id;
         $cargo->description = "No pagó antes del día de corte";
-        $cargo->amount = 50;
+        $cargo->amount = $interest->amount;
         $cargo->paid = false;
         
         //$this->info($cargo);
-        $controller->store($cargo);
+        $controller->store_schedule($cargo);
     }
     public function sendEmail($contract)
     {

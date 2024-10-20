@@ -74,7 +74,7 @@ const submit = () => {
         <TextInput
           id="price"
           v-model="form.price"
-          type="text"
+          type="number"
           class="mt-1 block w-full"
           required
           autofocus

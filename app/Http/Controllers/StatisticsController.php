@@ -29,40 +29,50 @@ class StatisticsController extends Controller
         $userCount = self::userCount();
 
         $trafficData = self::conectar();
-        
-        foreach($trafficData as $data)
-        {
-            if(!is_null($data)){
+        if(empty($trafficData)){
+            $target = [];
+            $upload_rate = [];
+            $download_rate = [];
+            $upload_byte = [];
+            $download_byte = [];
 
-                foreach($data as $dt){
-                    $targetTemp[] = $dt['target'];
-                
-                    $rateArray = explode("/", $dt['rate']);
-                    $byteArray = explode("/", $dt['bytes']);
-                    // Asegurarse de que 'rate' contenga tanto subida como bajada
-                    if (count($rateArray) === 2) {
-                        $upload_rateTemp[] = self::convertToMb($rateArray[0]);  // Tasa de subida
-                        $download_rateTemp[] = self::convertToMb($rateArray[1]);  // Tasa de bajada
+            $this->route = [];
+
+        }else{
+            foreach($trafficData as $data)
+            {
+                if(!is_null($data)){
+
+                    foreach($data as $dt){
+                        $targetTemp[] = $dt['target'];
+                    
+                        $rateArray = explode("/", $dt['rate']);
+                        $byteArray = explode("/", $dt['bytes']);
+                        // Asegurarse de que 'rate' contenga tanto subida como bajada
+                        if (count($rateArray) === 2) {
+                            $upload_rateTemp[] = self::convertToMb($rateArray[0]);  // Tasa de subida
+                            $download_rateTemp[] = self::convertToMb($rateArray[1]);  // Tasa de bajada
+                        }
+                        if (count($byteArray) === 2) {
+                            $upload_byteTemp[] = self::convertToMb($byteArray[0]);  // Tasa de subida
+                            $download_byteTemp[] = self::convertToMb($byteArray[1]);  // Tasa de bajada
+                        }
                     }
-                    if (count($byteArray) === 2) {
-                        $upload_byteTemp[] = self::convertToMb($byteArray[0]);  // Tasa de subida
-                        $download_byteTemp[] = self::convertToMb($byteArray[1]);  // Tasa de bajada
-                    }
+                    $target[] = $targetTemp;
+                    $upload_rate[] = $upload_rateTemp;
+                    $download_rate[] = $download_rateTemp;
+                    $upload_byte[] = $upload_byteTemp;
+                    $download_byte[] = $download_byteTemp;
+                    
+                    $targetTemp = [];
+                    $upload_rateTemp = [];
+                    $download_rateTemp = [];
+                    $upload_byteTemp = [];
+                    $download_byteTemp = [];
                 }
-                $target[] = $targetTemp;
-                $upload_rate[] = $upload_rateTemp;
-                $download_rate[] = $download_rateTemp;
-                $upload_byte[] = $upload_byteTemp;
-                $download_byte[] = $download_byteTemp;
-                
-                $targetTemp = [];
-                $upload_rateTemp = [];
-                $download_rateTemp = [];
-                $upload_byteTemp = [];
-                $download_byteTemp = [];
-            }
-        }  
-        //dd($target);
+            }  
+        }
+        
         return Inertia::render('DashboardBase',[
             'morrosos' => $morrosos,
             'activeDevice' => $activeDevice,
@@ -91,20 +101,25 @@ class StatisticsController extends Controller
     public function conectar(){
         $trafficData = [];
         $routers = Router::all();
-        foreach($routers as $r)
+       //dd(($routers->count()));
+        if(($routers->count()) != 0)
         {
-            try{   
+            foreach($routers as $r)
+            {
+                try{   
 
-                $routerOSService = RouterOSService::getInstance();
-                $trafficDat = $routerOSService->getQueueTraffic($r->id);
-                if(!is_null($trafficDat)){
-                    $trafficData[] = $trafficDat;
-                    $this->route [] = $r->id;
+                    $routerOSService = RouterOSService::getInstance();
+                    $trafficDat = $routerOSService->getQueueTraffic($r->id);
+                    if(!is_null($trafficDat)){
+                        $trafficData[] = $trafficDat;
+                        $this->route [] = $r->id;
+                    }
+                } catch (Exception $e) {
+                        return Redirect::route('dashboard')->with('error', $e->getMessage());
                 }
-            } catch (Exception $e) {
-                return Redirect::route('dashboard')->with('error', $e->getMessage());
             }
         }
+        
         return $trafficData;
     }
     public function activeContract()

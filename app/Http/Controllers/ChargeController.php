@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Charge\StoreChargeRequest;
+use App\Http\Requests\Charge\UpdateChargeRequest;
 use App\Models\Charge;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\ExtraChange\StoreChargeRequest;
+use App\Models\Contract;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class ChargeController extends Controller
@@ -27,7 +30,9 @@ class ChargeController extends Controller
                     ->orWhere('contract_id', 'like', "%$search%")
                     ->orWhere('description', 'like', "%$search%")
                     ->orWhere('amount', 'like', "%$search%")
-                    ->orWhere('paid', 'like', "%$search%");
+                    ->orWhere('paid', 'like', "%$search%")
+                    ->orWhere('date_paid', 'like', "%$search%")
+                    ->orWhere('created_at', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -41,17 +46,19 @@ class ChargeController extends Controller
         $charges = $query->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'contract_id' => $item->subject,
+                'contract_id' => $item->contract_id,
                 'description' => $item->description,
-                'amount' => $item->status,
-                'paid' =>  $item->user_id,
+                'amount' => $item->amount,
+                'paid' =>  $item->paid,
+                'date_paid' =>  $item->date_paid ?? '',
+                'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];
         });
 
         
         $totalChargesCount = Charge::count();
 
-        return Inertia::render('Coordi/Tickets/Tickets', [
+        return Inertia::render('Admin/Charges/Charges', [
             'charges' => $charges,
             'pagination' => [
                 'links' => $charges->links()->elements[0],
@@ -65,16 +72,64 @@ class ChargeController extends Controller
         ]);
     }
 
-    public function store(Charge $request)
+    public function edit($id)
+    {
+        $charge = Charge::findOrFail($id);
+        $contracts = Contract::with('user', 'plan')->get();
+
+        return Inertia::render('Admin/Charges/Edit', [
+            'charge' => $charge,
+            'contracts' => $contracts,
+        ]);
+    }
+    public function update(UpdateChargeRequest $request, $id)
+    {
+        $charge = Charge::findOrFail($id);
+
+        $validatedData = $request->validated();
+        $charge->update($validatedData);
+        return redirect()->route('charges')->with('success', 'Cargo Actualizado Con Éxito');
+    }
+    public function store_schedule(Charge $request)
     {   
         $charge = Charge::create([
             'contract_id' => $request->contract_id,
             'description' => $request->description,
             'amount' => $request->amount,
-            'paid' => $request->paid,
-            
+            'paid' => $request->paid
         ]);
        // print('Cargo creado');
        // return redirect()->route('')->with('success', 'Ticket creado con éxito');
+    }
+ 
+    public function create()
+    {
+        $contracts = Contract::with('user', 'plan')->get();
+        
+        return Inertia::render(
+            'Admin/Charges/Create',
+            [
+                'contracts' => $contracts,
+            ]
+        );
+    }
+    public function store(StoreChargeRequest $request)
+    {   
+        //dd('HEre');
+        $charge = Charge::create([
+            'contract_id' => $request->contract_id,
+            'description' => $request->description,
+            'amount' => $request->amount,
+            'paid' => $request->paid,
+            'date_paid' => $request->date_paid,
+        ]);
+        
+        return redirect()->route('charges')->with('success', 'El cargo ha sido creado con éxito');
+    }
+    public function destroy($id)
+    {
+        $charge = Charge::findOrFail($id);
+        $charge->delete();
+        return Redirect::route('charge')->with('success', 'Cargo fue Eliminado Con Éxito');
     }
 }

@@ -119,9 +119,13 @@ class ContractController extends Controller
     public function edit($id)
     {
         $contract = Contract::findOrFail($id);
+        $users = User::select('id', 'name')->where('admin', '=', '0')->get();
+        $plans = Plan::select('id', 'name')->get();
 
         return Inertia::render('Coordi/Contracts/Edit', [
             'contract' => $contract,
+            'users' => $users,
+            'plans' => $plans,
         ]);
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\PingController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DeviceHistoriesController;
+use App\Http\Controllers\InterestsController;
 use App\Http\Controllers\InventorieDevicesController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
@@ -158,6 +160,14 @@ Route::middleware([
         Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
         Route::delete('/plans/delete/{id}',      [PlanController::class, 'destroy'])->name('plans.destroy');
 
+        Route::get('/charges',                     [ChargeController::class, 'index'])->name('charges');
+        Route::get('/charges/create',              [ChargeController::class, 'create'])->name('charges.create');
+        Route::get('/charges/show/{id}',           [ChargeController::class, 'show'])->name('charges.show');
+        Route::post('/charges/store',              [ChargeController::class, 'store'])->name('charges.store');
+        Route::get('/charges/edit/{id}',           [ChargeController::class, 'edit'])->name('charges.edit');
+        Route::put('/charges/update/{id}',         [ChargeController::class, 'update'])->name('charges.update');
+        Route::delete('/charges/delete/{id}',      [ChargeController::class, 'destroy'])->name('charges.destroy');
+
 
         Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
         Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
@@ -167,6 +177,7 @@ Route::middleware([
         Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
         Route::get('/sistema/configuracion/paypal',      [PayPalSettingController::class, 'edit'])->name('settings.paypal.edit');
         Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
+        Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'index'])->name('settings.interest');
     });
 
     //MIDDLEWARE DEMÁS USUARIOS

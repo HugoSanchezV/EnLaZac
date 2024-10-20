@@ -175,7 +175,7 @@ useGeneralNotifications();
               </div>
               
             </div>
-            <div class="mt-5" v-for="(targetItem, index) in target" :key="index" >
+            <div  v-if="props.routers.length > 0" class="mt-5" v-for="(targetItem, index) in target" :key="index" >
               <div class="flex gap-1 mb-3">
                 <h2 class="text-blue-500 text-2xl">Router</h2><span class="text-blue-500 text-2xl">{{ routers[index] }}</span>
               </div>
@@ -190,6 +190,10 @@ useGeneralNotifications();
                 />
               </div>
             </div>
+            <div v-else>
+              <h2>No hay routers disponibles</h2>
+            </div>
+            
               
           </slot>
         </div>

@@ -18,17 +18,24 @@ class PayController extends Controller
         $contract = Contract::where('user_id', $userId)->first();
         if(is_null($contract))
         {
-            $plan = Plan::where('contract_id',$contract->id)->get();
+            $charges = 0;
+            $price = 0;
+        }else{
+            $plan = Plan::where('id',$contract->plan_id)->first();
+            //dd($plan);
             $price = $plan->price;
-            $charges = Charge::where('contract_id',$contract->id)->get();
+            $charges = Charge::where('contract_id',$contract->id)
+                             ->where('paid', false)
+                             ->get();
         }
         
 
 
-
+       // dd($price);
         return Inertia::render('User/Pays/Pays',[
             'charges' => $charges,
-            'cost_service' => $plan->price,
+            'cost_service' => $price,
+            'contract' => $contract
         ]);
     }
 }

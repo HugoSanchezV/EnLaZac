@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("plans.destroy", id);
+          const url = route("charges.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -44,24 +44,30 @@ const destroy = (id) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "name":
-      return "usuarios";
     case "description":
-      return "descripción";
-    case "precio":
-      return "price";
-      case "burst_limit":
-        return "límite de ráfaga";
-      case "burst_threshold":
-        return "umbral de ráfaga";
-      case "burst_time":
-        return "tiempo de ráfaga";
-      case "limite_at":
-        return "limite";
-      case "max_limit":
-        return "limite máximo";
-      default:
+      return "Descripción";
+      break;
+    case "contract_id":
+      return "Contrato";
+      break;
+    case "amount":
+      return "Monto";
+      break;
+    case "paid":
+      return "¿Pagado?";
+      break;
+
+    case "date_paid":
+      return "Fecha de Pago";
+      break;
+
+    case "created_at":
+      return "Fecha de Creación";
+      break;
+
+    default:
       return cellIndex;
+      break;
   }
 };
 </script>
@@ -183,7 +189,7 @@ const getTag = (cellIndex) => {
             $emit('search', {
               searchQuery: searchQuery,
               order: currentFilter,
-              type: currentContract,
+              type: currentCharge,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -193,15 +199,11 @@ const getTag = (cellIndex) => {
     </div>
 
     <table class="w-full text-sm text-left text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-950">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
-          <th
-            class="px-2"
-            v-for="(header, index) in headers"
-            :key="index"
-            scope="col"
-          >
+
+          <th v-for="(header, index) in headers" :key="index" scope="col">
             {{ header }}
           </th>
         </tr>
@@ -218,52 +220,9 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <!-- {{
-              typeof cell === "object"
-                ? JSON.stringify(cell)
-                    .replace(/[{}""]/g, "")
-                    .replace(/[:]/g, ": ")
-                    .replace(/[,]/g, " | ")
-                    .replace("_limits", "")
-                    .replace("_limits", "")
-                : String(cell).replace(/[{}]/g, "")
-            }} -->
-            <div v-if="typeof cell === 'object'" class="flex">
-              <span class="lg:hidden md:hidden block font-bold lowercase"
-                >{{ getTag(cellIndex) }} :</span
-              >
-              <span class="text-blue-600 flex">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  class="size-4"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 14a.75.75 0 0 0 .75-.75V4.56l1.22 1.22a.75.75 0 1 0 1.06-1.06l-2.5-2.5a.75.75 0 0 0-1.06 0l-2.5 2.5a.75.75 0 0 0 1.06 1.06l1.22-1.22v8.69c0 .414.336.75.75.75Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-
-                {{ cell.upload_limits }}
-              </span>
-              <span class="text-green-600 flex">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  class="size-4"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 2a.75.75 0 0 1 .75.75v8.69l1.22-1.22a.75.75 0 1 1 1.06 1.06l-2.5 2.5a.75.75 0 0 1-1.06 0l-2.5-2.5a.75.75 0 1 1 1.06-1.06l1.22 1.22V2.75A.75.75 0 0 1 8 2Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-
-                {{ cell.upload_limits }}
-              </span>
+            
+            <div v-if="cellIndex === 'paid'">
+              {{ cell === 0 ? "No" : "Sí" }}
             </div>
             <div v-else>
               <div class="flex gap-1">
@@ -300,7 +259,7 @@ const getTag = (cellIndex) => {
               </Link>
               <Link
                 v-if="edit"
-                :href="route('plans.edit', row.id)"
+                :href="route('charges.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -393,7 +352,7 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentContract: "todos",
+      currentCharge: "todos",
       currentOrder: "ASC",
     };
   },
@@ -424,18 +383,18 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        type: this.currentCharge,
         order: this.currentOrder,
       });
     },
 
-    selectContract(contract) {
-      this.currentContract = contract;
+    selectCharge(charge) {
+      this.currentCharge = charge;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        type: this.currentCharge,
         order: this.currentOrder,
       });
     },
