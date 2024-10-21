@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\ExtraCharge;
+namespace App\Http\Requests\Charge;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreExtraChargeRequest extends FormRequest
+class UpdateChargeRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine if the change is authorized to make this request.
      */
     public function authorize(): bool
     {
@@ -24,9 +24,9 @@ class StoreExtraChargeRequest extends FormRequest
         return [
             'contract_id' => 'required|exists:contracts,id',
             'description' => 'required|max:255',
-
             'amount' => 'required|numeric',
             'paid' => 'required|boolean',
+            'date_paid' => 'nullable',
         ];
     }
 
@@ -41,6 +41,6 @@ class StoreExtraChargeRequest extends FormRequest
             'amount.numeric' => 'El monto debe ser de tipo numérico',
             'paid.required' => 'La confimarción del pago es un campo obligatorio',
             'paid.boolean' => 'El confirmación debe ser de tipo booleano',
-        ];
+         ];
     }
 }

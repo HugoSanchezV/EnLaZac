@@ -8,6 +8,8 @@ import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
   contract: Object,
+  users: Array,
+  plans: Array,
 });
 
 const form = useForm({
@@ -74,29 +76,33 @@ const submit = () => {
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
         <InputLabel for="user_id" value="ID del Usuario" />
-        <TextInput
-          id="user_id"
-          v-model="form.user_id"
-          type="text"
-          class="mt-1 block w-full"
-          required
-          autofocus
-          autocomplete="user_id"
-        />
+        <div class="mt-2">
+            <select
+              v-model="form.user_id"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option value="null" selected>Selecciona una opción</option>
+              <option v-for="user in users" :key="user.id" :value="user.id">
+                  {{ user.id + " - " + user.name }}
+              </option>
+            </select>
+        </div>
         <InputError class="mt-2" :message="form.errors.user_id" />
       </div>
 
       <div class="mt-4">
         <InputLabel for="plan_id" value="ID del plan" />
-        <TextInput
-          id="plan_id"
-          v-model="form.plan_id"
-          type="text"
-          class="mt-1 block w-full"
-          required
-          autofocus
-          autocomplete="plan_id"
-        />
+        <div class="mt-2">
+            <select
+              v-model="form.plan_id"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option value="null" selected>Selecciona una opción</option>
+              <option v-for="plan in plans" :key="plan.id" :value="plan.id">
+                  {{ plan.id + " - " + plan.name }}
+              </option>
+            </select>
+        </div>
         <InputError class="mt-2" :message="form.errors.plan_id" />
       </div>
 

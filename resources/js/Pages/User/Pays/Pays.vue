@@ -1,6 +1,18 @@
 <script setup>
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import resources_js_components_PaypalButton from "@/Components/Base/Pays/resources_js_components_PaypalButton.vue";
+import GetData from "./GetData.vue"
+const props = defineProps({
+  charges:{
+    type: Array
+  },
+  cost_service: {
+    type: Number
+  },
+  contract:{
+    type: Object
+  }
+});
 </script>
 
 <template>
@@ -10,12 +22,17 @@ import resources_js_components_PaypalButton from "@/Components/Base/Pays/resourc
         <div class="payment-process">
     <h2>Proceso de Pago - Servicio de Internet</h2>
     
+    <div class="mt-3 mb-3">
+      <label for="">El valor unitario de tu plan es de $</label>
+      <span>{{ cost_service }}</span>
+    </div>
     <!-- Selección de meses -->
     <div class="select-months">
-      <label for="months">Seleccionar meses a pagar:</label>
+      <label for="months">Seleccionar meses a pagar: </label>
       <select v-model="selectedMonths" @change="addMonthToCart">
         <option v-for="n in 12" :key="n" :value="n">{{ n }} mes(es)</option>
       </select>
+      
     </div>
     
     <!-- Tabla de cargos generados -->
@@ -30,7 +47,7 @@ import resources_js_components_PaypalButton from "@/Components/Base/Pays/resourc
           </tr>
         </thead>
         <tbody>
-          <tr v-for="charge in clientCharges" :key="charge.id">
+          <tr v-for="charge in charges" :key="charge.id">
             <td>{{ charge.description }}</td>
             <td>{{ formatCurrency(charge.amount) }}</td>
             <td>
@@ -76,7 +93,16 @@ import resources_js_components_PaypalButton from "@/Components/Base/Pays/resourc
     <p v-if="paymentError" class="error-message">{{ paymentError }}</p>
   </div>
       </div>
-      <resources_js_components_PaypalButton></resources_js_components_PaypalButton>
+
+      <div v-if="showPayment">
+        <GetData
+          :totalAmount="totalAmount"
+          :selectedMonths = "selectedMonths"
+          :contract = "contract"
+          :cart = "cart"
+        >
+        </GetData>
+      </div>
     </template>
   </dashboard-base>
 </template>
@@ -89,7 +115,8 @@ export default {
       clientCharges: [], // Cargos obtenidos de la base de datos
       totalAmount: 0,
       serviceAdded: false, // Nueva bandera para controlar si ya se ha agregado el servicio
-      paymentError: ''
+      paymentError: '',
+      showPayment: false,
     };
   },
   methods: {
@@ -99,10 +126,11 @@ export default {
         alert('Ya has agregado el servicio de internet.');
         return;
       }
+
       const serviceItem = {
         id: 'service', // Asignar un id único para el servicio
         description: `Servicio por ${this.selectedMonths} mes(es)`,
-        amount: 250 * this.selectedMonths
+        amount: this.cost_service * this.selectedMonths
       };
       this.cart.push(serviceItem);
       this.serviceAdded = true; // Marcar que ya se agregó el servicio
@@ -152,8 +180,10 @@ export default {
     processPayment() {
       if (this.cart.length === 0) {
         this.paymentError = 'Agregar por lo menos un artículo a pagar';
+        this.showPayment = false;
       } else {
         this.paymentError = '';
+        this.showPayment = true;
         // Aquí llamarías a un componente o función externa que maneje el proceso de pago
         console.log('Procesando pago con los siguientes artículos:', this.cart);
         // Lógica para continuar con el pago, integración con tu componente de pago

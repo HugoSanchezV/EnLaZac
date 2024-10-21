@@ -113,7 +113,7 @@ onMounted( async () =>{
 
 <template>
         <div 
-        class="bg-white flex justify-between graficas">
+        class=" flex justify-between graficas gap-2 rounded-lg">
 
             <div class="rate rounded-lg shadow-lg overflow-hidden bg-white">
                 <canvas  :id= "'myChartRate'+ index"></canvas>

@@ -5,15 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Charge extends Model
+class Interest extends Model
 {
     use HasFactory;
     public $fillable =[
         'id',
-        'contract_id',
-        'description',
-        'amount',
-        'paid',
-        'date_paid',
+        'name',
+        'amount'
     ];
+
 }

@@ -5,30 +5,33 @@ namespace App\Http\Controllers;
 use App\Exports\GenericExport;
 use App\Http\Requests\Device\StoreDeviceRequest;
 use App\Http\Requests\Device\UpdateDeviceRequest;
+use App\Imports\AllDeviceImport;
 use App\Models\Device;
 use App\Models\DeviceHistorie;
-use App\Models\ExtraCharge;
 use App\Models\InventorieDevice;
 use App\Models\Router;
 use App\Models\User;
 use App\Models\DeviceStatus;
 use App\Models\PingDeviceHistorie;
+use App\Services\DeviceService;
 use App\Services\RouterOSService;
 use Illuminate\Http\Request;
 use Exception;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class DevicesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected DeviceService $deviceService;
+    public function __construct()
+    {
+        $this->deviceService = new DeviceService();
+    }
+
     public function index(Request $request)
     {
         // Trabajamos con Eloquent directamente, sin getQuery()
@@ -173,9 +176,10 @@ class DevicesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id){
-    
-        $devices = Device::with('user','router')->findOrFail($id);
+    public function show(string $id)
+    {
+
+        $devices = Device::with('user', 'router')->findOrFail($id);
 
         return Inertia::render('Admin/Devices/Show', [
             'devices' => $devices,
@@ -663,5 +667,19 @@ class DevicesController extends Controller
             ];
         };
         return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Dispositivos de Router.xlsx');
+    }
+
+
+    public function allDevicesImportExcel2(Request $request)
+    {
+        try {
+            $file = $request->excel;
+            $local = filter_var($request->local, FILTER_VALIDATE_BOOLEAN);;
+            // dd($local);
+            Excel::import(new AllDeviceImport($this->deviceService, $local), $file);
+            return Redirect::route('devices')->with('success', 'Archivo Importado Con Éxito ');
+        } catch (\Exception $e) {
+            return Redirect::route('devices')->with('error', 'Error al Importar, ' . $e->getMessage());
+        }
     }
 }

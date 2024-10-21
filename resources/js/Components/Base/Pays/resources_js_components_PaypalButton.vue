@@ -1,6 +1,23 @@
+<script setup>
+const props = defineProps({
+  totalAmount:{
+    type: Number
+  },
+  selectedMonths:{
+    type:Number
+  },
+  contract:{
+    type: Object
+  },
+  cart:{
+    type: Object
+  }
+});
+</script>
 <template>
   <div>
     <div id="paypal-button-container"></div>
+    {{ cart }}
   </div>
 </template>
 
@@ -12,7 +29,12 @@ export default {
       .Buttons({
         createOrder: async (data, actions) => {
          // alert("bien");
-          const response = await axios.post('/api/paypal/create-order');
+          const response = await axios.post(
+            '/api/paypal/create-order', 
+            this.totalAmount, 
+            this.selectedMonths,
+            this.contract,
+            this.cart);
           ///alert("bien");
           return response.data.id;
         },
@@ -30,7 +52,7 @@ export default {
 
         onError: (err) => {
           console.error("Error aqui: "+err.message);
-          alert("Error en el proceso de pago.");
+          //alert("Error en el proceso de pago.");
         },
       })
       .render("#paypal-button-container");

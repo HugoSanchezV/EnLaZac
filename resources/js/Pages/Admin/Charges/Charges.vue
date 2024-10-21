@@ -1,38 +1,38 @@
 <script setup>
 import { toRefs } from "vue";
+import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
-  plans: Object,
+  charges: Object,
   pagination: Object,
-  totalPlansCount: Number,
+  totalChargesCount: Number,
 });
 
-const { plans } = toRefs(props);
+const { charges } = toRefs(props);
+//const toRouteExport = "contracts.excel";
 
-//  [   Burst Limit   ]  [Burst Threshold]  [   Burst Time   ] [   Limite At   ] [   Max Limit   ]
-const headers = [
-  "Id",
-  "Nombre",
-  "Descripción",
-  "Precio",
-  "Burst Limit (Mb/s)",
-  "Burst Threshold (Mb/s)",
-  "Burst Time (S)",
-  "Limite At (Klb/s)",
-  "Max Limit (Mb/s)",
-  "Acciones",
-];
+//const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
   "id",
-  "nombre",
+  "contrato",
   "descripción",
-  'precio',
-  "burst_limit",
-  "burst_threshold",
-  "burst_time",
-  "limite_at",
-  "max_limit",
+  "monto",
+  "¿pagado?",
+  "fecha del pago",
+  "fecha de creación",
 ];
+
+const headers = [
+  "Id",
+  "Contrato",
+  "Descripción",
+  "Monto",
+  "¿Pagado?",
+  "Fecha de Pago",
+  "Fecha de Creación",
+  "Acciones",
+];
+//const filters = ["id", "usuario", "plan internet", "dirección"];
 </script>
 
 <template>
@@ -40,28 +40,27 @@ const filters = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Planes de Internet</h2>
+          <h2>Cargos</h2>
         </div>
         <div>
           <Link
-            :href="route('plans.create')"
+            :href="route('charges.create')"
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
-            <span class="material-symbols-outlined" style="font-size: 18px">
-              network_check
-            </span>
+            <span class="material-symbols-outlined" style="font-size: 16px;"> contract </span>
 
-            Crear Plan
+            Crear cargo
           </Link>
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalPlansCount > 0">
+        <div v-if="props.totalChargesCount > 0">
+          <!-- <base-export-excel :toRouteExport="toRouteExport"></base-export-excel> -->
           <!-- Esta es el inicio de la tabla -->
-          <base-table-plans
+          <base-table-charges
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -69,19 +68,19 @@ const filters = [
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-plans>
+          ></base-table-charges>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="plans.data.length > 0"
-            :links="plans.links"
+            v-if="charges.data.length > 0"
+            :links="charges.links"
             :pagination="pagination"
-            :current="plans.current_page"
-            :total="plans.last_page"
+            :current="charges.current_page"
+            :total="charges.last_page"
             :data="{
               q: q,
               attribute: attribute,
-              type: type,
               order: order,
+              type: type,
             }"
           ></base-pagination>
           <h2
@@ -92,37 +91,36 @@ const filters = [
           </h2>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
-          <h2>No hay planes de internet para mostrar</h2>
+          <h2>No hay Cargos para mostrar</h2>
         </div>
       </div>
     </template>
   </dashboard-base>
 </template>
-
 <script>
 import { Link } from "@inertiajs/vue3";
+import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTablePlans from "@/Components/Base/BaseTablePlan.vue";
+import BaseTableCharges from "@/Components/Base/BaseTableCharges.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTablePlans,
+    BaseTableCharges,
     BasePagination,
   },
 
   props: {
-    plans: Object,
+    charges: Object,
     pagination: Object,
-    success: String,
-    totalPlansCount: Number,
+    totalChargesCount: Number,
   },
 
   data() {
     return {
-      rows: this.plans.data,
+      rows: this.charges.data,
       q: "",
       attribute: "id",
       type: "todos",
@@ -131,9 +129,9 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("plans");
+      const link = route("charges");
 
-      console.log(props.searchQuery);
+  //    console.log(props.searchQuery);
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
@@ -143,15 +141,30 @@ export default {
       if (this.attribute === "id") {
         this.attribute = "id";
       }
-      if (this.order === "nombre") {
-        this.order = "name";
+
+      if (this.attribute === "contrato") {
+        this.attribute = "contract_id";
       }
-      if (this.order === "descripción") {
-        this.order = "description";
+
+      if (this.attribute === "descripción") {
+        this.attribute = "description";
       }
-      if (this.order === "precio") {
-        this.order = "price";
-      }     
+
+      if (this.order === "monto") {
+        this.order = "amount";
+      }
+      if (this.order === "¿pagado?") {
+        this.order = "paid";
+      }
+
+      if (this.order === "fecha de pago") {
+        this.order = "date_paid";
+      }
+
+      if (this.order === "fecha de creación") {
+        this.order = "created_at";
+      }
+
       this.$inertia.get(
         link,
         {
@@ -165,8 +178,8 @@ export default {
     },
   },
   watch: {
-    plans() {
-      this.rows = this.plans.data;
+    charges() {
+      this.rows = this.charges.data;
     },
   },
 };
