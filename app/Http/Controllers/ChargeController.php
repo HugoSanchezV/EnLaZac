@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Contract;
 use Illuminate\Support\Facades\Redirect;
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class ChargeController extends Controller
@@ -90,6 +91,15 @@ class ChargeController extends Controller
         $charge->update($validatedData);
         return redirect()->route('charges')->with('success', 'Cargo Actualizado Con Éxito');
     }
+    public function updatePaid($id)
+    {
+        $charge = Charge::findOrFail($id);
+        $charge->paid = true;
+        $charge->date_paid = Carbon::now();
+
+        $charge->save();
+
+    }
     public function store_schedule(Charge $request)
     {   
         $charge = Charge::create([
@@ -126,6 +136,7 @@ class ChargeController extends Controller
         
         return redirect()->route('charges')->with('success', 'El cargo ha sido creado con éxito');
     }
+    
     public function destroy($id)
     {
         $charge = Charge::findOrFail($id);

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Interest\UpdateInterestRequest;
 use App\Models\Interest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+use PDO;
 
 class InterestsController extends Controller
 {
@@ -52,6 +54,22 @@ class InterestsController extends Controller
             'success' => session('success') ?? null,
             'totalInterestCount' => $totalInterestCount 
         ]);
+    }
+    public function edit($id)
+    {
+        $interest = Interest::findOrFail($id);
+
+        return Inertia::render('Admin/Settings/Interest/Edit', [
+            'interest' => $interest,
+
+        ]);
+    }
+    public function update(UpdateInterestRequest $request, $id)
+    {
+        $interest = Interest::findOrFail($id);
+        $validatedData = $request->validated();
+        $interest->update($validatedData);
+        return redirect()->route('settings.interest')->with('success', 'El interest ha sido Actualizado Con Éxito');
     }
 
     public function getInterest($id){

@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('payment_historie', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('contract_id')->constrained('contracts');
             $table->decimal('amount', 10, 2);
+            $table->text('content');
             $table->string('payment_method');
-            $table->timestamp('date_payment');
-            $table->string('referencia')->nullable();
+            $table->string('transaction_id')->unique();
+            $table->string('receipt_url');
             $table->timestamps();
         });
     }

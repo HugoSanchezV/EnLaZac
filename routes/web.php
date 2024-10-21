@@ -184,6 +184,8 @@ Route::middleware([
         Route::get('/sistema/configuracion/paypal',      [PayPalSettingController::class, 'edit'])->name('settings.paypal.edit');
         Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
         Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'index'])->name('settings.interest');
+        Route::get('/sistema/configuracion/intereses/edit/{id}', [InterestsController::class, 'edit'])->name('settings.interest.edit');
+        Route::put('/sistema/configuracion/intereses/update/{id}', [InterestsController::class, 'update'])->name('settings.interest.update');
     });
 
     //MIDDLEWARE DEMÁS USUARIOS

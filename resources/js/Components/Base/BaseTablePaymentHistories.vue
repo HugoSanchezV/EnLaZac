@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("charges.destroy", id);
+          const url = route("paymentHistories.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -44,25 +44,35 @@ const destroy = (id) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "description":
-      return "Descripción";
+    case "user_id":
+      return "Usuario";
       break;
-    case "contract_id":
-      return "Contrato";
-      break;
+      case "contract_id":
+        return "Contrato";
+        break;
     case "amount":
       return "Monto";
       break;
-    case "paid":
-      return "¿Pagado?";
+      case "content":
+        return "Contenido";
+        break;
+    case "payment_method":
+      return "Método de Pago";
+      break;
+    
+    case "payment_method":
+      return "Método de Pago";
+      break;
+    case "transaction_id":
+      return "Id de Transacción";
       break;
 
-    case "date_paid":
-      return "Fecha de Pago";
+    case "receipt_url":
+      return "Link de Recepción";
       break;
 
     case "created_at":
-      return "Fecha de Creación";
+      return "Fecha de Pago";
       break;
 
     default:
@@ -189,7 +199,7 @@ const getTag = (cellIndex) => {
             $emit('search', {
               searchQuery: searchQuery,
               order: currentFilter,
-              type: currentCharge,
+              type: currentPayment,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -220,11 +230,7 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            
-            <div v-if="cellIndex === 'paid'">
-              {{ cell === 0 ? "No" : "Sí" }}
-            </div>
-            <div v-else>
+            <div>
               <div class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span
@@ -352,7 +358,7 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentCharge: "todos",
+      currentPayment: "todos",
       currentOrder: "ASC",
     };
   },
@@ -383,18 +389,18 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCharge,
+        type: this.currentPayment,
         order: this.currentOrder,
       });
     },
 
-    selectCharge(charge) {
-      this.currentCharge = charge;
+    selectPayment(payment) {
+      this.currentPayment = payment;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCharge,
+        type: this.currentPayment,
         order: this.currentOrder,
       });
     },
@@ -404,7 +410,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCharge,
+        type: this.currentPayment,
         order: this.currentOrder,
       });
     },

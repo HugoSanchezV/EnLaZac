@@ -9,15 +9,18 @@ const props = defineProps({
   contract:{
     type: Object
   },
-  cart:{
+  cartCharge:{
     type: Object
-  }
+  },
+  allCart:{
+    type: Object
+  },
+  
 });
 </script>
 <template>
   <div>
     <div id="paypal-button-container"></div>
-    {{ cart }}
   </div>
 </template>
 
@@ -30,11 +33,7 @@ export default {
         createOrder: async (data, actions) => {
          // alert("bien");
           const response = await axios.post(
-            '/api/paypal/create-order', 
-            this.totalAmount, 
-            this.selectedMonths,
-            this.contract,
-            this.cart);
+            '/api/paypal/create-order');
           ///alert("bien");
           return response.data.id;
         },
@@ -42,6 +41,11 @@ export default {
         onApprove: async (data, actions) => {
           const response = await axios.post("/api/paypal/capture-order", {
             orderID: data.orderID,
+            amount: this.totalAmount, 
+            mounths: this.selectedMonths,
+            contract: this.contract,
+            charges: this.cartCharge,
+            cart: this.allCart
           });
           if (response.data.status === "success") {
             alert("Pago completado con éxito!");

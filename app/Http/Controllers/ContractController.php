@@ -9,6 +9,8 @@ use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
+use Carbon\Carbon;
+
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -137,6 +139,20 @@ class ContractController extends Controller
         $validatedData = $request->validated();
         $contract->update($validatedData);
         return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
+    }
+
+    public function updateMonths($months, $id)
+    {
+        $contract = Contract::findOrFail($id);
+    
+        // Convertir `end_date` a una instancia de Carbon para manipular la fecha
+        $endDate = Carbon::parse($contract->end_date);
+        
+        // Sumar los meses a la fecha de finalización
+        $contract->end_date = $endDate->addMonths($months);
+
+        // Guardar los cambios
+        $contract->save();
     }
 
     public function destroy($id)
