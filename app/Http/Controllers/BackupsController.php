@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Backup;
 use App\Models\Backups;
+use App\Services\RequestService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class BackupsController extends Controller
         if ($request->attribute) {
             $query->orderBy($request->attribute, $request->order);
         } else {
-            $query->orderBy('id', 'asc');
+            $query->orderBy('id', 'desc');
         }
 
         $backups = $query->latest()->paginate(8)->through(function ($item) {
@@ -46,8 +47,8 @@ class BackupsController extends Controller
             return [
                 'id' => $item->id,
                 'path' => $item->path,
-                'user_id' => $item->user_id ?? "Sin asignar",
-                'created_at' => $date->format('d/m/Y H:i:s'),
+                'user_id' => $item->user->name ?? "Sin asignar",
+                'created_at' => $date->diffForHumans(),
             ];
         });
 
@@ -64,54 +65,15 @@ class BackupsController extends Controller
             ],
             'success' => session('success') ?? null,
             'error' => session('error') ?? null,
-            'totalBackupCount' => $totalBackupCount
+            'totalBackupCount' => $totalBackupCount,
+            'q' => "",
+            'attribute' => "id",
+            'type' => "todos",
+            'order' => "desc",
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Backup $backups)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Backup $backups)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Backup $backups)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Backup $backup)
+    public function destroy(Backup $backup, Request $request)
     {
         try {
             $filePath = storage_path('app/backup/' . $backup->path);
@@ -152,15 +114,17 @@ class BackupsController extends Controller
         }
     }
 
-    public function createBackup()
+    public function createBackup(Request $request)
     {
+
         try {
             $databaseName = env('DB_DATABASE');
             $username = env('DB_USERNAME');
             $password = env('DB_PASSWORD');
             $host = env('DB_HOST');
 
-            $gzip_file_name = $databaseName . "_backup_" . Str::random(8) . ".sql.gz";
+            $date = now()->format('d-Y-M-H-i');
+            $gzip_file_name = $databaseName  . "_" .  $date . "_backup_" . Str::random(8) . ".sql.gz";
             $backup_directory = storage_path("app/backup");
             $gzip_file_path = "$backup_directory/$gzip_file_name";
 
@@ -191,13 +155,13 @@ class BackupsController extends Controller
                 Log::info('Copia de seguridad guardada en: ' . $gzip_file_path);
             }
 
-            return Redirect::route('backups')->with('success', 'Copia de seguridad creada exitosamente en ' . $gzip_file_name);
+            return Redirect::route('backups', RequestService::getArrayIndexRequest($request))->with('success', 'Copia de seguridad creada exitosamente en ' . $gzip_file_name);
         } catch (\Exception $e) {
             return Redirect::route('backups')->with('error', 'No se pudo crear la copia de seguridad: ' . $e->getMessage());
         }
     }
 
-    public function download(Backup $backup)
+    public function download(Backup $backup, Request $request)
     {
         try {
             if (Storage::exists('backup/' . $backup->path)) {
@@ -205,7 +169,7 @@ class BackupsController extends Controller
                 return response()->download($path);
             }
         } catch (Exception $e) {
-            return Redirect::route('backups')->with('error', 'No se ha podido realizar la descarga');
+            return Redirect::route('backups', RequestService::getArrayIndexRequest($request))->with('error', 'No se ha podido realizar la descarga');
         }
     }
 }

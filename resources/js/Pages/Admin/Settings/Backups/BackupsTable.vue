@@ -224,7 +224,12 @@ const getTag = (cellIndex) => {
                   :href="route('backups.download', row.id)"
                   class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
-                  <span class="material-symbols-outlined" style="font-size: 16px;"> download </span>
+                  <span
+                    class="material-symbols-outlined"
+                    style="font-size: 16px"
+                  >
+                    download
+                  </span>
                   Descargar
                 </a>
               </div>
@@ -351,6 +356,7 @@ export default {
     // filterData() {
     //   console.log(this.searchQuery);
     // },
+    
   },
 };
 </script>

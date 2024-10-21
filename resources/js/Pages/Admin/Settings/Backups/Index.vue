@@ -10,14 +10,12 @@ const props = defineProps({
 
 const { backups, totalBackupCount } = toRefs(props);
 
-const headers = ["id", "path", "user_id", "created_at", "acciones"];
-const filters = ["id", "path", "user_id", "created_id"];
+const headers = ["id", "nombre", "usuario", "creado", "acciones"];
+const filters = ["id", "nombre", "usuario"];
 
-const createBackup = () => {
-  const routeBackUp = route("backups.create");
+// const createBackup = () => {
 
-  router.post(routeBackUp);
-};
+// };
 </script>
 
 <template>
@@ -25,7 +23,7 @@ const createBackup = () => {
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>BackUps {{ totalBackupCount }}</h2>
+          <h2>BackUps</h2>
         </div>
 
         <div>
@@ -84,6 +82,7 @@ import { Link } from "@inertiajs/vue3";
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import BackupsTable from "./BackupsTable.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
+import { router } from "@inertiajs/vue3";
 // import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
@@ -120,13 +119,13 @@ export default {
       this.type = props.type;
       this.order = props.order;
 
-      //   if (props.attribute === "mac address") {
-      //     this.attribute = "mac_address";
-      //   }
+      if (props.attribute === "nombre") {
+        this.attribute = "path";
+      }
 
-      //   if (props.attribute === "descripción") {
-      //     this.attribute = "description";
-      //   }
+      if (props.attribute === "usuario") {
+        this.attribute = "user";
+      }
 
       //   if (props.attribute === "marca") {
       //     this.attribute = "brand";
@@ -141,6 +140,19 @@ export default {
         },
         { preserveState: true, replace: true, preserveScroll: true }
       );
+    },
+
+    createBackup() {
+      const routeBackUp = route("backups.create");
+
+      const params = {
+        q: this.q,
+        attribute: this.attribute,
+        type: this.type,
+        order: this.order,
+      };
+
+      router.post(routeBackUp, params);
     },
   },
 
