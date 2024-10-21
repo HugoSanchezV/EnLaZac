@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChargeController;
+use App\Http\Controllers\BackupsController;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\PingController;
@@ -172,6 +173,11 @@ Route::middleware([
         Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
         Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
+        Route::get('/sistema/backups',      [BackupsController::class, 'index'])->name('backups');
+        Route::post('/sistema/backups/create',      [BackupsController::class, 'createBackup'])->name('backups.create');
+        Route::delete('/sistema/backups/delete/{backup}',      [BackupsController::class, 'destroy'])->name('backups.destroy');
+        Route::delete('/sistema/backups/clear',      [BackupsController::class, 'clear'])->name('backups.clear');
+        Route::get('/sistema/backups/download/{backup}',      [BackupsController::class, 'download'])->name('backups.download');
 
         // Settings
         Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
