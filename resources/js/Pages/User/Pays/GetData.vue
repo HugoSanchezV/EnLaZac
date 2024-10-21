@@ -31,12 +31,12 @@ onMounted(() => {
 </script>
 
 <template>
+
   <resources_js_components_PaypalButton
     :totalAmount="totalAmount"
     :selectedMonths = "selectedMonths"
     :contract = "contract"
     :cartCharge = "carrito"
-    :allCart = "cart"
-  >
+    :allCart = "cart">
   </resources_js_components_PaypalButton>
 </template>
