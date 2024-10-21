@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Services\PaymentService;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Illuminate\Http\Request;
 
@@ -38,9 +40,22 @@ class PayPalController extends Controller
         $response = $paypalModule->capturePaymentOrder($request->orderID);
        
         if ($response['status'] === 'COMPLETED') {
+            self::update($request->amount, 
+            $request->mounths, 
+            $request->contract, 
+            $request->charges,
+            $request->cart);
             return response()->json(['status' => 'success']);
         }
 
         return response()->json(['status' => 'error'], 500);
     }
+    public function update ($amount, $months, $contract, $charges, $cart)
+    {
+        $payment = new PaymentService();
+        $payment->createPayment($amount, $months, $contract, $cart);
+        $payment->updateContract($contract, $months);
+        $payment->updateCharge($charges);
+    }
+
 }

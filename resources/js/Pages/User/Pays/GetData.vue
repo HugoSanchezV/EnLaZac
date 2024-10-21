@@ -1,6 +1,8 @@
 <script setup>
 import resources_js_components_PaypalButton from "@/Components/Base/Pays/resources_js_components_PaypalButton.vue";
 import { onMounted } from "vue";
+import { ref } from "vue";
+
 
 const props = defineProps({
   totalAmount:{
@@ -16,8 +18,14 @@ const props = defineProps({
     type: Object
   }
 });
+const carrito = ref([]);
 onMounted(() => {
-  props.cart.forEach((element) => console.log(element.id));
+  props.cart.forEach(function(element, index, array){
+      if(element.id != "service"){
+        carrito.value.push(element);
+      }
+  });
+
 });
 
 </script>
@@ -27,7 +35,8 @@ onMounted(() => {
     :totalAmount="totalAmount"
     :selectedMonths = "selectedMonths"
     :contract = "contract"
-    :cart = "cart"
+    :cartCharge = "carrito"
+    :allCart = "cart"
   >
   </resources_js_components_PaypalButton>
 </template>
