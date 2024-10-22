@@ -58,19 +58,19 @@ const props = defineProps({
         <!-- Muestra el email del usuario -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">id dispositivo</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ devices.inventorieDevice.id === null ?? 'Sin asignar'}}</dd>
+           <dd class="mt-1 text-sm text-gray-900">{{ devices.inventorieDevice === null ? 'Sin asignar': devices.inventorieDevice.id}}</dd> 
 
         </div>
 
         
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">id usuario</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ devices.user_id}}</dd>
+          <dd class="mt-1 text-sm text-gray-900">{{ devices.user_id === null ? "Sin asignar": devices.user_id}}</dd>
         </div>
 
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">id usuario</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ devices.user.name}}</dd>
+          <dd class="mt-1 text-sm text-gray-900">{{ devices.user === null ? "Sin asignar": devices.user.name}}</dd>
         </div>
       </dl>
     </div>

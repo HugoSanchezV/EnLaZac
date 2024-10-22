@@ -193,7 +193,13 @@ useGeneralNotifications();
             <div v-else>
               <h2>No hay routers disponibles</h2>
             </div>
-            
+            <!-- Componente de pruebas -->
+            <div>
+              <GoogleMap 
+              :lat="20.676" :lng="-101.356" 
+              :clic="true" 
+              @area_selected="handleAreaSelected" />
+            </div>
               
           </slot>
         </div>
@@ -203,7 +209,17 @@ useGeneralNotifications();
 </template>
 
 <script>
+import GoogleMap from '@/Components/GoogleMapsZone.vue'
 export default {
+  components: {
+    GoogleMap,
+  },
+  methods:{
+    handleAreaSelected(coordinates) {
+      console.log('Área seleccionada con las siguientes coordenadas:', coordinates)
+      // Aquí puedes realizar lógica adicional, como asociar un precio a esta área
+    }
+  },
   props: {
     applyStyles: {
       type: Boolean,

@@ -157,7 +157,7 @@ const formattedDate = (dateCreation) => {
                                         </div>
                                         <div v-else>
                                             <Link  
-                                                :href = "router('user.show',notification.data.id)"
+                                                :href = "route('usuarios.show', notification.data.id)"
                                                 class="dropdown-item"
                                                 @click.prevent="handleNotificationClick(notification)">
                                                 <i class="fas fa-envelope"></i> Nuevo usuario registrado id {{ notification.data.id }}
@@ -166,11 +166,8 @@ const formattedDate = (dateCreation) => {
                                         </div>
                                     </div>
                                     </div>
-                                    <div v-else>
-                                    <p>No tienes notificaciones no leídas</p>
-                                    </div>
-                                    <div class="dropdown-footer">
-                                    <a href="#">Ver todas las notificaciones</a>
+                                    <div class="pl-3 mt-3 mb-3 " v-else>
+                                      <p>No tienes notificaciones no leídas</p>
                                     </div>
                                 </div>
                                 </div>
@@ -334,7 +331,6 @@ const formattedDate = (dateCreation) => {
                     </div>
                 </div>
             </nav>
-
             <!-- Page Heading -->
             <header v-if="$slots.header" class="bg-white shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -370,6 +366,7 @@ export default {
       axios.get('/notifications/unread')
         .then(response => {
           this.unreadNotifications = response.data;
+          
         })
         .catch(error => {
           console.error('Error al obtener las notificaciones:', error);

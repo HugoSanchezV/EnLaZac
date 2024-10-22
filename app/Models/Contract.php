@@ -32,4 +32,8 @@ class Contract extends Model
     {
         return $this->belongsTo(Plan::class);
     }
+    public function ruralCommunity()
+    {
+        return $this->hasOne(RuralCommunity::class, 'contract_id');
+    }
 }

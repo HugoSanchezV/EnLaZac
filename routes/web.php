@@ -17,6 +17,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\PayPalSettingController;
 use App\Http\Controllers\PingDeviceHistorieController;
+use App\Http\Controllers\RuralCommunityController;
 use App\Http\Controllers\ScheduledTaskController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatisticsController;
@@ -169,9 +170,15 @@ Route::middleware([
         Route::put('/charges/update/{id}',         [ChargeController::class, 'update'])->name('charges.update');
         Route::delete('/charges/delete/{id}',      [ChargeController::class, 'destroy'])->name('charges.destroy');
 
+        Route::get('/rural-community',                     [RuralCommunityController::class, 'index'])->name('rural-community');
+        Route::get('/rural-community/create',              [RuralCommunityController::class, 'create'])->name('rural-community.create');
+        Route::get('/rural-community/show/{id}',           [RuralCommunityController::class, 'show'])->name('rural-community.show');
+        Route::post('/rural-community/store',              [RuralCommunityController::class, 'store'])->name('rural-community.store');
+        Route::get('/rural-community/edit/{id}',           [RuralCommunityController::class, 'edit'])->name('rural-community.edit');
+        Route::put('/rural-community/update/{id}',         [RuralCommunityController::class, 'update'])->name('rural-community.update');
+        Route::delete('/rural-community/delete/{id}',      [RuralCommunityController::class, 'destroy'])->name('rural-community.destroy');
+        Route::put('/rural-community/updateContract/{id}', [RuralCommunityController::class, 'updateContract'])->name('rural-community.update.contract');
 
-        Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
-        Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
         Route::get('/sistema/backups',      [BackupsController::class, 'index'])->name('backups');
         Route::post('/sistema/backups/create',      [BackupsController::class, 'createBackup'])->name('backups.create');
@@ -188,8 +195,12 @@ Route::middleware([
         Route::put('/sistema/configuracion/intereses/update/{id}', [InterestsController::class, 'update'])->name('settings.interest.update');
     });
 
+    Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
+    Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
+
     //MIDDLEWARE DEMÁS USUARIOS
     Route::middleware(['rol:2,3'])->group(function () {
+   
         // Usuarios
         /*  Route::get('/dashboard', function () {
             return Inertia::render('DashboardBase');
