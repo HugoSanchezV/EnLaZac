@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("contracts.destroy", id);
+          const url = route("rural-community.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -44,28 +44,14 @@ const destroy = (id) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "user_id":
-      return "Usuario";
-      break;
-    case "plan_id":
-      return "Plan";
-      break;
-    case "start_date":
-      return "Inicio";
-      break;
-    case "end_date":
-      return "Fin";
-      break;
-
-    case "address":
-      return "Dirección";
-      break;
-      case "name":
-      return "Comunidad";
-      break;
-    default:
+    case "name":
+      return "nombre";
+    case "installation_cost":
+      return "costo de instalación";
+    case "contract_id":
+      return "contrato";
+      default:
       return cellIndex;
-      break;
   }
 };
 </script>
@@ -187,7 +173,7 @@ const getTag = (cellIndex) => {
             $emit('search', {
               searchQuery: searchQuery,
               order: currentFilter,
-              type: currentContract,
+              type: currentCommunity,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -197,11 +183,15 @@ const getTag = (cellIndex) => {
     </div>
 
     <table class="w-full text-sm text-left text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-950">
         <tr>
           <th></th>
-
-          <th v-for="(header, index) in headers" :key="index" scope="col">
+          <th
+            class="px-2"
+            v-for="(header, index) in headers"
+            :key="index"
+            scope="col"
+          >
             {{ header }}
           </th>
         </tr>
@@ -218,23 +208,7 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'geolocation'">
-              {{
-                typeof cell === "object"
-                  ? JSON.stringify(cell)
-                      .replace(/[{}""]/g, "")
-                      .replace(/[:]/g, ": ")
-                      .replace(/[,]/g, " | ")
-                      .replace("latitude", "Latitud")
-                      .replace("longitude", "Longitud")
-                      .replace("null", "Sin locación")
-                  : String(cell).replace(/[{}]/g, "")
-              }}
-            </div>
-            <div v-else-if="cellIndex === 'active'">
-              {{ cell === 0 ? "OFF" : "ON" }}
-            </div>
-            <div v-else>
+            <div>
               <div class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span
@@ -245,8 +219,9 @@ const getTag = (cellIndex) => {
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
+              
               <Link
-                href="#"
+                :href="route('rural-community.show', row.id)"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -269,7 +244,7 @@ const getTag = (cellIndex) => {
               </Link>
               <Link
                 v-if="edit"
-                :href="route('contracts.edit', row.id)"
+                :href="route('rural-community.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -362,7 +337,7 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentContract: "todos",
+      currentCommunity: "todos",
       currentOrder: "ASC",
     };
   },
@@ -393,18 +368,18 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        type: this.currentCommunity,
         order: this.currentOrder,
       });
     },
 
-    selectContract(contract) {
-      this.currentContract = contract;
+    selectCommunity(community) {
+      this.currentCommunity = community;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        type: this.currentCommunity,
         order: this.currentOrder,
       });
     },
@@ -414,7 +389,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentUser,
+        type: this.currentCommunity,
         order: this.currentOrder,
       });
     },

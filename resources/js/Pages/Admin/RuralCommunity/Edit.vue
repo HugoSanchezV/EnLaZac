@@ -1,31 +1,16 @@
-<script setup>
-const props = defineProps({
-  lastID:{
-    type: Object
-  },
-  users: {
-    type: Object,
-  },
-  plans: {
-    type: Object,
-  },
-  community:{
-    type: Array,
-  }
-});
-</script>
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
-      <div>
-        <h2>Crear Contrato</h2>
+      <div class="flex justify-between">
+        <h2>Editar</h2>
+        <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">{{community.name}}</span>
       </div>
     </template>
 
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :lastID="lastID" :users="users" :plans="plans" :community="community"/>
+          <FormUpdate :community="community" :contracts="contracts" />
         </div>
       </div>
     </template>
@@ -33,12 +18,22 @@ const props = defineProps({
 </template>
 
 <script>
+import FormUpdate from "./FormUpdate.vue";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import Form from "./FormCreate.vue";
+
 export default {
   components: {
+    FormUpdate,
     DashboardBase,
-    Form,
+  },
+  props: {
+    community: {
+      type: Object,
+      required: true,
+    },
+    contracts: {
+      type: Array,
+    },
   },
 };
 </script>

@@ -9,6 +9,7 @@ use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
+use App\Models\RuralCommunity;
 use Carbon\Carbon;
 
 use Exception;
@@ -44,9 +45,8 @@ class ContractController extends Controller
         } else {
             $query->orderBy('id', 'asc');
         }
-        $queryUser = User::query();
-        $queryPlan = Plan::query();
-        $contract = $query->with('user')->latest()->paginate(8)->through(function ($item) {
+
+        $contract = $query->with('user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
                 'user_id' => $item->user->name ?? 'None',
@@ -55,11 +55,7 @@ class ContractController extends Controller
                 'end_date' => $item->end_date,
                 'active' => $item->active,
                 'address' => $item->address,
-                // 'geolocation' => $item->geolocation ? [
-                //     'latitude' => $item->geolocation['latitude'] ?? null,
-                //     'longitude' => $item->geolocation['longitude'] ?? null,
-                // ] : null,
-
+                'community' => $item->ruralCommunity->name ?? 'Sin asignar',            
             ];
         });
 
@@ -91,13 +87,19 @@ class ContractController extends Controller
 
     public function create()
     {
+        $lastContract = Contract::orderBy('id', 'desc')->first();
+        $community = RuralCommunity::whereNull('contract_id')->get();
+
+        
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
         return Inertia::render(
             'Coordi/Contracts/Create',
             [
+                'lastID' => $lastContract->id,
                 'users' => $users,
                 'plans' => $plans,
+                'community' => $community,
             ]
         );
     }
@@ -105,7 +107,7 @@ class ContractController extends Controller
     public function store(StoreContractRequest $request)
     {
         $validatedData = $request->validated();
-        $contract = Contract::create([
+        Contract::create([
             'user_id' => $validatedData['user_id'],
             'plan_id' => $validatedData['plan_id'],
             'start_date' => $validatedData['start_date'],
@@ -120,7 +122,7 @@ class ContractController extends Controller
 
     public function edit($id)
     {
-        $contract = Contract::findOrFail($id);
+        $contract = Contract::with('ruralCommunity')->findOrFail($id);
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
 

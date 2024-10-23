@@ -1,31 +1,23 @@
 <script setup>
 const props = defineProps({
-  lastID:{
-    type: Object
-  },
-  users: {
-    type: Object,
-  },
-  plans: {
-    type: Object,
-  },
-  community:{
-    type: Array,
+  contracts: {
+    type: Array
   }
+
 });
 </script>
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div>
-        <h2>Crear Contrato</h2>
+        <h2>Crear Comunidad Rural</h2>
       </div>
     </template>
 
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :lastID="lastID" :users="users" :plans="plans" :community="community"/>
+          <Form :contracts="contracts"/>
         </div>
       </div>
     </template>

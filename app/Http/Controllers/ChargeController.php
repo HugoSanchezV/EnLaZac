@@ -18,12 +18,6 @@ class ChargeController extends Controller
     {
         $query = Charge::query();
 
-        //if ($request->type !== null && $request->type !== 'todos') {
-        //    $query->where('admin', '=', $request->type);
-       // }
-
-        //$query->where('admin', '!=', 1);
-
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
@@ -141,6 +135,6 @@ class ChargeController extends Controller
     {
         $charge = Charge::findOrFail($id);
         $charge->delete();
-        return Redirect::route('charge')->with('success', 'Cargo fue Eliminado Con Éxito');
+        return Redirect::route('charges')->with('success', 'Cargo fue Eliminado Con Éxito');
     }
 }

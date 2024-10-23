@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id(); // Id autoincremental
-            $table->unsignedBigInteger('user_id'); // Llave foránea a users
-            $table->unsignedBigInteger('plan_id'); // Llave foránea a plans
+            $table->unsignedBigInteger('user_id')->nullable()->constrained('users')->onDelete('cascade'); // Llave foránea a users
+            $table->unsignedBigInteger('plan_id')->nullable()->constrained('plans')->onDelete('cascade'); // Llave foránea a plans
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('active');

@@ -8,6 +8,9 @@ import TextInput from "@/Components/TextInput.vue";
 
 
 const props = defineProps({
+  lastID:{
+    type: Object
+  },
   users: {
     type: Array,
     default: () => [],
@@ -16,6 +19,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  community:{
+    type: Array,
+    default: () => [],
+  }
 });
 
 //const selectedUser = ref(null);
@@ -27,6 +34,7 @@ const form = useForm({
   end_date: "",
   active: "",
   address: "",
+  community: "",
   geolocation:{
     latitude: "",
     longitude:"",
@@ -89,7 +97,9 @@ const submit = () => {
   } else {
     form.active = false;
   }
-  form.post(route("contracts.store"));
+  //form.post(route("contracts.store"));
+
+  form.post(route("rural-community.update.contract", form.community, props.lastID+1));
 };
 
 
@@ -172,6 +182,7 @@ const submit = () => {
 
       <div class="mt-4 flex gap-4">
         <InputLabel for="active" value="¿Contrato Activo?" />
+        
         <label class="switch">
           <input type="checkbox" id="activated"/>
           <span class="slider round"></span>
@@ -194,9 +205,29 @@ const submit = () => {
       </div>
 
       <div class="mt-4">
+        <InputLabel for="name" value="Comunidad" />
+      </div>
+
+      <div class="mt-4">
         <p>Su ubicación actual será tomada de manera automática 
           para obtener la locación del cliente o ingrese la ubicación manualmente. 
         </p>
+      </div>
+
+      <div class="mt-4">
+        <InputLabel for="community" value="Comunidad" />
+        <div class="mt-2">
+            <select
+              v-model="form.community"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option :value="null" selected>Selecciona una opción</option>
+              <option v-for="com in community" :key="com.id" :value="com.id">
+                  {{com.id+" - " + com.name}}
+              </option>
+            </select>
+        </div>
+        <InputError class="mt-2" :message="form.errors.user_id" />
       </div>
 
       <div class="flex justify-between items-center gap-2 mt-5">
@@ -240,7 +271,7 @@ const submit = () => {
         :lat="parseInt(lat)"
         :lng="parseInt(lng)"
         :clic=true
-         @otherPos_clicked="handlePositionClicked" />
+        @otherPos_clicked="handlePositionClicked" />
       </div>
       
       <div v-else>
