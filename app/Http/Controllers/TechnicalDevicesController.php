@@ -22,9 +22,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
 
-class DevicesController extends Controller
+class TechnicalDevicesController extends Controller
 {
     protected DeviceService $deviceService;
     public function __construct()
@@ -34,6 +33,7 @@ class DevicesController extends Controller
 
     public function index(Request $request)
     {
+
         // Trabajamos con Eloquent directamente, sin getQuery()
         $query = Device::with(['inventorieDevice:id,mac_address', 'user:id,name', 'router:id,ip_address']);
 
@@ -75,7 +75,7 @@ class DevicesController extends Controller
         $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
-        return Inertia::render('Admin/AllDevices/Index', [
+        return Inertia::render('Tecnico/AllDevices/Index', [
             'devices' => $devices,
             'pagination' => [
                 'links' => $devices->links()->elements[0],
@@ -104,7 +104,7 @@ class DevicesController extends Controller
 
         $inv_devices = InventorieDevice::select('id', 'mac_address')->where('state', '0')->get();
 
-        return Inertia::render('Admin/Devices/Create', [
+        return Inertia::render('Tecnico/Devices/Create', [
             'devices' => $devices,
             'users' => $users,
             'inv_devices' => $inv_devices,
@@ -181,7 +181,7 @@ class DevicesController extends Controller
 
         $devices = Device::with('user', 'router')->findOrFail($id);
 
-        return Inertia::render('Admin/Devices/Show', [
+        return Inertia::render('Tecnico/Devices/Show', [
             'devices' => $devices,
         ]);
     }
@@ -189,7 +189,7 @@ class DevicesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Router $router, Device $device, $path = 'Admin/Devices/Edit')
+    public function edit(Router $router, Device $device, $path = 'Tecnico/Devices/Edit')
     {
         $device = Device::findOrFail($device->id);
 
@@ -218,7 +218,7 @@ class DevicesController extends Controller
         ]);
     }
 
-    public function device_all_edit(Router $router, Device $device, $path = 'Admin/AllDevices/Edit')
+    public function device_all_edit(Router $router, Device $device, $path = 'Tecnico/AllDevices/Edit')
     {
         return $this->edit($router, $device, $path);
     }
@@ -355,6 +355,8 @@ class DevicesController extends Controller
     {
         return $this->destroy($id, $url);
     }
+
+    // Envia ping a todos los dispositivos del router
     public function pingAllDevice(Router $router)
     {
         $device = Device::where('router_id', $router->id)
@@ -426,7 +428,7 @@ class DevicesController extends Controller
             return Redirect::route('routers.devices', ['router' => $router->id])->with('error', 'Se produjo un error: ' . $e);
         }
     }
-    public function sendPing(Device $device, $url = 'routers.devices')
+    public function sendPing(Device $device, $url = 'technical.routers.devices')
     {
 
         $device = Device::findOrFail($device->id);
@@ -491,12 +493,12 @@ class DevicesController extends Controller
         }
     }
 
-    public function sendAllPing(Device $device, $url = 'devices')
+    public function sendAllPing(Device $device, $url = 'technical.devices')
     {
         return $this->sendPing($device, $url);
     }
 
-    public function setDeviceStatus(Device $device, $url = 'routers.devices')
+    public function setDeviceStatus(Device $device, $url = 'technical.routers.devices')
     {
         $device = Device::findOrFail($device->id);
         $router = $device->router;
@@ -560,7 +562,7 @@ class DevicesController extends Controller
         return Redirect::route($url, $router)->with('success', $message);
     }
 
-    public function AllsetDeviceStatus(Device $device, $url = 'devices')
+    public function AllsetDeviceStatus(Device $device, $url = 'technical.devices')
     {
         return $this->setDeviceStatus($device, $url);
     }

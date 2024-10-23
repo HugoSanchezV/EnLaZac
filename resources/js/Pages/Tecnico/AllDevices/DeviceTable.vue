@@ -5,7 +5,7 @@ import { ref } from "vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
-import ModalUsers from "../Components/ModalUsers.vue";
+import ModalUsers from "@/Pages/Admin/Components/ModalUsers.vue";
 
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
@@ -14,42 +14,42 @@ import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 const toRouteExport = "devices.all.excel";
 //const urlComplete = "/devices/all/to/excel";
 
-const destroy = (id) => {
-  const toast = useToast();
+// const destroy = (id) => {
+//   const toast = useToast();
 
-  toast(
-    {
-      component: BaseQuestion,
-      props: {
-        message: "¿Estas seguro de Eliminar el Dispositivo?",
-        accept: true,
-        cancel: true,
-        textConfirm: "Eliminar",
-      },
+//   toast(
+//     {
+//       component: BaseQuestion,
+//       props: {
+//         message: "¿Estas seguro de Eliminar el Dispositivo?",
+//         accept: true,
+//         cancel: true,
+//         textConfirm: "Eliminar",
+//       },
 
-      listeners: {
-        accept: () => {
-          const url = route("devices.all.destroy", id);
+//       listeners: {
+//         accept: () => {
+//           const url = route("devices.all.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
-        },
-      },
-    },
+//           router.delete(url, () => {
+//             onError: (error) => {
+//               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+//             };
+//           });
+//         },
+//       },
+//     },
 
-    {
-      type: TYPE.WARNING,
-      position: POSITION.TOP_CENTER,
-      timeout: 10000,
-    }
-  );
-};
+//     {
+//       type: TYPE.WARNING,
+//       position: POSITION.TOP_CENTER,
+//       timeout: 10000,
+//     }
+//   );
+// };
 
 const setDeviceStatus = (row) => {
-  const url = route("devices.all.set.status", {
+  const url = route("technical.devices.all.set.status", {
     device: row.id,
   });
 
@@ -435,7 +435,7 @@ const getTag = (cellIndex) => {
                 d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
                 />
                 </svg>
-              </Link>
+              </Link>   
             </div> -->
             <div v-else>
               <!-- v-if="cellIndex !== 'router_id'" -->
@@ -474,13 +474,13 @@ const getTag = (cellIndex) => {
               </Link>
 
               <Link
-                :href="route('devices.one.ping', row.id)"
+                :href="route('technical.devices.one.ping', row.id)"
                 class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <span class="material-symbols-outlined"> network_ping </span>
                 Ping
               </Link>
-              <Link
+              <!-- <Link
                 v-if="edit"
                 :href="
                   route('devices.all.edit', {
@@ -506,9 +506,9 @@ const getTag = (cellIndex) => {
                 </svg>
 
                 Editar
-              </Link>
+              </Link> -->
 
-              <div v-if="del">
+              <!-- <div v-if="del">
                 <button
                   @click="destroy(row.id)"
                   class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -529,7 +529,7 @@ const getTag = (cellIndex) => {
                   </svg>
                   Eliminar
                 </button>
-              </div>
+              </div> -->
             </div>
           </td>
         </tr>

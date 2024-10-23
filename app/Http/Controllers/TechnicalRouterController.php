@@ -22,8 +22,11 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
-class RouterController extends Controller
+use function PHPUnit\Framework\isNull;
+
+class TechnicalRouterController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
@@ -38,6 +41,10 @@ class RouterController extends Controller
     public function index(Request $request)
     {
         $query = Router::query();
+
+        // if (isset($request->q) && !empty($request->q)) {
+        //     $query->where('id', 'asfdasdfs');
+        // }
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -69,7 +76,7 @@ class RouterController extends Controller
         // dd($schedule);
         $totalRoutersCount = Router::count();
         //Admin/Routers/Index
-        return Inertia::render('Admin/Routers/Index', [
+        return Inertia::render('Tecnico/Routers/Index', [
             'routers' => $routers,
             'pagination' => [
                 'links' => $routers->links()->elements[0],
@@ -90,7 +97,7 @@ class RouterController extends Controller
     public function create()
     {
         //
-        return Inertia::render('Admin/Routers/Create');
+        return Inertia::render('Tecnico/Routers/Create');
     }
 
     /**
@@ -204,9 +211,9 @@ class RouterController extends Controller
                 }
             }
 
-            return Redirect::route('routers')->with('success', $message);
+            return Redirect::route('technical.routers')->with('success', $message);
         } catch (Exception $e) {
-            return Redirect::route('routers')->with('error', $e->getMessage());
+            return Redirect::route('technical.routers')->with('error', $e->getMessage());
         }
     }
     public function sync($id)
@@ -236,7 +243,7 @@ class RouterController extends Controller
                 $users = $this->routerService->getDevicesNotInDatabase($users, $db_devices);
 
                 if (empty($users)) {
-                    return Redirect::route('routers')->with('success', 'El router se encuntra actualizado, todos los id conciden con la base de datos');
+                    return Redirect::route('technical.routers')->with('success', 'El router se encuntra actualizado, todos los id conciden con la base de datos');
                 }
             }
 
@@ -266,7 +273,7 @@ class RouterController extends Controller
 
             $routerOSService->disconnect();
         } catch (Exception $e) {
-            return Redirect::route('routers')->with('error', $e->getMessage());
+            return Redirect::route('technical.routers')->with('error', $e->getMessage());
         }
 
         $router->sync = 1;
@@ -351,7 +358,7 @@ class RouterController extends Controller
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
 
-        return Inertia::render('Admin/Routers/Devices', [
+        return Inertia::render('Tecnico/Routers/Devices', [
             'devices' => $devices,
             'pagination' => [
                 'links' => $devices->links()->elements[0],

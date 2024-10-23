@@ -1,19 +1,12 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { ref } from "vue";
 
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
-import ModalUsers from "../Components/ModalUsers.vue";
-
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
-import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
+
 // ACCION DE ELIMINAR
-
-const toRouteExport = "devices.all.excel";
-//const urlComplete = "/devices/all/to/excel";
-
 const destroy = (id) => {
   const toast = useToast();
 
@@ -21,7 +14,7 @@ const destroy = (id) => {
     {
       component: BaseQuestion,
       props: {
-        message: "¿Estas seguro de Eliminar el Dispositivo?",
+        message: "¿Estas seguro de Eliminar el Router?",
         accept: true,
         cancel: true,
         textConfirm: "Eliminar",
@@ -29,7 +22,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("devices.all.destroy", id);
+          const url = route("inventorie.devices.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -48,108 +41,18 @@ const destroy = (id) => {
   );
 };
 
-const setDeviceStatus = (row) => {
-  const url = route("devices.all.set.status", {
-    device: row.id,
-  });
-
-  router.patch(url, () => {});
-};
-
-const isModalOpen = ref({});
-const isModalDeviceOpen = ref({});
-
-const openModal = (id) => {
-  isModalOpen.value[id] = true;
-};
-
-const closeModal = (id) => {
-  isModalOpen.value[id] = false;
-};
-
-const openDeviceModal = (id) => {
-  isModalDeviceOpen.value[id] = true;
-};
-
-const closeDeviceModal = (id) => {
-  isModalDeviceOpen.value[id] = false;
-};
-
-const confirmSelectionDevice = (row, select) => {
-  if (select.selectId === null) {
-    const toast = useToast();
-    toast.error("Selecciona un dispositivo", {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  } else {
-    const url = route("devices.all.update", row.id);
-
-    let user_id = null;
-
-    if (row.user_id) {
-      user_id = row.user_id.id;
-    }
-    router.put(url, {
-      address: row.address,
-      router_id: row.router.id,
-      comment: row.comment,
-      user_id: user_id,
-      device_id: select.selectId,
-    });
-    closeModal();
-  }
-};
-
-const confirmSelectionUser = (row, select) => {
-  if (select.selectId === null) {
-    const toast = useToast();
-    toast.error("Selecciona un usuario", {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  } else {
-    const url = route("devices.all.update", row.id);
-    let device_id = null;
-
-    if (row.device_id) {
-      device_id = row.device_id.id;
-    }
-    console.log({
-      address: row.address,
-      router_id: route().params.router,
-      comment: row.comment,
-      user_id: select.selectId,
-      device_id: device_id,
-    });
-    router.put(url, {
-      address: row.address,
-      router_id: row.router.id,
-      comment: row.comment,
-      user_id: select.selectId,
-      device_id: device_id,
-    });
-    closeModal();
-  }
-};
-
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "user":
-      return "usuario";
-    case "device_internal_id":
-      return "id interno";
-
-    case "comment":
-      return "comentario";
-
-    case "address":
+    case "ip_address":
       return "ip";
-    case "device_id":
-      return "Mac";
 
-    case "user_id":
-      return "usuario";
+    case "mac_address":
+      return "mac";
+
+    case "description":
+      return "descripción";
+    case "brand":
+      return "marca";
     default:
       return cellIndex;
   }
@@ -157,10 +60,6 @@ const getTag = (cellIndex) => {
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <!-- <base-export-excel
-      :toRouteExport="toRouteExport"
-      :url-complete="urlComplete"
-    ></base-export-excel> -->
     <div
       class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
     >
@@ -283,7 +182,8 @@ const getTag = (cellIndex) => {
         />
       </div>
     </div>
-    <table class="w-full text-sm text-left text-gray-500">
+
+    <table class="w-full text-sm text-left text-gray-500 p-2">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -299,153 +199,75 @@ const getTag = (cellIndex) => {
           class="bg-white border-b hover:bg-gray-100"
         >
           <td></td>
-
           <td
             v-for="(cell, cellIndex) in row"
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'disabled'">
-              <label class="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  :checked="cell === 0"
-                  class="sr-only peer"
-                  @click="setDeviceStatus(row)"
-                />
-                <div
-                  class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:ring-blue-300 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-green-300"
-                ></div>
-              </label>
-            </div>
-
-            <div v-else-if="cellIndex === 'device_id'">
-              <div v-if="cell === null && inv_devices.length > 0">
-                <button
-                  @click="openDeviceModal(row.id)"
-                  class="flex justify-center items-center gap-1 border border-gray-500 bg-white-500 hover:bg-slate-600 py-1 px-2 rounded-md text-slate-600 hover:text-white sm:mb-0 mb-1"
-                >
-                  Asignar Dispositivo
-                </button>
-
-                <modal-users
-                  :show="isModalDeviceOpen[row.id]"
-                  @close="closeDeviceModal(row.id)"
-                  @selectData="confirmSelectionDevice(row, $event)"
-                  :data="inv_devices"
-                  :id="row.id"
-                  :title="
-                    'Selecciona un dispositivo del inventario para la conexión ' +
-                    row.address
-                  "
-                  item-text="mac_address"
-                >
-                </modal-users>
-              </div>
-              <div v-else>
-                <div v-if="cell !== null">
-                  <div class="flex gap-1">
-                    <span class="lg:hidden md:hidden block font-bold lowercase"
-                      >{{ getTag(cellIndex) }} :</span
-                    ><Link
-                      :href="route('inventorie.devices.show', cell.id)"
-                      class="cursor-pointer"
-                    >
-                      {{ cell.mac_address }}
-                    </Link>
-                  </div>
-                </div>
-                <div v-else>
-                  <span class="bg-slate-500 py-1 px-2 rounded-md text-white"
-                    >Sin dispositvos</span
+            <div v-if="cellIndex === 'state'">
+              <div v-if="cell === 0" class="bg-blue-300 rounded-md">
+                <div class="flex justify-center items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4"
                   >
+                    <path
+                      fill-rule="evenodd"
+                      d="M14.5 1A4.5 4.5 0 0 0 10 5.5V9H3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1.5V5.5a3 3 0 1 1 6 0v2.75a.75.75 0 0 0 1.5 0V5.5A4.5 4.5 0 0 0 14.5 1Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+
+                  <span>Disponible</span>
                 </div>
               </div>
-            </div>
-
-            <div v-else-if="cellIndex === 'user_id'">
-              <div v-if="cell === null && users.length > 0">
-                <button
-                  @click="openModal(row.id)"
-                  class="flex justify-center items-center gap-1 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:bg-teal-600 py-1 px-2 rounded-md hover:text-white sm:mb-0 mb-1"
-                >
-                  Asignar usuario
-                </button>
-
-                <modal-users
-                  :show="isModalOpen[row.id]"
-                  @close="closeModal(row.id)"
-                  @selectData="confirmSelectionUser(row, $event)"
-                  :data="users"
-                  :id="row.id"
-                  :title="
-                    'Selecciona un usuario para la conexión ' + row.address
-                  "
-                  item-text="name"
-                >
-                </modal-users>
-              </div>
-
-              <div v-else>
-                <div v-if="cell !== null">
-                  <div class="flex gap-1">
-                    <span class="lg:hidden md:hidden block font-bold lowercase"
-                      >{{ getTag(cellIndex) }} :</span
-                    >
-                    <Link
-                      :href="route('usuarios.show', cell.id)"
-                      class="cursor-pointer"
-                    >
-                      {{ cell.name }}
-                    </Link>
-                  </div>
-                </div>
-                <div v-else>
-                  <span class="bg-slate-500 py-1 px-2 rounded-md text-white"
-                    >Sin Usuarios</span
+              <div v-else-if="cell === 1" class="bg-green-300 rounded-md">
+                <div class="flex justify-center items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4"
                   >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  En Uso
+                  <span></span>
+                </div>
+              </div>
+              <div v-else-if="cell === 2" class="bg-yellow-300 rounded-md">
+                <div class="flex justify-center items-center gap-2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M14.5 10a4.5 4.5 0 0 0 4.284-5.882c-.105-.324-.51-.391-.752-.15L15.34 6.66a.454.454 0 0 1-.493.11 3.01 3.01 0 0 1-1.618-1.616.455.455 0 0 1 .11-.494l2.694-2.692c.24-.241.174-.647-.15-.752a4.5 4.5 0 0 0-5.873 4.575c.055.873-.128 1.808-.8 2.368l-7.23 6.024a2.724 2.724 0 1 0 3.837 3.837l6.024-7.23c.56-.672 1.495-.855 2.368-.8.096.007.193.01.291.01ZM5 16a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
+                      clip-rule="evenodd"
+                    />
+                    <path
+                      d="M14.5 11.5c.173 0 .345-.007.514-.022l3.754 3.754a2.5 2.5 0 0 1-3.536 3.536l-4.41-4.41 2.172-2.607c.052-.063.147-.138.342-.196.202-.06.469-.087.777-.067.128.008.257.012.387.012ZM6 4.586l2.33 2.33a.452.452 0 0 1-.08.09L6.8 8.214 4.586 6H3.309a.5.5 0 0 1-.447-.276l-1.7-3.402a.5.5 0 0 1 .093-.577l.49-.49a.5.5 0 0 1 .577-.094l3.402 1.7A.5.5 0 0 1 6 3.31v1.277Z"
+                    />
+                  </svg>
+                  <span>En Reparación</span>
                 </div>
               </div>
             </div>
-            <div v-else-if="cellIndex === 'router'">
-              {{ cell.ip_address }}
-            </div>
-            <!-- <div v-if="cellIndex === 'sync'">
-              <Link
-              v-if="edit"
-              :href="route('routers.sync', row.id)"
-              class="flex gap-1 p-1 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
-              :class="
-              row.sync
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : ' bg-orange-500 hover:bg-orange-600'
-                "
-                >
-                <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="size-6"
-                >
-                <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                />
-                </svg>
-              </Link>
-            </div> -->
             <div v-else>
-              <!-- v-if="cellIndex !== 'router_id'" -->
-              <div>
-                <div class="flex gap-1">
-                  <span class="lg:hidden md:hidden block font-bold lowercase"
-                    >{{ getTag(cellIndex) }} :</span
-                  >
-                  {{ cell }}
-                </div>
+              <div class="flex gap-1">
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+                {{ cell }}
               </div>
             </div>
           </td>
@@ -453,8 +275,8 @@ const getTag = (cellIndex) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                :href="route('routers.devices', row.id)"
-                class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                href="#"
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -467,28 +289,15 @@ const getTag = (cellIndex) => {
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+                    d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"
                   />
                 </svg>
-                Detalles
+                Historial
               </Link>
-
-              <Link
-                :href="route('devices.one.ping', row.id)"
-                class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <span class="material-symbols-outlined"> network_ping </span>
-                Ping
-              </Link>
-              <Link
+              <!-- <Link
                 v-if="edit"
-                :href="
-                  route('devices.all.edit', {
-                    router: row.router.id,
-                    device: row.id,
-                  })
-                "
-                class="flex items-center gap-1 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                :href="route('inventorie.devices.edit', row.id)"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -506,12 +315,12 @@ const getTag = (cellIndex) => {
                 </svg>
 
                 Editar
-              </Link>
+              </Link> -->
 
-              <div v-if="del">
+              <!-- <div v-if="del">
                 <button
                   @click="destroy(row.id)"
-                  class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -529,7 +338,7 @@ const getTag = (cellIndex) => {
                   </svg>
                   Eliminar
                 </button>
-              </div>
+              </div> -->
             </div>
           </td>
         </tr>
@@ -573,16 +382,6 @@ export default {
       type: Boolean,
       required: true,
     },
-
-    users: {
-      type: Object,
-      required: true,
-    },
-
-    inv_devices: {
-      type: Object,
-      required: true,
-    },
   },
   data() {
     return {
@@ -593,18 +392,18 @@ export default {
       currentUser: "todos",
       currentOrder: "ASC",
       typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
-      inv_devices_ref: this.inv_devices,
     };
-  },
-
-  watch: {
-    inv_devices() {
-      this.inv_devices_ref = this.inv_devices;
-    },
   },
   computed: {
     filteredRows() {
+      // if (!this.searchQuery) {
       return this.rows;
+      //}
+      // return this.rows.filter((row) =>
+      //   row.some((cell) =>
+      //     cell.toString().toLowerCase().includes(this.searchQuery.toLowerCase())
+      //   )
+      // );
     },
   },
   methods: {
@@ -619,17 +418,6 @@ export default {
     selectFilter(filter) {
       this.currentFilter = filter;
       this.toggleDropdown();
-      this.$emit("search", {
-        searchQuery: this.searchQuery,
-        attribute: this.currentFilter,
-        type: this.currentUser,
-        order: this.currentOrder,
-      });
-    },
-
-    selectUser(user) {
-      this.currentUser = user;
-      this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
@@ -653,4 +441,4 @@ export default {
     // },
   },
 };
-</script>``
+</script>

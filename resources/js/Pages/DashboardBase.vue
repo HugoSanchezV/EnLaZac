@@ -21,74 +21,69 @@ const layoutComponent = computed(() => {
     case 2:
       return AppLayoutCoordinador;
     case 3:
-      return AppLayoutEmpleado;
-    case 4:
       return AppLayoutTecnico;
     default:
       return AppLayoutUser;
   }
 });
 
-
 useGeneralNotifications();
 </script>
 <style>
-.frame-stats{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas iguales */
-    gap: 10px;
-  }
-  .graficas{
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  .graphic-container{
-
-    /* justify-content: center; */
-    width: 100%;
-  }
-  .rate, .byte{
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    width: 99%;
-  }
-  .frame-content{
-    width: 14rem;
-    height: 14rem;
-  }
+.frame-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columnas iguales */
+  gap: 10px;
+}
+.graficas {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.graphic-container {
+  /* justify-content: center; */
+  width: 100%;
+}
+.rate,
+.byte {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 99%;
+}
+.frame-content {
+  width: 14rem;
+  height: 14rem;
+}
 @media (min-width: 1450px) {
-  .frame-stats{
+  .frame-stats {
     display: flex;
     justify-content: space-between;
     max-width: 100%;
   }
-  .frame{
+  .frame {
     width: 15rem;
     /* border: 1px solid #000000; */
   }
-  .graficas{
+  .graficas {
     display: flex;
     flex-direction: row;
     width: 100%;
   }
-  .rate, .byte{
+  .rate,
+  .byte {
     width: 50%;
     display: flex;
     flex-direction: column;
   }
-  .graphic-container{
-   display: block;
-   width: 100%;
-
+  .graphic-container {
+    display: block;
+    width: 100%;
   }
-  canvas{
+  canvas {
     width: 50%;
   }
-
 }
-
 </style>
 
 <template>
@@ -98,8 +93,7 @@ useGeneralNotifications();
         <slot name="namePage"></slot>
       </h2>
     </template>
-    <div class="py-12 ">
-     
+    <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div
           class="overflow-hidden sm:rounded-lg"
@@ -110,91 +104,144 @@ useGeneralNotifications();
         >
           <slot name="content">
             <div class="frame-stats flex gap-4 w-full">
-               <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">person</span>
-                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ morrosos }}</span></h2>
-                      </div>
+              <div class="frame">
+                <div
+                  class="frame-content w-fit rounded-[25px] bg-white p-8 aspect"
+                >
+                  <div class="h-12">
+                    <span
+                      class="material-symbols-outlined text-blue-500"
+                      style="font-size: 2rem"
+                      >person</span
+                    >
+                  </div>
+                  <div class="my-2">
+                    <h2 class="text-4xl font-bold">
+                      <span>{{ morrosos }}</span>
+                    </h2>
+                  </div>
 
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
-                      </div>
+                  <div>
+                    <p
+                      class="mt-2 font-sans text-base font-medium text-gray-700"
+                    >
+                      Usuarios deudores (Morrosos)
+                    </p>
                   </div>
                 </div>
+              </div>
 
-                <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">contract</span>
-                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ activeContract }}</span></h2>
-                      </div>
+              <div class="frame">
+                <div
+                  class="frame-content w-fit rounded-[25px] bg-white p-8 aspect"
+                >
+                  <div class="h-12">
+                    <span
+                      class="material-symbols-outlined text-blue-500"
+                      style="font-size: 2rem"
+                      >contract</span
+                    >
+                  </div>
+                  <div class="my-2">
+                    <h2 class="text-4xl font-bold">
+                      <span>{{ activeContract }}</span>
+                    </h2>
+                  </div>
 
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Contratos activos</p>
-                      </div>
+                  <div>
+                    <p
+                      class="mt-2 font-sans text-base font-medium text-gray-700"
+                    >
+                      Contratos activos
+                    </p>
                   </div>
                 </div>
+              </div>
 
-                <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">confirmation_number</span>
-                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ new_tickets }}</span></h2>
-                      </div>
+              <div class="frame">
+                <div
+                  class="frame-content w-fit rounded-[25px] bg-white p-8 aspect"
+                >
+                  <div class="h-12">
+                    <span
+                      class="material-symbols-outlined text-blue-500"
+                      style="font-size: 2rem"
+                      >confirmation_number</span
+                    >
+                  </div>
+                  <div class="my-2">
+                    <h2 class="text-4xl font-bold">
+                      <span>{{ new_tickets }}</span>
+                    </h2>
+                  </div>
 
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Tickets nuevos</p>
-                      </div>
+                  <div>
+                    <p
+                      class="mt-2 font-sans text-base font-medium text-gray-700"
+                    >
+                      Tickets nuevos
+                    </p>
                   </div>
                 </div>
-                <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">account_circle</span>                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ userCount }}</span></h2>
-                      </div>
+              </div>
+              <div class="frame">
+                <div
+                  class="frame-content w-fit rounded-[25px] bg-white p-8 aspect"
+                >
+                  <div class="h-12">
+                    <span
+                      class="material-symbols-outlined text-blue-500"
+                      style="font-size: 2rem"
+                      >account_circle</span
+                    >
+                  </div>
+                  <div class="my-2">
+                    <h2 class="text-4xl font-bold">
+                      <span>{{ userCount }}</span>
+                    </h2>
+                  </div>
 
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios registrados</p>
-                      </div>
+                  <div>
+                    <p
+                      class="mt-2 font-sans text-base font-medium text-gray-700"
+                    >
+                      Usuarios registrados
+                    </p>
                   </div>
                 </div>
-              
+              </div>
             </div>
             <div class="mt-20 flex justify-center">
-              <div class="pt-3 pb-3 pl-5 pr-5 rounded-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-gray-50">
+              <div
+                class="pt-3 pb-3 pl-5 pr-5 rounded-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-gray-50"
+              >
                 <h2 class="text-2xl">Estadísticas de velocidad y consumo</h2>
               </div>
-              
             </div>
-            <div  v-if="props.routers.length > 0" class="mt-5" v-for="(targetItem, index) in target" :key="index" >
+            <div
+              v-if="props.routers.length > 0"
+              class="mt-5"
+              v-for="(targetItem, index) in target"
+              :key="index"
+            >
               <div class="flex gap-1 mb-3">
-                <h2 class="text-blue-500 text-2xl">Router</h2><span class="text-blue-500 text-2xl">{{ routers[index] }}</span>
+                <h2 class="text-blue-500 text-2xl">Router</h2>
+                <span class="text-blue-500 text-2xl">{{ routers[index] }}</span>
               </div>
               <div class="graphic-container">
-                  <Graphics
-                  :target = "targetItem"
-                  :upload_rate = "upload_rate[index]"
-                  :download_rate = "download_rate[index]"
-                  :upload_byte = "upload_byte[index]"
-                  :download_byte = "download_byte[index]"
-                  :index = "index"
+                <Graphics
+                  :target="targetItem"
+                  :upload_rate="upload_rate[index]"
+                  :download_rate="download_rate[index]"
+                  :upload_byte="upload_byte[index]"
+                  :download_byte="download_byte[index]"
+                  :index="index"
                 />
               </div>
             </div>
             <div v-else>
               <h2>No hay routers disponibles</h2>
             </div>
-            
-              
           </slot>
         </div>
       </div>
@@ -227,7 +274,7 @@ export default {
     target: {
       type: Array,
     },
-    upload_rate:{
+    upload_rate: {
       type: Array,
     },
     download_rate: {
@@ -241,8 +288,7 @@ export default {
     },
     routers: {
       type: Array,
-    }
+    },
   },
 };
-
 </script>

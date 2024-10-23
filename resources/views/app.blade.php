@@ -17,7 +17,7 @@
     <body class="font-sans antialiased">
         @inertia
     
-        <script src="https://www.paypal.com/sdk/js?client-id={{env('PAYPAL_SANDBOX_CLIENT_ID')}}"></script>
+        <script src="https://www.paypal.com/sdk/js?client-id={{env('PAYPAL_SANDBOX_CLIENT_ID')}}&currency=MXN"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </body>
 </html>

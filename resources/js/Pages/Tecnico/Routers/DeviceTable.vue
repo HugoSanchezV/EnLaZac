@@ -5,51 +5,51 @@ import { ref } from "vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
-import ModalUsers from "../Components/ModalUsers.vue";
+import ModalUsers from "@/Pages/Admin/Components/ModalUsers.vue";
 
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 // ACCION DE ELIMINAR
 
-const toRouteExport = "devices.all.excel";
-//const urlComplete = "/devices/all/to/excel";
+const toRouteExport = "routers.devices.excel";
+const urlComplete = route(toRouteExport, route().params.router);
 
-const destroy = (id) => {
-  const toast = useToast();
+// const destroy = (id) => {
+//   const toast = useToast();
 
-  toast(
-    {
-      component: BaseQuestion,
-      props: {
-        message: "¿Estas seguro de Eliminar el Dispositivo?",
-        accept: true,
-        cancel: true,
-        textConfirm: "Eliminar",
-      },
+//   toast(
+//     {
+//       component: BaseQuestion,
+//       props: {
+//         message: "¿Estas seguro de Eliminar el Dispositivo?",
+//         accept: true,
+//         cancel: true,
+//         textConfirm: "Eliminar",
+//       },
 
-      listeners: {
-        accept: () => {
-          const url = route("devices.all.destroy", id);
+//       listeners: {
+//         accept: () => {
+//           const url = route("devices.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
-        },
-      },
-    },
+//           router.delete(url, () => {
+//             onError: (error) => {
+//               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+//             };
+//           });
+//         },
+//       },
+//     },
 
-    {
-      type: TYPE.WARNING,
-      position: POSITION.TOP_CENTER,
-      timeout: 10000,
-    }
-  );
-};
+//     {
+//       type: TYPE.WARNING,
+//       position: POSITION.TOP_CENTER,
+//       timeout: 10000,
+//     }
+//   );
+// };
 
 const setDeviceStatus = (row) => {
-  const url = route("devices.all.set.status", {
+  const url = route("technical.devices.set.status", {
     device: row.id,
   });
 
@@ -83,7 +83,7 @@ const confirmSelectionDevice = (row, select) => {
       draggable: true,
     });
   } else {
-    const url = route("devices.all.update", row.id);
+    const url = route("technical.devices.update", row.id);
 
     let user_id = null;
 
@@ -92,7 +92,7 @@ const confirmSelectionDevice = (row, select) => {
     }
     router.put(url, {
       address: row.address,
-      router_id: row.router.id,
+      router_id: route().params.router,
       comment: row.comment,
       user_id: user_id,
       device_id: select.selectId,
@@ -109,22 +109,15 @@ const confirmSelectionUser = (row, select) => {
       draggable: true,
     });
   } else {
-    const url = route("devices.all.update", row.id);
+    const url = route("technical.devices.update", row.id);
     let device_id = null;
 
     if (row.device_id) {
       device_id = row.device_id.id;
     }
-    console.log({
-      address: row.address,
-      router_id: route().params.router,
-      comment: row.comment,
-      user_id: select.selectId,
-      device_id: device_id,
-    });
     router.put(url, {
       address: row.address,
-      router_id: row.router.id,
+      router_id: route().params.router,
       comment: row.comment,
       user_id: select.selectId,
       device_id: device_id,
@@ -385,7 +378,6 @@ const getTag = (cellIndex) => {
                 >
                 </modal-users>
               </div>
-
               <div v-else>
                 <div v-if="cell !== null">
                   <div class="flex gap-1">
@@ -406,9 +398,6 @@ const getTag = (cellIndex) => {
                   >
                 </div>
               </div>
-            </div>
-            <div v-else-if="cellIndex === 'router'">
-              {{ cell.ip_address }}
             </div>
             <!-- <div v-if="cellIndex === 'sync'">
               <Link
@@ -474,17 +463,17 @@ const getTag = (cellIndex) => {
               </Link>
 
               <Link
-                :href="route('devices.one.ping', row.id)"
+                :href="route('technical.devices.ping', row.id)"
                 class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <span class="material-symbols-outlined"> network_ping </span>
                 Ping
               </Link>
-              <Link
+              <!-- <Link
                 v-if="edit"
                 :href="
-                  route('devices.all.edit', {
-                    router: row.router.id,
+                  route('devices.edit', {
+                    router: route().params.router,
                     device: row.id,
                   })
                 "
@@ -506,9 +495,9 @@ const getTag = (cellIndex) => {
                 </svg>
 
                 Editar
-              </Link>
+              </Link> -->
 
-              <div v-if="del">
+              <!-- <div v-if="del">
                 <button
                   @click="destroy(row.id)"
                   class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -529,7 +518,7 @@ const getTag = (cellIndex) => {
                   </svg>
                   Eliminar
                 </button>
-              </div>
+              </div> -->
             </div>
           </td>
         </tr>
@@ -648,9 +637,9 @@ export default {
       });
     },
 
-    // filterData() {
-    //   console.log(this.searchQuery);
-    // },
+    filterData() {
+      console.log(this.searchQuery);
+    },
   },
 };
 </script>``
