@@ -22,8 +22,7 @@ class RuralCommunityController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('name', 'like', "%$search%")
-                    ->orWhere('installation_cost', 'like', "%$search%")
-                    ->orWhere('contract_id', 'like', "%$search%");
+                    ->orWhere('installation_cost', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -39,7 +38,6 @@ class RuralCommunityController extends Controller
                 'id' => $item->id,
                 'name' => $item->name,
                 'installation_cost' => $item->installation_cost,
-                'contract_id' => $item->contract_id ?? 'Sin asignar',
             ];
         });
 
@@ -63,11 +61,9 @@ class RuralCommunityController extends Controller
     public function edit($id)
     {
         $community = RuralCommunity::findOrFail($id);
-        $contracts = Contract::with('user', 'plan')->get();
-
+        
         return Inertia::render('Admin/RuralCommunity/Edit', [
-            'community' => $community,
-            'contracts' => $contracts,
+            'community' => $community
         ]);
     }
     public function update(UpdateRuralCommunityRequest $request, $id)
@@ -78,30 +74,16 @@ class RuralCommunityController extends Controller
         $community->update($validatedData);
         return redirect()->route('rural-community')->with('success', 'La Comunidad fue Actualizada Con Éxito');
     }
-    public function updateContract(UpdateRuralCommunityContractRequest $request, $id)
-    {
-        $community = RuralCommunity::findOrFail($id);
-        
-        $community->contract_id = $request->input('contract_id');
-       // $community->save();
-    }
     public function create()
     {
-        $contracts = Contract::with('user', 'plan')->get();
-        
-        return Inertia::render(
-            'Admin/RuralCommunity/Create',
-            [
-                'contracts' => $contracts,
-            ]
-        );
+     
+        return Inertia::render('Admin/RuralCommunity/Create');
     }
     public function store(StoreRuralCommunityRequest $request)
     {   
         RuralCommunity::create([
             'name' => $request->name,
             'installation_cost' => $request->installation_cost,
-            'contract_id' => $request->contract_id,
         ]);
         
         return redirect()->route('rural-community')->with('success', 'La Comunidad ha sido creado con éxito');

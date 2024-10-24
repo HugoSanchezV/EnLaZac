@@ -14,7 +14,6 @@ const props = defineProps({
 const form = useForm({
   name: "",
   installation_cost: "",
-  contract_id: "",
 });
 
 const submit = () => {
@@ -45,29 +44,12 @@ const submit = () => {
         <TextInput
           id="installation_cost"
           v-model="form.installation_cost"
-          type="text"
+          type="number"
           class="mt-1 block w-full"
           autocomplete="installation_cost"
         />
         <InputError class="mt-2" :message="form.errors.installation_cost" />
       </div>
-
-      <div class="mt-4">
-        <InputLabel for="contract_id" value="ID del contrato" />
-        <div class="mt-2">
-            <select
-              v-model="form.contract_id"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              <option value="nulo" selected>Selecciona una opción</option>
-              <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ "Contracto: "+contract.id + " - Usuario: " + contract.user.name  + " - Plan: "+ contract.plan.name }}
-              </option>
-            </select>
-        </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
-      </div>
-
      
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton

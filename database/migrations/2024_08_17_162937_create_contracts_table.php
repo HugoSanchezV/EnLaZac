@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date('end_date');
             $table->boolean('active');
             $table->string('address'); // Dirección del contrato
+            $table->foreignId('rural_community_id')->nullable()->constrained('rural_communities');
             $table->json('geolocation'); // Ubicacion de tipo JSON para poner la Latitud y la Longitud
             $table->timestamps(); // Campos created_at y updated_at
         });

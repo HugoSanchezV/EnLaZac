@@ -48,8 +48,6 @@ const getTag = (cellIndex) => {
       return "nombre";
     case "installation_cost":
       return "costo de instalación";
-    case "contract_id":
-      return "contrato";
       default:
       return cellIndex;
   }

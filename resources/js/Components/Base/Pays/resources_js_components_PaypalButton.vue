@@ -37,7 +37,7 @@ export default {
             // charges: this.cartCharge,
             // cart: this.allCart,
           });
-          ///alert("bien");
+          console.log(response);
           return response.data.id;
         },
 

@@ -14,19 +14,18 @@ const props = defineProps({
 const form = useForm({
   name: "",
   installation_cost: "",
-  contract_id: "",
 });
 
 onMounted(() => {
   if (props.community) {
     form.name = props.community.name || "";
     form.installation_cost = props.community.installation_cost || "";
-    form.contract_id = props.community.contract_id || "";
   }
 });
 const submit = () => {
   form.put(route("rural-community.update", { id: props.community.id }));
 };
+
 </script>
 
 

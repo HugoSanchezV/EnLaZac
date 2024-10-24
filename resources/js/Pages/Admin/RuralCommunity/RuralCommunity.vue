@@ -13,8 +13,8 @@ const { community } = toRefs(props);
 //const toRouteExport = "usuarios.excel";
 //const toImportRoute = "usuarios.import.excel";
 
-const headers = ["id", "Nombre", "Costo de instalación", "Contrato","Acciones"];
-const filters = ["id", "nombre", "costo de instalación", "contrato"];
+const headers = ["id", "Nombre", "Costo de instalación","Acciones"];
+const filters = ["id", "nombre", "costo de instalación"];
 //const headingsImport = "nombre, alias, email, password, role";
 </script>
 
@@ -151,9 +151,6 @@ export default {
       }
       if (this.attribute === "costo de instalación") {
         this.attribute = "installation_cost";
-      }
-      if (this.attribute === "contrato") {
-        this.attribute = "contract_id";
       }
 
       this.$inertia.get(

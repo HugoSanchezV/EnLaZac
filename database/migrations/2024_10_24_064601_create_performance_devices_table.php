@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rural_communities', function (Blueprint $table) {
+        Schema::create('performance_devices', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->decimal('installation_cost');
-            $table->foreignId('contract_id')->nullable()->constrained('contracts')->onDelete('cascade');
+            $table->foreignId('device_id')->constrained('devices');
+            $table->json('rate');
+            $table->json('byte');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rural_communities');
+        Schema::dropIfExists('performance_devices');
     }
 };

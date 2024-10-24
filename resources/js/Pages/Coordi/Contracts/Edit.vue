@@ -5,7 +5,7 @@
         <h2>Editar contrato</h2>
         <span
           class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md"
-          >{{
+          >{{ contract.id
         }}</span>
       </div>
     </template>
@@ -13,7 +13,7 @@
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :contract="contract" :users="users" :plans="plans"/>
+          <FormUpdate :contract="contract" :users="users" :plans="plans" :community="community"/>
         </div>
       </div>
     </template>
@@ -41,7 +41,11 @@ export default {
     plans:{
       type: Array,
       required: true,
-    }
+    },
+    community:{
+    type: Array,
+    required: true
+  }
   },
 };
 </script>

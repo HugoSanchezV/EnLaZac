@@ -84,19 +84,20 @@ const confirmSelectionTecnico = (row, select) => {
       draggable: true,
     });
   } else {
-    const url = route("device.ping.historie.update", row.id);
-    console.log({
-      router_id: row.router_id,
-      device_id: row.device_id,
-      user_id: select.selectId,
-      status: row.status,
-    });
-    router.put(url, {
-      router_id: row.router_id,
-      device_id: row.device_id,
-      user_id: select.selectId,
-      status: row.status,
-    });
+    const url = route("device.ping.historie.update", {id: row.id, user_id: select.selectId});
+    router.put(url);
+    // console.log({
+    //   device_id: row.device_id,
+    //   router_id: row.router_id,
+    //   user_id: select.selectId,
+    //   status: row.status,
+    // });
+    // router.put(url, {
+    //   device_id: row.device_id,
+    //   router_id: row.router_id,
+    //   user_id: select.selectId,
+    //   status: row.status,
+    // });
     closeDeviceModal();
   }
 };

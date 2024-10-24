@@ -22,7 +22,7 @@ class StatisticsController extends Controller
     {
         //Varias consultas para mandar aca
         $morrosos = self::morrososCount();
-       //dd($morrosos);
+     //  dd($morrosos);
         $activeDevice = self::activeDevices();
         $activeContract = self::activeContract();
         $newTickets = self::currentTickets();
@@ -72,12 +72,12 @@ class StatisticsController extends Controller
                 }
             }  
         }
-        
+      //  dd($userCount->count());
         return Inertia::render('DashboardBase',[
             'morrosos' => $morrosos,
             'activeDevice' => $activeDevice,
             'new_tickets' =>$newTickets,
-            'userCount' => $userCount,
+            'currentUsers' => $userCount,
             'activeContract' => $activeContract,
             'target' => $target,
             'upload_rate' =>$upload_rate,
@@ -122,21 +122,23 @@ class StatisticsController extends Controller
         
         return $trafficData;
     }
+    public function store()
+    {
+        
+    }
     public function activeContract()
-    {return Contract::where('active','1')->count();}
+    {return Contract::with('user','plan')->where('active','1')->get();}
+    
     public function userCount()
-    {return User::where('admin','0')->count();}
+    {return User::all();}
 
     public function morrososCount()
-    {return (Device::where('list','MOROSOS'))->count();}
+    {return (Contract::with('user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
 
     public function activeDevices()
-    {return (Device::where('disabled','0'))->count();}
+    {return (Device::where('disabled','0')->get());}
 
     public function currentTickets()
-    {
-        $currentDate = Carbon::now()->format('Y-m-d');  // Obtener solo la fecha actual
-        return Ticket::whereDate('created_at', $currentDate)->count();
-
-    }
+    {$currentDate = Carbon::now()->format('Y-m-d');  // Obtener solo la fecha actual
+     return Ticket::with('user')->whereDate('created_at', $currentDate)->get();}
 }

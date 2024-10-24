@@ -114,7 +114,7 @@ Route::middleware([
         //Ping Devices Historie
         Route::get('/devices/ping/historie',     [PingDeviceHistorieController::class, 'index'])->name('device.ping.historie');
         Route::get('/routers/{router}/devices/ping/historie',     [PingDeviceHistorieController::class, 'index2'])->name('router.device.ping.historie');
-        Route::put('/devices/ping/historie/update/{pingDeviceHistorie}',     [PingDeviceHistorieController::class, 'update'])->name('device.ping.historie.update');
+        Route::put('/devices/ping/historie/update/{id}',     [PingDeviceHistorieController::class, 'update'])->name('device.ping.historie.update');
         Route::delete('/devices/ping/historie/delete/{id}',     [PingDeviceHistorieController::class, 'destroy'])->name('device.ping.historie.destroy');
 
         // inventorie_devices
@@ -151,7 +151,7 @@ Route::middleware([
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
         Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
-        Route::get('/contracts/to/excel',  [ContractController::class, 'exportExcel'])->name('contracts.excel');
+        Route::get('/contracts/to/excel',        [ContractController::class, 'exportExcel'])->name('contracts.excel');
 
         //Planes de internet
         Route::get('/plans',                     [PlanController::class, 'index'])->name('plans');
@@ -177,7 +177,7 @@ Route::middleware([
         Route::get('/rural-community/edit/{id}',           [RuralCommunityController::class, 'edit'])->name('rural-community.edit');
         Route::put('/rural-community/update/{id}',         [RuralCommunityController::class, 'update'])->name('rural-community.update');
         Route::delete('/rural-community/delete/{id}',      [RuralCommunityController::class, 'destroy'])->name('rural-community.destroy');
-        Route::put('/rural-community/updateContract/{id}', [RuralCommunityController::class, 'updateContract'])->name('rural-community.update.contract');
+        Route::post('/rural-community/updateContract/{id}', [RuralCommunityController::class, 'updateContract'])->name('rural-community.update.contract');
 
 
         Route::get('/sistema/backups',      [BackupsController::class, 'index'])->name('backups');
@@ -197,8 +197,8 @@ Route::middleware([
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
-    Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
-    Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
+   // Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
+   // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
     //MIDDLEWARE DEMÁS USUARIOS
     Route::middleware(['rol:2,3'])->group(function () {

@@ -15,6 +15,7 @@ class PayPalController extends Controller
         // Log::info('Este es el log');
         // Log::info('Datos de la petición: ' . json_encode());
         // return;
+       // $token = "";
         try {
             $paypalModule = new PayPalClient;
 
@@ -43,11 +44,11 @@ class PayPalController extends Controller
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
+                'MADAFALE' => $token
             ];
 
             return response()->json($errorData);
         }
-
         return response()->json($order);
     }
 
