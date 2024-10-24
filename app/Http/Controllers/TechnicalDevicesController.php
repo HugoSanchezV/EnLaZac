@@ -63,7 +63,7 @@ class TechnicalDevicesController extends Controller
                 'id' => $item->id,
                 //'device_internal_id' => $item->device_internal_id,
                 'device_id' => $item->inventorieDevice,
-                'user_id' => $item->user,
+                // 'user_id' => $item->user,
                 'comment' => $item->comment,
                 'address' => $item->address,
                 'router' => $item->router,
@@ -224,7 +224,7 @@ class TechnicalDevicesController extends Controller
     }
 
 
-    public function update(UpdateDeviceRequest $request, $id, $url = 'routers.devices')
+    public function update(UpdateDeviceRequest $request, $id, $url = 'technical.routers.devices')
     {
         // dd($request);
         $validatedData = $request->validated();
@@ -301,7 +301,7 @@ class TechnicalDevicesController extends Controller
         }
     }
 
-    public function device_all_update(UpdateDeviceRequest $request, $id, $url = 'devices')
+    public function device_all_update(UpdateDeviceRequest $request, $id, $url = 'technical.devices')
     {
         return $this->update($request, $id, $url);
     }

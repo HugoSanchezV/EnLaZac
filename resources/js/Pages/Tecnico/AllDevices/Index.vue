@@ -23,7 +23,7 @@ const headers = [
   // "ID Interno",
   //"router_id",
   "device_id",
-  "user_id",
+  // "user_id",
   "comment",
   // "list",
   "address",

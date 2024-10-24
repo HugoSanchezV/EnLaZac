@@ -343,7 +343,7 @@ class TechnicalRouterController extends Controller
                     'device_internal_id' => $item->device_internal_id,
                     //'router_id' => $item->router_id,
                     'device_id' => $item->inventorieDevice,
-                    'user_id' => $item->user,
+                    // 'user_id' => $item->user,
                     'comment' => $item->comment,
                     //'list' => $item->list,
                     'address' => $item->address,

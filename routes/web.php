@@ -202,7 +202,7 @@ Route::middleware([
 
     //MIDDLEWARE DEMÁS USUARIOS
     Route::middleware(['rol:2,3'])->group(function () {
-   
+
         // Usuarios
         /*  Route::get('/dashboard', function () {
             return Inertia::render('DashboardBase');
@@ -227,9 +227,10 @@ Route::middleware([
         Route::patch('/tecnico/devices/set/device/status/{device}',     [TechnicalDevicesController::class, 'setDeviceStatus'])->name('technical.devices.set.status');
         Route::patch('/tecnico/devices/all/set/device/status/{device}',     [TechnicalDevicesController::class, 'AllsetDeviceStatus'])->name('technical.devices.all.set.status');
         Route::get('/tecnico/devices/set/device/ping/{device}',  [TechnicalDevicesController::class, 'sendPing'])->name('technical.devices.ping');
-        Route::put('/tecnico/devices/all/update/{device}',          [DevicesController::class, 'device_all_update'])->name('technical.devices.all.update');
 
-        Route::put('/tecnico/devices/all/update/{device}',          [TechnicalDevicesController::class, 'device_all_update'])->name('technical.devices.all.update');
+        Route::put('/tecnico/devices/update/{device}',          [TechnicalInventorieDevicesController::class, 'update'])->name('technical.devices.update');
+        Route::put('/tecnico/devices/all/update/{device}',          [TechnicalInventorieDevicesController::class, 'device_all_update'])->name('technical.devices.all.update');
+
         Route::get('/tecnico/devices/all/set/device/ping/{device}',  [TechnicalDevicesController::class, 'sendAllPing'])->name('technical.devices.one.ping');
 
         // -- ping devices all

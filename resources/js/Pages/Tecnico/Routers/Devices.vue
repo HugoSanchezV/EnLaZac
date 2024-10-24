@@ -17,7 +17,7 @@ const headers = [
   "device_internal_id",
   //"router_id",
   "device_id",
-  "user_id",
+  // "user_id",
   "comment",
   // "list",
   "address",

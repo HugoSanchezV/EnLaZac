@@ -83,7 +83,7 @@ const confirmSelectionDevice = (row, select) => {
       draggable: true,
     });
   } else {
-    const url = route("devices.all.update", row.id);
+    const url = route("technical.devices.all.update", row.id);
 
     let user_id = null;
 
@@ -364,7 +364,7 @@ const getTag = (cellIndex) => {
             </div>
 
             <div v-else-if="cellIndex === 'user_id'">
-              <div v-if="cell === null && users.length > 0">
+              <!-- <div v-if="cell === null && users.length > 0">
                 <button
                   @click="openModal(row.id)"
                   class="flex justify-center items-center gap-1 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:bg-teal-600 py-1 px-2 rounded-md hover:text-white sm:mb-0 mb-1"
@@ -405,7 +405,7 @@ const getTag = (cellIndex) => {
                     >Sin Usuarios</span
                   >
                 </div>
-              </div>
+              </div> -->
             </div>
             <div v-else-if="cellIndex === 'router'">
               {{ cell.ip_address }}
