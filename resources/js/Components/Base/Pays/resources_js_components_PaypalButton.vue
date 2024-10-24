@@ -6,6 +6,7 @@
 
 <script>
 import axios from "axios";
+import { POSITION, useToast } from "vue-toastification";
 export default {
   props: {
     totalAmount: {
@@ -30,12 +31,7 @@ export default {
         createOrder: async (data, actions) => {
           // alert("bien");
           const response = await axios.post("/api/paypal/create-order", {
-            // amount: this.totalAmount,
-            amount: 10.0,
-            // mounths: this.selectedMonths,
-            // contract: this.contract,
-            // charges: this.cartCharge,
-            // cart: this.allCart,
+            amount: this.totalAmount,
           });
           console.log(response);
           return response.data.id;
@@ -44,16 +40,27 @@ export default {
         onApprove: async (data, actions) => {
           const response = await axios.post("/api/paypal/capture-order", {
             orderID: data.orderID,
-            // amount: this.totalAmount,
-            // mounths: this.selectedMonths,
-            // contract: this.contract,
-            // charges: this.cartCharge,
-            // cart: this.allCart
+            amount: this.totalAmount,
+            mounths: this.selectedMonths,
+            contract: this.contract,
+            charges: this.cartCharge,
+            cart: this.allCart
           });
+
+          const toast = useToast();
           if (response.data.status === "success") {
-            alert("Pago completado con éxito!");
+            toast.success(
+              "Pago Realizado con exito, gracias por estar con nosotros",
+              {
+                position: POSITION.TOP_CENTER,
+                draggable: true,
+              }
+            );
           } else {
-            alert("Hubo un problema con el pago.");
+            toast.error("No se realizo el pago", {
+              position: POSITION.TOP_CENTER,
+              draggable: true,
+            });
           }
         },
 

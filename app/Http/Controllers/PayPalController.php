@@ -37,14 +37,14 @@ class PayPalController extends Controller
                 ]
             ]);
         } catch (Exception $e) {
-            Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
+        //    Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
 
             $errorData = [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
-                'MADAFALE' => $token
+               // 'MADAFALE' => $token
             ];
 
             return response()->json($errorData);
@@ -58,29 +58,33 @@ class PayPalController extends Controller
 
         Log::info('Se obtuvo el cliente');
         $paypalModule->setApiCredentials(config('paypal'));
-        Log::info('paypal modulo completo');
+       // Log::info('paypal modulo completo');
 
         $token = $paypalModule->getAccessToken();
-        Log::info('Se obtuvo el token');
+      //  Log::info('Se obtuvo el token');
 
         $paypalModule->setAccessToken($token);
-        Log::info('setAccesstoekn compleatdo con exto');
+       // Log::info('setAccesstoekn compleatdo con exto');
 
 
         $response = $paypalModule->capturePaymentOrder($request->orderID);
-        Log::info('Se obtuvo respuesra');
-        Log::info($response);
+       // Log::info('Se obtuvo respuesra');
+       // Log::info($response);
 
-        // $transaction_id = $response['purchase_units'][0]['payments']['captures'][0]['id'];
+        $transaction_id = $response['purchase_units'][0]['payments']['captures'][0]['id'];
+        // Log::info("This is the log");
+        // Log::info($transaction_id);
+        // Log::info("Arriba log");
+
         if ($response['status'] === 'COMPLETED') {
-            // self::update(
-            //     $request->amount,
-            //     $request->mounths,
-            //     $request->contract,
-            //     $request->charges,
-            //     $request->cart,
-            //     $transaction_id,
-            // );
+            self::update(
+                $request->amount,
+                $request->mounths,
+                $request->contract,
+                $request->charges,
+                $request->cart,
+                $transaction_id,
+            );
             return response()->json(['status' => 'success']);
         }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PaymentHistorie;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class PaymentHistorieController extends Controller
 {
@@ -64,6 +65,7 @@ class PaymentHistorieController extends Controller
     }
     public function store(PaymentHistorie $request)
     {
+        Log::info(json_encode($request));
         PaymentHistorie::create([
             'user_id' =>$request->user_id,
             'contract_id' =>$request->contract_id,

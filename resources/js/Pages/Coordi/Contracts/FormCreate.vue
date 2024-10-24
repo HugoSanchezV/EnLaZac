@@ -97,7 +97,7 @@ const submit = () => {
   } else {
     form.active = false;
   }
-
+  
   form.post(route("contracts.store"));
 };
 
@@ -124,7 +124,7 @@ const submit = () => {
               v-model="form.user_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option value="null" selected>Selecciona una opción</option>
+              <option :value="null" selected>Selecciona una opción</option>
               <option v-for="user in users" :key="user.id" :value="user.id">
                   {{ user.id + " - " + user.name }}
               </option>
