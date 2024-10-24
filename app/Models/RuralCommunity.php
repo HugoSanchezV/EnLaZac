@@ -11,6 +11,5 @@ class RuralCommunity extends Model
     public $fillable =[
         'name',
         'installation_cost',
-        'contract_id',
     ];
 }

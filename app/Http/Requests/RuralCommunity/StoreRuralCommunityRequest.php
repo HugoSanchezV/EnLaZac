@@ -24,7 +24,6 @@ class StoreRuralCommunityRequest extends FormRequest
         return [
             'name' => 'required|max:255',
             'installation_cost' => 'required|numeric',
-            'contract_id' => 'nullable|exists:contracts,id',
         ];
     }
 
@@ -35,7 +34,6 @@ class StoreRuralCommunityRequest extends FormRequest
             'name.max' => 'El nombre no puede tener más de 255 caracteres.',
             'installation_cost.required' => 'El costo es un campo obligatorio',
             'installation_cost.numeric' => 'El costo debe ser de tipo numérico',
-            'contract_id.exists' => 'Debe existir contrato',
         ];
     }
 }

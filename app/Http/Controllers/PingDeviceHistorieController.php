@@ -149,17 +149,20 @@ class PingDeviceHistorieController extends Controller
         //sdd("termino de ingresar");
         //return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');   
     }
-    public function update(UpdatePingDeviceHistorieRequest $request, $id ,$url = 'device.ping.historie')
+    public function update(Request $request)
     {
+        //$validatedData = $request->validated();
+     //   dd($request->id);
+        $pingDevice = PingDeviceHistorie::findOrFail($request->id);
 
-        $pingDevice = PingDeviceHistorie::findOrFail($id);
-        $validatedData = $request->validated();
+        $pingDevice->user_id = $request->user_id;
+        //$validatedData = $request->validated();
 
         
-        $pingDevice->update($validatedData);
+        $pingDevice->save();
         self::make_user_notification($pingDevice);
 
-        return redirect()->route($url)->with('success', 'El técnico ha sido notificado');
+        return redirect()->route('device.ping.historie')->with('success', 'El técnico ha sido notificado');
     }
     static function make_user_notification($ping){
         event(new PingTecnicoEvent($ping));

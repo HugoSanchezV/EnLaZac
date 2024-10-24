@@ -226,7 +226,7 @@ class DevicesController extends Controller
 
     public function update(UpdateDeviceRequest $request, $id, $url = 'routers.devices')
     {
-        // dd($request);
+        dd($request);
         $validatedData = $request->validated();
 
         $device = Device::findOrFail($id);

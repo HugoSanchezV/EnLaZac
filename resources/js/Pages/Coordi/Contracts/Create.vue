@@ -1,8 +1,5 @@
 <script setup>
 const props = defineProps({
-  lastID:{
-    type: Object
-  },
   users: {
     type: Object,
   },
@@ -25,7 +22,7 @@ const props = defineProps({
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :lastID="lastID" :users="users" :plans="plans" :community="community"/>
+          <Form :users="users" :plans="plans" :community="community"/>
         </div>
       </div>
     </template>

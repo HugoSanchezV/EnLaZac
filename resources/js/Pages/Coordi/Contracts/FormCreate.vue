@@ -34,7 +34,7 @@ const form = useForm({
   end_date: "",
   active: "",
   address: "",
-  community: "",
+  rural_community_id: "",
   geolocation:{
     latitude: "",
     longitude:"",
@@ -97,9 +97,8 @@ const submit = () => {
   } else {
     form.active = false;
   }
-  //form.post(route("contracts.store"));
 
-  form.post(route("rural-community.update.contract", form.community, props.lastID+1));
+  form.post(route("contracts.store"));
 };
 
 
@@ -205,20 +204,16 @@ const submit = () => {
       </div>
 
       <div class="mt-4">
-        <InputLabel for="name" value="Comunidad" />
-      </div>
-
-      <div class="mt-4">
         <p>Su ubicación actual será tomada de manera automática 
           para obtener la locación del cliente o ingrese la ubicación manualmente. 
         </p>
       </div>
-
+      {{ form.rural_community_id }}
       <div class="mt-4">
-        <InputLabel for="community" value="Comunidad" />
+        <InputLabel for="rural_community_id" value="Comunidad" />
         <div class="mt-2">
             <select
-              v-model="form.community"
+              v-model="form.rural_community_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
               <option :value="null" selected>Selecciona una opción</option>

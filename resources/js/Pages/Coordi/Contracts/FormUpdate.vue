@@ -5,11 +5,13 @@ import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
+import GoogleMaps from '@/Components/GoogleMaps.vue'
 
 const props = defineProps({
   contract: Object,
   users: Array,
   plans: Array,
+  community: Array,
 });
 
 const form = useForm({
@@ -19,6 +21,7 @@ const form = useForm({
   end_date: "",
   active: "0",
   address: "",
+  rural_community_id: "",
   geolocation:{
     latitude: "",
     longitude:"",
@@ -28,12 +31,13 @@ const lat = ref(null);
 const lng = ref(null); 
 onMounted(() => {
   if (props.contract) {
-    form.user_id = props.contract.user_id || "0";
-    form.plan_id = props.contract.plan_id || "0";
+    form.user_id = props.contract.user_id || "";
+    form.plan_id = props.contract.plan_id || "";
     form.address = props.contract.address || "";
     form.start_date = props.contract.start_date || "";
     form.end_date = props.contract.end_date || "";
-    form.active = props.contract.active || "0";
+    form.active = props.contract.active || "";
+    form.rural_community_id = props.contract.rural_community_id || ""
     lat.value = form.geolocation.latitude = props.contract.geolocation.latitude ||  "0";
     lng.value = form.geolocation.longitude = props.contract.geolocation.longitude || "0";
   }
@@ -46,10 +50,10 @@ onMounted(() => {
 const updateStatus = () =>{
   if (document.getElementById('activated').checked) {
     form.active = true;
-    console.log(form.active);
+   // console.log(form.active);
   } else {
     form.active = false;
-    console.log(form.active);
+//console.log(form.active);
   }
 
 }
@@ -59,19 +63,14 @@ const handlePositionClicked = (position) => {
 };
 
 const submit = () => {
-  form.put(route("contracts.update", { id: props.contract.id }));
+  updateStatus();
+  form.put(route("contracts.update", { id: props.contract }));
 };
 
 </script>
 
 
 <template>
-  <div class="flex justify-center border flex-col m-5 p-10 bg-white">
-    <h2 class="flex justify-center">
-      Actualizar contrato
-    </h2>
-
-  </div>
   <div class="mt-5 pl-5 pr-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
@@ -159,6 +158,23 @@ const submit = () => {
         />
         <InputError class="mt-2" :message="form.errors.address" />
       </div>
+
+      <div class="mt-4">
+        <InputLabel for="rural_community_id" value="Comunidad" />
+        <div class="mt-2">
+            <select
+              v-model="form.rural_community_id"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option :value="null" selected>Selecciona una opción</option>
+              <option v-for="com in community" :key="com.id" :value="com.id">
+                  {{com.id+" - " + com.name}}
+              </option>
+            </select>
+        </div>
+        <InputError class="mt-2" :message="form.errors.rural_community_id" />
+      </div>
+
       <div class="mt-4">
         <p>Ubicación
         </p>
@@ -211,18 +227,6 @@ const submit = () => {
     </form>
   </div>
 </template>
-
-
-<script>
-import GoogleMaps from '@/Components/GoogleMaps.vue'
-export default {
-  props: ["contract"],
-  components: {
-        GoogleMaps
-    },
-  
-};
-</script>
 
 <style scoped>
 .switch {

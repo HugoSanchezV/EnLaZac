@@ -7,7 +7,6 @@ class NotificationController extends Controller
 {
     public function unread(Request $request)
     {
-        dd("JO:A");
         $user = $request->user(); // Obtener el usuario autenticado
         $notifications = $user->unreadNotifications; // Obtener notificaciones no leídas
         

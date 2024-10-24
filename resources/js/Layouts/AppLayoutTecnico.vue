@@ -279,6 +279,26 @@ const formattedDate = (dateCreation) => {
                               }}</span>
                             </Link>
                           </div>
+                          <div
+                            v-else-if="
+                              notification.type ==
+                              'App\\Notifications\\PingTecnicoNotification'
+                            "
+                          >
+                            <Link
+                              :href="route('devices')"
+                              class="dropdown-item"
+                              @click.prevent="
+                                handleNotificationClick(notification)
+                              "
+                            >
+                              <i class="fas fa-envelope"></i> 
+                              Dispositivo {{ notification.data.device_id }} con problemas
+                              <span class="time">{{
+                                formattedDate(notification.created_at)
+                              }}</span>
+                            </Link>
+                          </div>
                           <div v-else>
                             <Link
                               :href="

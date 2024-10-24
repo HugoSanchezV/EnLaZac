@@ -157,7 +157,7 @@ export default {
   watch: {
     pingDevice() {
       const toast = useToast();
-      this.rows = this.pingDevices.data;
+      this.rows = this.pingDevice.data;
       if (this.success) {
         toast.success(this.success, {
           position: POSITION.TOP_CENTER,

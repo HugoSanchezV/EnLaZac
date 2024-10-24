@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
 use App\Models\RuralCommunity;
+use App\Services\RuralCommunityService;
 use Carbon\Carbon;
 
 use Exception;
@@ -35,7 +36,8 @@ class ContractController extends Controller
                     ->orWhere('start_date', 'like', "%$search%")
                     ->orWhere('end_date', 'like', "%$search%")
                     ->orWhere('active', 'like', "%$search%")
-                    ->orWhere('address', 'like', "%$search%");
+                    ->orWhere('address', 'like', "%$search%")
+                    ->orWhere('rural_community_id', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -49,13 +51,13 @@ class ContractController extends Controller
         $contract = $query->with('user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'user_id' => $item->user->name ?? 'None',
-                'plan_id' => $item->plan->name ?? 'None',
+                'user_id' => $item->user->name ?? 'Sin asignar',
+                'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'start_date' => $item->start_date,
                 'end_date' => $item->end_date,
                 'active' => $item->active,
                 'address' => $item->address,
-                'community' => $item->ruralCommunity->name ?? 'Sin asignar',            
+                'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',            
             ];
         });
 
@@ -87,16 +89,13 @@ class ContractController extends Controller
 
     public function create()
     {
-        $lastContract = Contract::orderBy('id', 'desc')->first();
-        $community = RuralCommunity::whereNull('contract_id')->get();
-
+        $community = RuralCommunity::all();
         
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
         return Inertia::render(
             'Coordi/Contracts/Create',
             [
-                'lastID' => $lastContract->id,
                 'users' => $users,
                 'plans' => $plans,
                 'community' => $community,
@@ -105,7 +104,9 @@ class ContractController extends Controller
     }
 
     public function store(StoreContractRequest $request)
-    {
+    {  
+
+        //dd('LLega aqui');
         $validatedData = $request->validated();
         Contract::create([
             'user_id' => $validatedData['user_id'],
@@ -114,14 +115,18 @@ class ContractController extends Controller
             'end_date' => $validatedData['end_date'],
             'active' => $validatedData['active'],
             'address' => $validatedData['address'],
+            'rural_community_id' => $validatedData['rural_community_id'],
             'geolocation' => $validatedData['geolocation'],
         ]);
-
+   //     RuralCommunityService::update($id, $request->community);
+        
         return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
     }
 
     public function edit($id)
     {
+        $community = RuralCommunity::all();
+
         $contract = Contract::with('ruralCommunity')->findOrFail($id);
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
@@ -130,14 +135,17 @@ class ContractController extends Controller
             'contract' => $contract,
             'users' => $users,
             'plans' => $plans,
+            'community' => $community,
+            
         ]);
     }
 
 
     public function update(UpdateContractRequest $request, $id)
     {
+       // dd("aqui");
         $contract = Contract::findOrFail($id);
-
+        
         $validatedData = $request->validated();
         $contract->update($validatedData);
         return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');

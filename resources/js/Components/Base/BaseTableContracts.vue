@@ -60,7 +60,7 @@ const getTag = (cellIndex) => {
     case "address":
       return "Dirección";
       break;
-      case "name":
+    case "rural_community_id":
       return "Comunidad";
       break;
     default:
