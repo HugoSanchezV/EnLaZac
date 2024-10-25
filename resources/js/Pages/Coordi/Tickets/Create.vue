@@ -3,6 +3,10 @@ const props = defineProps({
   users: {
     type: Object,
   },
+
+  technicals: {
+    type: Object,
+  },
 });
 </script>
 <template>
@@ -16,7 +20,7 @@ const props = defineProps({
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :users="users"/>
+          <Form :users="users" :technicals="technicals" />
         </div>
       </div>
     </template>

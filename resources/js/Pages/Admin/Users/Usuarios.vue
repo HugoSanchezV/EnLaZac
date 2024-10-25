@@ -21,15 +21,25 @@ const headingsImport = "nombre, alias, email, password, role";
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
-      <div class="flex justify-between">
-        <div>
+      <div class="block md:flex md:justify-between">
+        <div class="mb-2 md:mb-0">
           <h4>Usuarios</h4>
         </div>
         <div>
           <Link
             :href="route('usuarios.create')"
             method="get"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+            class="mb-1 flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+          >
+            <span class="material-symbols-outlined" style="font-size: 16px">
+              smartphone
+            </span>
+            Pre-registro Cliente
+          </Link>
+          <Link
+            :href="route('usuarios.create')"
+            method="get"
+            class="flex justify-center md:justify-betweenitems-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -57,6 +57,7 @@ Route::middleware([
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
         Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
         Route::post('/usuarios/store',          [UserController::class, 'store'])->name('usuarios.store');
+        Route::post('/usuarios/pre/create/',          [UserController::class, 'precreate'])->name('usuarios.pre.create');
         Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])->name('usuarios.edit');
         Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])->name('usuarios.update');
         Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
@@ -197,8 +198,8 @@ Route::middleware([
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
-   // Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
-   // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
+    // Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
+    // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
     //MIDDLEWARE DEMÁS USUARIOS
     Route::middleware(['rol:2,3'])->group(function () {

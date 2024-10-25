@@ -14,11 +14,17 @@ return new class extends Migration
             $table->string('description'); // Campo 'description' de tipo string
             $table->string('status')->default('0'); // Campo 'status' de tipo string
             $table->unsignedBigInteger('user_id') // Campo 'user_id' como llave foránea
-                  ->constrained() // Asume que la tabla relacionada es 'users' (por convención de Laravel)
-                  ->onDelete('cascade')
-                  ->nullable()
-                  ->default(null); // Si se elimina el usuario, se eliminan sus tickets
+                ->constrained() // Asume que la tabla relacionada es 'users' (por convención de Laravel)
+                ->nullable()
+                ->default(null); // Si se elimina el usuario, se eliminan sus tickets
+
+            $table->unsignedBigInteger('technical_id')
+                ->nullable()
+                ->default(null);
             $table->timestamps(); // Campos 'created_at' y 'updated_at'
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('technical_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
