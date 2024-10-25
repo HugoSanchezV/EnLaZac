@@ -108,20 +108,28 @@ const props = defineProps({
         </div>-->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Contrato asignado</dt>
-          <Link 
+          <Link v-if="contract !== null"
             :href="route('contracts.show', contract.id)"
             class="cursor-pointer"
           >
             <dd class="mt-1 text-sm text-gray-900">{{ contract === null ? "Sin asignar" : contract.id }}</dd>
           </Link>
+          <div v-else>
+            <dd class="mt-1 text-sm text-gray-900">Sin asignar</dd>
+
+          </div>
         </div>
 
         <!-- Muestra el costo del plan -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Plan afiliado</dt>
-          <Link :href="route('plans.show', plan.id)">
+          <Link v-if="plan !== null" :href="route('plans.show', plan.id)">
             <dd class="mt-1 text-sm text-gray-900">{{ plan === null ? "Sin asignar" : plan.name }}</dd>
           </Link>
+          <div v-else>
+            <dd class="mt-1 text-sm text-gray-900">Sin asingnar</dd>
+
+          </div>
         </div>
 
         <!-- Muestra el número de tickets enviados por el usuario -->

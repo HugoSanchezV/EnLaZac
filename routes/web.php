@@ -25,6 +25,7 @@ use App\Models\PingDeviceHistorie;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\MercadoPagoSettingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -40,6 +41,15 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
+   
+    //Mercado Pago
+    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/settings/mercadopago', [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
+    Route::post('/settings/mercadopago', [MercadoPagoSettingController::class, 'store'])->name('settings.mercadopago.store');
+    Route::put('/settings/mercadopago', [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
+    Route::delete('/settings/mercadopago/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('settings.mercadopago.destroy');
+});
 
     // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
     Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
@@ -183,6 +193,7 @@ Route::middleware([
         Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
         Route::get('/sistema/configuracion/paypal',      [PayPalSettingController::class, 'edit'])->name('settings.paypal.edit');
         Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
+       
         Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'index'])->name('settings.interest');
     });
 

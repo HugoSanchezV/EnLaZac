@@ -70,7 +70,7 @@ const props = defineProps({
 
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">id usuario</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ devices.user.name}}</dd>
+          <dd class="mt-1 text-sm text-gray-900">{{ devices.user.name === null ?? 'Sin asignar' }}</dd>
         </div>
       </dl>
     </div>
