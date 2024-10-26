@@ -10,10 +10,12 @@ use App\Events\RegisterUserEvent;
 use App\Exports\GenericExport;
 use App\Imports\UserImport;
 use App\Models\Plan;
+use App\Models\PreRegisterUser;
 use App\Services\UserService;
 use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -38,7 +40,8 @@ class UserController extends Controller
                 $q->where('name', 'like', "%$search%")
                     ->orWhere('email', 'like', "%$search%")
                     ->orWhere('alias', 'like', "%$search%")
-                    ->orWhere('id', 'like', "%$search%");
+                    ->orWhere('id', 'like', "%$search%")
+                    ->orWhere('phone', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -55,6 +58,7 @@ class UserController extends Controller
                 'name' => $item->name,
                 'alias' => $item->alias ?? "Sin asignar",
                 'email' => $item->email,
+                'phone' => $item->phone,
                 'role' => $item->admin,
             ];
         });
@@ -105,16 +109,30 @@ class UserController extends Controller
     }
     public function store(StoreUserRequest $request)
     {
-        $validatedData = $request->validated();
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'alias' => $validatedData['alias'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'admin' => $validatedData['admin'],
-        ]);
-        self::make_register_notification($user);
-        return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');
+        try {
+            DB::transaction(function () use ($request) {
+                $validatedData = $request->validated();
+                $user = User::create([
+                    'name' => $validatedData['name'],
+                    'alias' => $validatedData['alias'],
+                    'email' => $validatedData['email'],
+                    'phone' => $validatedData['phone'],
+                    'password' => Hash::make($validatedData['password']),
+                    'admin' => $validatedData['admin'],
+                ]);
+
+                $register = PreRegisterUser::where('phone', $validatedData['phone'])->first();
+
+                if ($register) {
+                    $register->delete();
+                }
+
+                self::make_register_notification($user);
+            });
+            return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');
+        } catch (Exception $e) {
+            return redirect()->route('usuarios')->with('success', 'Hubo un problema al crear el registro', 'user');
+        }
     }
 
     static function make_register_notification($user)
@@ -131,38 +149,55 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, $id)
     {
-        $user = User::findOrFail($id);
+        try {
+            DB::transaction(function () use ($request, $id) {
+                $user = User::findOrFail($id);
 
-        $validatedData = $request->validated();
+                $validatedData = $request->validated();
 
-        if (!empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-        } else {
-            unset($validatedData['password']);
+                if (!empty($validatedData['password'])) {
+                    $validatedData['password'] = Hash::make($validatedData['password']);
+                } else {
+                    unset($validatedData['password']);
+                }
+
+                $user->update($validatedData);
+
+                $register = PreRegisterUser::where('phone', $validatedData['phone'])->first();
+
+                if ($register) {
+                    $register->delete();
+                }
+            });
+            return Redirect::route('usuarios')->with('success', 'Usuario Actualizado Con Éxito');
+        } catch (Exception $e) {
+            return Redirect::route('usuarios')->with('error', 'Error al momento de actualizar registro');
         }
-
-        $user->update($validatedData);
-        return Redirect::route('usuarios')->with('success', 'Usuario Actualizado Con Éxito');
     }
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
-        return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito ');
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+            return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito ');
+        } catch (Exception $e) {
+            return Redirect::route('usuarios')->with('success', 'Ocurrio un error con el registro');
+        }
     }
 
     public function exportExcel()
     {
         $query = User::query()
             ->where('admin', '!=', 1)
-            ->select('id', 'name', 'alias', 'email', 'admin');
+            ->select('id', 'name', 'alias', 'email', 'phone', 'admin');
 
         $headings = [
             'ID',
             'Nombre',
             'Alias',
             'Email',
+            'Número',
             'Rol',
         ];
 
@@ -172,6 +207,7 @@ class UserController extends Controller
                 $user->name,
                 $user->alias ?? 'Sin asignar',
                 $user->email,
+                $user->phone,
                 UserService::getTypeUser($user->admin)
             ];
         };

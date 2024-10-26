@@ -1,32 +1,43 @@
 <script setup>
-import { router, useForm} from "@inertiajs/vue3";
-import {ref, onMounted} from 'vue';
+import { router, useForm } from "@inertiajs/vue3";
+import { ref, onMounted } from "vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-
-
+import { POSITION, useToast } from "vue-toastification";
 
 const form = useForm({
   name: "",
   alias: "",
   email: "",
+  phone: "",
   password: "",
   password_confirmation: "",
-  coordinates:{
+  coordinates: {
     latitude: "",
-    longitude:"",
+    longitude: "",
   },
   admin: 0,
 });
 
+const toast = useToast();
+
 const submit = () => {
+  if (!/^\d{10}$/.test(form.phone)) {
+    alert(form.phone);
+    toast.error("El número de teléfono debe tener exactamente 10 dígitos", {
+      position: POSITION.TOP_CENTER,
+      draggable: true
+    });
+    return; // Detiene el envío si no cumple con la validación
+  }
+
   form.post(route("usuarios.store"), {
     onFinish: () => form.reset("password", "password_confirmation"),
     onSuccess: () => {
-        router.back()
-    }
+      router.back();
+    },
   });
 };
 
@@ -35,25 +46,25 @@ const handlePositionClicked = (position) => {
   form.coordinates.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
 };
 const lat = ref(null);
-const lng = ref(null); 
+const lng = ref(null);
 onMounted(() => {
-  if(navigator.geolocation){
-    var success = function(position){
-      lat.value = form.coordinates.latitude = position.coords.latitude.toFixed(6),
-      lng.value = form.coordinates.longitude = position.coords.longitude.toFixed(6);
-    }
+  if (navigator.geolocation) {
+    var success = function (position) {
+      (lat.value = form.coordinates.latitude =
+        position.coords.latitude.toFixed(6)),
+        (lng.value = form.coordinates.longitude =
+          position.coords.longitude.toFixed(6));
+    };
 
-    navigator.geolocation.getCurrentPosition(success, function(msg)
-    {
-    console.error( msg );
+    navigator.geolocation.getCurrentPosition(success, function (msg) {
+      console.error(msg);
     });
   }
 });
-const getCurrentLocation = () =>
-{
-   form.coordinates.latitude = lat.value,
-   form.coordinates.longitude = lng.value;
-}
+const getCurrentLocation = () => {
+  (form.coordinates.latitude = lat.value),
+    (form.coordinates.longitude = lng.value);
+};
 const seleccionar = (valor) => {
   form.admin = Number(valor);
 };
@@ -137,6 +148,20 @@ const seleccionar = (valor) => {
       </div>
 
       <div class="mt-4">
+        <InputLabel for="phone" value="Teléfono" />
+        <TextInput
+          minlength="12"
+          maxlength="12"
+          id="phone"
+          v-model="form.phone"
+          type="number"
+          class="mt-1 block w-full"
+          autocomplete="phone"
+        />
+        <InputError class="mt-2" :message="form.errors.phone" />
+      </div>
+
+      <div class="mt-4">
         <InputLabel for="password" value="Password" />
         <TextInput
           id="password"
@@ -161,7 +186,6 @@ const seleccionar = (valor) => {
         />
         <InputError class="mt-2" :message="form.errors.password_confirmation" />
       </div>
-      
 
       <input type="hidden" id="admin" :value="form.admin" readonly />
 
@@ -188,7 +212,6 @@ export default {
     };
   },
 };
-
 </script>
 
 <style scoped>

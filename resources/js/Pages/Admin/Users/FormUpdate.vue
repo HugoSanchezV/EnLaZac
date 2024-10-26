@@ -14,6 +14,7 @@ const form = useForm({
   name: "",
   alias: "",
   email: "",
+  phone: "",
   password: "",
   password_confirmation: "",
   admin: 0,
@@ -24,6 +25,7 @@ onMounted(() => {
     form.name = props.user.name || "";
     form.alias = props.user.alias || "";
     form.email = props.user.email || "";
+    form.phone = props.user.phone || "";
     form.admin = props.user.admin || 0;
   }
 });
@@ -116,6 +118,19 @@ const seleccionar = (valor) => {
         <InputError class="mt-2" :message="form.errors.email" />
       </div>
 
+      <div class="mt-4">
+        <InputLabel for="phone" value="Teléfono" />
+        <TextInput
+          minlength="12"
+          maxlength="12"
+          id="phone"
+          v-model="form.phone"
+          type="number"
+          class="mt-1 block w-full"
+          autocomplete="phone"
+        />
+        <InputError class="mt-2" :message="form.errors.phone" />
+      </div>
 
       <div class="flex justify-between items-center gap-2 mt-5">
         <p>Editar Password</p>

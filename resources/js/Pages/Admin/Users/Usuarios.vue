@@ -13,8 +13,8 @@ const { users } = toRefs(props);
 const toRouteExport = "usuarios.excel";
 const toImportRoute = "usuarios.import.excel";
 
-const headers = ["id", "Nombre", "Alias", "Email", "Rol", "Acciones"];
-const filters = ["id", "nombre", "alias", "email"];
+const headers = ["id", "Nombre", "Alias", "Email", "número", "Rol", "Acciones"];
+const filters = ["id", "nombre", "alias", "email", "número"];
 const headingsImport = "nombre, alias, email, password, role";
 </script>
 
@@ -25,11 +25,11 @@ const headingsImport = "nombre, alias, email, password, role";
         <div class="mb-2 md:mb-0">
           <h4>Usuarios</h4>
         </div>
-        <div>
+        <div class="md:flex gap-1">
           <Link
-            :href="route('usuarios.create')"
+            :href="route('usuarios.pre.register')"
             method="get"
-            class="mb-1 flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+            class="mb-1 md:mb-0 flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
             <span class="material-symbols-outlined" style="font-size: 16px">
               smartphone
@@ -169,6 +169,10 @@ export default {
 
       if (this.attribute === "nombre") {
         this.attribute = "name";
+      }
+
+      if (this.attribute === "número") {
+        this.attribute = "phone";
       }
 
       if (this.type === "cliente") {

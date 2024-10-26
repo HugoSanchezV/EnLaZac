@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pay_pal', function (Blueprint $table) {
+        Schema::create('pre_register_users', function (Blueprint $table) {
             $table->id();
+            $table->string('phone')->unique();
             $table->timestamps();
         });
     }
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pay_pals');
+        Schema::dropIfExists('pre_registered_users');
     }
 };
