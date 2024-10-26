@@ -11,6 +11,7 @@ import TextInput from '@/Components/TextInput.vue';
 const form = useForm({
     name: '',
     email: '',
+    phone: '',
     password: '',
     password_confirmation: '',
     terms: false,
@@ -46,6 +47,20 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
 
+            <!-- <div>
+                <InputLabel for="alias" value="Alias" />
+                <TextInput
+                    id="alias"
+                    v-model="form.alias"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                    autofocus
+                    autocomplete="alias"
+                />
+                <InputError class="mt-2" :message="form.errors.name" />
+            </div> -->
+
             <div class="mt-4">
                 <InputLabel for="email" value="Correo" />
                 <TextInput
@@ -57,6 +72,19 @@ const submit = () => {
                     autocomplete="username"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="phone" value="Télefono" />
+                <TextInput
+                    id="phone"
+                    v-model="form.phone"
+                    type="number"
+                    class="mt-1 block w-full"
+                    required
+                    autocomplete="username"
+                />
+                <InputError class="mt-2" :message="form.errors.phone" />
             </div>
 
             <div class="mt-4">

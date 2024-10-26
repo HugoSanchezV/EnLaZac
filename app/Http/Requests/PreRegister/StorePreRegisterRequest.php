@@ -12,7 +12,7 @@ class StorePreRegisterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true ;
+        return true;
     }
 
     /**
@@ -26,9 +26,9 @@ class StorePreRegisterRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'size:10',                       // Exactamente 12 caracteres
-                'unique:pre_register_users,phone', // Verificación en pre_register_users
-                'unique:users,phone',              // Verificación en users
+                'size:10',
+                'unique:pre_register_users,phone',
+                'unique:users,phone',
             ],
         ];
     }
