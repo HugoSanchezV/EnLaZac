@@ -8,13 +8,21 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  id: {
+    default: null
+  }
 });
 const urlEsxport = ref("");
 
 if (props.urlComplete) {
   urlEsxport.value = props.urlComplete;
 } else {
-  urlEsxport.value = route(props.toRouteExport);
+  if (props.id) {
+    urlEsxport.value = route(props.toRouteExport, props.id);
+
+  } else{
+    urlEsxport.value = route(props.toRouteExport);
+  }
 }
 </script>
 <template>

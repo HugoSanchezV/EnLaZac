@@ -5,7 +5,6 @@ use App\Http\Controllers\BackupsController;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\PingController;
-use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
@@ -27,14 +26,9 @@ use App\Http\Controllers\TechnicalDevicesController;
 use App\Http\Controllers\TechnicalInventorieDevicesController;
 use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
-use App\Models\InventorieDevice;
-use App\Models\PingDeviceHistorie;
-use App\Models\PreRegisterUser;
-use App\Services\WebRouterService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Termwind\Html\PreRenderer;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -138,6 +132,9 @@ Route::middleware([
         Route::post('/inventorie/devices/histories/import/excel',          [InventorieDevicesController::class, 'importExcel'])->name('historieDevices.import.excel');
 
         Route::get('/inventorie/devices/histories',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
+        Route::get('/inventorie/devices/histories/show/{DeviceHistorie}',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.show');
+        Route::get('/inventorie/devices/histories/to/excel/{id}',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel.historie');
+
         Route::delete('/inventorie/devices/histories/{device}/delete',          [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');
         Route::get('/inventorie/devices/histories/to/excel',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
         //Tickets coordi
