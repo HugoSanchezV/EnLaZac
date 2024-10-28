@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_historie', function (Blueprint $table) {
+        Schema::create('payment_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('contract_id')->constrained('contracts');
             $table->decimal('amount', 10, 2);
+            $table->text('content');
             $table->string('payment_method');
-            $table->timestamp('date_payment');
-            $table->string('referencia')->nullable();
+            $table->string('transaction_id')->unique();
+            $table->string('receipt_url');
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_historie');
+        Schema::dropIfExists('payment_histories');
     }
 };

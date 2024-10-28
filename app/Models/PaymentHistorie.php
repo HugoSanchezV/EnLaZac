@@ -10,6 +10,12 @@ class PaymentHistorie extends Model
     use HasFactory;
     public $fillable =[
         'id',
+        'user_id',
+        'contract_id',
+        'amount',
         'content',
+        'payment_method',
+        'transaction_id',
+        'receipt_url',
     ];
 }

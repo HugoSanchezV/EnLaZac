@@ -1,11 +1,17 @@
 <script setup>
 import { computed, onMounted } from "vue";
+import { ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import AppLayoutAdmin from "@/Layouts/AppLayoutAdmin.vue";
 import AppLayoutUser from "@/Layouts/AppLayoutUser.vue";
 import AppLayoutEmpleado from "@/Layouts/AppLayoutEmpleado.vue";
 import AppLayoutTecnico from "@/Layouts/AppLayoutTecnico.vue";
 import AppLayoutCoordinador from "@/Layouts/AppLayoutCoordinador.vue";
+
+import ModalContracts from "../Pages/Admin/Components/ModalStatsContracts.vue";
+import ModalMorrosos from "../Pages/Admin/Components/ModalStatsMorrosos.vue";
+import ModalTickets from "../Pages/Admin/Components/ModalStatsTickets.vue";
+import ModalUsers from "../Pages/Admin/Components/ModalStatsUsers.vue";
 import useGeneralNotifications from "@/Components/Base/hooks/useGeneralFlashNotifications";
 import Graphics from "./Admin/Components/Graphics.vue";
 
@@ -20,14 +26,59 @@ const layoutComponent = computed(() => {
       return AppLayoutAdmin;
     case 2:
       return AppLayoutCoordinador;
-    case 3:
-      return AppLayoutEmpleado;
     case 4:
+      return AppLayoutEmpleado;
+    case 3:
       return AppLayoutTecnico;
     default:
       return AppLayoutUser;
   }
 });
+
+const isModalContractsOpen = ref({});
+const isModalMorrososOpen = ref({});
+const isModalTicketsOpen = ref({});
+const isModalUsersOpen = ref({});
+
+isModalContractsOpen.value = false;
+isModalMorrososOpen.value = false;
+isModalTicketsOpen.value = false;
+isModalUsersOpen.value = false;
+
+const openContractsModal = () => {
+  isModalContractsOpen.value = true;
+};
+
+const closeContractsModal = () => {
+  isModalContractsOpen.value = false;
+};
+
+const openMorrososModal = () => {
+  isModalMorrososOpen.value = true;
+};
+
+const closeMorrososModal = () => {
+  isModalMorrososOpen.value = false;
+};
+//---------------------------------------------
+
+
+
+const openTicketsModal = () => {
+  isModalTicketsOpen.value = true;
+};
+
+const closeTicketsModal = () => {
+  isModalTicketsOpen.value = false;
+};
+
+const openUsersModal = () => {
+  isModalUsersOpen.value = true;
+};
+
+const closeUsersModal = () => {
+  isModalUsersOpen.value = false;
+};
 
 
 useGeneralNotifications();
@@ -92,6 +143,7 @@ useGeneralNotifications();
 </style>
 
 <template>
+  {{ authenticatedUser.admin }}
   <component :is="layoutComponent" title="Dashboard">
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -111,61 +163,119 @@ useGeneralNotifications();
           <slot name="content">
             <div class="frame-stats flex gap-4 w-full">
                <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">person</span>
-                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ morrosos }}</span></h2>
-                      </div>
+                  <button
+                  @click="openMorrososModal()">
+                    <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
+                        <div class="h-12">
+                          <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">person</span>
+                        </div>
+                        <div class="my-2">
+                            <h2 class="text-4xl font-bold"><span>{{ morrosos.length }}</span></h2>
+                        </div>
 
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
-                      </div>
-                  </div>
+                        <div>
+                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
+                        </div>
+                    </div>
+                  </button>
+                  <modal-contracts
+                    :show="isModalContractsOpen"
+                    @close="closeContractsModal()"
+                    @selectData="confirmSelectionContracts($event)"
+                    :data="activeContract"
+                    :title="
+                      'Selecciona un dispositivo del inventario para la conexión '
+                    "
+                    item-text="mac_address"
+                  >
+                </modal-contracts>
+                </div>
+                <div class="frame">
+                  <button
+                  @click="openContractsModal()">
+                    <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
+                        <div class="h-12">
+                          <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">contract</span>
+                        </div>
+                        <div class="my-2">
+                            <h2 class="text-4xl font-bold"><span>{{ activeContract.length }}</span></h2>
+                        </div>
+
+                        <div>
+                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Contratos activos</p>
+                        </div>
+                    </div>
+                  </button>
+
+                  <modal-morrosos
+                    :show="isModalMorrososOpen"
+                    @close="closeMorrososModal()"
+                    @selectData="confirmSelectionMorrosos($event)"
+                    :data="morrosos"
+                    :title="
+                      'Selecciona un dispositivo del inventario para la conexión '
+                    "
+                    item-text="mac_address"
+                  >
+                </modal-morrosos>
                 </div>
 
                 <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">contract</span>
-                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ activeContract }}</span></h2>
-                      </div>
+                  <button
+                  @click="openTicketsModal()">
+                    <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
+                        <div class="h-12">
+                          <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">confirmation_number</span>
+                        </div>
+                        <div class="my-2">
+                            <h2 class="text-4xl font-bold"><span>{{ new_tickets.length }}</span></h2>
+                        </div>
 
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Contratos activos</p>
-                      </div>
-                  </div>
+                        <div>
+                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Tickets nuevos</p>
+                        </div>
+                    </div>
+                  </button>
+
+                  <modal-tickets
+                    :show="isModalTicketsOpen"
+                    @close="closeTicketsModal()"
+                    @selectData="confirmSelectionTickets($event)"
+                    :data="new_tickets"
+     
+                    :title="
+                      'Selecciona un dispositivo del inventario para la conexión '
+                    "
+                    item-text="mac_address"
+                  >
+                </modal-tickets>
                 </div>
-
                 <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">confirmation_number</span>
-                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ new_tickets }}</span></h2>
-                      </div>
+                  <button
+                  @click="openUsersModal()">
+                    <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
+                        <div class="h-12">
+                          <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">account_circle</span>                      </div>
+                        <div class="my-2">
+                            <h2 class="text-4xl font-bold"><span>{{ currentUsers.length }}</span></h2>
+                        </div>
 
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Tickets nuevos</p>
-                      </div>
-                  </div>
-                </div>
-                <div class="frame">
-                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                      <div class="h-12">
-                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">account_circle</span>                      </div>
-                      <div class="my-2">
-                          <h2 class="text-4xl font-bold"><span>{{ userCount }}</span></h2>
-                      </div>
-
-                      <div>
-                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios registrados</p>
-                      </div>
-                  </div>
+                        <div>
+                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios registrados</p>
+                        </div>
+                    </div>
+                  </button>
+                  <modal-users
+                    :show="isModalUsersOpen"
+                    @close="closeUsersModal()"
+                    @selectData="confirmSelectionUsers($event)"
+                    :data="currentUsers"
+                    :title="
+                      'Selecciona un dispositivo del inventario para la conexión '
+                    "
+                    item-text="mac_address"
+                  >
+                </modal-users>
                 </div>
               
             </div>
@@ -193,7 +303,6 @@ useGeneralNotifications();
             <div v-else>
               <h2>No hay routers disponibles</h2>
             </div>
-            
               
           </slot>
         </div>
@@ -204,25 +313,31 @@ useGeneralNotifications();
 
 <script>
 export default {
+  methods:{
+    handleAreaSelected(coordinates) {
+      console.log('Área seleccionada con las siguientes coordenadas:', coordinates)
+      // Aquí puedes realizar lógica adicional, como asociar un precio a esta área
+    }
+  },
   props: {
     applyStyles: {
       type: Boolean,
       default: true,
     },
     morrosos: {
-      type: Number,
+      type: Object,
     },
     activeDevice: {
-      type: Number,
+      type: Object,
     },
     new_tickets: {
-      type: Number,
+      type: Object,
     },
-    userCount: {
-      type: Number,
+    currentUsers: {
+      type: Object,
     },
     activeContract: {
-      type: Number,
+      type: Object,
     },
     target: {
       type: Array,

@@ -18,81 +18,87 @@ const props = defineProps({
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:content>
-      <div>
-        <div class="payment-process">
-    <h2>Proceso de Pago - Servicio de Internet</h2>
-    
-    <div class="mt-3 mb-3">
-      <label for="">El valor unitario de tu plan es de $</label>
-      <span>{{ cost_service }}</span>
-    </div>
-    <!-- Selección de meses -->
-    <div class="select-months">
-      <label for="months">Seleccionar meses a pagar: </label>
-      <select v-model="selectedMonths" @change="addMonthToCart">
-        <option v-for="n in 12" :key="n" :value="n">{{ n }} mes(es)</option>
-      </select>
       
-    </div>
-    
-    <!-- Tabla de cargos generados -->
-    <div class="client-charges">
-      <h3>Cargos del Cliente</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Monto</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="charge in charges" :key="charge.id">
-            <td>{{ charge.description }}</td>
-            <td>{{ formatCurrency(charge.amount) }}</td>
-            <td>
-              <button :disabled="isInCart(charge.id)" @click="addChargeToCart(charge)">
-                {{ isInCart(charge.id) ? 'Ya agregado' : 'Agregar al carrito' }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <!-- Tabla del carrito -->
-    <div class="cart">
-      <h3>Carrito</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Concepto</th>
-            <th>Monto</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, index) in cart" :key="index">
-            <td>{{ item.description }}</td>
-            <td>{{ formatCurrency(item.amount) }}</td>
-            <td><button @click="removeFromCart(index)">Eliminar</button></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="flex justify-start w-full">
+      <div class="w-full">
+        <div class="payment-process"></div>
+  
+      <div>
+        <h2>Proceso de Pago - Servicio de Internet</h2>
+      </div>
+      <div class="mt-3 mb-3">
+        <label for="">El valor unitario de tu plan es de $</label>
+        <span>{{ cost_service }}</span>
+      </div>
+      <!-- Selección de meses -->
+      <div class="select-months">
+        <label for="months">Seleccionar meses a pagar: </label>
+        <select v-model="selectedMonths" @change="addMonthToCart">
+          <option value="0" selected>--Seleccionar mes--</option>
+          <option v-for="n in 12" :key="n" :value="n">{{ n }} mes(es)</option>
+        </select>
+        
+      </div>
+      
+      <!-- Tabla de cargos generados -->
+      <div class="client-charges">
+        <h3>Cargos del Cliente</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Monto</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="charge in charges" :key="charge.id">
+              <td>{{ charge.description }}</td>
+              <td>{{ formatCurrency(charge.amount) }}</td>
+              <td>
+                <button :disabled="isInCart(charge.id)" @click="addChargeToCart(charge)">
+                  {{ isInCart(charge.id) ? 'Ya agregado' : 'Agregar al carrito' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tabla del carrito -->
+      <div class="cart">
+        <h3>Carrito</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Monto</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in cart" :key="index">
+              <td>{{ item.description }}</td>
+              <td>{{ formatCurrency(item.amount) }}</td>
+              <td><button @click="removeFromCart(index)">Eliminar</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Label del total -->
+      <div class="total-label">
+        <h4>Total a pagar: {{ formatCurrency(totalAmount) }}</h4>
+      </div>
+
+      <!-- Botón para realizar el pago -->
+      <button @click="processPayment">Realizar Pago</button>
     </div>
-
-    <!-- Label del total -->
-    <div class="total-label">
-      <h4>Total a pagar: {{ formatCurrency(totalAmount) }}</h4>
-    </div>
-
-    <!-- Botón para realizar el pago -->
-    <button @click="processPayment">Realizar Pago</button>
-
     <!-- Mensaje de error si no hay artículos en el carrito -->
     <p v-if="paymentError" class="error-message">{{ paymentError }}</p>
   </div>
-      </div>
+  
 
       <div v-if="showPayment">
         <GetData
@@ -110,7 +116,7 @@ const props = defineProps({
 export default {
   data() {
     return {
-      selectedMonths: 1,
+      selectedMonths: 0,
       cart: [],
       clientCharges: [], // Cargos obtenidos de la base de datos
       totalAmount: 0,
@@ -161,6 +167,7 @@ export default {
       const removedItem = this.cart[index];
       if (removedItem.id === 'service') {
         this.serviceAdded = false; // Permitir agregar el servicio de nuevo si es eliminado
+        this.selectedMonths = 0;
       }
       this.cart.splice(index, 1);
       this.calculateTotal();
@@ -169,6 +176,12 @@ export default {
     // Cálculo del total
     calculateTotal() {
       this.totalAmount = this.cart.reduce((acc, item) => acc + item.amount, 0);
+      
+      if(this.totalAmount < 1)
+      {
+        this.showPayment = false;
+      }
+  
     },
     
     // Formateo de la moneda

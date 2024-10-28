@@ -38,15 +38,14 @@ const filters = ["id", "nombre", "monto"];
       <div>
         <div v-if="props.totalInterestCount > 0">
           <!-- Esta es el inicio de la tabla -->
-          <base-table-interest
+          <BaseTableInterest
             :headers="headers"
             :rows="rows"
             :filters="filters"
-            :show="true"
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-interest>
+          ></BaseTableInterest>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
           <h2>No hay Intereses para mostrar</h2>

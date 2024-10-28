@@ -9,7 +9,7 @@ const props = defineProps({
         required: true,  // El usuario es obligatorio
     },
     ticket: {
-        type: Array,
+        tcdype: Array,
         required: true,  // Los tickets son obligatorios
     },
     plan: {

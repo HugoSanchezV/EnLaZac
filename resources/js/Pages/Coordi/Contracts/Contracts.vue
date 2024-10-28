@@ -20,6 +20,7 @@ const filters = [
   "fecha de terminación",
   "¿activo?",
   "dirección",
+  "comunidad"
 ];
 
 const headers = [
@@ -30,6 +31,7 @@ const headers = [
   "Fecha de Terminación",
   "¿Activo?",
   "Dirección",
+  "Comunidad",
   "Acciones",
 ];
 //const filters = ["id", "usuario", "plan internet", "dirección"];
@@ -164,6 +166,9 @@ export default {
 
       if (this.attribute === "dirección") {
         this.attribute = "address";
+      }
+      if (this.attribute === "comunidad") {
+        this.attribute = "community";
       }
 
       this.$inertia.get(

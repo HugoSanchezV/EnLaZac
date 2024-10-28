@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use MercadoPago; // Importa el SDK de Mercado Pago.
+use MercadoPago\Client\MercadoPagoClient;
+Use MercadoPago\SDK;
 
 class MercadoPagoSettingController extends Controller
 {
+    
     /**
      * Constructor para inicializar el SDK de Mercado Pago con el access token correcto.
      */
@@ -25,6 +28,7 @@ class MercadoPagoSettingController extends Controller
 
         // Inicializa el SDK de Mercado Pago con el token seleccionado.
         MercadoPago\SDK::setAccessToken($accessToken);
+       
     }
 
     /**
@@ -33,7 +37,8 @@ class MercadoPagoSettingController extends Controller
     public function edit()
     {
         // Recupera la configuración existente (si existe).
-        $settings = MercadoPagoAccount::first();
+        $settings = MercadoPagoAccount
+        ::first();
 
         // Renderiza la vista con Inertia, pasando la configuración actual.
         return Inertia::render('Admin/Settings/MercadoPago/Edit', [

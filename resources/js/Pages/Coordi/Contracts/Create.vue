@@ -6,6 +6,9 @@ const props = defineProps({
   plans: {
     type: Object,
   },
+  community:{
+    type: Array,
+  }
 });
 </script>
 <template>
@@ -19,7 +22,7 @@ const props = defineProps({
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :users="users" :plans="plans" />
+          <Form :users="users" :plans="plans" :community="community"/>
         </div>
       </div>
     </template>

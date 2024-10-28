@@ -16,6 +16,7 @@ use App\Services\RouterService;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -113,18 +114,16 @@ class RouterController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id) 
+    public function show($id)
     {
         $router = Router::findOrFail($id);
 
         return Inertia::render('Admin/Routers/Show', [
             'router' => $router,
         ]);
-
-
     }
 
-    
+
     public function edit($id)
     {
         $router = Router::findOrFail($id);
@@ -186,7 +185,7 @@ class RouterController extends Controller
             if (stripos(PHP_OS, 'WIN') === 0) {
                 // Para Windows, verificar si se recibió el número completo de respuestas
 
-             //   dd($pingResult);
+                //   dd($pingResult);
                 if (strpos($pingResult, 'recibidos = 4') == true) {
                     $message = "El dispositivo está en línea.\n";
                     //  return true;
@@ -235,8 +234,8 @@ class RouterController extends Controller
 
             if (!empty($users) && !empty($db_devices)) {
                 $users = $this->routerService->getDevicesNotInDatabase($users, $db_devices);
-                
-                if(empty($users)) {
+
+                if (empty($users)) {
                     return Redirect::route('routers')->with('success', 'El router se encuntra actualizado, todos los id conciden con la base de datos');
                 }
             }

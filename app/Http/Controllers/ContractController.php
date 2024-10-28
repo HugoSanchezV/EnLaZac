@@ -9,6 +9,10 @@ use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
+use App\Models\RuralCommunity;
+use App\Services\RuralCommunityService;
+use Carbon\Carbon;
+
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -32,7 +36,8 @@ class ContractController extends Controller
                     ->orWhere('start_date', 'like', "%$search%")
                     ->orWhere('end_date', 'like', "%$search%")
                     ->orWhere('active', 'like', "%$search%")
-                    ->orWhere('address', 'like', "%$search%");
+                    ->orWhere('address', 'like', "%$search%")
+                    ->orWhere('rural_community_id', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -42,22 +47,17 @@ class ContractController extends Controller
         } else {
             $query->orderBy('id', 'asc');
         }
-        $queryUser = User::query();
-        $queryPlan = Plan::query();
-        $contract = $query->with('user')->latest()->paginate(8)->through(function ($item) {
+
+        $contract = $query->with('user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'user_id' => $item->user->name ?? 'None',
-                'plan_id' => $item->plan->name ?? 'None',
+                'user_id' => $item->user->name ?? 'Sin asignar',
+                'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'start_date' => $item->start_date,
                 'end_date' => $item->end_date,
                 'active' => $item->active,
                 'address' => $item->address,
-                // 'geolocation' => $item->geolocation ? [
-                //     'latitude' => $item->geolocation['latitude'] ?? null,
-                //     'longitude' => $item->geolocation['longitude'] ?? null,
-                // ] : null,
-
+                'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',            
             ];
         });
 
@@ -89,6 +89,8 @@ class ContractController extends Controller
 
     public function create()
     {
+        $community = RuralCommunity::all();
+        
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
         return Inertia::render(
@@ -96,29 +98,36 @@ class ContractController extends Controller
             [
                 'users' => $users,
                 'plans' => $plans,
+                'community' => $community,
             ]
         );
     }
 
     public function store(StoreContractRequest $request)
-    {
+    {  
+
+        //dd('LLega aqui');
         $validatedData = $request->validated();
-        $contract = Contract::create([
+        Contract::create([
             'user_id' => $validatedData['user_id'],
             'plan_id' => $validatedData['plan_id'],
             'start_date' => $validatedData['start_date'],
             'end_date' => $validatedData['end_date'],
             'active' => $validatedData['active'],
             'address' => $validatedData['address'],
+            'rural_community_id' => $validatedData['rural_community_id'],
             'geolocation' => $validatedData['geolocation'],
         ]);
-
+   //     RuralCommunityService::update($id, $request->community);
+        
         return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
     }
 
     public function edit($id)
     {
-        $contract = Contract::findOrFail($id);
+        $community = RuralCommunity::all();
+
+        $contract = Contract::with('ruralCommunity')->findOrFail($id);
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
 
@@ -126,17 +135,34 @@ class ContractController extends Controller
             'contract' => $contract,
             'users' => $users,
             'plans' => $plans,
+            'community' => $community,
+            
         ]);
     }
 
 
     public function update(UpdateContractRequest $request, $id)
     {
+       // dd("aqui");
         $contract = Contract::findOrFail($id);
-
+        
         $validatedData = $request->validated();
         $contract->update($validatedData);
         return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
+    }
+
+    public function updateMonths($months, $id)
+    {
+        $contract = Contract::findOrFail($id);
+    
+        // Convertir `end_date` a una instancia de Carbon para manipular la fecha
+        $endDate = Carbon::parse($contract->end_date);
+        
+        // Sumar los meses a la fecha de finalización
+        $contract->end_date = $endDate->addMonths($months);
+
+        // Guardar los cambios
+        $contract->save();
     }
 
     public function destroy($id)

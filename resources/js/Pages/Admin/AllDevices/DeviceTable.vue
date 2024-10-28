@@ -474,7 +474,7 @@ const getTag = (cellIndex) => {
               </Link>
 
               <Link
-                :href="route('devices.all.ping', row.id)"
+                :href="route('devices.one.ping', row.id)"
                 class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <span class="material-symbols-outlined"> network_ping </span>

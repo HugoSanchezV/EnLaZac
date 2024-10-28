@@ -18,18 +18,24 @@ class Contract extends Model
         'end_date',
         'active',
         'address',
+        'rural_community_id',
         'geolocation',
+    ];
+    
+    protected $casts = [
+        'geolocation'  => 'array',
     ];
     
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    protected $casts = [
-        'geolocation'  => 'array',
-    ];
     public function plan()
     {
         return $this->belongsTo(Plan::class);
+    }
+    public function ruralCommunity()
+    {
+        return $this->belongsTo(RuralCommunity::class);
     }
 }

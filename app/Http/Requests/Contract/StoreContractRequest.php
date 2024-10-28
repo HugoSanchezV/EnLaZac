@@ -28,6 +28,7 @@ class StoreContractRequest extends FormRequest
             'end_date'=> 'required',
             'active'=> 'required',
             'address'=> 'required|max:100',
+            'rural_community_id' => 'nullable|numeric',
             'geolocation.latitude'=> 'required|numeric',
             'geolocation.longitude'=> 'required|numeric',
         ];
@@ -43,6 +44,11 @@ class StoreContractRequest extends FormRequest
             'end_date.required' => 'La fecha de terminación es un campo obligatorio.',
             'active.required' => 'El estado del contrato es un campo obligatorio.',
             'address.max' => 'La dirección no puede tener más de 100 caracteres.',
+            'rural_community_id.numeric' => 'El id de la comunidad debe ser de tipo numérico',
+            'geolocation.latitude.numeric' => 'La latitud debe ser de tipo numérico',
+            'geolocation.latitude.numeric' => 'La longitud debe ser de tipo numérico',
+            'geolocation.latitude.required' => 'La latitud es un campo obligatorio.',
+            'geolocation.latitude.required' => 'La longitud es un campo obligatorio.',
         ];
     }
 }

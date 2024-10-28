@@ -404,7 +404,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentUser,
+        type: this.currentCharge,
         order: this.currentOrder,
       });
     },

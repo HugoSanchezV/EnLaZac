@@ -209,46 +209,19 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            
-            <div v-if="cellIndex === 'paid'">
-              {{ cell === 0 ? "No" : "Sí" }}
-            </div>
-            <div v-else>
               <div class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span
                 >
                 {{ cell }}
-              </div>
+          
             </div>
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                href="#"
-                v-if="show"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-                  />
-                </svg>
-
-                Mostrar
-              </Link>
-              <Link
                 v-if="edit"
-                :href="route('charges.edit', row.id)"
+                :href="route('settings.interest.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -319,12 +292,6 @@ export default {
       type: Array,
       required: true,
     },
-
-    show: {
-      type: Boolean,
-      required: true,
-    },
-
     edit: {
       type: Boolean,
       required: true,

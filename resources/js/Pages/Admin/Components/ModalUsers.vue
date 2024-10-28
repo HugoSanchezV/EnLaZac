@@ -1,7 +1,7 @@
 <template>
   <div v-if="show" class="fixed z-10 inset-0 overflow-y-auto">
     <div
-      class="fixed inset-0 bg-gray-500 bg-opacity-10"
+      class="fixed inset-0 bg-black bg-opacity-70"
       @click="closeModal"
     ></div>
     <div class="flex items-center justify-center min-h-screen px-4">

@@ -226,7 +226,7 @@ class DevicesController extends Controller
 
     public function update(UpdateDeviceRequest $request, $id, $url = 'routers.devices')
     {
-        // dd($request);
+        dd($request);
         $validatedData = $request->validated();
 
         $device = Device::findOrFail($id);
@@ -426,7 +426,7 @@ class DevicesController extends Controller
             return Redirect::route('routers.devices', ['router' => $router->id])->with('error', 'Se produjo un error: ' . $e);
         }
     }
-    public function sendPing(Device $device)
+    public function sendPing(Device $device, $url = 'routers.devices')
     {
 
         $device = Device::findOrFail($device->id);
@@ -483,10 +483,10 @@ class DevicesController extends Controller
 
             $API->disconnect();
 
-            return Redirect::route('routers.devices', ['router' => $device->router_id])
+            return Redirect::route($url, ['router' => $device->router_id])
                 ->with($type, $message);
         } catch (Exception $e) {
-            return Redirect::route('routers.devices', ['router' => $device->router_id])
+            return Redirect::route($url, ['router' => $device->router_id])
                 ->with('error', $e);
         }
     }

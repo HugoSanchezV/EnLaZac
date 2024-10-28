@@ -17,15 +17,23 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\PayPalSettingController;
 use App\Http\Controllers\PingDeviceHistorieController;
+use App\Http\Controllers\RuralCommunityController;
 use App\Http\Controllers\ScheduledTaskController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\TechnicalDeviceHistoriesController;
+use App\Http\Controllers\TechnicalDevicesController;
+use App\Http\Controllers\TechnicalInventorieDevicesController;
+use App\Http\Controllers\TechnicalRouterController;
+use App\Http\Controllers\TechnicalTicketController;
 use App\Models\InventorieDevice;
 use App\Models\PingDeviceHistorie;
+use App\Services\WebRouterService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\MercadoPagoSettingController;
+use App\Http\Controllers\TelegramController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -42,6 +50,8 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
+    //telegram
+    Route::post('/telegram/send-message', [TelegramController::class, 'sendMessage'])->name('telegram.send-message');
    
     //Mercado Pago
     Route::middleware(['auth', 'verified'])->group(function () {
@@ -92,8 +102,6 @@ Route::middleware([
         Route::get('/pings',                  [PingController::class, 'index'])->name('pings');
         Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');
 
-
-
         // Devices
         Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
         Route::get('/devices/show/{id}',                  [DevicesController::class, 'show'])->name('devices.show');
@@ -112,17 +120,15 @@ Route::middleware([
         // -- ping
         Route::get('/devices/{router}/ping',                  [DevicesController::class, 'pingAllDevice'])->name('devices.all.ping');
         //Route::get('/devices/{router}/show/ping/status',       [DevicesController::class, 'showPingDevice'])->name('devices.show.all.ping');
-        //Route::get('/devices/all/set/device/ping/{device}',  [DevicesController::class, 'sendAllPing'])->name('devices.all.ping');
+        Route::get('/devices/all/set/device/ping/{device}',  [DevicesController::class, 'sendAllPing'])->name('devices.one.ping');
         Route::get('/devices/all/to/excel',     [DevicesController::class, 'allDevicesExportExcel'])->name('devices.all.excel');
         Route::post('/devices/all/import/excel',     [DevicesController::class, 'allDevicesImportExcel2'])->name('devices.import.excel');
         // Route::post('/devices/all/to/local/import/excel',     [DevicesController::class, 'allDevicesToLocalImportExcel'])->name('devices.to.local.import.excel');
         //Ping Devices Historie
         Route::get('/devices/ping/historie',     [PingDeviceHistorieController::class, 'index'])->name('device.ping.historie');
         Route::get('/routers/{router}/devices/ping/historie',     [PingDeviceHistorieController::class, 'index2'])->name('router.device.ping.historie');
-        Route::put('/devices/ping/historie/update/{pingDeviceHistorie}',     [PingDeviceHistorieController::class, 'update'])->name('device.ping.historie.update');
+        Route::put('/devices/ping/historie/update/{id}',     [PingDeviceHistorieController::class, 'update'])->name('device.ping.historie.update');
         Route::delete('/devices/ping/historie/delete/{id}',     [PingDeviceHistorieController::class, 'destroy'])->name('device.ping.historie.destroy');
-
-
 
         // inventorie_devices
         Route::get('/inventorie/devices',                 [InventorieDevicesController::class, 'index'])->name('inventorie.devices.index');
@@ -150,7 +156,6 @@ Route::middleware([
         Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
         //Leer y marcado como leída las notificaciones
 
-
         //Contracts Coordi
         Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
         Route::get('/contracts/create',          [ContractController::class, 'create'])->name('contracts.create');
@@ -159,8 +164,7 @@ Route::middleware([
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
         Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
-        Route::get('/contracts/to/excel',  [ContractController::class, 'exportExcel'])->name('contracts.excel');
-
+        Route::get('/contracts/to/excel',        [ContractController::class, 'exportExcel'])->name('contracts.excel');
 
         //Planes de internet
         Route::get('/plans',                     [PlanController::class, 'index'])->name('plans');
@@ -179,9 +183,15 @@ Route::middleware([
         Route::put('/charges/update/{id}',         [ChargeController::class, 'update'])->name('charges.update');
         Route::delete('/charges/delete/{id}',      [ChargeController::class, 'destroy'])->name('charges.destroy');
 
+        Route::get('/rural-community',                     [RuralCommunityController::class, 'index'])->name('rural-community');
+        Route::get('/rural-community/create',              [RuralCommunityController::class, 'create'])->name('rural-community.create');
+        Route::get('/rural-community/show/{id}',           [RuralCommunityController::class, 'show'])->name('rural-community.show');
+        Route::post('/rural-community/store',              [RuralCommunityController::class, 'store'])->name('rural-community.store');
+        Route::get('/rural-community/edit/{id}',           [RuralCommunityController::class, 'edit'])->name('rural-community.edit');
+        Route::put('/rural-community/update/{id}',         [RuralCommunityController::class, 'update'])->name('rural-community.update');
+        Route::delete('/rural-community/delete/{id}',      [RuralCommunityController::class, 'destroy'])->name('rural-community.destroy');
+        Route::post('/rural-community/updateContract/{id}', [RuralCommunityController::class, 'updateContract'])->name('rural-community.update.contract');
 
-        Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
-        Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
         Route::get('/sistema/backups',      [BackupsController::class, 'index'])->name('backups');
         Route::post('/sistema/backups/create',      [BackupsController::class, 'createBackup'])->name('backups.create');
@@ -195,10 +205,18 @@ Route::middleware([
         Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
        
         Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'index'])->name('settings.interest');
+        Route::get('/sistema/configuracion/intereses/edit/{id}', [InterestsController::class, 'edit'])->name('settings.interest.edit');
+        Route::put('/sistema/configuracion/intereses/update/{id}', [InterestsController::class, 'update'])->name('settings.interest.update');
     });
+    Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
+    Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
+
+   // Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
+   // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
     //MIDDLEWARE DEMÁS USUARIOS
     Route::middleware(['rol:2,3'])->group(function () {
+
         // Usuarios
         /*  Route::get('/dashboard', function () {
             return Inertia::render('DashboardBase');
@@ -207,7 +225,48 @@ Route::middleware([
 
     });
 
+    Route::middleware(['rol:3'])->group(function () {
+        //Router
+        Route::get('/tecnico/routers',                  [TechnicalRouterController::class, 'index'])->name('technical.routers');
+        Route::get('/tecnico/routers/show/{id}',        [TechnicalRouterController::class, 'show'])->name('technical.routers.show');
 
+        Route::get('/tecnico/routers/{id}/sync',        [TechnicalRouterController::class, 'sync'])->name('technical.routers.sync');
+        Route::get('/tecnico/routers/ping/{id}',     [TechnicalRouterController::class, 'sendPing'])->name('technical.routers.ping');
+
+        // -- devices
+        Route::get('/tecnico/routers/{router}/devices',     [TechnicalRouterController::class, 'devices'])->name('technical.routers.devices');
+        Route::get('/tecnico/devices',                  [TechnicalDevicesController::class, 'index'])->name('technical.devices');
+        Route::get('/tecnico/devices/show/{id}',                  [TechnicalDevicesController::class, 'show'])->name('technical.devices.show');
+        // -- device red
+        Route::patch('/tecnico/devices/set/device/status/{device}',     [TechnicalDevicesController::class, 'setDeviceStatus'])->name('technical.devices.set.status');
+        Route::patch('/tecnico/devices/all/set/device/status/{device}',     [TechnicalDevicesController::class, 'AllsetDeviceStatus'])->name('technical.devices.all.set.status');
+        Route::get('/tecnico/devices/set/device/ping/{device}',  [TechnicalDevicesController::class, 'sendPing'])->name('technical.devices.ping');
+
+        Route::put('/tecnico/devices/update/{device}',          [TechnicalInventorieDevicesController::class, 'update'])->name('technical.devices.update');
+        Route::put('/tecnico/devices/all/update/{device}',          [TechnicalInventorieDevicesController::class, 'device_all_update'])->name('technical.devices.all.update');
+
+        Route::get('/tecnico/devices/all/set/device/ping/{device}',  [TechnicalDevicesController::class, 'sendAllPing'])->name('technical.devices.one.ping');
+
+        // -- ping devices all
+        Route::get('/tecnico/devices/{router}/ping',                  [TechnicalDevicesController::class, 'pingAllDevice'])->name('technical.devices.all.ping');
+
+        // Invetorie
+        Route::get('/tecnico/inventorie/devices',                 [TechnicalInventorieDevicesController::class, 'index'])->name('technical.inventorie.devices.index');
+        Route::get('/tecnico/inventorie/devices/show/{id}', [TechnicalInventorieDevicesController::class, 'show'])->name('technical.inventorie.devices.show');
+        // Inventorie histories 
+        Route::get('/tecnico/inventorie/devices/histories',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.index');
+
+        // Tickets
+        Route::get('/tecnico/tickets',                    [TechnicalTicketController::class, 'index'])->name('technical.tickets');
+        Route::post('/tecnico/tickets/statusUpdate/{id}', [TechnicalTicketController::class, 'statusUpdate'])->name('technical.tickets.statusUpdate');
+        Route::get('/tecnico/tickets/create',             [TechnicalTicketController::class, 'create'])->name('technical.tickets.create');
+        Route::get('/tecnico/tickets/show/{id}',          [TechnicalTicketController::class, 'show'])->name('technical.tickets.show');
+        Route::get('/tecnico/tickets/create',             [TechnicalTicketController::class, 'create'])->name('technical.tickets.create');
+        Route::post('/tecnico/tickets/store',             [TechnicalTicketController::class, 'store'])->name('technical.tickets.store');
+        Route::get('/tecnico/tickets/edit/{id}',          [TechnicalTicketController::class, 'edit'])->name('technical.tickets.edit');
+        Route::put('/tecnico/tickets/update/{id}',        [TechnicalTicketController::class, 'update'])->name('technical.tickets.update');
+        // Route::delete('/tecnico/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
+    });
     //Vista generales
     /*  Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
     Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
