@@ -15,6 +15,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\PayPalSettingController;
+use App\Http\Controllers\PerformanceDeviceController;
 use App\Http\Controllers\PingDeviceHistorieController;
 use App\Http\Controllers\PreRegisterUserController;
 use App\Http\Controllers\RuralCommunityController;
@@ -26,6 +27,10 @@ use App\Http\Controllers\TechnicalDevicesController;
 use App\Http\Controllers\TechnicalInventorieDevicesController;
 use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
+use App\Models\InventorieDevice;
+use App\Models\PerformanceDevice;
+use App\Models\PingDeviceHistorie;
+use App\Services\WebRouterService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -46,10 +51,11 @@ Route::middleware([
 ])->group(function () {
 
     // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-    Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
     //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
+        Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
         Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
@@ -67,6 +73,9 @@ Route::middleware([
         Route::put('/usuarios/pre/register/update/{id}',          [PreRegisterUserController::class, 'update'])->name('usuarios.pre.register.update');
         Route::delete('/usuarios/pre/register/delete/{id}',          [PreRegisterUserController::class, 'destroy'])->name('usuarios.pre.register.destroy');
 
+        //Performance Devices
+        Route::get('/performance/user/{id}',                 [PerformanceDeviceController::class, 'indexByUser'])->name('performance');
+        Route::get('/performance/device/{id}',                 [PerformanceDeviceController::class, 'indexByDevice'])->name('performance');
         //Routers
         // -- Resource 
         Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
@@ -142,7 +151,6 @@ Route::middleware([
         Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
         Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
         Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
-        Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
         Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
         Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
         Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
@@ -207,7 +215,7 @@ Route::middleware([
     // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
     //MIDDLEWARE DEMÁS USUARIOS
-    Route::middleware(['rol:2,3'])->group(function () {
+  //  Route::middleware(['rol:2,3'])->group(function () {
 
         // Usuarios
         /*  Route::get('/dashboard', function () {
@@ -215,9 +223,14 @@ Route::middleware([
         })->name('dashboard');*/
         // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
-    });
-
+ //   });
     Route::middleware(['rol:3'])->group(function () {
+     //Dashboard
+     
+    //  Route::get('/dashboard', function () {
+    //      return Inertia::render('DashboardBase');
+    //  })->name('dashboard');
+
         //Router
         Route::get('/tecnico/routers',                  [TechnicalRouterController::class, 'index'])->name('technical.routers');
         Route::get('/tecnico/routers/show/{id}',        [TechnicalRouterController::class, 'show'])->name('technical.routers.show');
@@ -271,8 +284,16 @@ Route::middleware([
 
     //MIDDLEWARE DEL CLIENTE
     Route::middleware(['rol:0'])->group(function () {
+        // Route::get('/dashboard', function () {
+        //     return Inertia::render('DashboardBase');
+        // })->name('dashboard');
         Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
-        Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.usuario.store');
+        Route::get('/tickets/create/usuario',            [TicketController::class, 'create_user'])->name('tickets.usuario.create');
+        Route::post('/tickets/store/usuario',          [TicketController::class, 'store_user'])->name('tickets.usuario.store');
+        Route::get('/tickets/edit/usuario/{id}',         [TicketController::class, 'edit_user'])->name('tickets.usuario.edit');
+        Route::get('/tickets/update/usuario/{id}',         [TicketController::class, 'update_user'])->name('tickets.usuario.update');
+        Route::delete('/tickets/delete/usuario/{id}',    [TicketController::class, 'destroy_user'])->name('tickets.usuario.destroy');
+
     });
 
 

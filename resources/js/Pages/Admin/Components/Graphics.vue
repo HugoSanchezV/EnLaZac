@@ -8,14 +8,10 @@ import { defineProps } from "vue";
 const props = defineProps({
     index: Number,
     target:  Array,
-       
-        upload_rate: Array,
-     
-        download_rate: Array,
-       
-        upload_byte: Array,
-
-        download_byte: Array,
+    upload_rate: Array,
+    download_rate: Array,
+    upload_byte: Array,
+    download_byte: Array,
       
 })
 const rateMax = () => {

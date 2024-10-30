@@ -28,6 +28,6 @@ class CheckRole
             
         }
         //dd("eh: ".Auth::user()->admin.":".$admin);
-        return redirect('/dashboard')->with('success', 'No tienes acceso a esta sección.');
+        return redirect('/dashboard')->with('warning', 'No tienes acceso a esta sección.');
     }
 }

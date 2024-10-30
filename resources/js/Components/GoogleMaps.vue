@@ -3,7 +3,6 @@
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { Loader } from '@googlemaps/js-api-loader'
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyBQYG1b_KbXKX1ONj4eu2eWHD7k-qkjNkE'
 
 export default {
   props: {
@@ -29,7 +28,7 @@ export default {
     const otherPos = ref(null)
     const marker = ref(null) // Referencia para el marcador
 
-    const loader = new Loader({ apiKey: GOOGLE_MAPS_API_KEY })
+    const loader = new Loader({ apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY })
     const mapDiv = ref(null)
     let map = ref(null)
     let clickListener = null

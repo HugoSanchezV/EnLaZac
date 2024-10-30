@@ -2,10 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\DevicesController;
+use App\Http\Controllers\PerformanceDeviceController;
 use App\Models\Router;
+use App\Models\PerformanceDevice;
 use App\Services\RouterOSService;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Validator;
 
 class DeviceStats extends Command
 {
@@ -29,12 +33,41 @@ class DeviceStats extends Command
     public function handle()
     {
         $trafficData =  self::conectar();
-        self::getDate($trafficData);
+        $performance = self::getData($trafficData);
+        
+        $controller = new PerformanceDeviceController();
+       // $this->info($performance[1]);
+       // $this->info("------------");
 
+        foreach ($performance as $p)
+        {
+            if(!is_null($p['device_id']))
+            {
+                $controller->store($p);
+            }
+
+         //   $this->info("++++++++++++++");
+
+           // $controller->store($p);
+            //self::store($p);
+        }
         
     }
-    public function getDate($trafficData)
+
+    public function searchId($adress)
     {
+        $ipOnly = strtok($adress, '/');
+
+        $controller = new DevicesController();
+
+        return $controller->searchID($ipOnly);
+
+
+    }
+    public function getData($trafficData)
+    {
+        
+        $performance = [];
         if(empty($trafficData)){
             $target = [];
             $upload_rate = [];
@@ -48,34 +81,33 @@ class DeviceStats extends Command
                 if(!is_null($data)){
 
                     foreach($data as $dt){
-                        $targetTemp[] = $dt['target'];
+                        $perf = [];
+                        //$this->info($dt['target']);
+                      //  $this->info("data");
+                    //    $this->info($dt);
+                        //self::seachID($dt['target']);
+                        $perf['address'] = $dt['target'];
+                        $perf['device_id'] =  self::searchId($dt['target']);
                     
                         $rateArray = explode("/", $dt['rate']);
                         $byteArray = explode("/", $dt['bytes']);
                         // Asegurarse de que 'rate' contenga tanto subida como bajada
                         if (count($rateArray) === 2) {
-                            $upload_rateTemp[] = self::convertToGb($rateArray[0]);  // Tasa de subida
-                            $download_rateTemp[] = self::convertToGb($rateArray[1]);  // Tasa de bajada
+
+                            $perf['rate'] = ['upload' => self::convertToGb($rateArray[0]),'download' => self::convertToGb($rateArray[1])]; 
+                            // $upload_rateTemp = self::convertToGb($rateArray[0]);  // Tasa de subida
+                            // $download_rateTemp = self::convertToGb($rateArray[1]);  // Tasa de bajada
                         }
                         if (count($byteArray) === 2) {
-                            $upload_byteTemp[] = self::convertToGb($byteArray[0]);  // Tasa de subida
-                            $download_byteTemp[] = self::convertToGb($byteArray[1]);  // Tasa de bajada
+                            $perf['byte'] = ['upload' => self::convertToGb($byteArray[0]),'download' => self::convertToGb($byteArray[1])];
                         }
+                        $performance[] = $perf;
                     }
-                    $target[] = $targetTemp;
-                    $upload_rate[] = $upload_rateTemp;
-                    $download_rate[] = $download_rateTemp;
-                    $upload_byte[] = $upload_byteTemp;
-                    $download_byte[] = $download_byteTemp;
                     
-                    $targetTemp = [];
-                    $upload_rateTemp = [];
-                    $download_rateTemp = [];
-                    $upload_byteTemp = [];
-                    $download_byteTemp = [];
                 }
             }  
         }
+        return $performance;
     }
     public function conectar(){
         $trafficData = [];

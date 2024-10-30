@@ -99,29 +99,34 @@ const props = defineProps({
           </div>
         </div>
 
-        
-
-        <!-- Muestra el tipo de plan del usuario 
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Tipo de Plan</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.contract }}</dd>
-        </div>-->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Contrato asignado</dt>
-          <Link 
-            :href="route('contracts.show', contract.id)"
-            class="cursor-pointer"
-          >
-            <dd class="mt-1 text-sm text-gray-900">{{ contract === null ? "Sin asignar" : contract.id }}</dd>
-          </Link>
+            <div v-if="contract !== null">
+              <Link
+                :href="route('contracts.show', contract.id)"
+                class="cursor-pointer text-blue-500 underline"
+              >
+                <dd class="mt-1 text-sm text-gray-900">{{ contract.id }}</dd>
+              </Link>
+              
+            </div>
+            <div v-else>
+              <dd class="mt-1 text-sm text-gray-900"><p>Sin asignar</p></dd>
+            </div>
+
         </div>
 
         <!-- Muestra el costo del plan -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Plan afiliado</dt>
-          <Link :href="route('plans.show', plan.id)">
-            <dd class="mt-1 text-sm text-gray-900">{{ plan === null ? "Sin asignar" : plan.name }}</dd>
-          </Link>
+          <div v-if="plan !== null">
+            <Link :href="route('plans.show', plan.id)" class="cursor-pointer text-blue-500 underline">
+              <dd class="mt-1 text-sm text-gray-900">{{ plan === null ? "Sin asignar" : plan.name }}</dd>
+            </Link>
+          </div>
+          <div v-else>
+            <dd class="mt-1 text-sm text-gray-900"><p>Sin asignar</p></dd>
+          </div>
         </div>
 
         <!-- Muestra el número de tickets enviados por el usuario -->

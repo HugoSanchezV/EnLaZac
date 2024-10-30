@@ -16,22 +16,23 @@ const filters = [
   "id",
   "usuario",
   "plan internet",
+  "comunidad",
   "fecha de inicio",
   "fecha de terminación",
   "¿activo?",
   "dirección",
-  "comunidad"
+  
 ];
 
 const headers = [
   "Id",
   "Usuarios",
   "Plan Internet",
+  "Comunidad",
   "Fecha de Inicio",
   "Fecha de Terminación",
   "¿Activo?",
   "Dirección",
-  "Comunidad",
   "Acciones",
 ];
 //const filters = ["id", "usuario", "plan internet", "dirección"];

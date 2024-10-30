@@ -112,7 +112,7 @@ class PlanController extends Controller
     public function store(StorePlanRequest $request)
     {  
         $validatedData = $request->validated();
-        $plan = Plan::create($validatedData);
+        Plan::create($validatedData);
 
         return redirect()->route('plans')->with('success', 'Plan de internet creado con éxito');
 

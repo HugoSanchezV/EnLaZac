@@ -96,7 +96,7 @@ class ChargeController extends Controller
     }
     public function store_schedule(Charge $request)
     {   
-        $charge = Charge::create([
+        Charge::create([
             'contract_id' => $request->contract_id,
             'description' => $request->description,
             'amount' => $request->amount,
