@@ -43,7 +43,13 @@ class DevicesController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orwhere('device_internal_id', 'like', "%$search%")
-                    ->orWhere('device_id', 'like', "%$search%")
+                    // ->orWhere('device_id', 'like', "%$search%")
+                    ->orWhereHas('inventorieDevice', function ($q) use ($search) {
+                        $q->where('mac_address', 'like', "%$search%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('comment', 'like', "%$search%")
                     ->orWhere('address', 'like', "%$search%")
                     ->orWhere('disabled', 'like', "%$search%");
@@ -226,7 +232,6 @@ class DevicesController extends Controller
 
     public function update(UpdateDeviceRequest $request, $id, $url = 'routers.devices')
     {
-        dd($request);
         $validatedData = $request->validated();
 
         $device = Device::findOrFail($id);
