@@ -31,7 +31,7 @@ class TicketController extends Controller
                     ->orWhere('description', 'like', "%$search%")
                     ->orWhere('status', 'like', "%$search%")
                     ->orWhere('user_id', 'like', "%$search%")
-                    ->orWhere('created_at','like', "%$search%");
+                    ->orWhere('created_at', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
@@ -49,11 +49,12 @@ class TicketController extends Controller
                 'description' => $item->description,
                 'status' => $item->status,
                 'user_id' =>  $item->user->name,
+                'technical_id' =>  $item->technical->name ?? null,
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];
         });
 
-        
+
         $totalTicketsCount = Ticket::count();
 
         return Inertia::render('Coordi/Tickets/Tickets', [
@@ -66,11 +67,11 @@ class TicketController extends Controller
                 'total' => $tickets->total(),
             ],
             'success' => session('success') ?? null,
-            'totalTicketsCount' => $totalTicketsCount 
+            'totalTicketsCount' => $totalTicketsCount
         ]);
     }
 
-    
+
     //Muestra la información del ticket y del usuario en específico
     public function show($id)
     {
@@ -84,55 +85,73 @@ class TicketController extends Controller
     public function create()
     {
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
-        
+        $technicals = User::select('id', 'name')->where('admin', '=', '3')->get();
+
         return Inertia::render(
             'Coordi/Tickets/Create',
             [
                 'users' => $users,
+                'technicals' => $technicals,
             ]
         );
     }
 
     public function store(StoreTicketRequest $request)
     {
-        if($request->user_id == null){
+        if ($request->user_id == null) {
             $user_id = Auth::id();
-        }else{
+        } else {
             $user_id = $request->user_id;
         }
-        
+
         $validatedData = $request->validated();
 
-       // print('HOLAAA');
+        // print('HOLAAA');
         $ticket = Ticket::create([
             'subject' => $validatedData['subject'],
             'description' => $validatedData['description'],
             'user_id' => $user_id,
+            'technical_id' => $request->technical_id ?? null,
         ]);
 
-       self::make_ticket_notification($ticket);
+        self::make_ticket_notification($ticket);
 
-        return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');    
+        return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
     }
 
     public function edit($id)
     {
         $ticket = Ticket::findOrFail($id);
-        $name = $ticket->user->name; // Accede al nombre del usuario que creó el ticket
+        $nombre = $ticket->user->name;
+
+        $usersAndTechnicals = User::select('id', 'name', 'admin')
+            ->whereIn('admin', [0, 3])
+            ->get();
+
+        $users = $usersAndTechnicals->where('admin', 0);
+        $technicals = $usersAndTechnicals->where('admin', 3);
 
         return Inertia::render('Coordi/Tickets/Edit', [
             'ticket' => $ticket,
-            'nombre' => $name,
+            'nombre' => $nombre,
+            'users' => $users,
+            'technicals' => $technicals,
         ]);
     }
 
-    
+
     public function update(UpdateTicketRequest $request, $id)
     {
         $ticket = Ticket::findOrFail($id);
 
         $validatedData = $request->validated();
-        $ticket->update($validatedData);
+        $ticket->update([
+            'subject' => $validatedData['subject'],
+            'status' => $validatedData['status'],
+            'description' => $validatedData['description'],
+            'user_id' => $request->user_id ?? null,
+            'technical_id' => $request->technical_id ?? null,
+        ]);
         return redirect()->route('tickets')->with('success', 'Ticket Actualizado Con Éxito');
     }
     public function statusUpdate(UpdateTicketStatusRequest $request, $id)
@@ -140,7 +159,7 @@ class TicketController extends Controller
         $ticket = Ticket::findOrFail($id);
         $ticket->status = $request->input('status');
         $ticket->save();
-        
+
 
         return redirect()->route('tickets')->with('success', 'Estado del Ticket Actualizado Con Éxito');
     }
@@ -151,7 +170,8 @@ class TicketController extends Controller
         return Redirect::route('tickets')->with('success', 'Ticket Eliminado Con Éxito');
     }
 
-    static function make_ticket_notification($ticket){
+    static function make_ticket_notification($ticket)
+    {
         event(new TicketEvent($ticket));
     }
     //Para Usuarios mortales--------------------------------------------------------------------------
@@ -160,10 +180,10 @@ class TicketController extends Controller
     {
         $userId = Auth::id(); // Obtén el ID del usuario autenticado
         $query = Ticket::query();
-    
+
         // Filtra los tickets por el usuario autenticado
         $query->where('user_id', $userId);
-    
+
         // Filtro de búsqueda
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -173,18 +193,18 @@ class TicketController extends Controller
                     ->orWhere('description', 'like', "%$search%")
                     ->orWhere('status', 'like', "%$search%")
                     ->orWhere('user_id', 'like', "%$search%")
-                    ->orWhere('created_at','like', "%$search%");
+                    ->orWhere('created_at', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
-    
+
         // Ordenamiento
         if ($request->order) {
             $query->orderBy($request->order, 'asc');
         } else {
             $query->orderBy('id', 'asc');
         }
-    
+
         // Paginación y transformación de los datos
         $tickets = $query->latest()->paginate(8)->through(function ($item) {
             return [
@@ -192,13 +212,13 @@ class TicketController extends Controller
                 'subject' => $item->subject,
                 'description' => $item->description,
                 'status' => $item->status,
- //               'user_id' =>  $item->user_id,
+                //               'user_id' =>  $item->user_id,
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];
         });
-    
+
         $totalTicketsCount = Ticket::where('user_id', $userId)->count(); // Cuenta total de tickets del usuario autenticado
-    
+
         return Inertia::render('User/Tickets/Tickets', [
             'tickets' => $tickets,
             'pagination' => [
@@ -209,8 +229,7 @@ class TicketController extends Controller
                 'total' => $tickets->total(),
             ],
             'success' => session('success') ?? null,
-            'totalTicketsCount' => $totalTicketsCount 
+            'totalTicketsCount' => $totalTicketsCount
         ]);
     }
-   
 }

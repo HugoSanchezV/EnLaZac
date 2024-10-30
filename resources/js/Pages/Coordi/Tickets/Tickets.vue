@@ -15,6 +15,7 @@ const headers = [
   "Descripción",
   "Estado",
   "Cliente",
+  "Encagado",
   "Creación",
   "Acciones",
 ];
@@ -24,6 +25,7 @@ const filters = [
   "descripción",
   "estado",
   "usuario",
+  "Encargado",
   "creación",
 ];
 </script>

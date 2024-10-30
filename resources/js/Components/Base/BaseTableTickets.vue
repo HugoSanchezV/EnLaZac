@@ -100,6 +100,11 @@ const getTag = (cellIndex) => {
       return cellIndex;
   }
 };
+
+
+const subString = (text) => {
+  return text.substr(0, 15) + '...';
+};
 </script>
 <style>
 .boton-modal label {
@@ -434,6 +439,9 @@ const getTag = (cellIndex) => {
                     </li>
                   </ul>
                 </div>
+              </div>
+              <div v-else-if="cellIndex === 'description'">
+                {{ subString(cell) }}
               </div>
               <div v-else>
                 <div class="flex gap-1">

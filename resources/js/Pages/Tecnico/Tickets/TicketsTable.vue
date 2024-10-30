@@ -473,7 +473,7 @@ const getTag = (cellIndex) => {
 
                 Mostrar
               </Link>
-              <Link
+              <!-- <Link
                 v-if="edit"
                 :href="route('technical.tickets.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -494,7 +494,7 @@ const getTag = (cellIndex) => {
                 </svg>
 
                 Editar
-              </Link>
+              </Link> -->
               <!-- <div v-if="del">
                 <button
                   @click="destroy(row.id)"

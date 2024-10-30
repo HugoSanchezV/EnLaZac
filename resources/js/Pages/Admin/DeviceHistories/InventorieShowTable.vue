@@ -6,7 +6,8 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
-// ACCION DE ELIMINAR
+const defaultOrder = "DESC";
+// ACCION DE ELIMINAR1
 const destroy = (id) => {
   const toast = useToast();
 
@@ -22,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("inventorie.devices.destroy", id);
+          const url = route("historieDevices.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -70,6 +71,7 @@ const getTag = (cellIndex) => {
             { id: 0, order: 'ASC' },
             { id: 1, order: 'DESC' },
           ]"
+          :order="defaultOrder"
           name="order"
           @elementSelected="orderSelect"
         >
@@ -204,7 +206,22 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'state'">
+            <div v-if="cellIndex === 'device'">
+              <Link href="#">
+                {{ cell.mac_address }}
+              </Link>
+            </div>
+            <div v-else-if="cellIndex === 'user' && cell !== null">
+              <Link href="#">
+                {{ cell.name }}
+              </Link>
+            </div>
+            <div v-else-if="cellIndex === 'creator'">
+              <Link href="#">
+                {{ cell.name }}
+              </Link>
+            </div>
+            <div v-else-if="cellIndex === 'state'">
               <div v-if="cell === 0" class="bg-blue-300 rounded-md">
                 <div class="flex justify-center items-center gap-2">
                   <svg
@@ -274,49 +291,6 @@ const getTag = (cellIndex) => {
 
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
-              <Link
-                :href="route('historieDevices.show', row.id)"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"
-                  />
-                </svg>
-                Historial
-              </Link>
-              <Link
-                v-if="edit"
-                :href="route('inventorie.devices.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                  />
-                </svg>
-
-                Editar
-              </Link>
-
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
@@ -390,7 +364,7 @@ export default {
       dropdownOpen2: false,
       currentFilter: "id",
       currentUser: "todos",
-      currentOrder: "ASC",
+      currentOrder: "DESC",
       typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
     };
   },

@@ -10,11 +10,31 @@ use Exception;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function PHPUnit\Framework\isNull;
+
 class DeviceHistoriesController extends Controller
 {
-    public function index(Request $request)
+
+    private $pathDefault = "Admin/DeviceHistories/Index";
+    private $pathShow = "Admin/DeviceHistories/Show";
+
+    public function index(Request $request, $id = null)
     {
-        $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
+        $query = null;
+        if (!isset($id)) {
+            $path = $this->pathDefault;
+            $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
+            return self::indexHelper($request, $query, $path);
+        }
+
+        $path = $this->pathShow;
+        $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name'])->where('id', $id);
+        return self::indexHelper($request, $query, $path);
+    }
+
+    public function indexHelper(Request $request, $query, $path)
+    {
+        // $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -61,7 +81,7 @@ class DeviceHistoriesController extends Controller
         //$users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         //$inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
-        return Inertia::render('Admin/DeviceHistories/Index', [
+        return Inertia::render($path, [
             'histories' => $histories,
             'pagination' => [
                 'links' => $histories->links()->elements[0],
@@ -69,7 +89,7 @@ class DeviceHistoriesController extends Controller
                 'prev_page_url' => $histories->previousPageUrl(),
                 'per_page' => $histories->perPage(),
                 'total' => $histories->total(),
-        ],
+            ],
             'success' => session('success') ?? null,
             'error' => session('error') ?? null,
             'warning' => session('warning') ?? null,
@@ -94,9 +114,15 @@ class DeviceHistoriesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(DeviceHistorie $deviceHistorie)
+    public function show(Request $request, DeviceHistorie $deviceHistorie)
     {
         //
+        try {
+            self::index2($request, $deviceHistorie->id);
+        } catch (Exception $e) {
+            return redirect()->route('historieDevices.index')
+                ->with('error', 'Ocurrion un error con el registro');
+        }
     }
 
     /**
@@ -115,11 +141,14 @@ class DeviceHistoriesController extends Controller
         }
     }
 
-    public function exportExcel()
+    public function exportExcel($id = null)
     {
-        $data = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
-
-        $query = $data;
+        $query = null;
+        $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
+        if (!isset($deviceHistorie)) {
+            $query->where('id', $id);
+        } 
+ 
 
         $headings = [
             'ID',

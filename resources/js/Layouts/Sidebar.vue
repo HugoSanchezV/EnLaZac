@@ -101,7 +101,7 @@ const menuItems = ref([
     isOpen: false,
     icon: "earthquake", // ejemplo de path de SVG
     subItems: [
-      { name: "Principal", route: "tickets" },
+      // { name: "Principal", route: "tickets" },
       { name: "Estadísticas", route: "dashboard" },
     ],
   },
@@ -137,6 +137,17 @@ const menuItems = ref([
       { name: "Historial de Inv.", route: "historieDevices.index" },
     ],
   },
+  {
+    name: "Reportes",
+    route: "tickets",
+    isOpen: false,
+    icon: "flag_2", // ejemplo de path de SVG
+    subItems: [
+      { name: "Tickets", route: "tickets" },
+      // { name: "Planes", route: "plans" },
+    ],
+  },
+
   {
     name: "Sistema",
     route: "inventorie.devices.index",

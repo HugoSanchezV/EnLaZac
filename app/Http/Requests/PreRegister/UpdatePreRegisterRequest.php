@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\PreRegister;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+class UpdatePreRegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,28 +21,26 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('id');
-
+        $preRegisterUserId = $this->route('pre_register_user'); // Suponiendo que pasas el ID del pre-registro en la ruta
         return [
-            'name' => 'required|string|max:255',
-            'alias' => 'nullable|string|max:255',
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique('users', 'email')->ignore($userId),
-            ],
             'phone' => [
                 'required',
                 'string',
                 'size:10', // Exactamente 12 caracteres
-                // 'unique:pre_register_users,phone,' . $userId, 
-                Rule::unique('users', 'phone')->ignore($userId),
+                'unique:pre_register_users,phone,' . $preRegisterUserId, // Ignora el registro actual en pre_register_users
                 'unique:users,phone', // Verificación en users (para evitar duplicados)
             ],
-            'password' => 'nullable|string|min:8|confirmed',
-            'admin' => 'required|integer|in:0,2,3',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'phone.unique' => 'El número de teléfono ya está registrado.',
+            'phone.size' => 'El número de teléfono debe tener exactamente 12 dígitos.',
         ];
     }
 }

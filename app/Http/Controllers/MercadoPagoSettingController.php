@@ -1,18 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\MercadoPagoAccount; // Importa el modelo que representa la configuración en la base de datos.
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+
+use MercadoPago\Client\Common\RequestOptions;
+use MercadoPago\Client\Payment\PaymentClient;
+use MercadoPago\Exceptions\MPApiException;
+use MercadoPago\MercadoPagoConfig;
+
 use MercadoPago; // Importa el SDK de Mercado Pago.
 use MercadoPago\Client\MercadoPagoClient;
-Use MercadoPago\SDK;
 
 class MercadoPagoSettingController extends Controller
 {
-    
+
     /**
      * Constructor para inicializar el SDK de Mercado Pago con el access token correcto.
      */
@@ -22,13 +28,12 @@ class MercadoPagoSettingController extends Controller
         $mode = config('mercadopago.mode', 'sandbox');
 
         // Selecciona el access token adecuado según el modo.
-        $accessToken = $mode === 'live' 
-            ? env('MERCADOPAGO_ACCESS_TOKEN_LIVE') 
+        $accessToken = $mode === 'live'
+            ? env('MERCADOPAGO_ACCESS_TOKEN_LIVE')
             : env('MERCADOPAGO_ACCESS_TOKEN_SANDBOX');
 
         // Inicializa el SDK de Mercado Pago con el token seleccionado.
-        MercadoPago\SDK::setAccessToken($accessToken);
-       
+        MercadoPagoConfig::setAccessToken($accessToken);
     }
 
     /**
@@ -38,7 +43,7 @@ class MercadoPagoSettingController extends Controller
     {
         // Recupera la configuración existente (si existe).
         $settings = MercadoPagoAccount
-        ::first();
+            ::first();
 
         // Renderiza la vista con Inertia, pasando la configuración actual.
         return Inertia::render('Admin/Settings/MercadoPago/Edit', [

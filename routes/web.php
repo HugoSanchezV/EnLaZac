@@ -5,7 +5,6 @@ use App\Http\Controllers\BackupsController;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\RouterController;
 use App\Http\Controllers\PingController;
-use App\Http\Controllers\RouterosApiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\ContractController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\PayPalSettingController;
 use App\Http\Controllers\PingDeviceHistorieController;
+use App\Http\Controllers\PreRegisterUserController;
 use App\Http\Controllers\RuralCommunityController;
 use App\Http\Controllers\ScheduledTaskController;
 use App\Http\Controllers\SettingsController;
@@ -26,9 +26,6 @@ use App\Http\Controllers\TechnicalDevicesController;
 use App\Http\Controllers\TechnicalInventorieDevicesController;
 use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
-use App\Models\InventorieDevice;
-use App\Models\PingDeviceHistorie;
-use App\Services\WebRouterService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -73,9 +70,15 @@ Route::middleware([
         Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])->name('usuarios.edit');
         Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])->name('usuarios.update');
         Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
-        Route::get('/usuarios/to/excel',  [UserController::class, 'exportExcel'])->name('usuarios.excel');
-        Route::post('/usuarios/import/excel',  [UserController::class, 'importExcel'])->name('usuarios.import.excel');
+        Route::get('/usuarios/to/excel',        [UserController::class, 'exportExcel'])->name('usuarios.excel');
+        Route::post('/usuarios/import/excel',   [UserController::class, 'importExcel'])->name('usuarios.import.excel');
 
+        Route::get('/usuarios/pre/register/',                     [PreRegisterUserController::class, 'index'])->name('usuarios.pre.register');
+        Route::get('/usuarios/pre/register/create',               [PreRegisterUserController::class, 'create'])->name('usuarios.pre.register.create');
+        Route::post('/usuarios/pre/register/store',                [PreRegisterUserController::class, 'store'])->name('usuarios.pre.register.store');
+        Route::get('/usuarios/pre/register/edit/{PreRegisterUser}',            [PreRegisterUserController::class, 'edit'])->name('usuarios.pre.register.edit');
+        Route::put('/usuarios/pre/register/update/{id}',          [PreRegisterUserController::class, 'update'])->name('usuarios.pre.register.update');
+        Route::delete('/usuarios/pre/register/delete/{id}',          [PreRegisterUserController::class, 'destroy'])->name('usuarios.pre.register.destroy');
 
         //Routers
         // -- Resource 
@@ -86,8 +89,8 @@ Route::middleware([
         Route::get('/routers/edit/{id}',        [RouterController::class, 'edit'])->name('routers.edit');
         Route::put('/routers/update/{id}',      [RouterController::class, 'update'])->name('routers.update');
         Route::delete('/routers/delete/{id}',   [RouterController::class, 'destroy'])->name('routers.destroy');
-        Route::get('/routers/to/excel',  [RouterController::class, 'exportExcel'])->name('routers.excel');
-        Route::post('/routers/import/excel',  [RouterController::class, 'importExcel'])->name('routers.import.excel');
+        Route::get('/routers/to/excel',         [RouterController::class, 'exportExcel'])->name('routers.excel');
+        Route::post('/routers/import/excel',    [RouterController::class, 'importExcel'])->name('routers.import.excel');
 
         // -- sync
         Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
@@ -142,6 +145,9 @@ Route::middleware([
         Route::post('/inventorie/devices/histories/import/excel',          [InventorieDevicesController::class, 'importExcel'])->name('historieDevices.import.excel');
 
         Route::get('/inventorie/devices/histories',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
+        Route::get('/inventorie/devices/histories/show/{DeviceHistorie}',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.show');
+        Route::get('/inventorie/devices/histories/to/excel/{id}',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel.historie');
+
         Route::delete('/inventorie/devices/histories/{device}/delete',          [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');
         Route::get('/inventorie/devices/histories/to/excel',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
         //Tickets coordi
@@ -211,8 +217,8 @@ Route::middleware([
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
-   // Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
-   // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
+    // Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
+    // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
     //MIDDLEWARE DEMÁS USUARIOS
     Route::middleware(['rol:2,3'])->group(function () {

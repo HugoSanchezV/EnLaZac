@@ -20,6 +20,7 @@ class TechnicalTicketController extends Controller
     {
         $query = Ticket::query();
 
+        $query->where('technical_id', Auth::id());
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
