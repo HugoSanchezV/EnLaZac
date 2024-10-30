@@ -12,9 +12,26 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class TechnicalDeviceHistoriesController extends Controller
 {
-    public function index(Request $request)
+    private $pathDefault = "Tecnico/DeviceHistories/Index";
+    private $pathShow = "Tecnico/DeviceHistories/Show";
+
+    public function index(Request $request, $id = null)
     {
-        $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
+        $query = null;
+        if (!isset($id)) {
+            $path = $this->pathDefault;
+            $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
+            return self::indexHelper($request, $query, $path);
+        }
+
+        $path = $this->pathShow;
+        $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name'])->where('id', $id);
+        return self::indexHelper($request, $query, $path);
+    }
+
+    public function indexHelper(Request $request, $query, $path)
+    {
+        // $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -61,7 +78,7 @@ class TechnicalDeviceHistoriesController extends Controller
         //$users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         //$inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
-        return Inertia::render('Tecnico/DeviceHistories/Index', [
+        return Inertia::render($path, [
             'histories' => $histories,
             'pagination' => [
                 'links' => $histories->links()->elements[0],
@@ -69,7 +86,7 @@ class TechnicalDeviceHistoriesController extends Controller
                 'prev_page_url' => $histories->previousPageUrl(),
                 'per_page' => $histories->perPage(),
                 'total' => $histories->total(),
-        ],
+            ],
             'success' => session('success') ?? null,
             'error' => session('error') ?? null,
             'warning' => session('warning') ?? null,

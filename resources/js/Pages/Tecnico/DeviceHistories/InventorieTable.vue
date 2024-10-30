@@ -8,39 +8,39 @@ import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 const defaultOrder = "DESC";
 // ACCION DE ELIMINAR1
-const destroy = (id) => {
-  const toast = useToast();
+// const destroy = (id) => {
+//   const toast = useToast();
 
-  toast(
-    {
-      component: BaseQuestion,
-      props: {
-        message: "¿Estas seguro de Eliminar el Router?",
-        accept: true,
-        cancel: true,
-        textConfirm: "Eliminar",
-      },
+//   toast(
+//     {
+//       component: BaseQuestion,
+//       props: {
+//         message: "¿Estas seguro de Eliminar el Router?",
+//         accept: true,
+//         cancel: true,
+//         textConfirm: "Eliminar",
+//       },
 
-      listeners: {
-        accept: () => {
-          const url = route("historieDevices.destroy", id);
+//       listeners: {
+//         accept: () => {
+//           const url = route("tehistorieDevices.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
-        },
-      },
-    },
+//           router.delete(url, () => {
+//             onError: (error) => {
+//               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+//             };
+//           });
+//         },
+//       },
+//     },
 
-    {
-      type: TYPE.WARNING,
-      position: POSITION.TOP_CENTER,
-      timeout: 10000,
-    }
-  );
-};
+//     {
+//       type: TYPE.WARNING,
+//       position: POSITION.TOP_CENTER,
+//       timeout: 10000,
+//     }
+//   );
+// };
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
@@ -208,7 +208,7 @@ const getTag = (cellIndex) => {
           >
             <div v-if="cellIndex === 'device'">
               <Link href="#">
-                {{ cell.mac_address }}
+                {{ cell.mac_address  }} 
               </Link>
             </div>
             <div v-else-if="cellIndex === 'user' && cell !== null">

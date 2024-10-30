@@ -247,6 +247,7 @@ Route::middleware([
         Route::get('/tecnico/inventorie/devices/show/{id}', [TechnicalInventorieDevicesController::class, 'show'])->name('technical.inventorie.devices.show');
         // Inventorie histories 
         Route::get('/tecnico/inventorie/devices/histories',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.index');
+        Route::get('/tecnico/inventorie/devices/histories/show/{DeviceHistorie}',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.show');
 
         // Tickets
         Route::get('/tecnico/tickets',                    [TechnicalTicketController::class, 'index'])->name('technical.tickets');

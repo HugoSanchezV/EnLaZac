@@ -40,7 +40,7 @@ class UpdateUserRequest extends FormRequest
                 'size:10', // Exactamente 12 caracteres
                 // 'unique:pre_register_users,phone,' . $userId, 
                 Rule::unique('users', 'phone')->ignore($userId),
-                'unique:users,phone', // Verificación en users (para evitar duplicados)
+                //'unique:users,phone', // Verificación en users (para evitar duplicados)
             ],
             'password' => 'nullable|string|min:8|confirmed',
             'admin' => 'required|integer|in:0,2,3',
