@@ -6,6 +6,7 @@ use App\Events\ContractWarningEvent;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\InterestsController;
+use App\Services\ChargeService;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\Contract;
@@ -42,6 +43,7 @@ class CheckContracts extends Command
        // $this->info('DIA DE HOY : '.$diaT);
         
         //END_DATE es igual a la fecha de corte
+        $service = new ChargeService();
         $contractTerms = Contract::where('end_date', '<=', $today)->get();
         //INSERTAR CONSULTA DE PAGOS
         $this->info($contractTerms);
@@ -69,19 +71,19 @@ class CheckContracts extends Command
                         self::disconectUser($contract);
                         //Generar cargo
 
-                        self::Extra_charge($contract);
+                        self::Extra_charge($service, $contract);
                     }
                 }
                 if($mesT == 1)
                 {
                     if(($diaT == 1)&&(($anoT > $endDate->year)&&($mesT < $endDate->month)))
                     {
-                        self::cargoPorPago($contract);
+                        self::cargoPorPago($service, $contract);
                     }
                 }else{
                     if(($diaT == 1)&&(($endDate->year == $anoT)&&($mesT > $endDate->month)))
                     {
-                        self::cargoPorPago($contract);
+                        self::cargoPorPago($service, $contract);
                     }
                 }
                 
@@ -91,37 +93,12 @@ class CheckContracts extends Command
         $this->info('Se han verificado los contratos.');
 
     }
-    public function cargoPorPago($contract)
-    {
-        $controller = new ChargeController();
-        $cargo = new Charge();
-        $controllerInterest = new InterestsController();
-        //Set data
-        $interest = $controllerInterest->getInterest(1);
+    public function cargoPorPago($service , Contract $contract)
+    {$service->createChargeCourtDate($contract);}
 
-        $cargo->contract_id = $contract->id;
-        $cargo->description = "No pago el servicio durante el mes";
-        $cargo->amount = $interest->amount;
-        $cargo->paid = false;
-        
-        //$this->info($cargo);
-        $controller->store_schedule($cargo);
-    }
-    public function extra_charge($contract)
-    {
-        $controller = new ChargeController();
-        $cargo = new Charge();
-        $controllerInterest = new InterestsController();
-        $interest = $controllerInterest->getInterest(1);
-        //Set data
-        $cargo->contract_id = $contract->id;
-        $cargo->description = "No pagó antes del día de corte";
-        $cargo->amount = $interest->amount;
-        $cargo->paid = false;
-        
-        //$this->info($cargo);
-        $controller->store_schedule($cargo);
-    }
+    public function extra_charge($service, Contract $contract)
+    {$service->createChargeMounthsDebt($contract);}
+
     public function sendEmail($contract)
     {
         event(new ContractWarningEvent($contract));

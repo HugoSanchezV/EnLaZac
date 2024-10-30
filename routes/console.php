@@ -21,4 +21,5 @@ Schedule::call(function () {
 })->everyFifteenMinutes();
 
 Schedule::command('app:check-contracts')->daily();
+Schedule::command('app:device-stats')->everyFiveMinutes();
 //Schedule::command('app:ping-devices')->everyThirtyMinutes();

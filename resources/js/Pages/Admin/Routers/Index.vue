@@ -18,7 +18,7 @@ onMounted(() => {
     document.getElementById("activated").checked = true;
   }
 });
-
+let enviado = false;
 const updateStatus = () => {
   const toast = useToast();
 
@@ -35,21 +35,25 @@ const updateStatus = () => {
       listeners: {
         accept: () => {
           // event.stopPropagation();     // Evitar que el evento burbujee a otros elementos
-          const url = route("routers.scheduled.ping", "1");
+          const url = route("routers.scheduled.ping", "ping-routers");
 
           router.put(url, () => {
             onError: (error) => {
               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
             };
           });
-
-          const activatedCheckbox = document.getElementById("activated");
-          activatedCheckbox.checked = !props.success;
+          enviado = true;
         },
 
         cancel: () => {
-          const activatedCheckbox = document.getElementById("activated");
-          activatedCheckbox.checked = props.success;
+          if(!enviado)
+          {
+            const activatedCheckbox = document.getElementById("activated");
+            activatedCheckbox.checked = props.schedule;
+          }else{
+            enviado = false;
+          }
+          //salert("GOlar");
         },
       },
     },

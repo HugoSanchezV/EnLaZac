@@ -38,7 +38,7 @@ const updateStatus = () => {
       listeners: {
         accept: () => {
           // event.stopPropagation();     // Evitar que el evento burbujee a otros elementos
-          const url = route("routers.scheduled.ping", "1");
+          const url = route("routers.scheduled.ping", "ping-routers");
 
           router.put(url, () => {
             onError: (error) => {

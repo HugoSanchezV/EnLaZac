@@ -3,9 +3,9 @@ import { router } from "@inertiajs/vue3";
 
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
-import BaseQuestion from "./BaseQuestion.vue";
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 
-import FilterOrderBase from "./FilterOrderBase.vue";
+import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 // ACCION DE ELIMINAR
 const destroy = (id) => {
@@ -15,7 +15,7 @@ const destroy = (id) => {
     {
       component: BaseQuestion,
       props: {
-        message: "¿Estas seguro de Eliminar el registro?",
+        message: "¿Estas seguro de Eliminar el Router?",
         accept: true,
         cancel: true,
         textConfirm: "Eliminar",
@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("tickets.usuario.destroy", id);
+          const url = route("routers.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -42,57 +42,7 @@ const destroy = (id) => {
   );
 };
 
-const getTag = (cellIndex) => {
-  switch (cellIndex) {
-    case "subject":
-      return "asunto";
-    case "ip_address":
-      return "ip";
-
-    case "description":
-      return "descripción";
-
-    case "user_id":
-      return "usuario";
-
-    case "created_at":
-      return "creado";
-    default:
-      return cellIndex;
-  }
-};
 </script>
-<style>
-.boton-modal label {
-  cursor: pointer;
-  transition: all 300ms ease;
-}
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  pointer-events: none;
-}
-.container-modal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 380px;
-  width: 100%;
-  padding: 30px 20px;
-  border-radius: 24px;
-  background-color: #ffff;
-  opacity: 0;
-  pointer-events: none;
-}
-.content-modal Link {
-  font-size: 14px;
-  padding: 6px 12px;
-  margin: 0 10px;
-}
-</style>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
@@ -109,10 +59,11 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
+
         <div>
           <button
             id="dropdownRadioButton"
-            @click="toggleDropdown1"
+            @click="toggleDropdown"
             class="uppercase gap-2 inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-xs px-3 py-1.5"
             type="button"
           >
@@ -155,11 +106,11 @@ const getTag = (cellIndex) => {
 
           <!-- Dropdown menu -->
           <div
-            v-if="dropdownOpen1"
+            v-if="dropdownOpen"
             id="dropdownRadio"
             class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
           >
-            <ul class="p-3 space-y-1 text-sm text-gray-700">
+            <ul class="p-3 space-y-1 text-xs text-gray-700">
               <li v-for="(filter, index) in filters" :key="index">
                 <div class="flex items-center p-2 rounded hover:bg-gray-100">
                   <input
@@ -220,7 +171,7 @@ const getTag = (cellIndex) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 p-2">
+    <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -235,110 +186,34 @@ const getTag = (cellIndex) => {
           :key="rowIndex"
           class="bg-white border-b hover:bg-gray-100"
         >
-          <!-- INICIO DEWL  -->
           <td></td>
-          <!-- SELECTOR DE ESTADOS DE TICKET  -->
-          <td
-            v-for="(cell, cellIndex) in row"
-            :key="cellIndex"
-            class="font-medium text-gray-900 whitespace-nowrap"
-          >
-            <div v-if="cellIndex === 'status'">
-              <h2
-                v-if="cell === '0'"
-                class="bg-red-500 text-white px-2 py-1 rounded flex justify-start items-center gap-2"
+          <td v-for="(cell, cellIndex) in row" :key="cellIndex">
+            <div v-if="cellIndex === 'sync'">
+              <Link
+                v-if="edit"
+                :href="route('routers.sync', row.id)"
+                class="flex gap-1 p-1.5 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
+                :class="
+                  row.sync
+                    ? 'bg-green-500 hover:bg-green-600'
+                    : ' bg-orange-500 hover:bg-orange-600'
+                "
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.8"
+                  stroke-width="1.5"
                   stroke="currentColor"
                   class="size-5"
                 >
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
                   />
                 </svg>
-
-                Pendiente
-              </h2>
-              <h2
-                v-else-if="cell === '1'"
-                class="bg-yellow-500 text-white px-2 py-1 rounded flex justify-start gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.8"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 0 1 9 14.437V9.564Z"
-                  />
-                </svg>
-
-                En espera
-              </h2>
-              <h2
-                v-else-if="cell === '2'"
-                class="bg-blue-500 text-white px-2 py-1 rounded flex justify-start gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.9"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z"
-                  />
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                  />
-                </svg>
-
-                Trabajando
-              </h2>
-              <h2
-                v-else-if="cell === '3'"
-                class="bg-green-500 text-white px-2 py-1 rounded flex justify-start gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.8"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-
-                Solucionado
-              </h2>
-              <h2 v-else>{{ cell }}</h2>
+              </Link>
             </div>
             <div v-else>
               <div class="flex gap-1">
@@ -349,13 +224,68 @@ const getTag = (cellIndex) => {
               </div>
             </div>
           </td>
-          <!-- SELECTOR DE ESTADOS DE TICKET  -->
 
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4 flex actions">
+            <div class="sm:flex gap-4 flex flex-wrap actions">
+              <Link
+                v-if="row.sync"
+                :href="route('devices.create', row.id)"
+                class="flex items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-1 px-2 rounded-md sm:mb-0 mb-1"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2 2.75A.75.75 0 0 1 2.75 2C8.963 2 14 7.037 14 13.25a.75.75 0 0 1-1.5 0c0-5.385-4.365-9.75-9.75-9.75A.75.75 0 0 1 2 2.75Zm0 4.5a.75.75 0 0 1 .75-.75 6.75 6.75 0 0 1 6.75 6.75.75.75 0 0 1-1.5 0C8 10.35 5.65 8 2.75 8A.75.75 0 0 1 2 7.25ZM3.5 11a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Nueva Conexion
+              </Link>
+
+              <Link
+                :href="route('routers.devices', row.id)"
+                v-if="row.sync"
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2 4.25A2.25 2.25 0 0 1 4.25 2h7.5A2.25 2.25 0 0 1 14 4.25v5.5A2.25 2.25 0 0 1 11.75 12h-1.312c.1.128.21.248.328.36a.75.75 0 0 1 .234.545v.345a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-.345a.75.75 0 0 1 .234-.545c.118-.111.228-.232.328-.36H4.25A2.25 2.25 0 0 1 2 9.75v-5.5Zm2.25-.75a.75.75 0 0 0-.75.75v4.5c0 .414.336.75.75.75h7.5a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75h-7.5Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+
+                Dispositivos
+              </Link>
+
+              <div
+                v-else
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                Sincroniza para ver los dispositivos conectados
+              </div>
+
+              <Link
+                :href="route('routers.ping', row.id)"
+                class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <span class="material-symbols-outlined"> network_ping </span>
+                Ping
+              </Link>
+
               <Link
                 v-if="edit"
-                :href="route('tickets.usuario.edit', row.id)"
+                :href="route('routers.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -375,6 +305,7 @@ const getTag = (cellIndex) => {
 
                 Editar
               </Link>
+
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
@@ -402,19 +333,6 @@ const getTag = (cellIndex) => {
         </tr>
       </tbody>
     </table>
-  </div>
-  <span class="overlay"></span>
-  <div class="container-modal">
-    <div class="content-modal">
-      <h2>Hola checando esta vaina</h2>
-      <p>Parangaracutirimicuaro</p>
-      <div class="buttons">
-        <Link
-          class="btn-cerrarflex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-2 px-3 rounded-md text-white sm:mb-0 mb-1"
-          >Cerrar</Link
-        >
-      </div>
-    </div>
   </div>
 </template>
   
@@ -457,12 +375,12 @@ export default {
   data() {
     return {
       searchQuery: "",
-      dropdownOpen1: false,
-      dropdownOpen: {},
+      dropdownOpen: false,
+      dropdownOpen2: false,
       currentFilter: "id",
       currentUser: "todos",
       currentOrder: "ASC",
-      typeStatus: ["Pendiente", "En espera", "Trabajando", "Terminado"],
+      typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
     };
   },
   computed: {
@@ -478,17 +396,17 @@ export default {
     },
   },
   methods: {
-    toggleDropdown1() {
-      this.dropdownOpen1 = !this.dropdownOpen1;
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
     },
 
-    toggleDropdown(index) {
-      this.dropdownOpen[index] = !this.dropdownOpen[index];
+    toggleDropdown2() {
+      this.dropdownOpen2 = !this.dropdownOpen2;
     },
 
     selectFilter(filter) {
       this.currentFilter = filter;
-      this.toggleDropdown1();
+      this.toggleDropdown();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
@@ -497,9 +415,9 @@ export default {
       });
     },
 
-    selectUser(user, index) {
+    selectUser(user) {
       this.currentUser = user;
-      this.toggleDropdown(index);
+      this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
@@ -524,30 +442,4 @@ export default {
   },
 };
 </script>
-  
-  <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-th {
-  padding: 0.8rem;
-  background-color: rgb(229 231 235);
-}
-
-thead th:first-child {
-  border-top-left-radius: 0.25rem;
-}
-
-thead th:last-child {
-  border-top-right-radius: 0.25rem;
-}
-</style>
   

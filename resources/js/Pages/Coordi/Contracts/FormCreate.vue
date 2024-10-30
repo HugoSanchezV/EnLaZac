@@ -1,6 +1,9 @@
 <script setup>
 import { router, useForm } from "@inertiajs/vue3";
 import {ref, onMounted, toRefs} from 'vue';
+import { useToast, TYPE, POSITION } from "vue-toastification";
+
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -90,6 +93,29 @@ const onDateChange= () =>{
   date.setMonth(date.getMonth() + 1);
   form.end_date = date.toISOString().split('T')[0];
   }
+
+const showWarning = (id) => {
+  const toast = useToast();
+
+  toast(
+    {
+      component: BaseQuestion,
+      props: {
+        message: "Seleccione el Id de los campos correspondientes",
+      },
+
+      listeners: {
+      },
+    },
+
+    {
+      type: TYPE.ERROR,
+      position: POSITION.TOP_CENTER,
+      timeout: 10000,
+    }
+  );
+};
+
 const submit = () => {
   var miCheckbox = document.getElementById('activated');
   if (miCheckbox.checked) {
@@ -97,8 +123,13 @@ const submit = () => {
   } else {
     form.active = false;
   }
-  
-  form.post(route("contracts.store"));
+  if(form.user_id == "" || form.plan_id == "" || form.rural_community_id == "")
+  {
+    showWarning();
+  }else{
+    form.post(route("contracts.store"));
+  }
+
 };
 
 
@@ -124,7 +155,8 @@ const submit = () => {
               v-model="form.user_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option :value="null" selected>Selecciona una opción</option>
+              <option v-if="users.length === 0" disabled value="">No hay registro de usuarios</option>
+              <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="user in users" :key="user.id" :value="user.id">
                   {{ user.id + " - " + user.name }}
               </option>
@@ -140,13 +172,30 @@ const submit = () => {
               v-model="form.plan_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option value="null" selected>Selecciona una opción</option>
+              <option disabled v-if="plans.length === 0" value="">No hay registro de comunidades</option>
+              <option  disabled v-else value="">Selecciona una opción</option>
               <option v-for="plan in plans" :key="plan.id" :value="plan.id">
                   {{ plan.id + " - " + plan.name }}
               </option>
             </select>
         </div>
         <InputError class="mt-2" :message="form.errors.plan_id" />
+      </div>
+      <div class="mt-4">
+        <InputLabel for="rural_community_id" value="ID de la comunidad" />
+        <div class="mt-2">
+            <select
+              v-model="form.rural_community_id"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+            <option disabled v-if="community.length === 0" value="">No hay registro de comunidades</option>
+            <option disabled v-else value="">Selecciona una opción</option>
+            <option v-for="com in community" :key="com.id" :value="com.id">
+                  {{com.id+" - " + com.name}}
+              </option>
+            </select>
+        </div>
+        <InputError class="mt-2" :message="form.errors.user_id" />
       </div>
       <div class="mt-4 flex justify-between">
         <div>
@@ -208,23 +257,6 @@ const submit = () => {
           para obtener la locación del cliente o ingrese la ubicación manualmente. 
         </p>
       </div>
-      {{ form.rural_community_id }}
-      <div class="mt-4">
-        <InputLabel for="rural_community_id" value="Comunidad" />
-        <div class="mt-2">
-            <select
-              v-model="form.rural_community_id"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              <option :value="null" selected>Selecciona una opción</option>
-              <option v-for="com in community" :key="com.id" :value="com.id">
-                  {{com.id+" - " + com.name}}
-              </option>
-            </select>
-        </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
-      </div>
-
       <div class="flex justify-between items-center gap-2 mt-5">
         <p>Ingresar ubicación manualmente</p>
         <label class="switch">

@@ -7,13 +7,21 @@ use App\Models\ScheduledTask;
 use Illuminate\Support\Facades\Schedule;
 class ScheduledTaskController extends Controller
 {
-    public function toggleTask($id)
+    public function toggleTask($name)
     {
-        $task = ScheduledTask::find($id);
+        $task = ScheduledTask::where('task_name',$name)->first();
+
         if ($task) {
             $task->enabled = !$task->enabled;  // Alternar entre activado/desactivado
             $task->save();
 
+            return redirect()->back()->with('status', 'Tarea actualizada correctamente.');
+        }else{
+
+            ScheduledTask::create([
+                'task_name' => $name,
+                'enabled' => true,
+            ]);
             return redirect()->back()->with('status', 'Tarea actualizada correctamente.');
         }
 

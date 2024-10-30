@@ -7,35 +7,29 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
-  user: Object,
+  ticket: Object,
 });
 
 const form = useForm({
   subject: "",
   description: "",
-  status: "",
-  password: "",
-  password_confirmation: "",
-  admin: 0,
+  status: '0',
 });
 
 onMounted(() => {
-  if (props.user) {
-    form.name = props.user.name || "";
-    form.alias = props.user.alias || "";
-    form.email = props.user.email || "";
-    form.admin = props.user.admin || 0;
+  if (props.ticket) {
+    form.subject = props.ticket.subject || "";
+    form.description = props.ticket.description || "";
+    form.status = props.ticket.status || '0';
   }
 });
 
 const submit = () => {
-  form.put(route("usuarios.update", { id: props.user.id }), {
-    onFinish: () => form.reset("password", "password_confirmation"),
-  });
+  form.put(route("tickets.usuario.update", { id: props.ticket.id }));
 };
 
 const seleccionar = (valor) => {
-  form.admin = Number(valor);
+  form.status = valor.toString();
 };
 </script>
 
@@ -43,118 +37,81 @@ const seleccionar = (valor) => {
 <template>
   <div class="flex justify-center border flex-col m-5 p-10 bg-white">
     <h2 class="flex justify-center">
-      Selecciona el tipo de usuario que deseas crear
+      Actualizar estado del ticket
     </h2>
 
-    <div class="flex justify-center mt-5">
-      <button
-        @click="seleccionar(0)"
-        :class="{
-          'border py-2 px-3 rounded-l-md hover:bg-slate-200': true,
-          'bg-blue-500 hover:bg-blue-500 text-white': form.admin === 0,
-        }"
-      >
-        Cliente
-      </button>
-      <button
-        @click="seleccionar(2)"
-        :class="{
-          'border py-2 px-3 hover:bg-slate-200': true,
-          'bg-blue-500 hover:bg-blue-500 text-white': form.admin === 2,
-        }"
-      >
-        Coordinador
-      </button>
-      <button
-        @click="seleccionar(3)"
-        :class="{
-          'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
-          'bg-blue-500 hover:bg-blue-500 text-white': form.admin === 3,
-        }"
-      >
-        Técnico
-      </button>
-    </div>
+    <div class="mt-4">
+        <div class="flex justify-center mt-5">
+          <button
+            @click="seleccionar('0')"
+            :class="{
+              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
+              'bg-red-500 hover:bg-red-500 text-white': form.status === '0',
+            }"
+          >
+            Pendiente
+          </button>
+          <button
+            @click="seleccionar('1')"
+            :class="{
+              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
+              'bg-yellow-500 hover:bg-yellow-500 text-white': form.status === '1',
+            }"
+          >
+            En espera
+          </button>
+          <button
+            @click="seleccionar('2')"
+            :class="{
+              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
+              'bg-blue-500 hover:bg-blue-500 text-white': form.status === '2',
+            }"
+          >
+            Trabajando
+          </button>
+          <button
+            @click="seleccionar('3')"
+            :class="{
+              
+              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
+              'bg-green-500 hover:bg-green-500 text-white': form.status === '3',
+            }"
+          >
+            Solucionado
+          </button>
+        </div>
+      </div>
   </div>
-
-  <div class="mt-5">
+  <div class="mt-5 pl-5 pr-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
-        <InputLabel for="name" value="Nombre" />
+        <InputLabel for="subject" value="Asunto" />
         <TextInput
-          id="name"
-          v-model="form.name"
+          id="subject"
+          v-model="form.subject"
           type="text"
           class="mt-1 block w-full"
           required
           autofocus
-          autocomplete="name"
+          autocomplete="subject"
         />
-        <InputError class="mt-2" :message="form.errors.name" />
+        <InputError class="mt-2" :message="form.errors.subject" />
       </div>
 
       <div class="mt-4">
-        <InputLabel for="alias" value="Alias" />
-        <TextInput
-          id="alias"
-          v-model="form.alias"
+        <InputLabel for="description" value="Descripción" />
+        <textarea
+          id="description"
+          v-model="form.description"
           type="text"
           class="mt-1 block w-full"
-          autocomplete="alias"
-        />
-      </div>
-
-      <div class="mt-4">
-        <InputLabel for="email" value="Email" />
-        <TextInput
-          id="email"
-          v-model="form.email"
-          type="email"
-          class="mt-1 block w-full"
           required
-          autocomplete="username"
+          autocomplete="description"
+          style="height: 250px; resize: none; border-radius: 1.5%;"
         />
-        <InputError class="mt-2" :message="form.errors.email" />
       </div>
 
-      <div class="flex justify-between items-center gap-2 mt-5">
-        <p>Editar Password</p>
-        <label class="switch">
-          <input type="checkbox" checked v-model="modificarPassword" />
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <div v-if="modificarPassword">
-        <div class="mt-4">
-          <InputLabel for="password" value="Password" />
-          <TextInput
-            id="password"
-            v-model="form.password"
-            type="password"
-            class="mt-1 block w-full"
-            autocomplete="new-password"
-          />
-          <InputError class="mt-2" :message="form.errors.password" />
-        </div>
-
-        <div class="mt-4">
-          <InputLabel for="password_confirmation" value="Confirmar Password" />
-          <TextInput
-            id="password_confirmation"
-            v-model="form.password_confirmation"
-            type="password"
-            class="mt-1 block w-full"
-            autocomplete="new-password"
-          />
-          <InputError
-            class="mt-2"
-            :message="form.errors.password_confirmation"
-          />
-        </div>
-      </div>
-
-      <input type="hidden" id="admin" :value="form.admin" readonly />
+      <input type="hidden" id="status" :value="form.status" readonly />
 
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
@@ -172,7 +129,7 @@ const seleccionar = (valor) => {
 
 <script>
 export default {
-  props: ["user"],
+  props: ["ticket"],
   data() {
     return {
       modificarPassword: false,

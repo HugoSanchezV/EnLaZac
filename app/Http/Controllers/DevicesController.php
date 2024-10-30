@@ -16,10 +16,12 @@ use App\Models\PingDeviceHistorie;
 use App\Services\DeviceService;
 use App\Services\RouterOSService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -192,6 +194,22 @@ class DevicesController extends Controller
         ]);
     }
 
+    public function searchID($address)
+    {
+        $validator = Validator::make(['address' => $address], [
+            'address' => ['required', 'ip'],
+        ]);
+    
+        // Comprobar si la validación falla
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+    
+        // Buscar el dispositivo si la validación es exitosa
+        $device = Device::where('address', $address)->first();
+    
+        return $device ? $device->id : null;
+    }
     /**
      * Show the form for editing the specified resource.
      */
