@@ -27,6 +27,7 @@ use App\Http\Controllers\TechnicalDevicesController;
 use App\Http\Controllers\TechnicalInventorieDevicesController;
 use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
+use App\Http\Controllers\TelegramController;
 use App\Models\InventorieDevice;
 use App\Models\PerformanceDevice;
 use App\Models\PingDeviceHistorie;
@@ -215,21 +216,21 @@ Route::middleware([
     // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
     //MIDDLEWARE DEMÁS USUARIOS
-  //  Route::middleware(['rol:2,3'])->group(function () {
+    //  Route::middleware(['rol:2,3'])->group(function () {
 
-        // Usuarios
-        /*  Route::get('/dashboard', function () {
+    // Usuarios
+    /*  Route::get('/dashboard', function () {
             return Inertia::render('DashboardBase');
         })->name('dashboard');*/
-        // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
- //   });
+    //   });
     Route::middleware(['rol:3'])->group(function () {
-     //Dashboard
-     
-    //  Route::get('/dashboard', function () {
-    //      return Inertia::render('DashboardBase');
-    //  })->name('dashboard');
+        //Dashboard
+
+        //  Route::get('/dashboard', function () {
+        //      return Inertia::render('DashboardBase');
+        //  })->name('dashboard');
 
         //Router
         Route::get('/tecnico/routers',                  [TechnicalRouterController::class, 'index'])->name('technical.routers');
@@ -293,7 +294,6 @@ Route::middleware([
         Route::get('/tickets/edit/usuario/{id}',         [TicketController::class, 'edit_user'])->name('tickets.usuario.edit');
         Route::get('/tickets/update/usuario/{id}',         [TicketController::class, 'update_user'])->name('tickets.usuario.update');
         Route::delete('/tickets/delete/usuario/{id}',    [TicketController::class, 'destroy_user'])->name('tickets.usuario.destroy');
-
     });
 
 

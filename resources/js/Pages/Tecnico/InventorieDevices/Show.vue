@@ -25,7 +25,8 @@
 
 
 <script>
-import CardInformation from "./CardInformation2.vue";
+
+import CardInformation from "./CardInformation.vue";
 import DashboardBase from "@/Pages/DashboardBase.vue";
 
 export default {
