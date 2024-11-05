@@ -35,7 +35,6 @@ const headers = [
   "Dirección",
   "Acciones",
 ];
-//const filters = ["id", "usuario", "plan internet", "dirección"];
 </script>
 
 <template>

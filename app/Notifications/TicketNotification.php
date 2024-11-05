@@ -17,9 +17,13 @@ class TicketNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      */
     public $ticket;
-    public function __construct(Ticket $ticket)
+    public $fromAddress;
+    public $fromName;
+    public function __construct(Ticket $ticket, $fromAddress, $fromName)
     {
         $this->ticket = $ticket; 
+        $this->fromAddress = $fromAddress;
+        $this->fromName = $fromName;
     }
 
     /**

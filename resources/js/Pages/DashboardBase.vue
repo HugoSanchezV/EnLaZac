@@ -9,6 +9,7 @@ import AppLayoutTecnico from "@/Layouts/AppLayoutTecnico.vue";
 import AppLayoutCoordinador from "@/Layouts/AppLayoutCoordinador.vue";
 
 import useGeneralNotifications from "@/Components/Base/hooks/useGeneralFlashNotifications";
+import DashboardAdmin from "./Admin/DashboardAdmin.vue";
 
 
 const { props } = usePage();
@@ -30,9 +31,6 @@ const layoutComponent = computed(() => {
       return AppLayoutUser;
   }
 });
-
-
-
 useGeneralNotifications();
 </script>
 
@@ -44,7 +42,6 @@ useGeneralNotifications();
       </h2>
     </template>
     <div class="py-12 ">
-     
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div
           class="overflow-hidden sm:rounded-lg"
@@ -54,7 +51,20 @@ useGeneralNotifications();
           }"
         >
           <slot name="content">
-              
+              <dashboard-admin v-if="props.auth.user.admin == 1"
+              :morrosos="props.morrosos"
+              :new_tickets="props.new_tickets"
+              :currentUsers="props.currentUsers"
+              :activeContract="props.activeContract"
+              :target="props.target"
+              :upload_rate="props.upload_rate"
+              :download_rate="props.download_rate"
+              :upload_byte="props.upload_byte"
+              :download_byte="props.download_byte"
+              :routers="props.routers"
+              >
+
+              </dashboard-admin>
           </slot>
         </div>
       </div>
@@ -69,6 +79,45 @@ export default {
       type: Boolean,
       default: true,
     },
+    props: {
+    applyStyles: {
+      type: Boolean,
+      default: true,
+    },
+    morrosos: {
+      type: Object,
+    },
+    activeDevice: {
+      type: Object,
+    },
+    new_tickets: {
+      type: Object,
+    },
+    currentUsers: {
+      type: Object,
+    },
+    activeContract: {
+      type: Object,
+    },
+    target: {
+      type: Array,
+    },
+    upload_rate:{
+      type: Array,
+    },
+    download_rate: {
+      type: Array,
+    },
+    upload_byte: {
+      type: Array,
+    },
+    download_byte: {
+      type: Array,
+    },
+    routers: {
+      type: Array,
+    }
+  },
   },
 };
 

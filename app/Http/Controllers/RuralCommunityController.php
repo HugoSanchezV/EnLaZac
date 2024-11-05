@@ -81,9 +81,10 @@ class RuralCommunityController extends Controller
     }
     public function store(StoreRuralCommunityRequest $request)
     {   
+        $validatedData = $request->validated();
         RuralCommunity::create([
-            'name' => $request->name,
-            'installation_cost' => $request->installation_cost,
+            'name' => $validatedData ['name'],
+            'installation_cost' => $validatedData['installation_cost'],
         ]);
         
         return redirect()->route('rural-community')->with('success', 'La Comunidad ha sido creado con éxito');

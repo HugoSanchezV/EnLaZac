@@ -19,7 +19,48 @@ const props = defineProps({
   },
 });
 </script>
+<style>
+  .graficas{
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .graphic-container{
 
+    /* justify-content: center; */
+    width: 100%;
+  }
+  .rate, .byte{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 99%;
+  }
+  .frame-content{
+    width: 14rem;
+    height: 14rem;
+  }
+@media (min-width: 1450px) {
+  .graficas{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  .rate, .byte{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+  .graphic-container{
+   display: block;
+   width: 100%;
+
+  }
+  canvas{
+    width: 50%;
+  }
+}
+</style>
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
@@ -34,7 +75,7 @@ const props = defineProps({
     <template v-slot:content>
       <div class="container">
         <!-- Gráfica para Hoy -->
-        <div class="graphic">
+        <div class="graphic-container">
           <Graphics
             :target="todayPerformance.labels"
             :upload_rate="todayPerformance.rateUpload"
@@ -46,7 +87,7 @@ const props = defineProps({
         </div>
 
         <!-- Gráfica para Semana -->
-        <div class="graphic">
+        <div class="graphic-container">
           <Graphics
             :target="weekPerformance.labels"
             :upload_rate="weekPerformance.rateUpload"
@@ -58,7 +99,7 @@ const props = defineProps({
         </div>
 
         <!-- Gráfica para Mes -->
-        <div class="graphic">
+        <div class="graphic-container">
           <Graphics
             :target="monthPerformance.labels"
             :upload_rate="monthPerformance.rateUpload"
@@ -70,7 +111,7 @@ const props = defineProps({
         </div>
 
         <!-- Gráfica para Año -->
-        <div class="graphic">
+        <div class="graphic-container">
           <Graphics
             :target="yearPerformance.labels"
             :upload_rate="yearPerformance.rateUpload"

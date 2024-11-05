@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\PingTecnicoEvent;
+use App\Models\EmailAccount;
 use App\Models\User;
 use App\Notifications\PingTecnicoNotification;
 use Illuminate\Support\Facades\Notification;
@@ -25,7 +26,7 @@ class PingTecnicoListener
     public function handle(PingTecnicoEvent $event): void
     {
         $user = User::where('id', $event->ping->user_id)->get();
-
-        Notification::send($user, new PingTecnicoNotification($event->ping));
+        $account = EmailAccount::all()->first();
+        Notification::send($user, new PingTecnicoNotification($event->ping, $account->fromAddress, $account->fromName));
     }
 }

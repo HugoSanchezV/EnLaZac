@@ -17,9 +17,13 @@ class PingTecnicoNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      */
     public $ping;
-    public function __construct(PingDeviceHistorie $ping)
+    public $fromAddress;
+    public $fromName;
+    public function __construct(PingDeviceHistorie $ping, $fromAddress, $fromName)
     {
         $this->ping = $ping;
+        $this->fromAddress = $fromAddress;
+        $this->fromName = $fromName;
     }
 
     /**
@@ -38,6 +42,7 @@ class PingTecnicoNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
+                    ->from($this->fromAddress, $this->fromName)
                     ->line('Realizar revisión a siguiente dispositivo: '.$this->ping->id)
                     ->action('Ver dispositivo', url('/'))
                     ->line('Thank you for using our application!');

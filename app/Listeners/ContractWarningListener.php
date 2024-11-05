@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ContractWarningEvent;
+use App\Models\EmailAccount;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
@@ -25,7 +26,8 @@ class ContractWarningListener
     public function handle(ContractWarningEvent  $event): void
     {
         $user = User::where('id', '=', $event->contract->user_id)->get();
-
-        Notification::send($user, new ContractWarningNotification($event->contract));
+        
+        $account = EmailAccount::all()->first();
+        Notification::send($user, new ContractWarningNotification($event->contract, $account->fromAddress, $account->fromName));
     }
 }

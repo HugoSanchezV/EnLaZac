@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("payment.destroy", id);
+          const url = route("installation.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -44,35 +44,15 @@ const destroy = (id) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "user_id":
-      return "Usuario";
+    case "contract_id":
+      return "Contrato";
       break;
-      case "contract_id":
-        return "Contrato";
-        break;
-    case "amount":
-      return "Monto";
-      break;
-      case "content":
-        return "Contenido";
-        break;
-    case "payment_method":
-      return "Método de Pago";
-      break;
-    
-    case "payment_method":
-      return "Método de Pago";
-      break;
-    case "transaction_id":
-      return "Id de Transacción";
+    case "description":
+      return "Descripción";
       break;
 
-    case "receipt_url":
-      return "Link de Recepción";
-      break;
-
-    case "created_at":
-      return "Fecha de Pago";
+    case "assigned_date":
+      return "Fecha Asignada";
       break;
 
     default:
@@ -199,7 +179,7 @@ const getTag = (cellIndex) => {
             $emit('search', {
               searchQuery: searchQuery,
               order: currentFilter,
-              type: currentPayment,
+              type: currentInstallation,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -230,14 +210,21 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div>
-              <div class="flex gap-1">
+              <div v-if="cellIndex === 'description'">
+                <div v-if="cell === '1'">
+                  <h2>Instalación en el domicilio</h2>
+                </div>
+                <div v-if="cell === '2'">
+                  <h2>Cambio de domicilio</h2>
+                </div>
+              </div>
+              <div v-else class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span
                 >
                 {{ cell }}
               </div>
-            </div>
+            
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
@@ -265,6 +252,7 @@ const getTag = (cellIndex) => {
               </Link>
               <Link
                 v-if="edit"
+                :href="route('installation.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -357,7 +345,7 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentPayment: "todos",
+      currentInstallation: "todos",
       currentOrder: "ASC",
     };
   },
@@ -388,18 +376,18 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentPayment,
+        type: this.currentInstallation,
         order: this.currentOrder,
       });
     },
 
-    selectPayment(payment) {
-      this.currentPayment = payment;
+    selectInstallation(installation) {
+      this.currentInstallation = installation;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentPayment,
+        type: this.currentInstallation,
         order: this.currentOrder,
       });
     },
@@ -409,7 +397,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentPayment,
+        type: this.currentInstallation,
         order: this.currentOrder,
       });
     },

@@ -3,40 +3,29 @@ import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
-  payments: Object,
+  installation: Object,
   pagination: Object,
-  totalPaymentsCount: Number,
+  totalInstallationCount: Number,
 });
 
-const { payments } = toRefs(props);
-//const toRouteExport = "contracts.excel";
+const { installation } = toRefs(props);
+// const toRouteExport = "contracts.excel";
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
   "id",
-  "usuario",
   "contrato",
-  "monto",
-  "contenido",
-  "metodo de pago",
-  "id de transacción",
-  "link de recepción",
-  "fecha de pago"
+  'descripción',
+  "fecha asignada",
 ];
 
 const headers = [
   "Id",
-  "Usuario",
-  "Contrato",
-  "Monto",
-  "Contenido",
-  "Método de pago",
-  "Id de Transacción",
-  "Link de Recepción",
-  "Fecha de Pago",
+  "Contracto",
+  "Descripción",
+  "Fecha asignada",
   "Acciones",
 ];
-//const filters = ["id", "usuario", "plan internet", "dirección"];
 </script>
 
 <template>
@@ -44,16 +33,27 @@ const headers = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Historial de Pagos</h2>
+          <h2>Instalaciones</h2>
+        </div>
+        <div>
+          <Link
+            :href="route('installation.create')"
+            method="get"
+            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+          >
+            <span class="material-symbols-outlined" style="font-size: 16px;"> settings_input_antenna </span>
+
+            Crear Instalación
+          </Link>
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalPaymentsCount > 0">
+        <div v-if="props.totalInstallationCount > 0">
           <!-- <base-export-excel :toRouteExport="toRouteExport"></base-export-excel> -->
           <!-- Esta es el inicio de la tabla -->
-          <base-table-payments
+          <base-table-installations
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -61,14 +61,14 @@ const headers = [
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-payments>
+          ></base-table-installations>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="payments.data.length > 0"
-            :links="payments.links"
+            v-if="installation.data.length > 0"
+            :links="installation.links"
             :pagination="pagination"
-            :current="payments.current_page"
-            :total="payments.last_page"
+            :current="installation.current_page"
+            :total="installation.last_page"
             :data="{
               q: q,
               attribute: attribute,
@@ -84,7 +84,7 @@ const headers = [
           </h2>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
-          <h2>No hay pagos para mostrar</h2>
+          <h2>No hay Instalaciones para mostrar</h2>
         </div>
       </div>
     </template>
@@ -92,27 +92,28 @@ const headers = [
 </template>
 <script>
 import { Link } from "@inertiajs/vue3";
+import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTablePayments from "@/Components/Base/BaseTablePaymentHistories.vue";
+import BaseTableInstallations from "@/Components/Base/BaseTableInstallations.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTablePayments,
+    BaseTableInstallations,
     BasePagination,
   },
 
   props: {
-    payments: Object,
+    installation: Object,
     pagination: Object,
-    totalPaymentsCount: Number,
+    totalInstallationCount: Number,
   },
 
   data() {
     return {
-      rows: this.payments.data,
+      rows: this.installation.data,
       q: "",
       attribute: "id",
       type: "todos",
@@ -121,9 +122,7 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("payments");
-
-  //    console.log(props.searchQuery);
+      const link = route("installation");
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
@@ -134,36 +133,15 @@ export default {
         this.attribute = "id";
       }
 
-      if (this.attribute === "usuario") {
-        this.attribute = "user_id";
-      }
-
       if (this.attribute === "contrato") {
         this.attribute = "contract_id";
       }
-      
-      if (this.order === "monto") {
-        this.order = "amount";
+      if (this.attribute === "descripción") {
+        this.attribute = "description";
       }
 
-      if (this.attribute === "contenido") {
-        this.attribute = "content";
-      }
-
-      if (this.order === "metodo de pago") {
-        this.order = "payment_method";
-      }
-
-      if (this.order === "id de transacción") {
-        this.order = "transaction_id";
-      }
-
-      if (this.order === "link de recepción") {
-        this.order = "receipt_url";
-      }
-
-      if (this.order === "fecha de pago") {
-        this.order = "created_at";
+      if (this.attribute === "fecha asignada") {
+        this.attribute = "assigned_date";
       }
 
       this.$inertia.get(
@@ -179,8 +157,8 @@ export default {
     },
   },
   watch: {
-    payments() {
-      this.rows = this.payments.data;
+    installation() {
+      this.rows = this.installation.data;
     },
   },
 };

@@ -66,19 +66,22 @@ const getPosition = () =>{
 onMounted(() => {
   getPosition();
   // Obtener el input de fecha
-  const datePicker = document.getElementById('start_date');
+  // const datePicker = document.getElementById('start_date');
 
   // Inicializar el valor con el día 5 del mes actual
   const today = new Date();
   //alert(today);
-  datePicker.value = setDayToFive(today);
+  form.start_date = setDayToFive(today);
+  onDateChange();
 
-  // Escuchar los cambios del input
-  datePicker.addEventListener('change', function(event) {
-      // Obtener la fecha seleccionada por el usuario
-      const selectedDate = new Date(event.target.value);
-      // Forzar el día 5 en la fecha seleccionada
-      event.target.value = setDayToFive(selectedDate);});
+  // // Escuchar los cambios del input
+  // datePicker.addEventListener('change', function(event) {
+  //     // Obtener la fecha seleccionada por el usuario
+  //     const selectedDate = new Date(event.target.value);
+  //     // Forzar el día 5 en la fecha seleccionada
+  //     event.target.value = setDayToFive(selectedDate);});
+
+  //  console.log(form.start_date);
 
 });
 const getCurrentLocation = () =>
@@ -88,6 +91,7 @@ const getCurrentLocation = () =>
     getPosition();
 }
 const onDateChange= () =>{
+  // console.log("ENTRA");
   // Imprimir la fecha seleccionada en la consola
   const date = new Date(form.start_date);
   date.setMonth(date.getMonth() + 1);
@@ -133,16 +137,13 @@ const submit = () => {
 };
 
 
-
-
-
  // Función para siempre seleccionar el día 5 del mes
  function setDayToFive(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
-            const day = '05'; // Forzar el día 5
-            return `${year}-${month}-${day}`;
-        }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
+  const day = '05'; // Forzar el día 5
+  return `${year}-${month}-${day}`;
+}
 </script>
 
 <template>

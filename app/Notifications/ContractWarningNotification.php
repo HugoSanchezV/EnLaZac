@@ -16,9 +16,13 @@ class ContractWarningNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      */
     public $contract;
-    public function __construct(Contract $contract)
+    public $fromAddress;
+    public $fromName;
+    public function __construct(Contract $contract, $fromAddress, $fromName)
     {
         $this -> contract = $contract;
+        $this->fromAddress = $fromAddress;
+        $this->fromName = $fromName;
     }
 
     /**
@@ -37,6 +41,7 @@ class ContractWarningNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
+                    ->from($this->fromAddress, $this->fromName)
                     ->line('Se le notifica que en 2 días se termina su servicio de internet')
                     //Botón para enviar hacia el modulo de pagos online
                     ->action('Realizar pago online', url('/'))

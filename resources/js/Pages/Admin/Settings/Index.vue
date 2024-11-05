@@ -110,7 +110,7 @@ import { Link } from "@inertiajs/vue3";
               </div>
             </Link>
 
-            <Link :href="route('usuarios')">
+            <Link :href="route('settings.email.edit')">
               <div
                 class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
               >
