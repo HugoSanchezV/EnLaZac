@@ -38,7 +38,9 @@ useGeneralNotifications();
   <component :is="layoutComponent" title="Dashboard">
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        <slot name="namePage"></slot>
+        <slot name="namePage">
+          
+        </slot>
       </h2>
     </template>
     <div class="py-12 ">
@@ -73,7 +75,11 @@ useGeneralNotifications();
 </template>
 
 <script>
+import { Link } from "@inertiajs/vue3";
 export default {
+  components: {
+    Link,
+  },
   props: {
     applyStyles: {
       type: Boolean,

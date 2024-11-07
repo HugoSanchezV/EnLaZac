@@ -27,7 +27,7 @@ use App\Http\Controllers\TechnicalDevicesController;
 use App\Http\Controllers\TechnicalInventorieDevicesController;
 use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
-use App\Http\Controllers\EmailAccountController;
+use App\Http\Controllers\MailSettingController;
 use App\Http\Controllers\InstallationController;
 use App\Http\Controllers\PaymentHistorieController;
 use App\Models\InventorieDevice;
@@ -35,6 +35,7 @@ use App\Models\PerformanceDevice;
 use App\Models\PingDeviceHistorie;
 use App\Services\WebRouterService;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -77,8 +78,8 @@ Route::middleware([
         Route::delete('/usuarios/pre/register/delete/{id}',          [PreRegisterUserController::class, 'destroy'])->name('usuarios.pre.register.destroy');
 
         //Performance Devices
-        Route::get('/performance/user/{id}',                 [PerformanceDeviceController::class, 'indexByUser'])->name('performance');
-        Route::get('/performance/device/{id}',                 [PerformanceDeviceController::class, 'indexByDevice'])->name('performance');
+        Route::get('/performance/user/{id}',                 [PerformanceDeviceController::class, 'indexByUser'])->name('performance.user');
+        Route::get('/performance/device/{id}',                 [PerformanceDeviceController::class, 'indexByDevice'])->name('performance.device');
         //Routers
         // -- Resource 
         Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
@@ -219,11 +220,10 @@ Route::middleware([
         Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
         Route::get('/sistema/configuracion/paypal',      [PayPalSettingController::class, 'edit'])->name('settings.paypal.edit');
         Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
-        Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'index'])->name('settings.interest');
-        Route::get('/sistema/configuracion/intereses/edit/{id}', [InterestsController::class, 'edit'])->name('settings.interest.edit');
-        Route::put('/sistema/configuracion/intereses/update/{id}', [InterestsController::class, 'update'])->name('settings.interest.update');
-        Route::get('/sistema/configuracion/email',      [EmailAccountController::class, 'edit'])->name('settings.email.edit');
-        Route::post('/sistema/configuracion/email/update',      [EmailAccountController::class, 'update'])->name('settings.email.update');
+        Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'edit'])->name('settings.interest');
+        Route::put('/sistema/configuracion/intereses/update/', [InterestsController::class, 'update'])->name('settings.interest.update');
+        Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
+        Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
@@ -314,5 +314,17 @@ Route::middleware([
     });
 
 
+    Route::get('/test-mail', function () {
+        $htmlContent = "
+            <h1>¡Bienvenido!</h1>
+            <p>Gracias por unirte a nuestra plataforma. Esperamos que disfrutes de la experiencia.</p>
+            <p>Saludos,<br>El equipo de Laravel</p>
+        ";
+    
+        Mail::html($htmlContent, function ($message) {
+            $message->to('l20030020@fresnillo.tecnm.mx')
+                    ->subject('¡Bienvenido a nuestra plataforma!');
+        });
+    });
     Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
 });

@@ -11,9 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('email_accounts', function (Blueprint $table) {
+        Schema::create('mail_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('email');
+            $table->string('transport');
+            $table->string('host');
+            $table->integer('port');
+            $table->string('encryption');
+            $table->string('username');
+            $table->string('password');
+            $table->string('address');
             $table->string('name');
             $table->timestamps();
         });

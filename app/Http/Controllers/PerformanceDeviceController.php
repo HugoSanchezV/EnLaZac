@@ -18,7 +18,7 @@ class PerformanceDeviceController extends Controller
         $device = Device::where('user_id', $id)->first();
         if (!$device) {
             // Manejar el caso donde el dispositivo no existe
-            return redirect()->back()->with('success', 'Dispositivo no encontrado.');
+            return redirect()->back()->with('success', 'No se ha asignado un dispositivo al usuario');
         }else{
             // Hacer los periodos 
 

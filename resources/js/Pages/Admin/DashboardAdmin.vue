@@ -1,16 +1,52 @@
 <script setup>
 import { ref } from "vue";
-import { usePage } from "@inertiajs/vue3";
-import AppLayoutAdmin from "@/Layouts/AppLayoutAdmin.vue";
-
 import ModalContracts from "./Components/ModalStatsContracts.vue";
 import ModalMorrosos from "./Components/ModalStatsMorrosos.vue";
 import ModalTickets from "./Components/ModalStatsTickets.vue";
 import ModalUsers from "./Components/ModalStatsUsers.vue";
 import useGeneralNotifications from "@/Components/Base/hooks/useGeneralFlashNotifications";
 import Graphics from "./Components/Graphics.vue";
+import {Link} from "@inertiajs/vue3";
 
-const { props } = usePage();
+const props = defineProps({
+  applyStyles: {
+      type: Boolean,
+      default: true,
+    },
+    morrosos: {
+      type: Object,
+    },
+    activeDevice: {
+      type: Object,
+    },
+    new_tickets: {
+      type: Object,
+    },
+    currentUsers: {
+      type: Object,
+    },
+    activeContract: {
+      type: Object,
+    },
+    target: {
+      type: Array,
+    },
+    upload_rate:{
+      type: Array,
+    },
+    download_rate: {
+      type: Array,
+    },
+    upload_byte: {
+      type: Array,
+    },
+    download_byte: {
+      type: Array,
+    },
+    routers: {
+      type: Array,
+    }
+});
 
 
 const isModalContractsOpen = ref({});
@@ -84,8 +120,12 @@ useGeneralNotifications();
     width: 99%;
   }
   .frame-content{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     width: 14rem;
     height: 14rem;
+
   }
 @media (min-width: 1450px) {
   .frame-stats{
@@ -115,13 +155,11 @@ useGeneralNotifications();
   canvas{
     width: 50%;
   }
-
 }
 </style>
 
 <template>
     <div class="py-12 ">
-     
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div
           class="overflow-hidden sm:rounded-lg"
@@ -221,20 +259,21 @@ useGeneralNotifications();
                 </modal-tickets>
                 </div>
                 <div class="frame">
-                  <button
-                  @click="openUsersModal()">
-                    <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                        <div class="h-12">
-                          <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">account_circle</span>                      </div>
-                        <div class="my-2">
-                            <h2 class="text-4xl font-bold"><span>{{ currentUsers.length }}</span></h2>
-                        </div>
-
-                        <div>
-                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios registrados</p>
-                        </div>
-                    </div>
-                  </button>
+                  <Link
+                  :href="route('usuarios')">
+                      <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
+                          <div class="h-12">
+                            <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">account_circle</span>                      </div>
+                          <div class="my-2">
+                              <h2 class="text-4xl font-bold"><span>{{ currentUsers.length }}</span></h2>
+                          </div>
+  
+                          <div>
+                              <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios registrados</p>
+                          </div>
+                      </div>
+               
+                  </Link>
                   <modal-users
                     :show="isModalUsersOpen"
                     @close="closeUsersModal()"
@@ -279,54 +318,3 @@ useGeneralNotifications();
       </div>
     </div>
 </template>
-
-<script>
-export default {
-  methods:{
-    handleAreaSelected(coordinates) {
-      console.log('Área seleccionada con las siguientes coordenadas:', coordinates)
-      // Aquí puedes realizar lógica adicional, como asociar un precio a esta área
-    }
-  },
-  props: {
-    applyStyles: {
-      type: Boolean,
-      default: true,
-    },
-    morrosos: {
-      type: Object,
-    },
-    activeDevice: {
-      type: Object,
-    },
-    new_tickets: {
-      type: Object,
-    },
-    currentUsers: {
-      type: Object,
-    },
-    activeContract: {
-      type: Object,
-    },
-    target: {
-      type: Array,
-    },
-    upload_rate:{
-      type: Array,
-    },
-    download_rate: {
-      type: Array,
-    },
-    upload_byte: {
-      type: Array,
-    },
-    download_byte: {
-      type: Array,
-    },
-    routers: {
-      type: Array,
-    }
-  },
-};
-
-</script>

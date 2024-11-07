@@ -16,13 +16,13 @@ class RegisterUserNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      */
     public $user;
-    public $fromAddress;
-    public $fromName;
-    public function __construct(User $user, $fromAddress, $fromName)
+    // public $fromAddress;
+    // public $fromName;
+    public function __construct(User $user)
     {
         $this -> user = $user;
-        $this->fromAddress = $fromAddress;
-        $this->fromName = $fromName;
+        // $this->fromAddress = $fromAddress;
+        // $this->fromName = $fromName;
     }
 
     /**
@@ -32,7 +32,7 @@ class RegisterUserNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        return ['database'];
         //return ['mail'];
     }
 
@@ -42,7 +42,7 @@ class RegisterUserNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                ->from($this->fromAddress, $this->fromName)
+                //->from($this->fromAddress, $this->fromName)
                 ->subject('Nuevo Usuario Registrado')
                 ->greeting('Hola ' . $notifiable->name . ',')
                 ->line('Han creado un usuario nuevo: ' . $this->user->name)

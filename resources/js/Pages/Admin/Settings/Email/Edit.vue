@@ -4,7 +4,7 @@ import FormUpdate from "./FormUpdate.vue";
 import { defineProps } from "vue";
 
 const props = defineProps({
-  account: Object,
+  settings: Object,
 });
 
 const account = props.account;
@@ -20,7 +20,7 @@ const account = props.account;
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :account="account" />
+          <FormUpdate :settings="settings" />
         </div>
       </div>
     </template>
