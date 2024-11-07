@@ -44,11 +44,50 @@ const byteMax = () => {
     document.getElementById('tasa-byte-download'+props.index).textContent = MaxDownloadByte;
     document.getElementById('device-byte-download'+props.index).textContent = props.target[maxIndexByteDownload];
 }
+
+const avgByteUpload = () => {
+  let sum = 0;
+  props.upload_byte.forEach(element => {
+    sum = element + sum
+  });
+  document.getElementById("avgByteUpload"+props.index).textContent = sum / props.upload_byte.length;
+ // return sum / props.upload_byte.length;
+}
+
+const avgByteDownload = () => {
+  let sum = 0;
+  props.download_byte.forEach(element => {
+    sum = element + sum
+  });
+  document.getElementById("avgByteDownload"+props.index).textContent = sum / props.download_byte.length;
+ // return sum / props.download_byte.length;
+}
+
+const avgRateUpload = () => {
+  let sum = 0;
+  props.upload_rate.forEach(element => {
+    sum = element + sum
+  });
+  document.getElementById("avgRateUpload"+props.index).textContent = sum / props.upload_rate.length;
+  //return sum / props.upload_rate.length;
+}
+const avgRateDownload = () => {
+  let sum = 0;
+  props.download_rate.forEach(element => {
+    sum = element + sum
+  });
+  document.getElementById("avgRateDownload"+props.index).textContent = sum / props.download_rate.length;
+  //return sum / props.download_rate.length;
+}
+
 onMounted( async () =>{
     await nextTick();
     const ctxRate = document.getElementById('myChartRate'+props.index);
     const ctxByte = document.getElementById('myChartByte'+props.index);
-
+    avgByteDownload();
+    avgByteUpload();
+    avgRateDownload();
+    avgRateUpload();
     rateMax();
     byteMax();
 
@@ -108,6 +147,24 @@ onMounted( async () =>{
 </script>
 
 <template>
+    <div class="bg-white pl-2 pt-2 rounded-lg" >
+ 
+        <div class="bg-white">
+            <h3 class="font-semibold text-gray-800 text-xl">Promedio de Tasa de Transferencia: </h3>
+            <div>
+                <p class="text-green-500 flex items-center text-xl font-bold mr-1 " :id = "'avgRateUpload'+props.index">
+                    
+                </p><span>MB</span>
+            </div>
+            <p class="text-red-500 flex items-center text-xl font-bold mr-1" :id = "'avgRateDownload'+props.index"></p>
+        </div>
+        <div class="bg-white">
+            <h3 class=" font-semibold text-gray-800 text-xl">Promedio de Trafico: </h3>
+            <p class="text-green-500 flex items-center text-xl font-bold mr-1" :id = "'avgByteUpload'+props.index"></p>
+            <p class="text-red-500 flex items-center text-xl font-bold mr-1" :id = "'avgByteDownload'+props.index"></p>
+
+        </div>
+    </div>
         <div 
         class=" flex justify-between graficas gap-2 rounded-lg">
 
