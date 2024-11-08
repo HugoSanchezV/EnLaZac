@@ -23,18 +23,19 @@ class MailSettingController extends Controller
 
     public function update(UpdateMailSettingRequest $request)
     {
+        $validatedData = $request->validated();
         try {
             $account = MailSetting::first();
             if (!$account) {
                 $account = MailSetting::create([
-                    'transport' =>$request->transport,
-                    'host' =>$request->host,
-                    'port' =>$request->port,
-                    'encryption' =>$request->encryption,
-                    'username' =>$request->username,
-                    'password' =>$request->password,
-                    'address' =>$request->address,
-                    'name' =>$request->name,
+                    'transport' =>$validatedData['transport'],
+                    'host' =>$validatedData['host'],
+                    'port' =>$validatedData['port'],
+                    'encryption' =>$validatedData['encryption'],
+                    'username' =>$validatedData['username'],
+                    'password' =>$validatedData['password'],
+                    'address' =>$validatedData['address'],
+                    'name' =>$validatedData['name'],
                 ]);
             } else {
                 $account->update($request->

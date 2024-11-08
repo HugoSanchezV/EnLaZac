@@ -11,38 +11,95 @@ const props = defineProps({
   download_byte: Array,
   type: String,
 });
-
 const avgByteUpload = () => {
-  let sum = 0;
-  props.upload_byte.forEach(element => {
-    sum = element + sum
-  });
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.upload_byte) || props.upload_byte.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
+  }
+
+  // Convertir a números y sumar
+  const sum = props.upload_byte.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
   return sum / props.upload_byte.length;
-}
-
+};
 const avgByteDownload = () => {
-  let sum = 0;
-  props.download_byte.forEach(element => {
-    sum = element + sum
-  });
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.download_byte) || props.download_byte.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
+  }
+
+  // Convertir a números y sumar
+  const sum = props.download_byte.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
   return sum / props.download_byte.length;
-}
-
-const avgRateUpload = () => {
-  let sum = 0;
-  props.upload_rate.forEach(element => {
-    sum = element + sum
-  });
-  return sum / props.upload_rate.length;
-}
-
+};
 const avgRateDownload = () => {
-  let sum = 0;
-  props.download_rate.forEach(element => {
-    sum = element + sum
-  });
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.download_rate) || props.download_rate.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
+  }
+
+  // Convertir a números y sumar
+  const sum = props.download_rate.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
   return sum / props.download_rate.length;
-}
+};
+const avgRateUpload = () => {
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.upload_rate) || props.upload_rate.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
+  }
+
+  // Convertir a números y sumar
+  const sum = props.upload_rate.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
+  return sum / props.download_rate.length;
+};
+// const avgByteUpload = () => {
+//   // Validar que el arreglo sea válido y no esté vacío
+//   if (!Array.isArray(props.upload_byte) || props.upload_byte.length === 0) {
+//     return 0; 
+//   }
+//   const sum = props.upload_byte.reduce((acc, element) => acc + element, 0);
+//   console.log(props.upload_byte);
+//   console.log(" SUMA : "+sum);
+//   return sum / props.upload_byte.length;
+// }
+// const avgByteDownload = () => {
+//   let sum = 0;
+//   props.download_byte.forEach(element => {
+//     sum = sum + element
+//   });
+//   return sum / props.download_byte.length;
+// }
+
+// const avgRateUpload = () => {
+//   let sum = 0;
+//   props.upload_rate.forEach(element => {
+//     sum = element + sum
+//   });
+//   return sum / props.upload_rate.length;
+// }
+
+// const avgRateDownload = () => {
+//   let sum = 0;
+//   props.download_rate.forEach(element => {
+//     sum = element + sum
+//   });
+//   return sum / props.download_rate.length;
+// }
 
 const byteMax = () => {
    // console.log(props.upload_byte);
@@ -53,8 +110,10 @@ const byteMax = () => {
     }else{
       const MaxUploadByte = Math.max(...props.upload_byte); 
       const AvgUploadByte = avgByteUpload();
+      console.log(AvgUploadByte+ " :    "+props.upload_byte);
+
       const CurrentUploadByte = props.upload_byte[props.upload_byte.length-1];
-      document.getElementById('avg-byte-upload'+props.type).textContent = (AvgUploadByte*1024).toFixed(3);
+      document.getElementById('avg-byte-upload'+props.type).textContent = (AvgUploadByte*1024).toFixed(5);
       document.getElementById('tasa-byte-upload'+props.type).textContent = MaxUploadByte;
       document.getElementById('current-byte-upload'+props.type).textContent = CurrentUploadByte;
 
@@ -68,8 +127,10 @@ const byteMax = () => {
     }else{
       const MaxDownloadByte = Math.max(...props.download_byte);
       const AvgDownloadByte = avgByteDownload();
+      console.log(AvgDownloadByte+ " :    "+props.download_byte);
+
       const CurrentDownloadByte = props.download_byte[props.download_byte.length-1];
-      document.getElementById('avg-byte-download'+props.type).textContent = (AvgDownloadByte*1024).toFixed(3);
+      document.getElementById('avg-byte-download'+props.type).textContent = (AvgDownloadByte*1024).toFixed(5);
       document.getElementById('tasa-byte-download'+props.type).textContent = MaxDownloadByte;
       document.getElementById('current-byte-download'+props.type).textContent = CurrentDownloadByte;
     }
@@ -84,8 +145,9 @@ const rateMax = () => {
 
       const MaxUploadRate = Math.max(...props.upload_rate); 
       const AvgUploadRate = avgRateUpload();
+      console.log(AvgUploadRate);
       const CurrentUploadRate = props.upload_rate[props.upload_rate.length-1];
-      document.getElementById('avg-rate-upload'+props.type).textContent = (AvgUploadRate*1024).toFixed(3);
+      document.getElementById('avg-rate-upload'+props.type).textContent = (AvgUploadRate*1024).toFixed(5);
       document.getElementById('tasa-rate-upload'+props.type).textContent = MaxUploadRate;
       document.getElementById('current-rate-upload'+props.type).textContent = CurrentUploadRate;
     }
@@ -97,8 +159,9 @@ const rateMax = () => {
     }else{
       const MaxDownloadRate = Math.max(...props.download_rate);
       const AvgDownloadRate = avgRateDownload();
+      console.log(AvgDownloadRate);
       const CurrentDownloadRate = props.download_rate[props.download_rate.length-1];
-      document.getElementById('avg-rate-download'+props.type).textContent = (AvgDownloadRate*1024).toFixed(3);
+      document.getElementById('avg-rate-download'+props.type).textContent = (AvgDownloadRate*1024).toFixed(5);
       document.getElementById('tasa-rate-download'+props.type).textContent = MaxDownloadRate;
       document.getElementById('current-rate-download'+props.type).textContent = CurrentDownloadRate;
     }

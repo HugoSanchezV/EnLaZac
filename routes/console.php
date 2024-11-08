@@ -10,6 +10,18 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 //Schedule de Ping-devices 
+
+Schedule::call(function () {
+
+    $task = ScheduledTask::where('task_name', 'ping-routers')->first();
+
+    if ($task->enabled) {
+
+        Artisan::call('app:ping-routers');
+    }
+    
+})->everyFiveMinutes();
+
 Schedule::call(function () {
     $task = ScheduledTask::where('task_name', 'ping-routers')->first();
 
@@ -17,9 +29,38 @@ Schedule::call(function () {
 
         Artisan::call('app:ping-routers');
     }
-    // $this->info('dsad');*/
+  
 })->everyFifteenMinutes();
+
+Schedule::call(function () {
+    $task = ScheduledTask::where('task_name', 'ping-routers')->first();
+
+    if ($task->enabled) {
+
+        Artisan::call('app:ping-routers');
+    }
+
+})->everyThirtyMinutes();
+
+Schedule::call(function () {
+    $task = ScheduledTask::where('task_name', 'ping-routers')->first();
+
+    if ($task->enabled) {
+
+        Artisan::call('app:ping-routers');
+    }
+ 
+})->hourly();
+
+Schedule::call(function () {
+    $task = ScheduledTask::where('task_name', 'ping-routers')->first();
+
+    if ($task->enabled) {
+
+        Artisan::call('app:ping-routers');
+    }
+
+})->daily();
 
 Schedule::command('app:check-contracts')->daily();
 Schedule::command('app:device-stats')->everyFiveMinutes();
-//Schedule::command('app:ping-devices')->everyThirtyMinutes();

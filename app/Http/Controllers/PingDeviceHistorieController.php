@@ -151,14 +151,11 @@ class PingDeviceHistorieController extends Controller
     }
     public function update(Request $request)
     {
-        //$validatedData = $request->validated();
-     //   dd($request->id);
+        $validatedData = $request->validate(['user_id' => 'required|exists:users,id', ]);
         $pingDevice = PingDeviceHistorie::findOrFail($request->id);
 
-        $pingDevice->user_id = $request->user_id;
-        //$validatedData = $request->validated();
+        $pingDevice->user_id = $validatedData['user_id'];
 
-        
         $pingDevice->save();
         self::make_user_notification($pingDevice);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Device;
 use App\Models\PerformanceDevice;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,25 @@ class PerformanceDeviceController extends Controller
             // Manejar el caso donde el dispositivo no existe
             return redirect()->back()->with('success', 'No se ha asignado un dispositivo al usuario');
         }else{
+
+            $performances = PerformanceDevice::where('device_id', $device->id)->get();
+
+            // Sumar el total de bytes subidos y descargados
+            $totalByteUpload = $performances->sum(function ($performance) {
+                return $performance->byte['upload'] ?? 0; // Suma solo si 'upload' existe en el array
+            });
+
+            $totalByteDownload = $performances->sum(function ($performance) {
+                return $performance->byte['download'] ?? 0; // Suma solo si 'download' existe en el array
+            });
+            $totalRateUpload = $performances->sum(function ($performance) {
+                return $performance->byte['upload'] ?? 0; // Suma solo si 'upload' existe en el array
+            });
+
+            $totalRateDownload = $performances->sum(function ($performance) {
+                return $performance->byte['download'] ?? 0; // Suma solo si 'download' existe en el array
+            });
+
             // Hacer los periodos 
 
             $performanceToday = self::today($device);
@@ -65,6 +85,11 @@ class PerformanceDeviceController extends Controller
                 'weekPerformance' => $weekPerformance,
                 'monthPerformance' => $monthPerformance,
                 'yearPerformance' => $yearPerformance,
+                'totalByteUpload'=>$totalByteUpload,
+                'totalByteDownload'=>$totalByteDownload,
+                'totalRateUpload'=>$totalRateUpload ,
+                'totalRateDownload'=>$totalRateDownload,
+
                 
                 'success' => session('success') ?? null,
                 'error' => session('error') ?? null,
@@ -76,11 +101,37 @@ class PerformanceDeviceController extends Controller
     }
     public function indexByDevice($id)
     {
+      
         $device = Device::where('id', $id)->first();
         if (!$device) {
             // Manejar el caso donde el dispositivo no existe
             return redirect()->back()->with('success', 'Dispositivo no encontrado.');
         }else{
+            if($device->user_id){
+
+                $user = User::findOrFail($device->user_id);
+            }else{
+                $user= null;
+            }
+
+            $performances = PerformanceDevice::where('device_id', $device->id)->get();
+
+            // Sumar el total de bytes subidos y descargados
+            $totalByteUpload = $performances->sum(function ($performance) {
+                return $performance->byte['upload'] ?? 0; // Suma solo si 'upload' existe en el array
+            });
+
+            $totalByteDownload = $performances->sum(function ($performance) {
+                return $performance->byte['download'] ?? 0; // Suma solo si 'download' existe en el array
+            });
+            $totalRateUpload = $performances->sum(function ($performance) {
+                return $performance->rate['upload'] ?? 0; // Suma solo si 'upload' existe en el array
+            });
+
+            $totalRateDownload = $performances->sum(function ($performance) {
+                return $performance->rate['download'] ?? 0; // Suma solo si 'download' existe en el array
+            });
+
             // Hacer los periodos 
             $performanceToday = self::today($device);
             $performanceWeek = self::week($device);
@@ -123,10 +174,15 @@ class PerformanceDeviceController extends Controller
 
             return Inertia::render('Admin/PerformanceDevice/PerformanceDevice', [
                 'device' => $device,
+                'user' => $user,
                 'todayPerformance' => $todayPerformance,
                 'weekPerformance' => $weekPerformance,
                 'monthPerformance' => $monthPerformance,
                 'yearPerformance' => $yearPerformance,
+                'totalByteUpload'=>$totalByteUpload,
+                'totalByteDownload'=>$totalByteDownload,
+                'totalRateUpload'=>$totalRateUpload ,
+                'totalRateDownload'=>$totalRateDownload,
                 
                 'success' => session('success') ?? null,
                 'error' => session('error') ?? null,
