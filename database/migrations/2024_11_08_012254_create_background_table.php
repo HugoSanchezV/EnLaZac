@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('period');
-            $table->boolean('activated');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

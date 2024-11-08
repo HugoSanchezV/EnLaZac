@@ -13,11 +13,6 @@ class Background extends Model
     public $fillable =[
         'name',
         'period',
-        'start_date',
-        'end_date',
-        'active',
-        'address',
-        'rural_community_id',
-        'geolocation',
+        'status',
     ];
 }

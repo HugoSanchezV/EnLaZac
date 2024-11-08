@@ -141,10 +141,11 @@ class PingDeviceHistorieController extends Controller
 
     public function create(PingDeviceHistorie $request)
     {   
-        $ping = PingDeviceHistorie::create([
-            'device_id' => $request->device_id,
-            'router_id' => $request->router_id,
-            'status' => $request->status,
+        $validatedData = $request->validated();
+        PingDeviceHistorie::create([
+            'device_id' => $$validatedData['device_id'],
+            'router_id' => $$validatedData['router_id'],
+            'status' => $$validatedData['status'],
         ]);
         //sdd("termino de ingresar");
         //return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');   
