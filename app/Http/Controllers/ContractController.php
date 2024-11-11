@@ -53,11 +53,12 @@ class ContractController extends Controller
                 'id' => $item->id,
                 'user_id' => $item->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
+                'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',  
                 'start_date' => $item->start_date,
                 'end_date' => $item->end_date,
                 'active' => $item->active,
                 'address' => $item->address,
-                'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',            
+                          
             ];
         });
 

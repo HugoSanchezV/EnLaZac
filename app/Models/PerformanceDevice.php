@@ -13,6 +13,10 @@ class PerformanceDevice extends Model
         'rate',
         'byte',  
     ];
+    protected $casts = [
+        'rate'  => 'array',
+        'byte'  => 'array',
+    ];
 
     public function device()
     {

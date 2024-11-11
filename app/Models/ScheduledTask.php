@@ -10,7 +10,7 @@ class ScheduledTask extends Model
     use HasFactory;
     public $fillable =[
         'id',
-        'task-name',
+        'task_name',
         'enabled',
     ];
 }

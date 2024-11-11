@@ -98,15 +98,15 @@ class TicketController extends Controller
 
     public function store(StoreTicketRequest $request)
     {
-        if ($request->user_id == null) {
+        if($request->user_id == null){
             $user_id = Auth::id();
         } else {
             $user_id = $request->user_id;
         }
-
+        
         $validatedData = $request->validated();
 
-        // print('HOLAAA');
+       // print('HOLAAA');
         $ticket = Ticket::create([
             'subject' => $validatedData['subject'],
             'description' => $validatedData['description'],
@@ -118,6 +118,8 @@ class TicketController extends Controller
 
         return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
     }
+
+    
 
     public function edit($id)
     {
@@ -231,5 +233,47 @@ class TicketController extends Controller
             'success' => session('success') ?? null,
             'totalTicketsCount' => $totalTicketsCount
         ]);
+    }
+    public function update_user(UpdateTicketRequest $request, $id)
+    {
+        $ticket = Ticket::findOrFail($id);
+
+        $validatedData = $request->validated();
+        $ticket->update($validatedData);
+        return redirect()->route('tickets.usuario')->with('success', 'Ticket Actualizado Con Éxito');
+    }
+    public function store_user(StoreTicketRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $ticket = Ticket::create([
+            'subject' => $validatedData['subject'],
+            'description' => $validatedData['description'],
+            'user_id' => Auth::id(),
+        ]);
+
+       self::make_ticket_notification($ticket);
+
+        return redirect()->route('tickets.usuario')->with('success', 'Ticket creado con éxito');    
+    }
+    public function edit_user($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $name = $ticket->user->name; // Accede al nombre del usuario que creó el ticket
+
+        return Inertia::render('User/Tickets/Edit', [
+            'ticket' => $ticket,
+            'nombre' => $name,
+        ]);
+    }
+    public function destroy_user($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->delete();
+        return Redirect::route('tickets.usuario')->with('success', 'Ticket Eliminado Con Éxito');
+    }
+    public function create_user()
+    {        
+        return Inertia::render('User/Tickets/Create');
     }
 }

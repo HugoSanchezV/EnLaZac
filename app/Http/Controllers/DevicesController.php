@@ -16,10 +16,12 @@ use App\Models\PingDeviceHistorie;
 use App\Services\DeviceService;
 use App\Services\RouterOSService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -43,7 +45,13 @@ class DevicesController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orwhere('device_internal_id', 'like', "%$search%")
-                    ->orWhere('device_id', 'like', "%$search%")
+                    // ->orWhere('device_id', 'like', "%$search%")
+                    ->orWhereHas('inventorieDevice', function ($q) use ($search) {
+                        $q->where('mac_address', 'like', "%$search%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('comment', 'like', "%$search%")
                     ->orWhere('address', 'like', "%$search%")
                     ->orWhere('disabled', 'like', "%$search%");
@@ -186,6 +194,22 @@ class DevicesController extends Controller
         ]);
     }
 
+    public function searchID($address)
+    {
+        $validator = Validator::make(['address' => $address], [
+            'address' => ['required', 'ip'],
+        ]);
+    
+        // Comprobar si la validación falla
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 422);
+        }
+    
+        // Buscar el dispositivo si la validación es exitosa
+        $device = Device::where('address', $address)->first();
+    
+        return $device ? $device->id : null;
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -226,7 +250,6 @@ class DevicesController extends Controller
 
     public function update(UpdateDeviceRequest $request, $id, $url = 'routers.devices')
     {
-        dd($request);
         $validatedData = $request->validated();
 
         $device = Device::findOrFail($id);

@@ -1,99 +1,130 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use Exception;
+use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\PaymentReceived;
+
 class MercadoPagoController extends Controller
 {
-    // Constructor para inicializar el SDK de Mercado Pago
-    public function __construct()
+    public function createPaymentPreference(Request $request)
     {
-        SDK::setAccessToken(env('MERCADOPAGO_ACCESS_TOKEN')); // Configuración del token de acceso
-    }
+        Log::info('Creando preferencia de pago');
 
-    /**
-     * Listar todas las transacciones guardadas en la base de datos.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function index()
-    {
-        $transactions = Transaction::all(); // Obtener todas las transacciones
-        return response()->json($transactions); // Devolver las transacciones en formato JSON
-    }
-
-    /**
-     * Crear una nueva transacción y generar un pago en Mercado Pago.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request)
-    {
-        // Crear una preferencia de pago en Mercado Pago
-        $preference = new Preference();
-
-        // Crear un ítem para la preferencia (producto a vender)
-        $item = new \MercadoPago\Item();
-        $item->title = $request->input('title'); // Nombre del producto
-        $item->quantity = $request->input('quantity'); // Cantidad
-        $item->unit_price = $request->input('unit_price'); // Precio unitario
-        $preference->items = [$item]; // Asignar ítem a la preferencia
-
-        // Crear un pagador (información del comprador)
-        $payer = new Payer();
-        $payer->email = $request->input('email'); // Email del comprador
-        $preference->payer = $payer; // Asignar pagador a la preferencia
-
-        // Guardar la preferencia en Mercado Pago
-        $preference->save();
-
-        // Almacenar la transacción en la base de datos
-        $transaction = new Transaction();
-        $transaction->title = $request->input('title'); // Título del producto
-        $transaction->quantity = $request->input('quantity'); // Cantidad
-        $transaction->unit_price = $request->input('unit_price'); // Precio unitario
-        $transaction->payer_email = $request->input('email'); // Email del comprador
-        $transaction->preference_id = $preference->id; // ID de la preferencia de Mercado Pago
-        $transaction->save();
-
-        // Devolver el ID de la preferencia para abrir el checkout de Mercado Pago
-        return response()->json(['preference_id' => $preference->id]);
-    }
-
-    /**
-     * Actualizar el estado de una transacción en la base de datos.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function update(Request $request, $id)
-    {
-        // Buscar la transacción en la base de datos por su ID
-        $transaction = Transaction::find($id);
+        // Token de acceso a Mercado Pago
+        $accessToken = "APP_USR-1185876763191395-110614-ff589a305022fcfd67c464b58d746b18-2080399408";
         
-        if ($transaction) {
-            // Actualizar el estado de la transacción
-            $transaction->status = $request->input('status', $transaction->status);
-            $transaction->save();
-            return response()->json(['message' => 'Transacción actualizada correctamente.']);
+        // Detalles del producto como un array de items
+        $items = [
+            [
+                "title" => "Producto de ejemplo",
+                "quantity" => 1,
+                "unit_price" => 100.0,
+                "currency_id" => "MXN"
+            ]
+        ];
+
+        // Información del comprador
+        $payer = [
+            "name" => "hols",
+            "surname" => "hugo",
+            "email" => "i@admin.com",
+        ];
+
+        // Crear los datos de la solicitud de preferencia
+        $requestData = [
+            "items" => $items,
+            "payer" => $payer,
+            "payment_methods" => [
+                "excluded_payment_methods" => [],
+                "installments" => 12,
+                "default_installments" => 1
+            ],
+            "back_urls" => [
+                "success" => route('mercadopago.success'),
+                "failure" => route('mercadopago.failed')
+            ],
+            "notification_url" => "https://abcd1234.ngrok.io/mercadopago/webhook", // Cambia esta URL cada vez que reinicies ngrok
+            "statement_descriptor" => "Servicio de red",
+            "external_reference" => "1234567890",
+            "expires" => false,
+            "auto_return" => 'approved'
+        ];
+
+        // Crear un cliente GuzzleHTTP
+        $client = new Client();
+
+        try {
+            // Enviar la solicitud a Mercado Pago
+            $response = $client->post('https://api.mercadopago.com/checkout/preferences', [
+                'headers' => [
+                    'Authorization' => "Bearer $accessToken",
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => $requestData,
+                'verify' => false, // Desactiva la verificación SSL (solo para desarrollo)
+            ]);
+
+            // Obtener y decodificar la respuesta de Mercado Pago
+            $preference = json_decode($response->getBody()->getContents(), true);
+            Log::info('Preferencia creada exitosamente', ['preference' => $preference]);
+
+            // Redirigir al usuario a la URL de pago usando Inertia
+            return Inertia::location($preference['init_point']);
+        } catch (Exception $e) {
+            // Registrar cualquier error que ocurra
+            Log::error('Error inesperado', ['message' => $e->getMessage()]);
+
+            // Enviar una respuesta de error en formato JSON para manejarla en el frontend si es necesario
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // Método webhook para manejar notificaciones de Mercado Pago
+    public function webhook(Request $request)
+    {
+        Log::info('Webhook recibido', $request->all());
+
+        // Verificar que el estado del pago sea "approved"
+        if ($request->type === 'payment') {
+            $paymentId = $request->data['id'];
+            $paymentStatus = $this->getPaymentStatus($paymentId);
+
+            if ($paymentStatus === 'approved') {
+                $paymentAmount = $request->data['transaction_amount'];
+
+                Log::info('Pago aprobado y notificación enviada al usuario');
+            }
         }
 
-        return response()->json(['message' => 'Transacción no encontrada.'], 404);
+        return response()->json(['status' => 'success'], 200);
     }
 
-    /**
-     * Eliminar una transacción de la base de datos.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function destroy($id)
+    // Función auxiliar para obtener el estado del pago a partir del ID
+    private function getPaymentStatus($paymentId)
     {
-        // Buscar la transacción en la base de datos por su ID
-        $transaction = Transaction::find($id);
-        
-        if ($transaction) {
-            $transaction->delete(); // Eliminar la transacción
-            return response()->json(['message' => 'Transacción eliminada correctamente.']);
-        }
+        $accessToken = "TEST-3796733327633492-102515-7f4d7f0ab89b5f70facc784ce720fb04-1345692363";
+        $client = new Client();
 
-        return response()->json(['message' => 'Transacción no encontrada.'], 404);
+        try {
+            $response = $client->get("https://api.mercadopago.com/v1/payments/{$paymentId}", [
+                'headers' => [
+                    'Authorization' => "Bearer $accessToken",
+                ],
+                'verify' => false,
+            ]);
+
+            $paymentData = json_decode($response->getBody()->getContents(), true);
+
+            return $paymentData['status'] ?? null;
+        } catch (Exception $e) {
+            Log::error('Error al obtener el estado del pago', ['message' => $e->getMessage()]);
+            return null;
+        }
     }
 }

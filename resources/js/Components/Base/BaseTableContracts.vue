@@ -50,6 +50,9 @@ const getTag = (cellIndex) => {
     case "plan_id":
       return "Plan";
       break;
+      case "rural_community_id":
+      return "Comunidad";
+      break;
     case "start_date":
       return "Inicio";
       break;
@@ -60,15 +63,14 @@ const getTag = (cellIndex) => {
     case "address":
       return "Dirección";
       break;
-    case "rural_community_id":
-      return "Comunidad";
-      break;
+    
     default:
       return cellIndex;
       break;
   }
 };
 </script>
+
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
@@ -232,7 +234,22 @@ const getTag = (cellIndex) => {
               }}
             </div>
             <div v-else-if="cellIndex === 'active'">
-              {{ cell === 0 ? "OFF" : "ON" }}
+              <div v-if="cell === 0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red" class="size-8">
+                  <path fill-rule="evenodd" 
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm6-2.438c0-.724.588-1.312 1.313-1.312h4.874c.725 0 1.313.588 1.313 1.313v4.874c0 .725-.588 1.313-1.313 1.313H9.564a1.312 1.312 0 0 1-1.313-1.313V9.564Z" 
+                  clip-rule="evenodd" />
+                </svg>
+
+
+              </div>
+              <div v-else-if="cell == 1">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00CF00" class="size-8">
+                  <path fill-rule="evenodd" 
+                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm14.024-.983a1.125 1.125 0 0 1 0 1.966l-5.603 3.113A1.125 1.125 0 0 1 9 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113Z" 
+                  clip-rule="evenodd" />
+                </svg>
+              </div>
             </div>
             <div v-else>
               <div class="flex gap-1">

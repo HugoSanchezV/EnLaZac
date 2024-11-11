@@ -19,5 +19,6 @@
     
         <script src="https://www.paypal.com/sdk/js?client-id={{env('PAYPAL_SANDBOX_CLIENT_ID')}}&currency=MXN"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://sdk.mercadopago.com/js/v2"></script>
     </body>
 </html>

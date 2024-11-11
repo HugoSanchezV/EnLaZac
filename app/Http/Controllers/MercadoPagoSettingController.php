@@ -2,119 +2,110 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MercadoPagoAccount; // Importa el modelo que representa la configuración en la base de datos.
-use Exception;
+use App\Models\MercadoPagoSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-
-use MercadoPago\Client\Common\RequestOptions;
-use MercadoPago\Client\Payment\PaymentClient;
-use MercadoPago\Exceptions\MPApiException;
-use MercadoPago\MercadoPagoConfig;
-
-use MercadoPago; // Importa el SDK de Mercado Pago.
-use MercadoPago\Client\MercadoPagoClient;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class MercadoPagoSettingController extends Controller
 {
-
     /**
-     * Constructor para inicializar el SDK de Mercado Pago con el access token correcto.
-     */
-    public function __construct()
-    {
-        // Determina el modo (sandbox o live) desde la configuración.
-        $mode = config('mercadopago.mode', 'sandbox');
-
-        // Selecciona el access token adecuado según el modo.
-        $accessToken = $mode === 'live'
-            ? env('MERCADOPAGO_ACCESS_TOKEN_LIVE')
-            : env('MERCADOPAGO_ACCESS_TOKEN_SANDBOX');
-
-        // Inicializa el SDK de Mercado Pago con el token seleccionado.
-        MercadoPagoConfig::setAccessToken($accessToken);
-    }
-
-    /**
-     * Renderiza la vista de edición de las configuraciones de Mercado Pago.
+     * Mostrar el formulario de edición de configuraciones de MercadoPago.
      */
     public function edit()
     {
-        // Recupera la configuración existente (si existe).
-        $settings = MercadoPagoAccount
-            ::first();
-
-        // Renderiza la vista con Inertia, pasando la configuración actual.
+        $settings = MercadoPagoSetting::first(); // Recupera la primera configuración
         return Inertia::render('Admin/Settings/MercadoPago/Edit', [
-            'settings' => $settings,
+            'settings' => $settings
         ]);
     }
 
     /**
-     * Almacena una nueva configuración de Mercado Pago en la base de datos.
+     * Guardar una nueva configuración de MercadoPago.
      */
     public function store(Request $request)
     {
-        // Valida los datos enviados desde el formulario.
+        // Validar los datos de la solicitud
         $request->validate([
-            'mode' => 'required|in:sandbox,live', // Modo sandbox o live.
-            'sandbox_public_key' => 'required|string', // Clave pública para sandbox.
-            'sandbox_access_token' => 'required|string', // Token de acceso para sandbox.
-            'live_public_key' => 'nullable|string', // Clave pública para live (opcional).
-            'live_access_token' => 'nullable|string', // Token de acceso para live (opcional).
-            'currency' => 'required|string|size:3', // Moneda en formato ISO 4217 (ej: USD).
+            'mode' => 'required|in:sandbox,live',
+            'sandbox_client_id' => 'required|string',
+            'sandbox_client_secret' => 'required|string',
+            'live_client_id' => 'nullable|string',
+            'live_client_secret' => 'nullable|string',
+            'currency' => 'required|string',
         ]);
 
-        // Crea una nueva configuración con los datos validados.
-        $setting = MercadoPagoAccount::create($request->all());
+        // Crear y guardar la configuración
+        $setting = MercadoPagoSetting::create($request->all());
 
-        // Retorna la configuración creada con un código de estado 201 (Creado).
+        // Retornar la nueva configuración creada
         return response()->json($setting, 201);
     }
 
     /**
-     * Actualiza una configuración existente de Mercado Pago.
+     * Mostrar una configuración específica.
+     */
+    public function show($id)
+    {
+        $setting = MercadoPagoSetting::findOrFail($id);
+        return response()->json($setting);
+    }
+
+    /**
+     * Actualizar una configuración de MercadoPago.
      */
     public function update(Request $request)
     {
-        // Valida solo los campos opcionales para live.
         $request->validate([
-            'live_public_key' => 'nullable|string',
-            'live_access_token' => 'nullable|string',
+            'mode' => 'required|in:sandbox,live',
+            'sandbox_client_id' => 'required|string',
+            'sandbox_client_secret' => 'required|string',
+            'live_client_id' => 'nullable|string',
+            'live_client_secret' => 'nullable|string',
+            'currency' => 'required|string',
         ]);
 
         try {
-            // Recupera la configuración existente, si no existe, crea una nueva.
-            $setting = MercadoPagoAccount::first();
+            $setting = MercadoPagoSetting::first();
             if (!$setting) {
-                // Crea una nueva configuración si no hay ninguna.
-                MercadoPagoAccount::create($request->all());
+                // Si no existe ninguna configuración, crear una nueva
+                MercadoPagoSetting::create([
+                    'mode' => $request->mode,
+                    'sandbox_client_id' => $request->sandbox_client_id,
+                    'sandbox_client_secret' => $request->sandbox_client_secret,
+                    'live_client_id' => $request->live_client_id,
+                    'live_client_secret' => $request->live_client_secret,
+                    'currency' => $request->currency,
+                ]);
             } else {
-                // Actualiza solo los campos proporcionados.
-                $setting->update($request->only(['live_public_key', 'live_access_token']));
+                // Si existe, actualizar la configuración existente
+                $setting->update($request->only([
+                    'mode',
+                    'sandbox_client_id',
+                    'sandbox_client_secret',
+                    'live_client_id',
+                    'live_client_secret',
+                    'currency',
+                ]));
             }
 
-            // Redirige a la página de edición con un mensaje de éxito.
-            return Redirect::route('settings.mercadopago.edit')->with('success', 'Configuración actualizada con éxito');
+            return Redirect::route('settings.mercadopago.edit')->with('success', 'Configuración Actualizada Con Éxito');
         } catch (Exception $e) {
-            // Redirige con un mensaje de error si ocurre alguna excepción.
-            return Redirect::route('settings.mercadopago.edit')->with('error', 'Error al actualizar: ' . $e->getMessage());
+            Log::error('Error al actualizar configuración de MercadoPago', ['message' => $e->getMessage()]);
+            return Redirect::route('settings.mercadopago.edit')->with('error', 'Hubo un error al actualizar las credenciales');
         }
     }
 
     /**
-     * Elimina una configuración específica de Mercado Pago.
+     * Eliminar una configuración de MercadoPago.
      */
     public function destroy($id)
     {
-        // Busca la configuración por su ID. Lanza un error 404 si no se encuentra.
-        $setting = MercadoPagoAccount::findOrFail($id);
-
-        // Elimina la configuración de la base de datos.
+        $setting = MercadoPagoSetting::findOrFail($id);
         $setting->delete();
 
-        // Retorna una respuesta sin contenido (204).
         return response()->json(null, 204);
     }
 }

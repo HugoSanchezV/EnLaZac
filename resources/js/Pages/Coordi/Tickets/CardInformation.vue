@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted } from "vue";
+import { Link } from "@inertiajs/vue3";
 
 const props = defineProps({
   ticket: Object,
@@ -104,7 +105,12 @@ onMounted(() => {
           <dt class="text-sm font-medium text-gray-600">ID del Usuario</dt>
           <dd class="mt-1 text-sm text-gray-900">
             <div class="data-container w-full bg-gray-50 text-sm font-medium text-gray-800 border-0">
-              {{ ticket.user_id }}
+              <Link
+              :href="route('usuarios.show', ticket.user_id)"
+                class="cursor-pointer text-blue-500 underline">
+                {{ ticket.user_id }}
+              
+              </Link>
             </div>
           </dd>
         </div>

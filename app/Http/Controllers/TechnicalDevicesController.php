@@ -43,7 +43,10 @@ class TechnicalDevicesController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orwhere('device_internal_id', 'like', "%$search%")
-                    ->orWhere('device_id', 'like', "%$search%")
+                    // ->orWhere('device_id', 'like', "%$search%")
+                    ->orWhereHas('inventorieDevice', function ($q) use ($search) {
+                        $q->where('mac_address', 'like', "%$search%");
+                    })
                     ->orWhere('comment', 'like', "%$search%")
                     ->orWhere('address', 'like', "%$search%")
                     ->orWhere('disabled', 'like', "%$search%");

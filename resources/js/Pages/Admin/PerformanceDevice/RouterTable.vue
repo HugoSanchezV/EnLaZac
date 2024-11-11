@@ -4,6 +4,7 @@ import { router } from "@inertiajs/vue3";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
+
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 // ACCION DE ELIMINAR
@@ -21,14 +22,15 @@ const destroy = (id) => {
       },
 
       listeners: {
-        // accept: () => {
-        //   const url = route("inventorie.devices.destroy", id);
-        //   router.delete(url, () => {
-        //     onError: (error) => {
-        //       toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-        //     };
-        //   });
-        // },
+        accept: () => {
+          const url = route("routers.destroy", id);
+
+          router.delete(url, () => {
+            onError: (error) => {
+              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+            };
+          });
+        },
       },
     },
 
@@ -40,22 +42,6 @@ const destroy = (id) => {
   );
 };
 
-const getTag = (cellIndex) => {
-  switch (cellIndex) {
-    case "ip_address":
-      return "ip";
-
-    case "mac_address":
-      return "mac";
-
-    case "description":
-      return "descripción";
-    case "brand":
-      return "marca";
-    default:
-      return cellIndex;
-  }
-};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -73,6 +59,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
+
         <div>
           <button
             id="dropdownRadioButton"
@@ -123,7 +110,7 @@ const getTag = (cellIndex) => {
             id="dropdownRadio"
             class="z-10 w-48 bg-white divide-y divide-gray-100 rounded-lg shadow absolute"
           >
-            <ul class="p-3 space-y-1 text-sm text-gray-700">
+            <ul class="p-3 space-y-1 text-xs text-gray-700">
               <li v-for="(filter, index) in filters" :key="index">
                 <div class="flex items-center p-2 rounded hover:bg-gray-100">
                   <input
@@ -145,6 +132,8 @@ const getTag = (cellIndex) => {
             </ul>
           </div>
         </div>
+
+        <!-- Final dfrop nbuton  -->
       </div>
       <!-- final de filtros -->
       <div class="relative">
@@ -182,7 +171,7 @@ const getTag = (cellIndex) => {
       </div>
     </div>
 
-    <table class="w-full text-sm text-left text-gray-500 p-2">
+    <table class="w-full text-sm text-left text-gray-500">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -198,12 +187,34 @@ const getTag = (cellIndex) => {
           class="bg-white border-b hover:bg-gray-100"
         >
           <td></td>
-          <td
-            v-for="(cell, cellIndex) in row"
-            :key="cellIndex"
-            class="font-medium text-gray-900 whitespace-nowrap"
-          >
-            <div v-if="cellIndex === 'state'"></div>
+          <td v-for="(cell, cellIndex) in row" :key="cellIndex">
+            <div v-if="cellIndex === 'sync'">
+              <Link
+                v-if="edit"
+                :href="route('routers.sync', row.id)"
+                class="flex gap-1 p-1.5 rounded-full text-white sm:mb-0 mb-1 w-8 items-center justify-center"
+                :class="
+                  row.sync
+                    ? 'bg-green-500 hover:bg-green-600'
+                    : ' bg-orange-500 hover:bg-orange-600'
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
+                </svg>
+              </Link>
+            </div>
             <div v-else>
               <div class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
@@ -215,7 +226,86 @@ const getTag = (cellIndex) => {
           </td>
 
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4 flex actions">
+            <div class="sm:flex gap-4 flex flex-wrap actions">
+              <Link
+                v-if="row.sync"
+                :href="route('devices.create', row.id)"
+                class="flex items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-1 px-2 rounded-md sm:mb-0 mb-1"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2 2.75A.75.75 0 0 1 2.75 2C8.963 2 14 7.037 14 13.25a.75.75 0 0 1-1.5 0c0-5.385-4.365-9.75-9.75-9.75A.75.75 0 0 1 2 2.75Zm0 4.5a.75.75 0 0 1 .75-.75 6.75 6.75 0 0 1 6.75 6.75.75.75 0 0 1-1.5 0C8 10.35 5.65 8 2.75 8A.75.75 0 0 1 2 7.25ZM3.5 11a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Nueva Conexion
+              </Link>
+
+              <Link
+                :href="route('routers.devices', row.id)"
+                v-if="row.sync"
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2 4.25A2.25 2.25 0 0 1 4.25 2h7.5A2.25 2.25 0 0 1 14 4.25v5.5A2.25 2.25 0 0 1 11.75 12h-1.312c.1.128.21.248.328.36a.75.75 0 0 1 .234.545v.345a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1-.75-.75v-.345a.75.75 0 0 1 .234-.545c.118-.111.228-.232.328-.36H4.25A2.25 2.25 0 0 1 2 9.75v-5.5Zm2.25-.75a.75.75 0 0 0-.75.75v4.5c0 .414.336.75.75.75h7.5a.75.75 0 0 0 .75-.75v-4.5a.75.75 0 0 0-.75-.75h-7.5Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+
+                Dispositivos
+              </Link>
+
+              <div
+                v-else
+                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                Sincroniza para ver los dispositivos conectados
+              </div>
+
+              <Link
+                :href="route('routers.ping', row.id)"
+                class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <span class="material-symbols-outlined"> network_ping </span>
+                Ping
+              </Link>
+
+              <Link
+                v-if="edit"
+                :href="route('routers.edit', row.id)"
+                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                  />
+                </svg>
+
+                Editar
+              </Link>
+
               <div v-if="del">
                 <button
                   @click="destroy(row.id)"
@@ -325,6 +415,17 @@ export default {
       });
     },
 
+    selectUser(user) {
+      this.currentUser = user;
+      this.toggleDropdown2();
+      this.$emit("search", {
+        searchQuery: this.searchQuery,
+        attribute: this.currentFilter,
+        type: this.currentUser,
+        order: this.currentOrder,
+      });
+    },
+
     orderSelect(newOrder) {
       this.currentOrder = newOrder;
       this.$emit("search", {
@@ -335,9 +436,10 @@ export default {
       });
     },
 
-    // filterData() {
-    //   console.log(this.searchQuery);
-    // },
+    filterData() {
+      console.log(this.searchQuery);
+    },
   },
 };
 </script>
+  

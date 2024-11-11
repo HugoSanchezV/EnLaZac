@@ -15,6 +15,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PayController;
 use App\Http\Controllers\PayPalSettingController;
+use App\Http\Controllers\PerformanceDeviceController;
 use App\Http\Controllers\PingDeviceHistorieController;
 use App\Http\Controllers\PreRegisterUserController;
 use App\Http\Controllers\RuralCommunityController;
@@ -26,11 +27,17 @@ use App\Http\Controllers\TechnicalDevicesController;
 use App\Http\Controllers\TechnicalInventorieDevicesController;
 use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
+use App\Models\InventorieDevice;
+use App\Models\PerformanceDevice;
+use App\Models\PingDeviceHistorie;
+use App\Services\WebRouterService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\MercadoPagoSettingController;
-use App\Http\Controllers\TelegramController;
+use App\Http\Controllers\MercadoPagoController;
+use App\Http\Controllers\SMSController;
+use App\Http\Controllers\MercadoPagoDataController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -47,22 +54,67 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    //telegram
-    Route::post('/telegram/send-message', [TelegramController::class, 'sendMessage'])->name('telegram.send-message');
+
    
     //Mercado Pago
     Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/settings/mercadopago', [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
-    Route::post('/settings/mercadopago', [MercadoPagoSettingController::class, 'store'])->name('settings.mercadopago.store');
-    Route::put('/settings/mercadopago', [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
-    Route::delete('/settings/mercadopago/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('settings.mercadopago.destroy');
+    // Route::get('/settings/mercadopago', [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
+    // Route::post('/settings/mercadopago', [MercadoPagoSettingController::class, 'store'])->name('settings.mercadopago.store');
+    // Route::put('/settings/mercadopago', [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
+    // Route::delete('/settings/mercadopago/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('settings.mercadopago.destroy');
+    
+});
+
+    // Rutas para MercadoPagoController
+Route::post('/create-preference', [MercadoPagoController::class, 'createPaymentPreference']);
+Route::get('/mercadopago/success', [MercadoPagoController::class, 'success'])->name('mercadopago.success');
+Route::get('/mercadopago/failed', [MercadoPagoController::class, 'failed'])->name('mercadopago.failed');
+Route::post('/mercadopago/webhook', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
+
+// Rutas para MercadoPagoSettingController
+Route::prefix('settings')->name('settings.')->middleware('auth')->group(function () {
+    Route::prefix('mercadopago')->name('mercadopago.')->group(function () {
+        // Mostrar el formulario de edición de configuraciones
+        Route::get('/edit', [MercadoPagoSettingController::class, 'edit'])->name('edit');
+        
+        // Guardar una nueva configuración
+        Route::post('/store', [MercadoPagoSettingController::class, 'store'])->name('store');
+        
+        // Mostrar una configuración específica
+        Route::get('/{id}', [MercadoPagoSettingController::class, 'show'])->name('show');
+        
+        // Actualizar una configuración existente
+        Route::put('/update', [MercadoPagoSettingController::class, 'update'])->name('update');
+        
+        // Eliminar una configuración
+        Route::delete('/destroy/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('destroy');
+    });
+});
+
+// Rutas para MercadoPagoDataController
+Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('auth')->group(function () {
+    // Listar todas las transacciones
+    Route::get('/', [MercadoPagoDataController::class, 'index'])->name('index');
+    
+    // Crear una nueva transacción
+    Route::post('/', [MercadoPagoDataController::class, 'store'])->name('store');
+    
+    // Mostrar una transacción específica
+    Route::get('/{id}', [MercadoPagoDataController::class, 'show'])->name('show');
+    
+    // Actualizar una transacción específica
+    Route::put('/{id}', [MercadoPagoDataController::class, 'update'])->name('update');
+    
+    // Eliminar una transacción específica
+    Route::delete('/{id}', [MercadoPagoDataController::class, 'destroy'])->name('destroy');
 });
 
     // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
-    Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
     //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
+        Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
         Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
@@ -80,6 +132,9 @@ Route::middleware([
         Route::put('/usuarios/pre/register/update/{id}',          [PreRegisterUserController::class, 'update'])->name('usuarios.pre.register.update');
         Route::delete('/usuarios/pre/register/delete/{id}',          [PreRegisterUserController::class, 'destroy'])->name('usuarios.pre.register.destroy');
 
+        //Performance Devices
+        Route::get('/performance/user/{id}',                 [PerformanceDeviceController::class, 'indexByUser'])->name('performance');
+        Route::get('/performance/device/{id}',                 [PerformanceDeviceController::class, 'indexByDevice'])->name('performance');
         //Routers
         // -- Resource 
         Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
@@ -155,7 +210,6 @@ Route::middleware([
         Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
         Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
         Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
-        Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
         Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
         Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
         Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
@@ -221,7 +275,7 @@ Route::middleware([
     // Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
 
     //MIDDLEWARE DEMÁS USUARIOS
-    Route::middleware(['rol:2,3'])->group(function () {
+  //  Route::middleware(['rol:2,3'])->group(function () {
 
         // Usuarios
         /*  Route::get('/dashboard', function () {
@@ -229,9 +283,14 @@ Route::middleware([
         })->name('dashboard');*/
         // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
-    });
-
+ //   });
     Route::middleware(['rol:3'])->group(function () {
+     //Dashboard
+     
+    //  Route::get('/dashboard', function () {
+    //      return Inertia::render('DashboardBase');
+    //  })->name('dashboard');
+
         //Router
         Route::get('/tecnico/routers',                  [TechnicalRouterController::class, 'index'])->name('technical.routers');
         Route::get('/tecnico/routers/show/{id}',        [TechnicalRouterController::class, 'show'])->name('technical.routers.show');
@@ -261,6 +320,7 @@ Route::middleware([
         Route::get('/tecnico/inventorie/devices/show/{id}', [TechnicalInventorieDevicesController::class, 'show'])->name('technical.inventorie.devices.show');
         // Inventorie histories 
         Route::get('/tecnico/inventorie/devices/histories',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.index');
+        Route::get('/tecnico/inventorie/devices/histories/show/{DeviceHistorie}',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.show');
 
         // Tickets
         Route::get('/tecnico/tickets',                    [TechnicalTicketController::class, 'index'])->name('technical.tickets');
@@ -284,8 +344,16 @@ Route::middleware([
 
     //MIDDLEWARE DEL CLIENTE
     Route::middleware(['rol:0'])->group(function () {
+        // Route::get('/dashboard', function () {
+        //     return Inertia::render('DashboardBase');
+        // })->name('dashboard');
         Route::get('/tickets/usuario',                 [TicketController::class, 'index_user'])->name('tickets.usuario');
-        Route::post('/tickets/store/usuario',          [TicketController::class, 'store'])->name('tickets.usuario.store');
+        Route::get('/tickets/create/usuario',            [TicketController::class, 'create_user'])->name('tickets.usuario.create');
+        Route::post('/tickets/store/usuario',          [TicketController::class, 'store_user'])->name('tickets.usuario.store');
+        Route::get('/tickets/edit/usuario/{id}',         [TicketController::class, 'edit_user'])->name('tickets.usuario.edit');
+        Route::get('/tickets/update/usuario/{id}',         [TicketController::class, 'update_user'])->name('tickets.usuario.update');
+        Route::delete('/tickets/delete/usuario/{id}',    [TicketController::class, 'destroy_user'])->name('tickets.usuario.destroy');
+
     });
 
 

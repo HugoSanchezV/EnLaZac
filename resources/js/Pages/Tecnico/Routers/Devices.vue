@@ -14,24 +14,24 @@ const { devices, users } = toRefs(props);
 
 const headers = [
   "id",
-  "device_internal_id",
+  "id interno",
   //"router_id",
-  "device_id",
+  "dispositivo",
   // "user_id",
-  "comment",
+  "comentario",
   // "list",
-  "address",
-  "Enable",
+  "ip",
+  "estado",
   "acciones",
 ];
 const filters = [
   "id",
-  "device_internal_id",
-  "device_id",
-  "user_id",
-  "comment",
+  "id interno",
+  "dispositivo",
+  // "usuario",
+  "comentario",
   //"list",
-  "address",
+  "ip",
 ];
 
 const columns = ["id", "name"];
@@ -175,6 +175,26 @@ export default {
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
+
+      if (this.attribute === "id interno") {
+        this.attribute = "device_internal_id";
+      }
+
+      if (this.attribute === "dispositivo") {
+        this.attribute = "device_id";
+      }
+
+      if (this.attribute === "usuario") {
+        this.attribute = "user_id";
+      }
+
+      if (this.attribute === "comentario") {
+        this.attribute = "comment";
+      }
+
+      if (this.attribute === "ip") {
+        this.attribute = "address";
+      }
 
       this.$inertia.get(
         link,

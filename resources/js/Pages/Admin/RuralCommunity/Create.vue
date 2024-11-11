@@ -1,4 +1,4 @@
-</script>
+
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>

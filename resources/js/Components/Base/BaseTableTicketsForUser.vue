@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("tickets.destroy", id);
+          const url = route("tickets.usuario.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -355,7 +355,7 @@ const getTag = (cellIndex) => {
             <div class="sm:flex gap-4 flex actions">
               <Link
                 v-if="edit"
-                :href="route('tickets.edit', row.id)"
+                :href="route('tickets.usuario.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg

@@ -72,7 +72,23 @@ class InterestsController extends Controller
         return redirect()->route('settings.interest')->with('success', 'El interest ha sido Actualizado Con Éxito');
     }
 
-    public function getInterest($id){
-        return Interest::findOrFail($id);
+    public function createInterestCourtDate()
+    {
+        Interest::create([
+            'name' => "fuera-fecha",
+            'amount' => 50
+        ]);
+    }
+
+    public function createInterestMounthsDebt()
+    {
+        Interest::create([
+            'name' => "recargo-mes",
+            'amount' => 50
+        ]);
+    }
+
+    public function getInterest($name){
+        return Interest::where('name',$name)->first();
     }
 }

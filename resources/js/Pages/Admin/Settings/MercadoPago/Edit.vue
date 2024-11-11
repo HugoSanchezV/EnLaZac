@@ -1,28 +1,19 @@
+<!-- resources/js/Pages/Admin/Settings/MercadoPago/Edit.vue -->
 <script setup>
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import FormUpdate from "./FormUpdate.vue";
 import { defineProps } from "vue";
 
 const props = defineProps({
-  settings: String,
+  settings: Object, // Cambiado de String a Object
 });
-
-const settings = props.settings;
 </script>
+
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div class="flex justify-between">
-        <h2>Editar Crendeciales de MercadoPago </h2>
-
-        <!-- <div class="flex gap-2">
-            <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">{{
-              router.ip_address
-            }}</span>
-            <span class="bg-slate-500 text-md text-white py-2 px-3 rounded-md">{{
-              router.user
-            }}</span>
-          </div> -->
+        <h2>Editar Configuraciones de MercadoPago</h2>
       </div>
     </template>
 

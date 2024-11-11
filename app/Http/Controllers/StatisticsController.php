@@ -20,6 +20,8 @@ class StatisticsController extends Controller
 
     public function show()
     {
+
+      //  dd(Carbon::now());
         //Varias consultas para mandar aca
         $morrosos = self::morrososCount();
      //  dd($morrosos);
@@ -72,8 +74,10 @@ class StatisticsController extends Controller
                 }
             }  
         }
+  //     dd(Carbon::now()->toString());
+
       //  dd($userCount->count());
-        return Inertia::render('DashboardBase',[
+        return Inertia::render('Admin/DashboardAdmin',[
             'morrosos' => $morrosos,
             'activeDevice' => $activeDevice,
             'new_tickets' =>$newTickets,
@@ -122,10 +126,7 @@ class StatisticsController extends Controller
         
         return $trafficData;
     }
-    public function store()
-    {
-        
-    }
+    public function store(){}
     public function activeContract()
     {return Contract::with('user','plan')->where('active','1')->get();}
     
