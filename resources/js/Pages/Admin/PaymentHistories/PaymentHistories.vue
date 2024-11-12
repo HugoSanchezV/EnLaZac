@@ -92,7 +92,6 @@ const headers = [
 </template>
 <script>
 import { Link } from "@inertiajs/vue3";
-import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import BaseTablePayments from "@/Components/Base/BaseTablePaymentHistories.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";

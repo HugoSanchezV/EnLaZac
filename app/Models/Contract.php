@@ -38,4 +38,8 @@ class Contract extends Model
     {
         return $this->belongsTo(RuralCommunity::class);
     }
+    public function installations()
+    {
+        return $this->hasMany(Installation::class, 'contract_id');
+    }
 }

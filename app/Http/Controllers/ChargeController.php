@@ -96,6 +96,7 @@ class ChargeController extends Controller
     }
     public function store_schedule(Charge $request)
     {   
+        
         Charge::create([
             'contract_id' => $request->contract_id,
             'description' => $request->description,
@@ -119,8 +120,7 @@ class ChargeController extends Controller
     }
     public function store(StoreChargeRequest $request)
     {   
-        //dd('HEre');
-        $charge = Charge::create([
+        Charge::create([
             'contract_id' => $request->contract_id,
             'description' => $request->description,
             'amount' => $request->amount,

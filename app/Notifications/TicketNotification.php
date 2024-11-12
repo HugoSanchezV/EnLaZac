@@ -17,9 +17,11 @@ class TicketNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      */
     public $ticket;
+
     public function __construct(Ticket $ticket)
     {
         $this->ticket = $ticket; 
+
     }
 
     /**
@@ -29,7 +31,7 @@ class TicketNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        return ['database'];
     }
 
     /**

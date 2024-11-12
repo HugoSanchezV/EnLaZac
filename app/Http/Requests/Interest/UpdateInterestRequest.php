@@ -22,18 +22,18 @@ class UpdateInterestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'amount' => 'required|numeric',
+            'amountCourt' => 'required|numeric',
+            'amountDebt' => 'required|numeric',
         ];
     }
 
     public function messages()
     {
         return [
-            'name.required' => 'El nombre es un campo obligatorio.',
-            'name.string' => 'El nombre debe ser una cadena',
-            'amount.required' => 'El monto es un campo obligatorio',
-            'amount.numeric' => 'El monto debe ser de tipo numérico',
+            'amountCourt.required' => 'El monto es un campo obligatorio',
+            'amountCourt.numeric' => 'El monto debe ser de tipo numérico',
+            'amountDebt.required' => 'El monto es un campo obligatorio',
+            'amountDebt.numeric' => 'El monto debe ser de tipo numérico',
          ];
     }
 }

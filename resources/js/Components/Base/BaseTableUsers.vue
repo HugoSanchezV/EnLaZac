@@ -388,22 +388,13 @@ const getTag = (cell) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-2 actions">
               <Link
-                :href="route('usuarios.show', row.id)"
+                :href="route('performance.user', row.id)"
                 v-if="show"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M2 3.75A.75.75 0 0 1 2.75 3h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 3.75ZM2 8a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 8Zm0 4.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+              <span class="material-symbols-outlined">
+              signal_cellular_alt
+              </span>
 
                 Consumo
               </Link>
@@ -487,7 +478,7 @@ const getTag = (cell) => {
   </div>
 </template>
   
-  <script>
+<script>
 import { Link, router } from "@inertiajs/vue3";
 export default {
   components: {

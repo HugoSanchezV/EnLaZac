@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Events\ContractWarningEvent;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\ChargeController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\InterestsController;
 use App\Services\ChargeService;
 use Illuminate\Console\Command;
@@ -45,20 +46,29 @@ class CheckContracts extends Command
         $mesT = Carbon::today()->month;
         $anoT = Carbon::today()->year;
 
-        // $this->info('DIA DE HOY : '.$diaT);
+        $controllerContract = new ContractController();
 
+       // $this->info('DIA DE HOY : '.$diaT);
+        
         //END_DATE es igual a la fecha de corte
         $service = new ChargeService();
-        $contractTerms = Contract::where('end_date', '<=', $today)->get();
+        $contractTerms = $controllerContract->getContracts($today);
+
+        
+
+        //Contract::where('end_date', '<=', $today)->get();
         //INSERTAR CONSULTA DE PAGOS
         $this->info($contractTerms);
 
         //INSERTAR CONDICION PARA SABER SI EL USUARIO HA PAGADO
         foreach ($contractTerms as $contract) {
             $endDate = Carbon::parse($contract->end_date);
-            if ($contract->active == 1) {
-                if (($endDate->year == $anoT) && ($endDate->month == $mesT)) {
-                    // $this->info('MISMO ANO Y FECHA'.($endDate->day)+2 ." == ".$diaT);
+            if($contract->active == 1)
+            {
+                self::checkInstallation($contract, $today);
+                if(($endDate->year == $anoT)&&($endDate->month == $mesT))
+                {
+                   // $this->info('MISMO ANO Y FECHA'.($endDate->day)+2 ." == ".$diaT);
 
                     if ((($endDate->day) + 2) == $diaT) {
                         //  $this->info('ENVIADO');
@@ -84,14 +94,41 @@ class CheckContracts extends Command
                         self::cargoPorPago($service, $contract);
                     }
                 }
+               
+
+                
             }
         }
         $this->info('Se han verificado los contratos.');
     }
-    public function cargoPorPago($service, Contract $contract)
+
+    public function checkInstallation($contract, $today)
     {
-        $service->createChargeCourtDate($contract);
+        if (!$contract->installations->isEmpty()){
+
+            foreach($contract->installations as $installation)
+            {
+             //   if($installation->assigned_date == );
+                $assigned = Carbon::parse($installation->assigned_date);
+                if($assigned->year >= $today->year)
+                {
+                    if($assigned->month >= $today->month)
+                    {
+                        if($assigned->day > $today->day)
+                        {
+
+                        }else if($assigned->day == $today->day){
+                            
+                        }
+                    }
+                }
+            }
+        }else{
+
+        }
     }
+    public function cargoPorPago($service , Contract $contract)
+    {$service->createChargeCourtDate($contract);}
 
     public function extra_charge($service, Contract $contract)
     {

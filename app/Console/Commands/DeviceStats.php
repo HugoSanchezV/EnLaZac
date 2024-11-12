@@ -94,12 +94,12 @@ class DeviceStats extends Command
                         // Asegurarse de que 'rate' contenga tanto subida como bajada
                         if (count($rateArray) === 2) {
 
-                            $perf['rate'] = ['upload' => self::convertToGb($rateArray[0]),'download' => self::convertToGb($rateArray[1])]; 
+                            $perf['rate'] = ['upload' => self::convertToMB($rateArray[0]),'download' => self::convertToMB($rateArray[1])]; 
                             // $upload_rateTemp = self::convertToGb($rateArray[0]);  // Tasa de subida
                             // $download_rateTemp = self::convertToGb($rateArray[1]);  // Tasa de bajada
                         }
                         if (count($byteArray) === 2) {
-                            $perf['byte'] = ['upload' => self::convertToGb($byteArray[0]),'download' => self::convertToGb($byteArray[1])];
+                            $perf['byte'] = ['upload' => self::convertToMB($byteArray[0]),'download' => self::convertToMB($byteArray[1])];
                         }
                         $performance[] = $perf;
                     }

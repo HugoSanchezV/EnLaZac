@@ -9,6 +9,7 @@ use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
+use App\Models\Charge;
 use App\Models\RuralCommunity;
 use App\Services\RuralCommunityService;
 use Carbon\Carbon;
@@ -128,7 +129,7 @@ class ContractController extends Controller
 
         //dd('LLega aqui');
         $validatedData = $request->validated();
-        Contract::create([
+        $contract = Contract::create([
             'user_id' => $validatedData['user_id'],
             'plan_id' => $validatedData['plan_id'],
             'start_date' => $validatedData['start_date'],
@@ -138,10 +139,27 @@ class ContractController extends Controller
             'rural_community_id' => $validatedData['rural_community_id'],
             'geolocation' => $validatedData['geolocation'],
         ]);
-        //     RuralCommunityService::update($id, $request->community);
 
+        self::createCharge($contract);
+   //     RuralCommunityService::update($id, $request->community);
+        
         return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
     }
+    private function createCharge($contract)
+    {
+        $controller = new ChargeController();
+        $cargo = new Charge();
+        $community = RuralCommunity::findOrFail($contract->rural_community_id);
+
+        $cargo->contract_id = $contract->id;
+        $cargo->description = "Cargo de instalación";
+        $cargo->amount = $community->installation_cost;
+        $cargo->paid = false;
+
+        $controller->store_schedule($cargo);
+    }
+
+    
 
     public function edit($id)
     {
@@ -196,6 +214,9 @@ class ContractController extends Controller
         }
     }
 
+    public function getContracts($today){
+        return Contract::with('installations')->where('end_date', '<=', $today)->get();
+    }
     public function exportExcel()
     {
         $query = Contract::with(['user', 'plan']);

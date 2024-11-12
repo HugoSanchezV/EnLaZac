@@ -11,6 +11,7 @@ class ScheduledTask extends Model
     public $fillable =[
         'id',
         'task_name',
-        'enabled',
+        'period',
+        'status',
     ];
 }

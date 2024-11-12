@@ -7,22 +7,30 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
-  interest: Object,
+  interestCourt: Number,
+  interestDebt: Number,
 });
 
 const form = useForm({
-  name: "",
-  amount: 0,
+  nameCourt: "",
+  amountCourt: 0,
+  nameDebt: "",
+  amountDebt: 0,
 });
 
+
 onMounted(() => {
-  if (props.interest) {
-    form.name = props.interest.name || "";
-    form.amount = props.interest.amount || 0;
+  if (props.interestCourt) {
+    form.nameCourt = props.interestCourt.name || "";
+    form.amountCourt = props.interestCourt.amount || 0;
+  }
+  if (props.interestDebt) {
+    form.nameDebt = props.interestDebt.name || "";
+    form.amountDebt = props.interestDebt.amount || 0;
   }
 });
 const submit = () => {
-  form.put(route("settings.interest.update", { id: props.interest.id }));
+  form.put(route("settings.interest.update"));
 };
 
 </script>
@@ -32,29 +40,35 @@ const submit = () => {
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
-        <InputLabel for="name" value="Nombre" />
-        <TextInput
-          id="name"
-          v-model="form.name"
-          type="text"
-          class="mt-1 block w-full"
-          required
-          autofocus
-          autocomplete="name"
-        />
-        <InputError class="mt-2" :message="form.errors.name" />
+        <h2>Interes por fecha de corte: </h2>
+        <div class="mt-2">
+          
+          <InputLabel for="amountCourt" value="Monto" />
+          <TextInput
+            id="amountCourt"
+            v-model="form.amountCourt"
+            type="number"
+            class="mt-1 block w-full"
+            autocomplete="amountCourt"
+          />
+          <InputError class="mt-2" :message="form.errors.amountCourt" />
+        </div>
       </div>
 
       <div class="mt-4">
-        <InputLabel for="amount" value="Monto" />
-        <TextInput
-          id="amount"
-          v-model="form.amount"
-          type="number"
-          class="mt-1 block w-full"
-          autocomplete="amount"
-        />
-        <InputError class="mt-2" :message="form.errors.amount" />
+        <h2>Interes por adeudo de mes: </h2>
+        <div class="mt-2">
+          
+          <InputLabel for="amountDebt" value="Monto" />
+          <TextInput
+            id="amountDebt"
+            v-model="form.amountDebt"
+            type="number"
+            class="mt-1 block w-full"
+            autocomplete="amountDebt"
+          />
+          <InputError class="mt-2" :message="form.errors.amountDebt" />
+        </div>
       </div>
 
       <div class="flex items-center justify-end mt-4">
@@ -70,12 +84,6 @@ const submit = () => {
   </div>
 </template>
 
-
-<script>
-export default {
-  props: ["interest"],
-};
-</script>
 
 <style scoped>
 .switch {

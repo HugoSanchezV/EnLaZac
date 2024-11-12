@@ -68,6 +68,7 @@ class TicketController extends Controller
                 'total' => $tickets->total(),
             ],
             'success' => session('success') ?? null,
+            'warning' => session('warning') ?? null,
             'totalTicketsCount' => $totalTicketsCount
         ]);
     }
@@ -245,6 +246,7 @@ class TicketController extends Controller
                 'total' => $tickets->total(),
             ],
             'success' => session('success') ?? null,
+            'error' => session('error') ?? null,
             'totalTicketsCount' => $totalTicketsCount
         ]);
     }
