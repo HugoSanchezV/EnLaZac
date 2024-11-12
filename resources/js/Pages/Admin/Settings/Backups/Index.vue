@@ -124,7 +124,7 @@ export default {
       }
 
       if (props.attribute === "usuario") {
-        this.attribute = "user";
+        this.attribute = "user_id";
       }
 
       //   if (props.attribute === "marca") {

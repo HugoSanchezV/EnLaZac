@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use danog\MadelineProto\API;
+use danog\MadelineProto\Namespace\Contacts;
 use danog\MadelineProto\Settings;
 use Illuminate\Support\Facades\Log;
 
@@ -54,6 +55,7 @@ class TelegramService
             $result = $this->madelineProto->contacts->importContacts([
                 'contacts' => [
                     [
+                        '_' => 'inputPhoneContact',
                         'phone' => $phoneNumber,
                         'first_name' => $firstName,
                         'last_name' => $lastName,
@@ -68,20 +70,47 @@ class TelegramService
             throw $e;
         }
     }
-    
-    public function sendMessage(string $peer, string $message)
+
+    public function deleteContact(string $chatId)
     {
         try {
-            $this->madelineProto->messages->sendMessage([
-                'peer' => $peer,
-                'message' => $message,
-            ]);
-            Log::info("Mensaje enviado a {$peer}: {$message}");
+            $result = $this->madelineProto->contacts->deleteContacts(
+                id: [$chatId]
+            );
+
+            Log::info("Contacto eliminado");
+            return $result;
         } catch (\Exception $e) {
-            Log::error('Error al enviar mensaje: ' . $e->getMessage());
+            Log::error('Error al eliminar contacto: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    // Puedes agregar más métodos según tus necesidades
+    public function deleteHistory(string $chatId)
+    {
+        try {
+            $result = $this->madelineProto->messages->deleteHistory(peer: $chatId);
+
+            Log::info("Contacto eliminado");
+            return $result;
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar contacto: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+    public function sendMessage(string $peer, string $message)
+    {
+        try {
+            $this->madelineProto->messages->sendMessage(
+                peer: $peer,
+                message: $message,
+            );
+            Log::info("Mensaje enviado a {$peer}: {$message}");
+        } catch (\Exception $e) {
+            Log::error('Error al enviar mensaje: ' . $e->getMessage());
+            throw $e;
+        } 
+    }
 }

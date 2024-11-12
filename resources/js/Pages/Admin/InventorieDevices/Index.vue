@@ -15,14 +15,14 @@ const toRouteExport = "inventorie.devices.excel";
 const toImportRoute = "historieDevices.import.excel";
 
 const headers = [
-  "state",
+  "estado",
   "id",
   "mac address",
   "descripción",
   "marca",
   "acciones",
 ];
-const filters = ["state", "id", "mac address", "descripción", "marca"];
+const filters = ["estado", "id", "mac address", "descripción", "marca"];
 const headingsImport = "mac, descripción, marca";
 </script>
 
@@ -145,6 +145,10 @@ export default {
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
+
+      if (props.attribute === "estado") {
+        this.attribute = "state";
+      }
 
       if (props.attribute === "mac address") {
         this.attribute = "mac_address";

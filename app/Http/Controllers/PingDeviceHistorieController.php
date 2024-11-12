@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Events\PingTecnicoEvent;
 use App\Models\PingDeviceHistorie;
 use App\Models\User;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Http\Requests\PingDeviceHistorie\UpdatePingDeviceHistorieRequest;
 use App\Models\Router;
+use Exception;
+
+use function PHPUnit\Framework\isNull;
 
 class PingDeviceHistorieController extends Controller
 {
@@ -21,20 +22,30 @@ class PingDeviceHistorieController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    ->orWhere('device_id', 'like', "%$search%")
-                    ->orWhere('router_id', 'like', "%$search%")
-                    ->orWhere('user_id', 'like', "%$search%")
+                    ->orWhereHas('router', function ($q) use ($search) {
+                        $q->where('ip_address', 'like', "%$search%");
+                    })
+                    ->orWhereHas('device', function ($q) use ($search) {
+                        $q->where('address', 'like', "%$search%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('status', 'like', "%$search%")
-                    ->orWhere('created_at','like', "%$search%");
+                    ->orWhere('created_at', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'desc');
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+
 
         $pingDevice = $query->latest()->paginate(8)->through(function ($item) {
             return [
@@ -54,9 +65,9 @@ class PingDeviceHistorieController extends Controller
         ])->count();
 
         $totalPingDeviceCount = PingDeviceHistorie::count();
-        $users = User::where('admin','3')->get();
+        $users = User::where('admin', '3')->get();
 
-       // dd($users);
+        // dd($users);
         return Inertia::render('Admin/PingDeviceHistorie/PingDevice', [
             'pingDevice' => $pingDevice,
             'pagination' => [
@@ -79,27 +90,32 @@ class PingDeviceHistorieController extends Controller
     {
         //dd($router->id);
         $query = PingDeviceHistorie::query();
-        $query->where('router_id',$router->id);
+        $query->where('router_id', $router->id);
 
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    ->orWhere('device_id', 'like', "%$search%")
-                    ->orWhere('router_id', 'like', "%$search%")
-                    ->orWhere('user_id', 'like', "%$search%")
-                    ->orWhere('status', 'like', "%$search%")
-                    ->orWhere('created_at','like', "%$search%")
-                    ;
+                    ->orWhereHas('device', function ($q) use ($search) {
+                        $q->where('address', 'like', "%$search%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
+                    ->orWhere('created_at', 'like', "%$search%")
+                ;
                 // Puedes agregar más campos si es necesario
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'desc');
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         $pingDevice = $query->latest()->paginate(8)->through(function ($item) {
             return [
@@ -119,11 +135,12 @@ class PingDeviceHistorieController extends Controller
         ])->count();
 
         $totalPingDeviceCount = PingDeviceHistorie::count();
-        $users = User::where('admin','3')->get();
+        $users = User::where('admin', '3')->get();
 
-       // dd($users);
+        // dd($users);
         return Inertia::render('Admin/PingDeviceHistorie/PingDevice', [
             'pingDevice' => $pingDevice,
+            'router' => $router ?? null,
             'pagination' => [
                 'links' => $pingDevice->links()->elements[0],
                 'next_page_url' => $pingDevice->nextPageUrl(),
@@ -140,7 +157,7 @@ class PingDeviceHistorieController extends Controller
     }
 
     public function create(PingDeviceHistorie $request)
-    {   
+    {
         $ping = PingDeviceHistorie::create([
             'device_id' => $request->device_id,
             'router_id' => $request->router_id,
@@ -151,27 +168,57 @@ class PingDeviceHistorieController extends Controller
     }
     public function update(Request $request)
     {
-        //$validatedData = $request->validated();
-     //   dd($request->id);
-        $pingDevice = PingDeviceHistorie::findOrFail($request->id);
+        try {
+            // $validatedData = $request->validated();
+            //   dd($request->id);
+            $pingDevice = PingDeviceHistorie::findOrFail($request->id);
 
-        $pingDevice->user_id = $request->user_id;
-        //$validatedData = $request->validated();
+            $pingDevice->user_id = $request->user_id;
+            //$validatedData = $request->validated();
 
-        
-        $pingDevice->save();
-        self::make_user_notification($pingDevice);
+            $pingDevice->save();
+            self::make_user_notification($pingDevice);
 
-        return redirect()->route('device.ping.historie')->with('success', 'El técnico ha sido notificado');
+            self::redirectDecition($request, 'success', 'El técnico ha sido notificado');
+        } catch (Exception $e) {
+            self::redirectDecition($request, 'error', 'Error al momento de cargar el registro');
+        }
     }
-    static function make_user_notification($ping){
+
+    static function make_user_notification($ping)
+    {
         event(new PingTecnicoEvent($ping));
     }
-    public function destroy($id)
-    {
-        $ping = PingDeviceHistorie::findOrFail($id);
-        $ping->delete();
 
-        return Redirect::route('device.ping.historie')->with('success', 'Ping Eliminado Con Éxito');
+    public function destroy(Request $request, $id)
+    {
+        try {
+            $ping = PingDeviceHistorie::findOrFail($id);
+            $ping->delete();
+            self::redirectDecition($request, 'success', 'Ping Eliminado Con Éxito');
+        } catch (Exception $e) {
+            dd($e->getMessage());
+            self::redirectDecition($request, 'error', 'Error al cargar el registro');
+        }
+    }
+
+
+    public function redirectDecition(Request $request, String $type, String $message)
+    {
+        $url = 'device.ping.historie';
+        if ($request->router) {
+            $url = 'router.device.ping.historie';
+            return redirect()->route($url, [
+                "router" => $request->router ?? null,
+                "q" => $request->q ?? null,
+                "attribute" => $request->attribute ?? null,
+                "order" => $request->order ?? null,
+            ])->with($type, $message);
+        }
+        return redirect()->route($url, [
+            "q" => $request->q,
+            "attribute" => $request->attribute,
+            "order" => $request->order,
+        ])->with($type, $message);
     }
 }

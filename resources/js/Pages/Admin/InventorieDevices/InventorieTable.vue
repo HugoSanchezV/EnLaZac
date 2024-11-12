@@ -6,8 +6,25 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
+const getOriginal = (data) => {
+  if (data === "estado") {
+    return "state";
+  }
+
+  if (data === "mac address") {
+    return "mac_address";
+  }
+
+  if (data === "descripción") {
+    return "description";
+  }
+
+  if (data === "marca") {
+    return "brand";
+  }
+};
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -23,12 +40,24 @@ const destroy = (id) => {
       listeners: {
         accept: () => {
           const url = route("inventorie.devices.destroy", id);
+          const attributeUrl = getOriginal(data.attribute);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          router.delete(
+            url,
+            {
+              preserveState: true,
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -173,8 +202,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentUser,
+              attribute: currentFilter,
+              order: currentOrder,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -275,7 +304,7 @@ const getTag = (cellIndex) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                :href="route('historieDevices.show', row.id)"
+                :href="route('historieDevices.show', row.mac_address)"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -319,7 +348,13 @@ const getTag = (cellIndex) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg

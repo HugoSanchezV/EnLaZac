@@ -153,23 +153,23 @@ export default {
         this.attribute = "plan_id";
       }
 
-      if (this.order === "fecha de inicio") {
-        this.order = "start_date";
+      if (this.attribute === "fecha de inicio") {
+        this.attribute = "start_date";
       }
 
-      if (this.order === "fecha de terminación") {
-        this.order = "end_date";
+      if (this.attribute === "fecha de terminación") {
+        this.attribute = "end_date";
       }
 
-      if (this.order === "¿activo?") {
-        this.order = "active";
+      if (this.attribute === "¿activo?") {
+        this.attribute = "active";
       }
 
       if (this.attribute === "dirección") {
         this.attribute = "address";
       }
       if (this.attribute === "comunidad") {
-        this.attribute = "community";
+        this.attribute = "rural_community_id";
       }
 
       this.$inertia.get(

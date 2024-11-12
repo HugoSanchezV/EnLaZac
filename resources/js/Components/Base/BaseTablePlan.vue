@@ -7,8 +7,24 @@ import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
 
+const getOriginal = (data) => {
+  if (data === "id") {
+    return "id";
+  }
+  if (data === "nombre") {
+    return "name";
+  }
+  if (data === "descripción") {
+    return "description";
+  }
+  if (data === "precio") {
+    return "price";
+  }
+
+  return data;
+};
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -24,12 +40,23 @@ const destroy = (id) => {
       listeners: {
         accept: () => {
           const url = route("plans.destroy", id);
-
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          const attributeUrl = getOriginal(data.attribute);
+          router.delete(
+            url,
+            {
+              preserveState: true,
+              data: {
+                q: data.q,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -50,17 +77,17 @@ const getTag = (cellIndex) => {
       return "descripción";
     case "precio":
       return "price";
-      case "burst_limit":
-        return "límite de ráfaga";
-      case "burst_threshold":
-        return "umbral de ráfaga";
-      case "burst_time":
-        return "tiempo de ráfaga";
-      case "limite_at":
-        return "limite";
-      case "max_limit":
-        return "limite máximo";
-      default:
+    case "burst_limit":
+      return "límite de ráfaga";
+    case "burst_threshold":
+      return "umbral de ráfaga";
+    case "burst_time":
+      return "tiempo de ráfaga";
+    case "limite_at":
+      return "limite";
+    case "max_limit":
+      return "limite máximo";
+    default:
       return cellIndex;
   }
 };
@@ -182,8 +209,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentContract,
+              attribute: currentFilter,
+              order: currentOrder,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -323,7 +350,13 @@ const getTag = (cellIndex) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      q: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg

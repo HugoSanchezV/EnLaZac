@@ -26,6 +26,8 @@ use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
+use function PHPUnit\Framework\isNull;
+
 class DevicesController extends Controller
 {
     protected DeviceService $deviceService;
@@ -59,11 +61,14 @@ class DevicesController extends Controller
         }
 
         // Ordenación
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         // Paginación
         $devices = $query->paginate(8)->through(function ($item) {
@@ -199,15 +204,15 @@ class DevicesController extends Controller
         $validator = Validator::make(['address' => $address], [
             'address' => ['required', 'ip'],
         ]);
-    
+
         // Comprobar si la validación falla
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
-    
+
         // Buscar el dispositivo si la validación es exitosa
         $device = Device::where('address', $address)->first();
-    
+
         return $device ? $device->id : null;
     }
     /**
@@ -315,11 +320,20 @@ class DevicesController extends Controller
                 ]);
             });
 
-
-            return redirect()->route($url, ['router' => $device->router_id])
+            return redirect()->route($url, [
+                "router" => $device->router_id,
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])
                 ->with('success', 'El dispositivo ha sido actualizado con éxito');
         } catch (Exception $e) {
-            return redirect()->route($url, ['router' => $device->router_id])
+            return redirect()->route($url, [
+                "router" => $device->router_id,
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
     }
@@ -330,7 +344,7 @@ class DevicesController extends Controller
     }
 
 
-    public function destroy($id, $url = 'routers.devices')
+    public function destroy(Request $request, $id, $url = 'routers.devices')
     {
         $device = Device::findOrFail($id);
         try {
@@ -340,43 +354,57 @@ class DevicesController extends Controller
             try {
 
                 DB::transaction(function () use ($device, $routerOSService) {
-                    $router =  $device->router;
+                    // $router =  $device->router;
 
-                    if (!$router->disabled) {
-                        $router->enable_devices -= 1;
-                    }
-                    $router->total_devices -= 1;
-                    $router->save();
-                    $device->delete();
+                    // if (!$router->disabled) {
+                    //     $router->enable_devices -= 1;
+                    // }
+                    // $router->total_devices -= 1;
+                    // $router->save();
+                    // $device->delete();
 
-                    $response = $routerOSService->executeCommand(
-                        '/ip/firewall/address-list/remove',
-                        [
-                            '.id' => $device->device_internal_id,
-                        ]
-                    );
-
-                    if (isset($response['!trap'])) {
-                        throw new \Exception('Error en la eliminación de la dirección en RouterOS');
-                    }
+                    // $response = $routerOSService->executeCommand(
+                    //     '/ip/firewall/address-list/remove',
+                    //     [
+                    //         '.id' => $device->device_internal_id,
+                    //     ]
+                    // );
+                    // if (isset($response['!trap'])) {
+                    //     throw new \Exception('Error en la eliminación de la dirección en RouterOS');
+                    // }
                 });
 
-                return redirect()->route($url, ['router' => $device->router_id])
+                return redirect()->route($url, [
+                    "router" => $device->router_id,
+                    "q" => $request->q,
+                    "attribute" => $request->attribute,
+                    "order" => $request->order,
+                ])
                     ->with('success', 'El dispositivo ha sido eliminado con éxito');
             } catch (\Exception $e) {
-                return redirect()->route($url, ['router' => $device->router_id])
+                return redirect()->route($url, [
+                    "router" => $device->router_id,
+                    "q" => $request->q,
+                    "attribute" => $request->attribute,
+                    "order" => $request->order,
+                ])
                     ->with('error', 'Error al eliminar la dirección: ' . $e->getMessage());
             } finally {
                 $routerOSService->disconnect();
             }
         } catch (\Exception $e) {
-            return redirect()->route($url, ['router' => $device->router_id])
+            return redirect()->route($url, [
+                "router" => $device->router_id,
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])
                 ->with('error', 'Error al intentar conectar con el router, inténtalo más tarde');
         }
     }
-    public function device_all_destroy($id, $url = 'devices')
+    public function device_all_destroy(Request $request, $id, $url = 'devices')
     {
-        return $this->destroy($id, $url);
+        return $this->destroy($request, $id, $url);
     }
     public function pingAllDevice(Router $router)
     {

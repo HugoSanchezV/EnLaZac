@@ -37,7 +37,7 @@ const filters = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Hisotirial del Inventario</h2>
+          <h2>Historial del Inventario</h2>
         </div>
       </div>
     </template>
@@ -85,6 +85,7 @@ import { Link } from "@inertiajs/vue3";
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import InventorieTable from "./InventorieTable.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
+import { usePage } from "@inertiajs/vue3";
 
 export default {
   components: {

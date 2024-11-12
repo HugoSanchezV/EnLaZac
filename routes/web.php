@@ -68,6 +68,9 @@ Route::middleware([
         Route::get('/usuarios/pre/register/edit/{PreRegisterUser}',            [PreRegisterUserController::class, 'edit'])->name('usuarios.pre.register.edit');
         Route::put('/usuarios/pre/register/update/{id}',          [PreRegisterUserController::class, 'update'])->name('usuarios.pre.register.update');
         Route::delete('/usuarios/pre/register/delete/{id}',          [PreRegisterUserController::class, 'destroy'])->name('usuarios.pre.register.destroy');
+        Route::post('/usuarios/telegram/create/contact/{id}',          [UserController::class, 'createContactTelegram'])->name('usuarios.telegram.create.contact');
+        Route::get('/usuarios/telegram/message/{id}',          [UserController::class, 'messageTelegram'])->name('usuarios.telegram.message');
+        Route::post('/usuarios/telegram/send/message/',          [UserController::class, 'sendMessageTelegram'])->name('usuarios.telegram.send.message');
 
         //Performance Devices
         Route::get('/performance/user/{id}',                 [PerformanceDeviceController::class, 'indexByUser'])->name('performance');
@@ -137,7 +140,7 @@ Route::middleware([
         Route::post('/inventorie/devices/histories/import/excel',          [InventorieDevicesController::class, 'importExcel'])->name('historieDevices.import.excel');
 
         Route::get('/inventorie/devices/histories',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
-        Route::get('/inventorie/devices/histories/show/{DeviceHistorie}',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.show');
+        Route::get('/inventorie/devices/histories/show/{mac_address}',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.show');
         Route::get('/inventorie/devices/histories/to/excel/{id}',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel.historie');
 
         Route::delete('/inventorie/devices/histories/{device}/delete',          [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');

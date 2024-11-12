@@ -2,6 +2,7 @@
 import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 import BaseImportExcel from "@/Components/Base/Excel/BaseImportExcel.vue";
+import { usePage } from "@inertiajs/vue3";
 
 const props = defineProps({
   users: Object,
@@ -22,6 +23,7 @@ const headingsImport = "nombre, alias, email, password, role";
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div class="block md:flex md:justify-between">
+        
         <div class="mb-2 md:mb-0">
           <h4>Usuarios</h4>
         </div>

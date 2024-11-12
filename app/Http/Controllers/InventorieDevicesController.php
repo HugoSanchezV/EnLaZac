@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function PHPUnit\Framework\isNull;
+
 class InventorieDevicesController extends Controller
 {
     /**
@@ -37,11 +39,19 @@ class InventorieDevicesController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'asc');
+        // }
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         $devices = $query->latest()->paginate(8)->through(function ($item) {
             return [
@@ -100,7 +110,6 @@ class InventorieDevicesController extends Controller
                 ]);
             });
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return redirect()->route('inventorie.devices.index')->with('error', 'Hubo un error al intentar realizar el registro');
         }
         return redirect()->route('inventorie.devices.index')->with('success', 'El dispositivo ha sido agregado con éxito');
@@ -159,7 +168,7 @@ class InventorieDevicesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             DB::transaction(function () use ($id) {
@@ -176,11 +185,18 @@ class InventorieDevicesController extends Controller
                 $device->delete();
             });
         } catch (\Exception $e) {
-            dd($e->getMessage());
-            return redirect()->route('inventorie.devices.index')->with('error', 'Hubo un error al intentar eliminar el registro');
+            return redirect()->route('inventorie.devices.index',  [
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])->with('error', 'Hubo un error al intentar eliminar el registro');
         }
 
-        return redirect()->route('inventorie.devices.index')
+        return redirect()->route('inventorie.devices.index',  [
+            "q" => $request->q,
+            "attribute" => $request->attribute,
+            "order" => $request->order,
+        ])
             ->with('success', 'Dispositivo Eliminado Con Éxito');
     }
 

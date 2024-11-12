@@ -14,7 +14,6 @@ class TelegramMadelineController extends Controller
     {
         $this->telegramService = $telegramService;
     }
-
     /**
      * Enviar un mensaje a un chat específico.
      */
@@ -26,7 +25,8 @@ class TelegramMadelineController extends Controller
         ]);
 
         try {
-            $this->telegramService->sendMessage($request->peer, $request->message);
+            // $this->telegramService->sendMessage( $request->peer,  $request->message);
+            $this->telegramService->sendMessage('7866871450',  'holaaa');
             return response()->json(['status' => 'Mensaje enviado correctamente.']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al enviar el mensaje: ' . $e->getMessage()], 500);
@@ -35,12 +35,7 @@ class TelegramMadelineController extends Controller
 
     public function importContact(Request $request)
     {
-        return response()->json([
-            'status' => 'ok',
-            'response' => 'success'
-        ]);
-        
-        // Validar la solicitud
+
         // $validator = Validator::make($request->all(), [
         //     'phone' => 'required|string|regex:/^\+\d+$/',
         //     'first_name' => 'required|string|max:255',
@@ -56,7 +51,7 @@ class TelegramMadelineController extends Controller
         // $lastName = $request->input('last_name', '');
 
         try {
-            $userId = $this->telegramService->importContact('4931252248', 'july', 'San');
+            $userId = $this->telegramService->importContact('4931252248', 'july', 'san');
 
             if ($userId) {
                 return response()->json([
@@ -71,6 +66,28 @@ class TelegramMadelineController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al importar contacto: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroyContact()
+    {
+        try {
+            $this->telegramService->deleteHistory('7866871450');
+            $response = $this->telegramService->deleteContact('7866871450');
+
+            if ($response) {
+                return response()->json([
+                    'message' => 'Contacto eliminado exitosamente.',
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Contacto importado, pero no se pudo obtener el User ID.',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al eliminar contacto: ' . $e->getMessage(),
             ], 500);
         }
     }

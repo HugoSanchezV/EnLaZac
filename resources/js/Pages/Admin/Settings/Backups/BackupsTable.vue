@@ -8,8 +8,19 @@ import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 import axios from "axios";
 
 const defaultOrder = "DESC";
+
+const getOriginal = (data) => {
+  if (data === "nombre") {
+    return "path";
+  }
+
+  if (data === "usuario") {
+    return "user_id";
+  }
+};
+
 // ACCION DE ELIMINAR1
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -26,11 +37,22 @@ const destroy = (id) => {
         accept: () => {
           const url = route("backups.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          const attributeUrl = getOriginal(data.attribute);
+          router.delete(
+            url,
+            {
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -176,8 +198,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentUser,
+              order: currentOrder,
+              attribute: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -236,7 +258,13 @@ const getTag = (cellIndex) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
@@ -356,7 +384,6 @@ export default {
     // filterData() {
     //   console.log(this.searchQuery);
     // },
-    
   },
 };
 </script>

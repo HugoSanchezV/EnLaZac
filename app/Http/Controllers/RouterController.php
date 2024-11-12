@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function PHPUnit\Framework\isNull;
+
 class RouterController extends Controller
 {
     /**
@@ -48,11 +50,20 @@ class RouterController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'asc');
+        // }
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+
 
         $routers = $query->latest()->paginate(8)->through(function ($item) {
             return [
@@ -153,11 +164,15 @@ class RouterController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $router = Router::findOrFail($id);
-        $router->delete();
-        return Redirect::route('routers')->with('success', 'Router Eliminado Con Éxito');
+        try {
+            $router = Router::findOrFail($id);
+            $router->delete();
+            return Redirect::route('routers', $request->query())->with('success', 'Router Eliminado Con Éxito');
+        } catch (Exception $e) {
+            return Redirect::route('routers', $request->query())->with('error', 'Error al cargar el registro');
+        }
     }
 
     public function sendPing($id)
@@ -321,12 +336,15 @@ class RouterController extends Controller
             });
         }
 
-        // Ordenación
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // 
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         // Paginación
         $devices = $query

@@ -1,9 +1,9 @@
 <script setup>
-import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   histories: Object,
+  device: String,
   pagination: Object,
   totalHistoriesCount: Number,
 });
@@ -14,21 +14,21 @@ const idExport = props.histories.data[0].id;
 const headers = [
   "state",
   "id",
-  "comment",
-  "mac address",
-  "user",
-  "creator",
-  "date",
+  "comentario",
+  "mac",
+  "usuario",
+  "creador",
+  "fecha",
   "acciones",
 ];
 const filters = [
   "id",
-  "comment",
-  "device_id",
-  "user_id",
-  "creator_id",
-  "state",
-  "created_at",
+  "comentario",
+  // "mac",
+  "usuario",
+  "creador",
+  "estado",
+  "fecha",
 ];
 </script>
 
@@ -37,15 +37,13 @@ const filters = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Historial</h2>
+        <h2>Historial</h2>
         </div>
 
         <div>
           <h2 class="items-center flex">
             <span class="material-symbols-outlined"> nest_wifi_point </span>
-            <span class="bg-gray-300 px-2 rounded-md">{{
-              histories.data[0].device.mac_address
-            }}</span>
+            <span class="bg-gray-300 px-2 rounded-md">{{ device ?? "no hay datos" }}</span>
           </h2>
         </div>
       </div>
@@ -53,11 +51,15 @@ const filters = [
 
     <template v-slot:content>
       <div v-if="totalHistoriesCount > 0">
-        <base-export-excel :to-route-export="toRouteExport" :id="idExport"></base-export-excel>
+        <base-export-excel
+          :to-route-export="toRouteExport"
+          :id="idExport"
+        ></base-export-excel>
         <!-- Esta es el inicio de la tabla -->
         <inventorie-show-table
           :headers="headers"
           :rows="rows"
+          :device="device"
           :filters="filters"
           :show="true"
           :edit="true"
@@ -107,6 +109,7 @@ export default {
 
   props: {
     histories: Object,
+    device: Object,
     pagination: Object,
     success: String,
   },
@@ -123,26 +126,35 @@ export default {
 
   methods: {
     search(props) {
-      const link = route("historieDevices.show");
-
       this.q = props.searchQuery;
       this.attribute = props.attribute;
-      this.type = props.type;
       this.order = props.order;
+      const link = route("historieDevices.show", this.device);
 
-      //   if (props.attribute === "mac address") {
-      //     this.attribute = "mac_address";
-      //   }
+        if (props.attribute === "comentario") {
+          this.attribute = "comment";
+        }
 
-      //   if (props.attribute === "descripción") {
-      //     this.attribute = "description";
-      //   }
+        if (props.attribute === "mac") {
+          this.attribute = "device_id";
+        }
 
-      //   if (props.attribute === "marca") {
-      //     this.attribute = "brand";
-      //   }
+        if (props.attribute === "usuario") {
+          this.attribute = "user_id";
+        }
 
-      console.log(props.type);
+        if (props.attribute === "creador") {
+          this.attribute = "creator_id";
+        }
+
+        if (props.attribute === "estado") {
+          this.attribute = "state";
+        }
+
+        if (props.attribute === "fecha") {
+          this.attribute = "created_at";
+        }
+
 
       this.$inertia.get(
         link,

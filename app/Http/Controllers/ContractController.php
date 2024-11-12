@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function PHPUnit\Framework\isNull;
+
 class ContractController extends Controller
 {
     //
@@ -26,39 +28,56 @@ class ContractController extends Controller
     {
         $query = Contract::query();
 
-
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    ->orWhere('user_id', 'like', "%$search%")
-                    ->orWhere('plan_id', 'like', "%$search%")
+                    // ->orWhere('user_id', 'like', "%$search%")
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%$search%");
+                    })
+                    // ->orWhere('plan_id', 'like', "%$search%")
+                    ->orWhereHas('plan', function ($planQuery) use ($search) {
+                        $planQuery->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('start_date', 'like', "%$search%")
                     ->orWhere('end_date', 'like', "%$search%")
                     ->orWhere('active', 'like', "%$search%")
                     ->orWhere('address', 'like', "%$search%")
-                    ->orWhere('rural_community_id', 'like', "%$search%");
-                // Puedes agregar más campos si es necesario
+                    ->orWhereHas('ruralCommunity', function ($communityQuery) use ($search) {
+                        $communityQuery->where('name', 'like', "%$search%");
+                    });
+                // ->orWhere('rural_community_id', 'like', "%$search%");
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'asc');
+        // }
+        
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+
 
         $contract = $query->with('user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
                 'user_id' => $item->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
-                'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',  
+                'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',
                 'start_date' => $item->start_date,
                 'end_date' => $item->end_date,
                 'active' => $item->active,
                 'address' => $item->address,
-                          
+
             ];
         });
 
@@ -91,7 +110,7 @@ class ContractController extends Controller
     public function create()
     {
         $community = RuralCommunity::all();
-        
+
         $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
         return Inertia::render(
@@ -105,7 +124,7 @@ class ContractController extends Controller
     }
 
     public function store(StoreContractRequest $request)
-    {  
+    {
 
         //dd('LLega aqui');
         $validatedData = $request->validated();
@@ -119,8 +138,8 @@ class ContractController extends Controller
             'rural_community_id' => $validatedData['rural_community_id'],
             'geolocation' => $validatedData['geolocation'],
         ]);
-   //     RuralCommunityService::update($id, $request->community);
-        
+        //     RuralCommunityService::update($id, $request->community);
+
         return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
     }
 
@@ -137,16 +156,16 @@ class ContractController extends Controller
             'users' => $users,
             'plans' => $plans,
             'community' => $community,
-            
+
         ]);
     }
 
 
     public function update(UpdateContractRequest $request, $id)
     {
-       // dd("aqui");
+        // dd("aqui");
         $contract = Contract::findOrFail($id);
-        
+
         $validatedData = $request->validated();
         $contract->update($validatedData);
         return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
@@ -155,10 +174,10 @@ class ContractController extends Controller
     public function updateMonths($months, $id)
     {
         $contract = Contract::findOrFail($id);
-    
+
         // Convertir `end_date` a una instancia de Carbon para manipular la fecha
         $endDate = Carbon::parse($contract->end_date);
-        
+
         // Sumar los meses a la fecha de finalización
         $contract->end_date = $endDate->addMonths($months);
 
@@ -166,11 +185,15 @@ class ContractController extends Controller
         $contract->save();
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $contract = Contract::findOrFail($id);
-        $contract->delete();
-        return Redirect::route('contracts')->with('success', 'Contrato Eliminado Con Éxito');
+        try {
+            $contract = Contract::findOrFail($id);
+            $contract->delete();
+            return Redirect::route('contracts', $request->query())->with('success', 'Contrato Eliminado Con Éxito');
+        } catch (Exception $e) {
+            return Redirect::route('contracts', $request->query())->with('error', 'Error al cargar el registro');
+        }
     }
 
     public function exportExcel()

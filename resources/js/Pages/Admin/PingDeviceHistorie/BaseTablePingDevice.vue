@@ -1,7 +1,8 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-import { ref } from 'vue';
+import { ref } from "vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
+import { defineProps } from "vue";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import ModalTecnico from "../Components/ModalTecnico.vue";
@@ -9,7 +10,7 @@ import ModalTecnico from "../Components/ModalTecnico.vue";
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -26,11 +27,34 @@ const destroy = (id) => {
         accept: () => {
           const url = route("device.ping.historie.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          if (data.currentFilter === "ip") {
+            data.currentFilter = "device_id";
+          }
+
+          if (data.currentFilter === "creado") {
+            data.currentFilter = "created_at";
+          }
+
+          if (data.currentFilter === "encargado") {
+            data.currentFilter = "user_id";
+          }
+
+          router.delete(
+            url,
+            {
+              data: {
+                router: data?.routerObject?.id ?? null,
+                q: data.searchQuery,
+                attribute: data.currentFilter,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -43,15 +67,14 @@ const destroy = (id) => {
   );
 };
 
-
 const getTag = (cellIndex) => {
   switch (cellIndex) {
     case "device_id":
       return "dispositivo";
-      case "router_id":
+    case "router_id":
       return "router";
     case "address":
-      return "dirección";
+      return "ip";
     case "user_id":
       return "encargado";
 
@@ -75,8 +98,14 @@ const closeDeviceModal = (id) => {
   isModalDeviceOpen.value[id] = false;
 };
 
-
-const confirmSelectionTecnico = (row, select) => {
+const confirmSelectionTecnico = (
+  row,
+  select,
+  routerObject,
+  q,
+  order,
+  attribute
+) => {
   if (select.selectId === null) {
     const toast = useToast();
     toast.error("Selecciona un tecnico", {
@@ -84,8 +113,28 @@ const confirmSelectionTecnico = (row, select) => {
       draggable: true,
     });
   } else {
-    const url = route("device.ping.historie.update", {id: row.id, user_id: select.selectId});
-    router.put(url);
+    const url = route("device.ping.historie.update", row.id);
+
+    if (attribute === "ip") {
+      attribute = "device_id";
+    }
+
+    if (attribute === "creado") {
+      attribute = "created_at";
+    }
+
+    if (attribute === "encargado") {
+      attribute = "user_id";
+    }
+
+    router.put(url, {
+      router: routerObject?.id ?? null,
+      id: row.id,
+      user_id: select.selectId,
+      q: q,
+      order: order,
+      attribute: attribute,
+    });
     // console.log({
     //   device_id: row.device_id,
     //   router_id: row.router_id,
@@ -251,8 +300,9 @@ const confirmSelectionTecnico = (row, select) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentUser,
+              order: currentOrder,
+              attribute: currentFilter,
+              router: router,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -301,7 +351,6 @@ const confirmSelectionTecnico = (row, select) => {
 
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
-              
               <!-- <Link
                 :href="route('device.show', row.id)"
                 v-if="show"
@@ -325,26 +374,42 @@ const confirmSelectionTecnico = (row, select) => {
                 Mostrar
               </Link> -->
               <div v-if="users.length > 0">
-                <button 
-                class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-                @click="openDeviceModal(row.id)">
+                <button
+                  class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                  @click="openDeviceModal(row.id)"
+                >
                   Seleccionar Técnico
                 </button>
                 <modal-tecnico
                   :show="isModalDeviceOpen[row.id]"
                   @close="closeDeviceModal(row.id)"
-                  @selectData="confirmSelectionTecnico(row, $event)"
+                  @selectData="
+                    confirmSelectionTecnico(
+                      row,
+                      $event,
+                      routerObject,
+                      searchQuery,
+                      currentOrder,
+                      currentFilter
+                    )
+                  "
                   :data="users"
                   :id="row.id"
-                  :title="
-                    'Selecciona un técnico a notificar'"
+                  :title="'Selecciona un técnico a notificar'"
                   item-text="name"
                 >
                 </modal-tecnico>
               </div>
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
+                      routerObject: routerObject
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
@@ -373,7 +438,7 @@ const confirmSelectionTecnico = (row, select) => {
 </template>
   
   <script>
-import { Link, router } from "@inertiajs/vue3";
+import { Link } from "@inertiajs/vue3";
 export default {
   components: {
     Link,
@@ -384,13 +449,18 @@ export default {
       type: Array,
       required: true,
     },
-    users:{
+    users: {
       type: Object,
       required: true,
     },
     rows: {
       type: Array,
       required: true,
+    },
+    routerObject: {
+      type: Object,
+      required: false,
+      default: null,
     },
     filters: {
       type: Array,

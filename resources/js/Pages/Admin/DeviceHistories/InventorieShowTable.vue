@@ -1,14 +1,39 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-
 import { useToast, TYPE, POSITION } from "vue-toastification";
-
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 const defaultOrder = "DESC";
 // ACCION DE ELIMINAR1
-const destroy = (id) => {
+
+const getOriginal = (data) => {
+  if (data === "comentario") {
+    return "comment";
+  }
+
+  // if (data === "mac") {
+  //   return "device_id";
+  // }
+
+  if (data === "usuario") {
+    return "user_id";
+  }
+
+  if (data === "creador") {
+    return "creator_id";
+  }
+
+  if (data === "estado") {
+    return "state";
+  }
+
+  if (data === "fecha") {
+    return "created_at";
+  }
+  return data;
+};
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -23,13 +48,29 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("historieDevices.destroy", id);
-
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
+          const urlAttribute = getOriginal(data.attribute);
+          const url = route("historieDevices.destroy", {
+            id: id,
           });
+
+          router.delete(
+            url,
+            {
+              preserveState: true,
+              preserveScroll: true,
+              data: {
+                q: data.searchQuery,
+                attribute: urlAttribute,
+                order: data.order,
+                mac_address: data.device,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -44,14 +85,14 @@ const destroy = (id) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "ip_address":
-      return "ip";
+    case "comment":
+      return "comentario";
 
-    case "mac_address":
-      return "mac";
+    case "user":
+      return "usuario";
 
-    case "description":
-      return "descripción";
+    case "date":
+      return "fecha";
     case "brand":
       return "marca";
     default:
@@ -175,8 +216,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentUser,
+              attribute: currentFilter,
+              order: currentOrder,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -207,17 +248,20 @@ const getTag = (cellIndex) => {
             class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'device'">
-              <Link href="#">
+              <span>
                 {{ cell.mac_address }}
-              </Link>
+              </span>
             </div>
             <div v-else-if="cellIndex === 'user' && cell !== null">
-              <Link href="#">
+              <Link
+                :href="route('usuarios.show', cell.id)"
+                class="bg-neutral-200 hover:bg-neutral-300 px-2 py-1 rounded-md"
+              >
                 {{ cell.name }}
               </Link>
             </div>
             <div v-else-if="cellIndex === 'creator'">
-              <Link href="#">
+              <Link :href="route('usuarios.show', cell.id)">
                 {{ cell.name }}
               </Link>
             </div>
@@ -293,7 +337,14 @@ const getTag = (cellIndex) => {
             <div class="sm:flex gap-4 flex actions">
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
+                      device: device,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
@@ -337,6 +388,11 @@ export default {
       type: Array,
       required: true,
     },
+    device: {
+      type: String,
+      required: false,
+      default: null,
+    },
     filters: {
       type: Array,
       required: true,
@@ -365,7 +421,6 @@ export default {
       currentFilter: "id",
       currentUser: "todos",
       currentOrder: "DESC",
-      typeUsers: ["todos", "cliente", "coordinador", "tecnico"],
     };
   },
   computed: {

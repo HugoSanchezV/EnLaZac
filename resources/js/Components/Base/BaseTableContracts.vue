@@ -7,8 +7,41 @@ import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
 
+const getOriginal = (data) => {
+  if (data.attribute === "id") {
+    return "id";
+  }
+
+  if (data.attribute === "usuario") {
+    return "user_id";
+  }
+
+  if (data.attribute === "plan internet") {
+    return "plan_id";
+  }
+
+  if (data.attribute === "fecha de inicio") {
+    return "start_date";
+  }
+
+  if (data.attribute === "fecha de terminación") {
+    return "end_date";
+  }
+
+  if (data.attribute === "¿activo?") {
+    return "active";
+  }
+
+  if (data.attribute === "dirección") {
+    return "address";
+  }
+  if (data.attribute === "comunidad") {
+    return "community";
+  }
+};
+
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -23,7 +56,14 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("contracts.destroy", id);
+          const original = getOriginal(data.attribute);
+          
+          const url = route("contracts.destroy", {
+            id: id,
+            q: data.searchQuery,
+            attribute: original,
+            order: data.order,
+          });
 
           router.delete(url, () => {
             onError: (error) => {
@@ -50,7 +90,7 @@ const getTag = (cellIndex) => {
     case "plan_id":
       return "Plan";
       break;
-      case "rural_community_id":
+    case "rural_community_id":
       return "Comunidad";
       break;
     case "start_date":
@@ -63,7 +103,7 @@ const getTag = (cellIndex) => {
     case "address":
       return "Dirección";
       break;
-    
+
     default:
       return cellIndex;
       break;
@@ -188,8 +228,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentContract,
+              attribute: currentFilter,
+              order: currentOrder,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -235,19 +275,31 @@ const getTag = (cellIndex) => {
             </div>
             <div v-else-if="cellIndex === 'active'">
               <div v-if="cell === 0">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red" class="size-8">
-                  <path fill-rule="evenodd" 
-                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm6-2.438c0-.724.588-1.312 1.313-1.312h4.874c.725 0 1.313.588 1.313 1.313v4.874c0 .725-.588 1.313-1.313 1.313H9.564a1.312 1.312 0 0 1-1.313-1.313V9.564Z" 
-                  clip-rule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="red"
+                  class="size-8"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm6-2.438c0-.724.588-1.312 1.313-1.312h4.874c.725 0 1.313.588 1.313 1.313v4.874c0 .725-.588 1.313-1.313 1.313H9.564a1.312 1.312 0 0 1-1.313-1.313V9.564Z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
-
-
               </div>
               <div v-else-if="cell == 1">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#00CF00" class="size-8">
-                  <path fill-rule="evenodd" 
-                  d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm14.024-.983a1.125 1.125 0 0 1 0 1.966l-5.603 3.113A1.125 1.125 0 0 1 9 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113Z" 
-                  clip-rule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="#00CF00"
+                  class="size-8"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm14.024-.983a1.125 1.125 0 0 1 0 1.966l-5.603 3.113A1.125 1.125 0 0 1 9 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113Z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
             </div>
@@ -309,7 +361,13 @@ const getTag = (cellIndex) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
