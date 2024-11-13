@@ -11,67 +11,55 @@ use PDO;
 
 class InterestsController extends Controller
 {
-    public function index(Request $request)
+    public function edit()
     {
-        $query = Interest::query();
-
-        if ($request->has('q')) {
-            $search = $request->input('q');
-            $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', "%$search%")
-                    ->orWhere('name', 'like', "%$search%")
-                    ->orWhere('amount', 'like', "%$search%");
-                // Puedes agregar más campos si es necesario
-            });
-        }
-
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
-        }
-
-        $interest = $query->latest()->paginate(8)->through(function ($item) {
-            return [
-                'id' => $item->id,
-                'name' => $item->name,
-                'amount' => $item->amount,
-            ];
-        });
-
-        
-        $totalInterestCount = Interest::count();
-
-        return Inertia::render('Admin/Settings/Interest/Interest', [
-            'interest' => $interest,
-            'pagination' => [
-                'links' => $interest->links()->elements[0],
-                'next_page_url' => $interest->nextPageUrl(),
-                'prev_page_url' => $interest->previousPageUrl(),
-                'per_page' => $interest->perPage(),
-                'total' => $interest->total(),
-            ],
-            'success' => session('success') ?? null,
-            'totalInterestCount' => $totalInterestCount 
-        ]);
-    }
-    public function edit($id)
-    {
-        $interest = Interest::findOrFail($id);
+        $interest1 = Interest::where('name', 'fuera-fecha')->first();
+        $interest2 = Interest::where('name', 'recargo-mes')->first();
 
         return Inertia::render('Admin/Settings/Interest/Edit', [
-            'interest' => $interest,
+            'interestCourt' => $interest1,
+            'interestDebt' => $interest2,
 
         ]);
     }
-    public function update(UpdateInterestRequest $request, $id)
+    public function update(UpdateInterestRequest $request)
     {
-        $interest = Interest::findOrFail($id);
+
         $validatedData = $request->validated();
-        $interest->update($validatedData);
+
+        $interest = Interest::where('name','fuera-fecha')->first();
+        if(!$interest)
+        {
+            Interest::create([
+                'name' => "fuera-fecha",
+                'amount' => $validatedData['amountCourt'],
+
+            ]);
+        }else{
+            
+            $interest->update([
+                'amount' => $validatedData['amountCourt'],
+            ]);
+        }
+
+        $interest = Interest::where('name','recargo-mes')->first();
+        if(!$interest)
+        {
+            Interest::create([
+                'name' => "recargo-mes",
+                'amount' => $validatedData['amountDebt'],
+
+            ]);
+        }else{
+            
+            $interest->update([
+                'amount' => $validatedData['amountDebt'],
+            ]);
+        }
+
         return redirect()->route('settings.interest')->with('success', 'El interest ha sido Actualizado Con Éxito');
     }
-
+    
     public function createInterestCourtDate()
     {
         Interest::create([

@@ -51,7 +51,7 @@ class PaymentHistorieController extends Controller
         $totalPaymentsCount = PaymentHistorie::count();
 
         return Inertia::render('Admin/PaymentHistories/PaymentHistories', [
-            'contracts' => $payment,
+            'payments' => $payment,
             'pagination' => [
                 'links' => $payment->links()->elements[0],
                 'next_page_url' => $payment->nextPageUrl(),

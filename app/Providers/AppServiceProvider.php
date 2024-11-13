@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\MailSetting;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Inertia;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,11 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
-        if (app()->environment('local') || app()->environment('production')) {
-            URL::forceScheme('https');
-        }
-        
         Inertia::share([
             'auth.user' => function () {
                 return Auth::user() ? [
@@ -34,8 +31,23 @@ class AppServiceProvider extends ServiceProvider
                     'name' => Auth::user()->name,
                     'email' => Auth::user()->email,
                     'admin' => Auth::user()->admin,
-                ] : null;
-            },
-        ]);
+                    ] : null;
+                },
+            ]);
+            
+        // $mail = MailSetting::first();
+        // $data = [
+        //     'driver' => $mail->transport,
+        //     'host' => $mail->host,
+        //     'port' => $mail->port,
+        //     'encryption' =>  $mail->encryption,
+        //     'username' => $mail->username,
+        //     'password' => $mail->password,
+        //     'from' => [
+        //         'address' => $mail->address,
+        //         'name' => $mail->name
+        //     ]
+        // ];
+        // Config::set('mail', $data);
     }
 }

@@ -1,6 +1,8 @@
+
 <script setup>
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import resources_js_components_PaypalButton from "@/Components/Base/Pays/resources_js_components_PaypalButton.vue";
+import { useToast, TYPE, POSITION } from "vue-toastification";
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import GetData from "./GetData.vue"
 const props = defineProps({
   charges:{
@@ -13,6 +15,9 @@ const props = defineProps({
     type: Object
   }
 });
+
+
+
 </script>
 
 <template>
@@ -93,10 +98,9 @@ const props = defineProps({
       </div>
 
       <!-- Botón para realizar el pago -->
-      <button @click="processPayment">Realizar Pago</button>
+      <button class="pay" @click="processPayment">Realizar Pago</button>
     </div>
     <!-- Mensaje de error si no hay artículos en el carrito -->
-    <p v-if="paymentError" class="error-message">{{ paymentError }}</p>
   </div>
   
 
@@ -112,6 +116,168 @@ const props = defineProps({
     </template>
   </dashboard-base>
 </template>
+<style scoped>
+/* Contenedor principal */
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 32px;
+  max-width: 700px;
+  margin: 50px auto;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Encabezados */
+h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1.4rem;
+  color: #4a4a4a;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+h4 {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 500;
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Labels y Selectores */
+.select-months label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-right: 12px;
+}
+
+.select-months select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d1d1;
+  background-color: #f9f9f9;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.select-months select:hover {
+  border-color: #2c3e50;
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #2c3e50;
+  color: white;
+  font-weight: 600;
+}
+
+tbody tr:hover {
+  background-color: #f7f7f7;
+}
+
+/* Botones */
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  color: white;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Botón de acción */
+.client-charges button,
+.cart button {
+  background-color: #3498db;
+}
+
+.client-charges button:hover,
+.cart button:hover {
+  background-color: #2980b9;
+  box-shadow: 0 4px 12px rgba(41, 128, 185, 0.3);
+}
+
+/* Botón de eliminación */
+.cart button {
+  background-color: #e74c3c;
+}
+
+.cart button:hover {
+  background-color: #c0392b;
+}
+
+/* Total a pagar */
+.total-label {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #27ae60;
+  text-align: center;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #ecf9f1;
+  border-radius: 8px;
+}
+
+/* Mensaje de error */
+.error-message {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+  padding: 8px;
+  background-color: #fdecea;
+  border-radius: 8px;
+}
+
+/* Botón de pago */
+button.process-payment {
+  background-color: #27ae60;
+  width: 100%;
+  padding: 14px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  margin-top: 25px;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+button.process-payment:hover {
+  background-color: #219150;
+}
+</style>
 <script>
 export default {
   data() {
@@ -129,7 +295,7 @@ export default {
     // Función para agregar los meses seleccionados al carrito
     addMonthToCart() {
       if (this.serviceAdded) {
-        alert('Ya has agregado el servicio de internet.');
+        this.warning();
         return;
       }
 
@@ -188,11 +354,43 @@ export default {
     formatCurrency(value) {
       return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
     },
-    
+    warning(){
+      const toast = useToast();
+        toast(
+          {
+            component: BaseQuestion,
+            props: {
+              message: "Ya seleccionaste un servicio",
+            },
+          },
+          {
+            type: TYPE.ERROR,
+            position: POSITION.TOP_CENTER,
+            timeout: 10000,
+          }
+        );
+    },
+    error(){
+      const toast = useToast();
+        toast(
+          {
+            component: BaseQuestion,
+            props: {
+              message: "¿Selecciona un servicio o cargo?",
+            },
+          },
+          {
+            type: TYPE.ERROR,
+            position: POSITION.TOP_CENTER,
+            timeout: 10000,
+          }
+        );
+    },
     // Función para procesar el pago
     processPayment() {
       if (this.cart.length === 0) {
-        this.paymentError = 'Agregar por lo menos un artículo a pagar';
+        this.error();
+        //this.paymentError = 'Agregar por lo menos un artículo a pagar';
         this.showPayment = false;
       } else {
         this.paymentError = '';
@@ -203,39 +401,5 @@ export default {
       }
     }
   },
-  mounted() {
-    // Aquí realizarías la consulta a la base de datos para obtener los cargos del cliente
-    this.clientCharges = [
-      { id: 1, description: 'Cargo por mora', amount: 100 },
-      { id: 2, description: 'Cargo por reconexión', amount: 150 }
-    ];
-  }
 };
 </script>
-
-<style scoped>
-.payment-process {
-  max-width: 800px;
-  margin: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-th, td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
-}
-
-.total-label {
-  margin-bottom: 20px;
-}
-
-.error-message {
-  color: red;
-}
-</style>

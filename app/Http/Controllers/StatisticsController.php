@@ -11,16 +11,24 @@ use App\Services\RouterOSService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\Redirect;
 
 class StatisticsController extends Controller
 {
-    public $route = [];
+    private $route = [];
 
-    public function show()
+    public function index()
     {
-
+        if(Auth::user()->admin == 1){
+            return self::showAdmin();
+        }else{
+            return Inertia::render('DashboardBase');
+        }
+    }
+    public function showAdmin()
+    {
       //  dd(Carbon::now());
         //Varias consultas para mandar aca
         $morrosos = self::morrososCount();
@@ -77,7 +85,8 @@ class StatisticsController extends Controller
   //     dd(Carbon::now()->toString());
 
       //  dd($userCount->count());
-        return Inertia::render('Admin/DashboardAdmin',[
+     // dd('Terminó');
+        return Inertia::render('DashboardBase',[
             'morrosos' => $morrosos,
             'activeDevice' => $activeDevice,
             'new_tickets' =>$newTickets,

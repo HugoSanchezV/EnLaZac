@@ -11,27 +11,176 @@ const props = defineProps({
   download_byte: Array,
   type: String,
 });
-
-
-const groupedData = props.target.reduce((acc, currentTarget, index) => {
-  // Verificar si el target actual ya existe en acc
-  const existing = acc.find(item => item.target === currentTarget);
-
-  if (existing) {
-    // Si existe, sumar los valores de upload y download correspondientes
-    existing.upload_rate += props.upload_rate[index];
-    existing.download_rate += props.download_rate[index];
-  } else {
-    // Si no existe, crear una nueva entrada en acc
-    acc.push({
-      target: currentTarget,
-      upload_rate: props.upload_rate[index],
-      download_rate: props.download_rate[index]
-    });
+const avgByteUpload = () => {
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.upload_byte) || props.upload_byte.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
   }
 
-  return acc;
-}, []);
+  // Convertir a números y sumar
+  const sum = props.upload_byte.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
+  return sum / props.upload_byte.length;
+};
+const avgByteDownload = () => {
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.download_byte) || props.download_byte.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
+  }
+
+  // Convertir a números y sumar
+  const sum = props.download_byte.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
+  return sum / props.download_byte.length;
+};
+const avgRateDownload = () => {
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.download_rate) || props.download_rate.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
+  }
+
+  // Convertir a números y sumar
+  const sum = props.download_rate.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
+  return sum / props.download_rate.length;
+};
+const avgRateUpload = () => {
+  // Verificar que sea un arreglo válido
+  if (!Array.isArray(props.upload_rate) || props.upload_rate.length === 0) {
+    return 0; // Retornar 0 si el arreglo está vacío o no es válido
+  }
+
+  // Convertir a números y sumar
+  const sum = props.upload_rate.reduce((acc, value) => {
+    const numericValue = parseFloat(value); // Convertir a número
+    return acc + (isNaN(numericValue) ? 0 : numericValue); // Sumar solo si es un número válido
+  }, 0);
+
+  return sum / props.download_rate.length;
+};
+// const avgByteUpload = () => {
+//   // Validar que el arreglo sea válido y no esté vacío
+//   if (!Array.isArray(props.upload_byte) || props.upload_byte.length === 0) {
+//     return 0; 
+//   }
+//   const sum = props.upload_byte.reduce((acc, element) => acc + element, 0);
+//   console.log(props.upload_byte);
+//   console.log(" SUMA : "+sum);
+//   return sum / props.upload_byte.length;
+// }
+// const avgByteDownload = () => {
+//   let sum = 0;
+//   props.download_byte.forEach(element => {
+//     sum = sum + element
+//   });
+//   return sum / props.download_byte.length;
+// }
+
+// const avgRateUpload = () => {
+//   let sum = 0;
+//   props.upload_rate.forEach(element => {
+//     sum = element + sum
+//   });
+//   return sum / props.upload_rate.length;
+// }
+
+// const avgRateDownload = () => {
+//   let sum = 0;
+//   props.download_rate.forEach(element => {
+//     sum = element + sum
+//   });
+//   return sum / props.download_rate.length;
+// }
+
+const byteMax = () => {
+   // console.log(props.upload_byte);
+    if(props.upload_byte.length == 0){
+      document.getElementById('tasa-byte-upload'+props.type).textContent = "0";
+      document.getElementById('avg-byte-upload'+props.type).textContent = "0";
+      document.getElementById('current-byte-upload'+props.type).textContent = "0";
+    }else{
+      const MaxUploadByte = Math.max(...props.upload_byte); 
+      const AvgUploadByte = avgByteUpload();
+      console.log(AvgUploadByte+ " :    "+props.upload_byte);
+
+      const CurrentUploadByte = props.upload_byte[props.upload_byte.length-1];
+      document.getElementById('avg-byte-upload'+props.type).textContent = (AvgUploadByte*1024).toFixed(5);
+      document.getElementById('tasa-byte-upload'+props.type).textContent = MaxUploadByte;
+      document.getElementById('current-byte-upload'+props.type).textContent = CurrentUploadByte;
+
+    }
+   
+    if(props.download_byte.length == 0){
+      document.getElementById('tasa-byte-download'+props.type).textContent = "0";
+      document.getElementById('avg-byte-download'+props.type).textContent = "0";
+      document.getElementById('current-byte-download'+props.type).textContent = "0";
+
+    }else{
+      const MaxDownloadByte = Math.max(...props.download_byte);
+      const AvgDownloadByte = avgByteDownload();
+      console.log(AvgDownloadByte+ " :    "+props.download_byte);
+
+      const CurrentDownloadByte = props.download_byte[props.download_byte.length-1];
+      document.getElementById('avg-byte-download'+props.type).textContent = (AvgDownloadByte*1024).toFixed(5);
+      document.getElementById('tasa-byte-download'+props.type).textContent = MaxDownloadByte;
+      document.getElementById('current-byte-download'+props.type).textContent = CurrentDownloadByte;
+    }
+}
+
+const rateMax = () => {
+    if(props.upload_rate.length == 0){
+      document.getElementById('tasa-rate-upload'+props.type).textContent = "0";
+      document.getElementById('avg-rate-upload'+props.type).textContent = "0";
+      document.getElementById('current-rate-upload'+props.type).textContent = "0";
+    }else{
+
+      const MaxUploadRate = Math.max(...props.upload_rate); 
+      const AvgUploadRate = avgRateUpload();
+      console.log(AvgUploadRate);
+      const CurrentUploadRate = props.upload_rate[props.upload_rate.length-1];
+      document.getElementById('avg-rate-upload'+props.type).textContent = (AvgUploadRate*1024).toFixed(5);
+      document.getElementById('tasa-rate-upload'+props.type).textContent = MaxUploadRate;
+      document.getElementById('current-rate-upload'+props.type).textContent = CurrentUploadRate;
+    }
+
+    if(props.download_rate.length == 0){
+      document.getElementById('tasa-rate-download'+props.type).textContent = "0";
+      document.getElementById('avg-rate-download'+props.type).textContent = "0";
+      document.getElementById('current-rate-download'+props.type).textContent = "0";
+    }else{
+      const MaxDownloadRate = Math.max(...props.download_rate);
+      const AvgDownloadRate = avgRateDownload();
+      console.log(AvgDownloadRate);
+      const CurrentDownloadRate = props.download_rate[props.download_rate.length-1];
+      document.getElementById('avg-rate-download'+props.type).textContent = (AvgDownloadRate*1024).toFixed(5);
+      document.getElementById('tasa-rate-download'+props.type).textContent = MaxDownloadRate;
+      document.getElementById('current-rate-download'+props.type).textContent = CurrentDownloadRate;
+    }
+}
+
+const setFomartTarget = () =>{
+  let puntero;
+  for(let i = 0; i < props.target.length; i++){
+      
+      if(i != 0)
+      { 
+        if(props.target[puntero] == props.target[i])
+        {
+          props.target[i-1] = "";
+        }
+    }
+    puntero = i;
+  }
+}
 
 const chartRateInstance = ref(null);
 const chartByteInstance = ref(null);
@@ -40,6 +189,11 @@ onMounted(async () => {
   await nextTick();
   const ctxRate = document.getElementById("rateGraphic" + props.type);
   const ctxByte = document.getElementById("byteGraphic" + props.type);
+
+  setFomartTarget();
+
+  rateMax();
+  byteMax();
 
   // Destruir cualquier instancia previa para evitar duplicados
   if (chartRateInstance.value) chartRateInstance.value.destroy();
@@ -118,10 +272,105 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>
-    <canvas :id="'rateGraphic' + type"></canvas>
-  </div>
-  <div>
-    <canvas :id="'byteGraphic' + type"></canvas>
+  <div 
+  class=" flex justify-between graficas gap-2 rounded-lg">
+    <div class="graficas gap-2">
+      <div class="rate rounded-lg overflow-hidden bg-white mt-3">
+        <canvas :id="'rateGraphic' + type"></canvas>
+        <div class="p-4">
+            <div class="border-b-2">
+              <h3 class="text-lg font-semibold text-gray-800">Tasa de Transferencia Actual</h3>
+            </div>
+            <div class="justify-between">
+              <div class="border-b-2">
+                <p class="text-green-500 flex items-center">
+                  <p :id="'tasa-rate-upload'+type" class="font-bold mr-1"></p>
+                  <span  class="font-bold mr-1">MB</span>
+                  <p class="text-gray-500">Máxima subida</p>
+                </p>
+                <p class="text-red-500 flex items-center">
+                    <p :id="'tasa-rate-download'+type" class="font-bold mr-1"></p>
+                    <span  class="font-bold mr-1">MB</span>
+                    <p class="text-gray-500">Máxima descarga</p>
+                </p>
+              </div>
+
+              <div class="border-b-2">
+                <p class="text-green-500 flex items-center">
+                  <p :id="'avg-rate-upload'+type" class="font-bold mr-1"></p>
+                  <span  class="font-bold mr-1">KB</span>
+                  <p class="text-gray-500">Promedio subida</p>
+                </p>
+                <p class="text-red-500 flex items-center">
+                    <p :id="'avg-rate-download'+type" class="font-bold mr-1"></p>
+                    <span  class="font-bold mr-1">KB</span>
+                    <p class="text-gray-500">Promedio descarga</p>
+                </p>
+              </div>
+              <div>
+                <p class="text-green-500 flex items-center">
+                  <p :id="'current-rate-upload'+type" class="font-bold mr-1"></p>
+                  <span  class="font-bold mr-1">MB</span>
+                  <p class="text-gray-500">Actual subida</p>
+                </p>
+                <p class="text-red-500 flex items-center">
+                    <p :id="'current-rate-download'+type" class="font-bold mr-1"></p>
+                    <span  class="font-bold mr-1">MB</span>
+                    <p class="text-gray-500">Actual descarga</p>
+                </p>
+              </div>
+            </div>
+            
+        </div>
+      </div>
+      <div class="byte rounded-lg overflow-hidden bg-white mt-3">
+        <canvas :id="'byteGraphic' + type"></canvas>
+        <div class="p-4">
+            <div class="border-b-2">
+              <h3 class="text-lg font-semibold text-gray-800">Tráfico total</h3>
+            </div>
+            <div class="justify-center">
+              <div class="border-b-2">
+                <p class="text-green-500 flex items-center">
+                  <p :id="'tasa-byte-upload'+type" class=" font-bold mr-1"></p>
+                  <span  class="font-bold mr-1">MB</span>
+                  <p class="text-gray-500">Total subida</p>
+                </p>
+                <p class="text-red-500 flex items-center">
+                    <p :id="'tasa-byte-download'+type" class="font-bold mr-1"></p>
+                    <span  class="font-bold mr-1">MB</span>
+                    <p class="text-gray-500">Total descarga</p>
+                </p>
+              </div>
+
+              <div class="border-b-2">
+                <p class="text-green-500 flex items-center">
+                  <p :id="'avg-byte-upload'+type" class="font-bold mr-1"></p>
+                  <span  class="font-bold mr-1">KB</span>
+                  <p class="text-gray-500">Promedio subida</p>
+                </p>
+                <p class="text-red-500 flex items-center">
+                    <p :id="'avg-byte-download'+type" class="font-bold mr-1"></p>
+                    <span  class="font-bold mr-1">KB</span>
+                    <p class="text-gray-500">Promedio descarga</p>
+                </p>
+              </div>
+
+              <div>
+                <p class="text-green-500 flex items-center">
+                  <p :id="'current-byte-upload'+type" class="font-bold mr-1"></p>
+                  <span  class="font-bold mr-1">MB</span>
+                  <p class="text-gray-500">Actual subida</p>
+                </p>
+                <p class="text-red-500 flex items-center">
+                    <p :id="'current-byte-download'+type" class="font-bold mr-1"></p>
+                    <span  class="font-bold mr-1">MB</span>
+                    <p class="text-gray-500">Actual descarga</p>
+                </p>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
