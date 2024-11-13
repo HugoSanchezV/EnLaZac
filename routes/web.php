@@ -279,10 +279,17 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
         Route::get('/sistema/configuracion/paypal',      [PayPalSettingController::class, 'edit'])->name('settings.paypal.edit');
         Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
-       
-        Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'index'])->name('settings.interest');
-        Route::get('/sistema/configuracion/intereses/edit/{id}', [InterestsController::class, 'edit'])->name('settings.interest.edit');
-        Route::put('/sistema/configuracion/intereses/update/{id}', [InterestsController::class, 'update'])->name('settings.interest.update');
+        Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'edit'])->name('settings.interest');
+        Route::put('/sistema/configuracion/intereses/update/', [InterestsController::class, 'update'])->name('settings.interest.update');
+        Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
+        Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
+        Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
+
+        Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
+        Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
+        Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
+
+
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);

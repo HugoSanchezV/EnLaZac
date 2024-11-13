@@ -98,13 +98,22 @@ class InstallationController extends Controller
     public function store(StoreInstallationRequest $request)
     {   
         $validatedData = $request->validated();
-        Installation::create([
+        $installation = Installation::create([
             'contract_id' => $validatedData['contract_id'],
             'description' => $validatedData['description'],
             'assigned_date' => $validatedData['assigned_date'],
         ]);
         
+      //  $this->setFirstMonthPayment($installation);
         return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
+    }
+    public function setFirstMonthPayment($installation)
+    {
+        $date = Carbon::parse($installation->assigned_date);
+        if($date->day > 16)
+        {
+            
+        }
     }
     
     public function destroy($id)

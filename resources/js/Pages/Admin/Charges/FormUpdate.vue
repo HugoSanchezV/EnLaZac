@@ -118,11 +118,11 @@ onMounted(() => {
             >
               <option :value="null" selected>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ "Contracto: "+contract.id + " - Usuario: " + contract.user.name  + " - Plan: "+ contract.plan.name }}
+                  {{ "Contracto: "+contract.id + " - Disp.: " + contract.device.address  + " - Plan: "+ contract.plan.name }}
               </option>
             </select>
         </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
+        <InputError class="mt-2" :message="form.errors.contract" />
       </div>
 
       <div class="mt-4">

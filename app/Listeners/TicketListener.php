@@ -12,6 +12,7 @@ use App\Http\Controllers\MailerController;
 use App\Jobs\Mailing;
 use App\Models\EmailAccount;
 use App\Models\MailSetting;
+use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
@@ -30,17 +31,25 @@ class TicketListener
      */
     public function handle(TicketEvent $event): void
     {
-        $mail = MailSetting::first();
-        $phpMailer = new MailerController();
-
-        User::whereIn('admin', [1, 3])
-
-        ->where('id', '!=', $event->ticket->user_id)
-        ->each(function(User $user) use ($event, $mail, $phpMailer) {
-            Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML());
-
-            Notification::send($user, new TicketNotification($event->ticket));
-        });
+        try{
+            $settings = MailSetting::first();
+            $users = User::whereIn('admin', [1, 3])->
+            where('id', '!=', $event->ticket->user_id);
+            
+            $users->each(function (User $user) use ($event, $settings) {
+        
+                    if($settings){
+                        Mailing::dispatch($settings, $user, $this->createSubject($event), $this->createHTML());
+                    }
+                    Notification::send($user, new TicketNotification($event->ticket));
+        
+                    Log::error("Error al enviar notificación/correo al usuario {$user->id}: {$e->getMessage()}");
+            
+            });
+        }catch(\Exception $e){
+            throw new Exception('Error' . $e->getMessage());
+        }
+        
     }
     public function createSubject($event){
         return "Nuevo ticket no. ".$event->ticket->id;

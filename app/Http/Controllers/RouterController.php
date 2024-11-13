@@ -65,7 +65,7 @@ class RouterController extends Controller
             ];
         });
         $scheduleTask = new ScheduledTaskController();
-        $schedule = $scheduleTask->status('1');
+        $schedule = $scheduleTask->status('ping-routers');
         // dd($schedule);
         $totalRoutersCount = Router::count();
         //Admin/Routers/Index

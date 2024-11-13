@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use App\Services\PaymentService;
 use Exception;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
@@ -12,10 +12,9 @@ class PayPalController extends Controller
 {
     public function createOrder(Request $request)
     {
-        // Log::info('Este es el log');
-        // Log::info('Datos de la petición: ' . json_encode());
-        // return;
-       // $token = "";
+        Log::info(Auth::id());
+
+
         try {
             $paypalModule = new PayPalClient;
 

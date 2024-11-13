@@ -13,14 +13,12 @@ class RouterDiagnosisNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $message;
-    public $fromAddress;
-    public $fromName;
-    public function __construct($message,$fromAddress, $fromName)
+
+    public function __construct($message)
     {
 
         $this->message = $message;
-        $this->fromAddress = $fromAddress;
-        $this->fromName = $fromName;
+
     }
 
     /**
