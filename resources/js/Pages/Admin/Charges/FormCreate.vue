@@ -102,11 +102,11 @@ const submit = () => {
             >
               <option :value="null" selected>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ "Contracto: "+contract.id + " - Usuario: " + contract.user.name  + " - Plan: "+ contract.plan.name }}
+                  {{ "Contracto: "+contract.id + " - Disp.: " + contract.device.address  + " - Plan: "+ contract.plan.name }}
               </option>
             </select>
         </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
+        <InputError class="mt-2" :message="form.errors.contract_id" />
       </div>
 
       <div class="mt-4">
@@ -133,7 +133,7 @@ const submit = () => {
             autofocus
             autocomplete="amount"
           />
-          <InputError class="mt-2" :message="form.errors.dateamount_paid" />
+          <InputError class="mt-2" :message="form.errors.amount" />
       </div>
       <div class="mt-4 flex gap-4">
         <InputLabel for="active" value="¿Cargo pagado?" />

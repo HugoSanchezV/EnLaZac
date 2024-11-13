@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-  users: {
+  devices: {
     type: Object,
   },
   plans: {
@@ -22,7 +22,7 @@ const props = defineProps({
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :users="users" :plans="plans" :community="community"/>
+          <Form :devices="devices" :plans="plans" :community="community"/>
         </div>
       </div>
     </template>

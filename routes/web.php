@@ -225,8 +225,11 @@ Route::middleware([
         Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
         Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
-        Route::get('/sistema/configuracion/background/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
-        Route::put('/sistema/configuracion/background/{}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
+
+        Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
+        Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
+        Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
+
 
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);

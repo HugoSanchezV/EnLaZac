@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\RouterDiagnosisEvent;
 use App\Models\User;
 use App\Notifications\RouterDiagnosisNotification;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
@@ -24,12 +25,14 @@ class RouterDiagnosisListener
      */
     public function handle(RouterDiagnosisEvent $event): void
     {
-        User::whereIn('admin', [1, 2, 3, 4])
-        // Excluir al usuario que realizó la orden
-        ->each(function(User $user) use ($event) {
-            //$account = EmailAccount::all()->first();
-            // Enviar notificación a los usuarios seleccionados
-            Notification::send($user, new RouterDiagnosisNotification($event->message,  $account->fromAddress, $account->fromName));
-        });
+        try{
+            User::whereIn('admin', [1, 3])
+            ->each(function(User $user) use ($event) {
+                Notification::send($user, new RouterDiagnosisNotification($event->message));
+            });
+        }catch(\Exception $e){
+            throw new Exception('Error' . $e->getMessage());
+        }
+       
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
 use App\Models\Charge;
+use App\Models\Device;
 use App\Models\RuralCommunity;
 use App\Services\RuralCommunityService;
 use Carbon\Carbon;
@@ -32,7 +33,7 @@ class ContractController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    ->orWhere('user_id', 'like', "%$search%")
+                    ->orWhere('device_id', 'like', "%$search%")
                     ->orWhere('plan_id', 'like', "%$search%")
                     ->orWhere('start_date', 'like', "%$search%")
                     ->orWhere('end_date', 'like', "%$search%")
@@ -49,10 +50,11 @@ class ContractController extends Controller
             $query->orderBy('id', 'asc');
         }
 
-        $contract = $query->with('user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
+        $contract = $query->with('device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'user_id' => $item->user->name ?? 'Sin asignar',
+                'device_id' => $item->device->address ?? 'Sin asignar',
+                'user_id' => $item->device->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',  
                 'start_date' => $item->start_date,
@@ -92,13 +94,13 @@ class ContractController extends Controller
     public function create()
     {
         $community = RuralCommunity::all();
-        
-        $users = User::select('id', 'name')->where('admin', '=', '0')->get();
+        $devices = Device::select('id', 'address')->whereNotNull('user_id')->get();
+       // $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
         return Inertia::render(
             'Coordi/Contracts/Create',
             [
-                'users' => $users,
+                'devices' => $devices,
                 'plans' => $plans,
                 'community' => $community,
             ]
@@ -111,7 +113,7 @@ class ContractController extends Controller
         //dd('LLega aqui');
         $validatedData = $request->validated();
         $contract = Contract::create([
-            'user_id' => $validatedData['user_id'],
+            'device_id' => $validatedData['device_id'],
             'plan_id' => $validatedData['plan_id'],
             'start_date' => $validatedData['start_date'],
             'end_date' => $validatedData['end_date'],
@@ -147,12 +149,12 @@ class ContractController extends Controller
         $community = RuralCommunity::all();
 
         $contract = Contract::with('ruralCommunity')->findOrFail($id);
-        $users = User::select('id', 'name')->where('admin', '=', '0')->get();
+        $devices = Device::select('id', 'address')->whereNotNull('user_id')->get();
         $plans = Plan::select('id', 'name')->get();
 
         return Inertia::render('Coordi/Contracts/Edit', [
             'contract' => $contract,
-            'users' => $users,
+            'devices' => $devices,
             'plans' => $plans,
             'community' => $community,
             
@@ -173,7 +175,9 @@ class ContractController extends Controller
     public function updateMonths($months, $id)
     {
         $contract = Contract::findOrFail($id);
-    
+        $today = Carbon::today();
+
+        //if($today->day >  ) 
         // Convertir `end_date` a una instancia de Carbon para manipular la fecha
         $endDate = Carbon::parse($contract->end_date);
         
@@ -191,9 +195,8 @@ class ContractController extends Controller
         return Redirect::route('contracts')->with('success', 'Contrato Eliminado Con Éxito');
     }
 
-    public function getContracts($today){
-        return Contract::with('installations')->where('end_date', '<=', $today)->get();
-    }
+    public function getContracts($today)
+    {return Contract::with('installations')->where('end_date', '<=', $today)->get();}
     public function exportExcel()
     {
         $query = Contract::with(['user', 'plan']);

@@ -1,40 +1,30 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
-use App\Events\ContractWarningEvent;
-use App\Http\Controllers\DevicesController;
-use App\Http\Controllers\ContractController;
-use App\Services\ChargeService;
-use Illuminate\Console\Command;
-use Carbon\Carbon;
-use App\Models\Contract;
-use App\Models\Device;
-use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-class CheckContracts extends Command
+class CheckContracts implements ShouldQueue
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:check-contracts';
+    use Queueable;
+
+
+    public function __construct()
+    {
+        //
+    }
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * Execute the job.
      */
-    protected $description = 'Verificar los contratos que han llegado a su fecha de terminación';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    public function handle(): void
     {
         $today = Carbon::today();
         //Verificar por que a partir de las 10 pm, lo toma como el siguiente dia 
+        $this->diaT = Carbon::today()->day;
+        $this->mesT = Carbon::today()->month;
+        $this->anoT = Carbon::today()->year;
 
         $controllerContract = new ContractController();
 
@@ -55,29 +45,30 @@ class CheckContracts extends Command
         // }
         foreach($contractTerms as $contract){
             $endDate = Carbon::parse($contract->end_date);
-            if($contract->active == 1){
-                self::checkInstallation($contract, $today, $endDate, $service);
+            if($contract->active == 1)
+            {
+                if(self::checkInstallation($contract, $today)){
+                    self::conditional();
+                }
+               
+
+                
             }
 
         }
         $this->info('Se han verificado los contratos.');
-
     }
-    private function conditional($endDate, $contract, $today, $service)
+    private function conditional($endDate, $contract, $anoT)
     {
-        if(($endDate->year == $today->year)&&($endDate->month == $today->month)){
+        if(($endDate->year == $anoT)&&($endDate->month == $mesT)){
 
-            if((($endDate->day)+2) == $today->day)
+            if((($endDate->day)+2) == $diaT)
             {
-                $this->info("Envio de email en 2 dias");
+                $this->info("Envio de email");
                 //Enviar correo
-                self::sendEmail($contract, "2");
+                self::sendEmail($contract);
 
-            }else if((($endDate->day)+7) == $today->day){
-                $this->info("Envio de email en 2 dias");
-                self::sendEmail($contract, "7");
-
-            } else if ($endDate->day == $today->day)
+            }else if ($endDate->day == $diaT)
             {
                 $this->info("Fin del contrato y cargo");
                 
@@ -87,26 +78,22 @@ class CheckContracts extends Command
 
                 self::Extra_charge($service, $contract);
             }
-        }else if($today->month == 1)
+        }else if($mesT == 1)
         {
-            if(($today->day == 1)
-            &&(($today->year > $endDate->year)
-            &&($today->month < $endDate->month)))
+            if(($diaT == 1)&&(($anoT > $endDate->year)&&($mesT < $endDate->month)))
             {
                 $this->info("Cargo por renta");
                 self::cargoPorPago($service, $contract);
             }
         }else{
-            if(($today->day == 1)
-            &&(($endDate->year == $today->year)
-            &&($today->month > $endDate->month)))
+            if(($diaT == 1)&&(($endDate->year == $anoT)&&($mesT > $endDate->month)))
             {
                 $this->info("Cargo por renta");
                 self::cargoPorPago($service, $contract);
             }
         }
     }
-    private function checkInstallation($contract, $today, $endDate, $service)
+    private function checkInstallation($contract, $today)
     {
         if (!$contract->installations->isEmpty()){
 
@@ -119,24 +106,24 @@ class CheckContracts extends Command
                     if(($assigned->day >= 16) && ($assigned->day < 32))
                     {
                         //Le cobra no el proximo mes, sino el siguiente
-                       if(self::incomingMonth($assigned, $today, 2, 1, 6)){
-                            self::conditional($endDate, $contract, $today, $service);
-                       }
+                        return self::incomingMonth($assigned, $today, 2, 1, 6);
     
                     }else if (($assigned->day >= 6)&&($assigned->day <= 15)){
                         
                         //Condicionar si paga el siguiente mes o  el proximo
-                        if(self::incomingMonth($assigned, $today, 1, 1,6))
-                        {
-                             self::conditional($endDate, $contract, $today, $service);
-                        }
+                        return self::incomingMonth($assigned, $today, 1, 1,6);
+                     //   return self::incomingMonth($assigned, $today, 2, 1,6);
+                    
+                        //
                     }else{
-                        self::conditional($endDate, $contract, $today, $service);
+                        return true;
                     }
+                }else {
+                    return false;
                 }
             }
         }else{
-            self::conditional($endDate, $contract, $today, $service);
+            return true;
         }
     }
     private function incomingMonth($assigned, $today, $increase, $start, $end){
@@ -160,31 +147,28 @@ class CheckContracts extends Command
     private function extra_charge($service, Contract $contract)
     {$service->createChargeMounthsDebt($contract);}
 
-    private function sendEmail($contract, $days)
+    private function sendEmail($contract)
     {
-        event(new ContractWarningEvent($contract, $days));
+        event(new ContractWarningEvent($contract));
     }
     private function disconectUser($contract)
     {
         try{
-            $devices = Device::findOrFail($contract->device_id);
-            
-            if($devices)
+            $device = Device::where('user_id','=',$contract->user_id)->first();
+        
+            if($device)
             {
-                foreach($devices  as $device)
+                if($device->disabled == 0)
                 {
-                    if($device->disabled == 0)
-                    {
-                        $device->disabled = 1;
-                        $controller = new DevicesController();
-    
-                        $controller->setDeviceStatusContrato($device);
-                    }
+                    $device->disabled = 1;
+                    $controller = new DevicesController();
+
+                    $controller->setDeviceStatusContrato($device);
                 }
                 
             }
         }catch(Exception $e){
-            throw new Exception('Error' . $e->getMessage());
+            $this->info($e);
         }
         
         $this->info('\n SE TERMINO DE ENVIAR.\n');

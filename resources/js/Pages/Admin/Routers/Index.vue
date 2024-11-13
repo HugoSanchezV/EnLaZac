@@ -15,7 +15,12 @@ const props = defineProps({
 
 onMounted(() => {
   if (props.schedule == true) {
-    document.getElementById("activated").checked = true;
+    const checkbox = document.getElementById("activated");
+    if (checkbox) {
+      checkbox.checked = true;
+    } else {
+      console.error("El elemento con ID 'activated' no existe.");
+    }
   }
 });
 let enviado = false;

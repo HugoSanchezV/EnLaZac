@@ -14,7 +14,7 @@ const props = defineProps({
   lastID:{
     type: Object
   },
-  users: {
+  devices: {
     type: Array,
     default: () => [],
   },
@@ -31,7 +31,7 @@ const props = defineProps({
 //const selectedUser = ref(null);
 
 const form = useForm({
-  user_id: "",
+  device_id: "",
   plan_id: "",
   start_date: "",
   end_date: "",
@@ -127,10 +127,11 @@ const submit = () => {
   } else {
     form.active = false;
   }
-  if(form.user_id == "" || form.plan_id == "" || form.rural_community_id == "")
+  if(form.device_id == "" || form.plan_id == "" || form.rural_community_id == "")
   {
     showWarning();
   }else{
+    console.log(form);
     form.post(route("contracts.store"));
   }
 
@@ -150,20 +151,20 @@ const submit = () => {
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
-        <InputLabel for="user_id" value="ID del Usuario" />
+        <InputLabel for="device_id" value="ID del dispositivo" />
         <div class="mt-2">
             <select
-              v-model="form.user_id"
+              v-model="form.device_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option v-if="users.length === 0" disabled value="">No hay registro de usuarios</option>
+              <option v-if="devices.length === 0" disabled value="">No hay dispositivos con usuario</option>
               <option v-else value="" disabled>Selecciona una opción</option>
-              <option v-for="user in users" :key="user.id" :value="user.id">
-                  {{ user.id + " - " + user.name }}
+              <option v-for="device in devices" :key="device.id" :value="device.id">
+                  {{ device.id + " - " + device.address }}
               </option>
             </select>
         </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
+        <InputError class="mt-2" :message="form.errors.device_id" />
       </div>
 
       <div class="mt-4">
@@ -196,7 +197,7 @@ const submit = () => {
               </option>
             </select>
         </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
+        <InputError class="mt-2" :message="form.errors.rural_community_id" />
       </div>
       <div class="mt-4 flex justify-between">
         <div>

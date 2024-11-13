@@ -20,13 +20,39 @@ const form = useForm({
 
 onMounted(() => {
   if (props.task) {
-    form.name = props.task.name || "";
+    form.name = props.task.task_name || "";
     form.period = props.task.period || "";
     form.status = props.task.status || ""
   }
+  if(form.status == true)
+  {
+    document.getElementById('activated').checked = true;
+  }else{
+    form.status == false;
+  }
+  
 });
+const updateStatus = () => {
+  if(document.getElementById('activated').checked){
+    form.status = true;
+
+  }else{
+    form.status = false;
+  }
+}
 const submit = () => {
-  form.put(route("settings.background.update"));
+  if(document.getElementById('activated').checked){
+    form.status = true
+  }else{
+    form.status = false;
+  }
+  if(props.task==null)
+  {
+    form.name = props.title;
+    form.post(route("settings.background.store"));
+  }else{
+    form.put(route("settings.background.update",{ id: props.task.id }));
+  }
 };
 
 </script>
@@ -38,35 +64,38 @@ const submit = () => {
       <div>
         <h2>Interes por fecha de corte: </h2>
         <div class="mt-2">
-          
-          <InputLabel for="amountCourt" value="Monto" />
-          <TextInput
-            id="amountCourt"
-            v-model="form.amountCourt"
-            type="number"
-            class="mt-1 block w-full"
-            autocomplete="amountCourt"
-          />
-          <InputError class="mt-2" :message="form.errors.amountCourt" />
+          <InputLabel for="period" value="Periodo" />
+
+          <select
+              v-model="form.period"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option disabled value="">Selecciona una opción</option>
+              <option value="everyFiveMinutes">Cada 5 minutos</option>
+              <option value="everyFifteenMinutes">Cada 15 minutos</option>
+              <option value="everyThirtyMinutes">Cada 30 minutos</option>
+              <option value="hourly">Cada hora</option>
+              <option value="daily">Diariamente</option>
+            </select>
+          <InputError class="mt-2" :message="form.errors.period" />
+          <InputError class="mt-2" :message="form.errors.name" />
+        </div>
+        <div class="mt-4">
+          <div class="flex gap-3">
+
+            <InputLabel for="status" value="¿Activo?" />
+            <label class="switch">
+              <input
+               type="checkbox" 
+               id="activated" 
+               @click="updateStatus"
+              />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <InputError class="mt-2" :message="form.errors.status" />
         </div>
       </div>
-
-      <div class="mt-4">
-        <h2>Interes por adeudo de mes: </h2>
-        <div class="mt-2">
-          
-          <InputLabel for="amountDebt" value="Monto" />
-          <TextInput
-            id="amountDebt"
-            v-model="form.amountDebt"
-            type="number"
-            class="mt-1 block w-full"
-            autocomplete="amountDebt"
-          />
-          <InputError class="mt-2" :message="form.errors.amountDebt" />
-        </div>
-      </div>
-
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
           class="ms-4"
