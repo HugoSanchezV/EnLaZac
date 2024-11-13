@@ -7,6 +7,7 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\PaymentHistorieController;
 use App\Models\PaymentHistorie;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class PaymentService
@@ -16,9 +17,9 @@ class PaymentService
         try {
             $controller = new PaymentHistorieController();
             $pay = new PaymentHistorie();
-            Log::info($cart);
-
-            $pay->user_id = 1;
+            Log::info(json_encode(Auth::user()));
+            Log::info(json_encode(Auth::id()));
+            $pay->user_id = Auth::id();
             $pay->contract_id = $contract["id"];
             $pay->amount = $amount;
             Log::info('entre al poderoso');

@@ -143,7 +143,6 @@ export default {
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
-      this.type = props.type;
       this.order = props.order;
 
       if (this.attribute === "nombre") {
@@ -158,7 +157,6 @@ export default {
         {
           q: this.q,
           attribute: this.attribute,
-          type: this.type,
           order: this.order,
         },
         { preserveState: true, replace: true }

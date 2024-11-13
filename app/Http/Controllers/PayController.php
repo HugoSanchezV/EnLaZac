@@ -29,8 +29,6 @@ class PayController extends Controller
                              ->get();
         }
         
-
-
        // dd($price);
         return Inertia::render('User/Pays/Pays',[
             'charges' => $charges,

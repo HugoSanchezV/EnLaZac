@@ -3,75 +3,73 @@ import { router } from "@inertiajs/vue3";
 
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
-import BaseQuestion from "./BaseQuestion.vue";
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 
-import FilterOrderBase from "./FilterOrderBase.vue";
-
-// ACCION DE ELIMINAR
+import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 const getOriginal = (data) => {
-  if (data === "id") {
+  if (data.attribute === "id") {
     return "id";
   }
 
-  if (data === "contrato") {
-    return "contract_id";
+  if (data.attribute === "usuario") {
+    return "user_id";
   }
 
-  if (data === "descripción") {
-    return "description";
+  if (data.attribute === "plan internet") {
+    return "plan_id";
   }
 
-  if (data === "monto") {
-    return "amount";
-  }
-  if (data === "¿pagado?") {
-    return "paid";
+  if (data.attribute === "fecha de inicio") {
+    return "start_date";
   }
 
-  if (data === "fecha del pago") {
-    return "date_paid";
+  if (data.attribute === "fecha de terminación") {
+    return "end_date";
   }
 
-  if (data === "fecha de creación") {
-    return "created_at";
+  if (data.attribute === "¿activo?") {
+    return "active";
   }
 
-  return;
+  if (data.attribute === "dirección") {
+    return "address";
+  }
+  if (data.attribute === "comunidad") {
+    return "community";
+  }
 };
-const destroy = (id, data) => {
+
+// ACCION DE ELIMINAR
+const extendsDate = (id, data) => {
   const toast = useToast();
 
   toast(
     {
       component: BaseQuestion,
       props: {
-        message: "¿Estas seguro de Eliminar el registro?",
+        message: "¿Estas seguro de extende el contrato?",
         accept: true,
         cancel: true,
-        textConfirm: "Eliminar",
+        textConfirm: "Extender",
       },
 
       listeners: {
         accept: () => {
-          const url = route("charges.destroy", id);
+          const original = getOriginal(data.attribute);
 
-          const attributeURL = getOriginal(data.attribute);
-          router.delete(
-            url,
-            {
-              data: {
-                q: data.searchQuery,
-                attribute: attributeURL,
-                order: data.order,
-              },
-            },
-            () => {
-              onError: (error) => {
-                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-              };
-            }
-          );
+          const url = route("reaming.contracts", {
+            id: id,
+            q: data.searchQuery,
+            attribute: original,
+            order: data.order,
+          });
+
+          router.post(url, () => {
+            onError: (error) => {
+              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+            };
+          });
         },
       },
     },
@@ -86,25 +84,24 @@ const destroy = (id, data) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "description":
-      return "Descripción";
+    case "user_id":
+      return "Usuario";
       break;
-    case "contract_id":
-      return "Contrato";
+    case "plan_id":
+      return "Plan";
       break;
-    case "amount":
-      return "Monto";
+    case "rural_community_id":
+      return "Comunidad";
       break;
-    case "paid":
-      return "¿Pagado?";
+    case "start_date":
+      return "Inicio";
+      break;
+    case "end_date":
+      return "Fin";
       break;
 
-    case "date_paid":
-      return "Fecha de Pago";
-      break;
-
-    case "created_at":
-      return "Fecha de Creación";
+    case "address":
+      return "Dirección";
       break;
 
     default:
@@ -113,6 +110,7 @@ const getTag = (cellIndex) => {
   }
 };
 </script>
+
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
@@ -230,8 +228,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentOrder,
               attribute: currentFilter,
+              order: currentOrder,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -262,8 +260,48 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'paid'">
-              {{ cell === 0 ? "No" : "Sí" }}
+            <div v-if="cellIndex === 'geolocation'">
+              {{
+                typeof cell === "object"
+                  ? JSON.stringify(cell)
+                      .replace(/[{}""]/g, "")
+                      .replace(/[:]/g, ": ")
+                      .replace(/[,]/g, " | ")
+                      .replace("latitude", "Latitud")
+                      .replace("longitude", "Longitud")
+                      .replace("null", "Sin locación")
+                  : String(cell).replace(/[{}]/g, "")
+              }}
+            </div>
+            <div v-else-if="cellIndex === 'active'">
+              <div v-if="cell === 0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="red"
+                  class="size-8"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm6-2.438c0-.724.588-1.312 1.313-1.312h4.874c.725 0 1.313.588 1.313 1.313v4.874c0 .725-.588 1.313-1.313 1.313H9.564a1.312 1.312 0 0 1-1.313-1.313V9.564Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div v-else-if="cell == 1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="#00CF00"
+                  class="size-8"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm14.024-.983a1.125 1.125 0 0 1 0 1.966l-5.603 3.113A1.125 1.125 0 0 1 9 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
             </div>
             <div v-else>
               <div class="flex gap-1">
@@ -276,7 +314,7 @@ const getTag = (cellIndex) => {
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
-              <Link
+              <!-- <Link
                 href="#"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -297,10 +335,10 @@ const getTag = (cellIndex) => {
                 </svg>
 
                 Mostrar
-              </Link>
-              <Link
+              </Link> -->
+              <!-- <Link
                 v-if="edit"
-                :href="route('charges.edit', row.id)"
+                :href="route('contracts.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -319,34 +357,23 @@ const getTag = (cellIndex) => {
                 </svg>
 
                 Editar
-              </Link>
+              </Link> -->
 
               <div v-if="del">
                 <button
                   @click="
-                    destroy(row.id, {
+                    extendsDate(row.id, {
                       searchQuery: this.searchQuery,
                       attribute: this.currentFilter,
                       order: this.currentOrder,
                     })
                   "
-                  class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                  class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-5"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                    />
-                  </svg>
-                  Eliminar
+                  <span class="material-symbols-outlined">
+                    settings_backup_restore
+                  </span>
+                  Extender
                 </button>
               </div>
             </div>
@@ -399,7 +426,7 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentCharge: "todos",
+      currentContract: "todos",
       currentOrder: "ASC",
     };
   },
@@ -430,18 +457,18 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCharge,
+        type: this.currentContract,
         order: this.currentOrder,
       });
     },
 
-    selectCharge(charge) {
-      this.currentCharge = charge;
+    selectContract(contract) {
+      this.currentContract = contract;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCharge,
+        type: this.currentContract,
         order: this.currentOrder,
       });
     },
@@ -451,7 +478,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCharge,
+        type: this.currentUser,
         order: this.currentOrder,
       });
     },

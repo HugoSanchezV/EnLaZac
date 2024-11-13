@@ -4,6 +4,7 @@ import DashboardBase from "@/Pages/DashboardBase.vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import GetData from "./GetData.vue"
+
 const props = defineProps({
   charges:{
     type: Array

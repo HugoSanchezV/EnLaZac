@@ -6,16 +6,17 @@ use App\Services\PaymentService;
 use Exception;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class PayPalController extends Controller
 {
     public function createOrder(Request $request)
     {
         // Log::info('Este es el log');
-        // Log::info('Datos de la petición: ' . json_encode());
-        // return;
-       // $token = "";
+        // $token = "";
         try {
             $paypalModule = new PayPalClient;
 
@@ -31,20 +32,21 @@ class PayPalController extends Controller
                     [
                         "amount" => [
                             "currency_code" => "MXN",
-                            "value" => strval($request->amount)
+                            "value" => '1.0'
                         ]
                     ]
                 ]
             ]);
+            //strval($request->amount)
         } catch (Exception $e) {
-        //    Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
+            Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
 
             $errorData = [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
-               // 'MADAFALE' => $token
+                // 'MADAFALE' => $token
             ];
 
             return response()->json($errorData);
@@ -54,41 +56,50 @@ class PayPalController extends Controller
 
     public function captureOrder(Request $request)
     {
-        $paypalModule = new PayPalClient;
+        try {
 
-        Log::info('Se obtuvo el cliente');
-        $paypalModule->setApiCredentials(config('paypal'));
-       // Log::info('paypal modulo completo');
+            $paypalModule = new PayPalClient;
 
-        $token = $paypalModule->getAccessToken();
-      //  Log::info('Se obtuvo el token');
+            // Log::info('Se obtuvo el cliente');
+            $paypalModule->setApiCredentials(config('paypal'));
+            // Log::info('paypal modulo completo');
 
-        $paypalModule->setAccessToken($token);
-       // Log::info('setAccesstoekn compleatdo con exto');
+            $token = $paypalModule->getAccessToken();
+            // Log::info('Se obtuvo el token');
+
+            $paypalModule->setAccessToken($token);
+            // Log::info('setAccesstoekn compleatdo con exto');
 
 
-        $response = $paypalModule->capturePaymentOrder($request->orderID);
-       // Log::info('Se obtuvo respuesra');
-       // Log::info($response);
+            $response = $paypalModule->capturePaymentOrder($request->orderID);
+            // Log::info('Se obtuvo respuesra');
+            // Log::info($response);
 
-        $transaction_id = $response['purchase_units'][0]['payments']['captures'][0]['id'];
-        // Log::info("This is the log");
-        // Log::info($transaction_id);
-        // Log::info("Arriba log");
+            $transaction_id = $response['purchase_units'][0]['payments']['captures'][0]['id'];
+            // Log::info("This is the log");
+            // Log::info($transaction_id);
+            // Log::info("Arriba log");
 
-        if ($response['status'] === 'COMPLETED') {
-            self::update(
-                $request->amount,
-                $request->mounths,
-                $request->contract,
-                $request->charges,
-                $request->cart,
-                $transaction_id,
-            );
-            return response()->json(['status' => 'success']);
+            if ($response['status'] === 'COMPLETED') {
+                // self::update(
+                //     $request->amount,
+                //     $request->mounths,
+                //     $request->contract,
+                //     $request->charges,
+                //     $request->cart,
+                //     $transaction_id,
+                // );
+
+                // return redirect()->route('pays')->with('success', 'Se ha realizado la operación con éxito');
+                return response()->json(['status' => 'success'], 200);
+                //return Redirect::route('pays')->with('success', 'Se ha realizado la operación con exito');
+            }
+        } catch (Exception $e) {
+            Log::info("Error al hacer el pago " . $e->getMessage());
+            Log::info("" );
+            // return response()->json(['status' => 'error'], 500);
+            return redirect()->route('pays')->with('error', 'Hubo un problema al procesar el pago. Inténtalo de nuevo.');
         }
-
-        return response()->json(['status' => 'error'], 500);
     }
     public function update($amount, $months, $contract, $charges, $cart, $transaction)
     {

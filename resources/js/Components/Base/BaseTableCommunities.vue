@@ -8,7 +8,7 @@ import BaseQuestion from "./BaseQuestion.vue";
 import FilterOrderBase from "./FilterOrderBase.vue";
 
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -25,11 +25,28 @@ const destroy = (id) => {
         accept: () => {
           const url = route("rural-community.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          if (data.attribute === "nombre") {
+            data.attribute = "name";
+          }
+          if (data.attribute === "costo de instalación") {
+            data.attribute = "installation_cost";
+          }
+          
+          router.delete(
+            url,
+            {
+              data: {
+                q: data.searchQuery,
+                attribute: data.attribute,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -48,7 +65,7 @@ const getTag = (cellIndex) => {
       return "nombre";
     case "installation_cost":
       return "costo de instalación";
-      default:
+    default:
       return cellIndex;
   }
 };
@@ -170,8 +187,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentCommunity,
+              order: currentOrder,
+              attribute: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -217,7 +234,6 @@ const getTag = (cellIndex) => {
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
-              
               <Link
                 :href="route('rural-community.show', row.id)"
                 v-if="show"
@@ -265,7 +281,13 @@ const getTag = (cellIndex) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
@@ -335,7 +357,6 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentCommunity: "todos",
       currentOrder: "ASC",
     };
   },
@@ -366,7 +387,6 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCommunity,
         order: this.currentOrder,
       });
     },
@@ -377,7 +397,6 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCommunity,
         order: this.currentOrder,
       });
     },
@@ -387,7 +406,6 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentCommunity,
         order: this.currentOrder,
       });
     },

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class TicketController extends Controller
@@ -196,6 +197,7 @@ class TicketController extends Controller
     public function index_user(Request $request)
     {
         $userId = Auth::id(); // Obtén el ID del usuario autenticado
+        Log::info(Auth::id());
         $query = Ticket::query();
 
         // Filtra los tickets por el usuario autenticado
@@ -291,5 +293,9 @@ class TicketController extends Controller
     public function create_user()
     {
         return Inertia::render('User/Tickets/Create');
+    }
+
+    static function user_id(){
+        return Auth::id();
     }
 }

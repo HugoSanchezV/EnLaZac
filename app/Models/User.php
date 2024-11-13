@@ -83,4 +83,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(TelegramAccount::class);
     }
+
+    public function paymentHistorie()
+    {
+        return $this->hasMany(PaymentHistorie::class);
+    }
 }

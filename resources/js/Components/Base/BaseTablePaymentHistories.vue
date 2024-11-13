@@ -7,8 +7,41 @@ import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
 
+const getOriginal = (data) => {
+  if (data === "usuario") {
+    return "user_id";
+  }
+
+  if (data === "contrato") {
+    return "contract_id";
+  }
+
+  if (data === "monto") {
+    return "amount";
+  }
+
+  if (data === "contenido") {
+    return "content";
+  }
+
+  if (data === "metodo de pago") {
+    return "payment_method";
+  }
+
+  if (data === "id de transacción") {
+    return "transaction_id";
+  }
+
+  // if (data === "link de recepción") {
+  //   return "receipt_url";
+  // }
+
+  if (data === "fecha de pago") {
+    return "created_at";
+  }
+};
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -25,11 +58,23 @@ const destroy = (id) => {
         accept: () => {
           const url = route("payment.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          const attributeUrl = getOriginal(data.attribute);
+          router.delete(
+            url,
+            {
+              preserveState: true,
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -47,19 +92,19 @@ const getTag = (cellIndex) => {
     case "user_id":
       return "Usuario";
       break;
-      case "contract_id":
-        return "Contrato";
-        break;
+    case "contract_id":
+      return "Contrato";
+      break;
     case "amount":
       return "Monto";
       break;
-      case "content":
-        return "Contenido";
-        break;
+    case "content":
+      return "Contenido";
+      break;
     case "payment_method":
       return "Método de Pago";
       break;
-    
+
     case "payment_method":
       return "Método de Pago";
       break;
@@ -198,8 +243,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentPayment,
+              order: currentOrder,
+              attribute: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -263,7 +308,7 @@ const getTag = (cellIndex) => {
 
                 Mostrar
               </Link>
-              <Link
+              <!-- <Link
                 v-if="edit"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -283,11 +328,17 @@ const getTag = (cellIndex) => {
                 </svg>
 
                 Editar
-              </Link>
+              </Link> -->
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
@@ -414,9 +465,9 @@ export default {
       });
     },
 
-    filterData() {
-      console.log(this.searchQuery);
-    },
+    // filterData() {
+    //   console.log(this.searchQuery);
+    // },
   },
 };
 </script>

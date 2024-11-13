@@ -3,36 +3,37 @@ import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
-  charges: Object,
+  contracts: Object,
   pagination: Object,
-  totalChargesCount: Number,
+  totalContractsCount: Number,
 });
 
-const { charges } = toRefs(props);
-const toRouteExport = "charges.excel";
+const { contracts } = toRefs(props);
+// const toRouteExport = "contracts.excel";
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
   "id",
-  "contrato",
-  "descripción",
-"monto",
-  "¿pagado?",
-  "fecha del pago",
-  "fecha de creación",
+  "usuario",
+  "plan internet",
+  "comunidad",
+  "fecha de inicio",
+  "fecha de terminación",
+  "¿activo?",
+  "dirección",
 ];
 
 const headers = [
   "Id",
-  "Contrato",
-  "Descripción",
-  "Monto",
-  "¿Pagado?",
-  "Fecha de Pago",
-  "Fecha de Creación",
+  "Usuarios",
+  "Plan Internet",
+  "Comunidad",
+  "Fecha de Inicio",
+  "Fecha de Terminación",
+  "¿Activo?",
+  "Dirección",
   "Acciones",
 ];
-//const filters = ["id", "usuario", "plan internet", "dirección"];
 </script>
 
 <template>
@@ -40,11 +41,11 @@ const headers = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Cargos</h2>
+          <h2>Contratos proximos a finalizar</h2>
         </div>
         <div>
-          <Link
-            :href="route('charges.create')"
+          <!-- <Link
+            :href="route('contracts.create')"
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
@@ -52,17 +53,17 @@ const headers = [
               contract
             </span>
 
-            Crear cargo
-          </Link>
+            Crear contrato
+          </Link> -->
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalChargesCount > 0">
-          <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
+        <div v-if="props.totalContractsCount > 0">
+          <!-- <base-export-excel :toRouteExport="toRouteExport"></base-export-excel> -->
           <!-- Esta es el inicio de la tabla -->
-          <base-table-charges
+          <base-table-contracts
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -70,14 +71,14 @@ const headers = [
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-charges>
+          ></base-table-contracts>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="charges.data.length > 0"
-            :links="charges.links"
+            v-if="contracts.data.length > 0"
+            :links="contracts.links"
             :pagination="pagination"
-            :current="charges.current_page"
-            :total="charges.last_page"
+            :current="contracts.current_page"
+            :total="contracts.last_page"
             :data="{
               q: q,
               attribute: attribute,
@@ -93,7 +94,7 @@ const headers = [
           </h2>
         </div>
         <div v-else class="flex justify-center uppercase font-bold">
-          <h2>No hay Cargos para mostrar</h2>
+          <h2>No hay Contratos proximos a finalizar</h2>
         </div>
       </div>
     </template>
@@ -103,26 +104,26 @@ const headers = [
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableCharges from "@/Components/Base/BaseTableCharges.vue";
+import BaseTableContracts from "./BaseTableContracts.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTableCharges,
+    BaseTableContracts,
     BasePagination,
   },
 
   props: {
-    charges: Object,
+    contracts: Object,
     pagination: Object,
-    totalChargesCount: Number,
+    totalContractsCount: Number,
   },
 
   data() {
     return {
-      rows: this.charges.data,
+      rows: this.contracts.data,
       q: "",
       attribute: "id",
       type: "todos",
@@ -131,9 +132,9 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("charges");
+      const link = route("reaming.contracts");
 
-      //    console.log(props.searchQuery);
+      console.log(props.searchQuery);
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
@@ -144,27 +145,31 @@ export default {
         this.attribute = "id";
       }
 
-      if (this.attribute === "contrato") {
-        this.attribute = "contract_id";
+      if (this.attribute === "usuario") {
+        this.attribute = "user_id";
       }
 
-      if (this.attribute === "descripción") {
-        this.attribute = "description";
+      if (this.attribute === "plan internet") {
+        this.attribute = "plan_id";
       }
 
-      if (this.attribute === "monto") {
-        this.attribute = "amount";
-      }
-      if (this.attribute === "¿pagado?") {
-        this.attribute = "paid";
+      if (this.attribute === "fecha de inicio") {
+        this.attribute = "start_date";
       }
 
-      if (this.attribute === "fecha del pago") {
-        this.attribute = "date_paid";
+      if (this.attribute === "fecha de terminación") {
+        this.attribute = "end_date";
       }
 
-      if (this.attribute === "fecha de creación") {
-        this.attribute = "created_at";
+      if (this.attribute === "¿activo?") {
+        this.attribute = "active";
+      }
+
+      if (this.attribute === "dirección") {
+        this.attribute = "address";
+      }
+      if (this.attribute === "comunidad") {
+        this.attribute = "rural_community_id";
       }
 
       this.$inertia.get(
@@ -180,8 +185,8 @@ export default {
     },
   },
   watch: {
-    charges() {
-      this.rows = this.charges.data;
+    contracts() {
+      this.rows = this.contracts.data;
     },
   },
 };

@@ -174,6 +174,9 @@ Route::middleware([
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
         Route::get('/contracts/to/excel',        [ContractController::class, 'exportExcel'])->name('contracts.excel');
 
+        Route::get('/contracts/days/remaining',                 [ContractController::class, 'index_remainig'])->name('reaming.contracts');
+        Route::post('/contracts/days/remaining/{id}',                 [ContractController::class, 'extendEndDate'])->name('reaming.contracts.extend');
+
         //Planes de internet
         Route::get('/plans',                     [PlanController::class, 'index'])->name('plans');
         Route::get('/plans/create',              [PlanController::class, 'create'])->name('plans.create');
@@ -190,15 +193,16 @@ Route::middleware([
         Route::get('/charges/edit/{id}',           [ChargeController::class, 'edit'])->name('charges.edit');
         Route::put('/charges/update/{id}',         [ChargeController::class, 'update'])->name('charges.update');
         Route::delete('/charges/delete/{id}',      [ChargeController::class, 'destroy'])->name('charges.destroy');
-        
-        Route::get('/installation',                     [InstallationController ::class, 'index'])->name('installation');
+        Route::get('/charges/to/excel',      [ChargeController::class, 'exportExcel'])->name('charges.excel');
+
+        Route::get('/installation',                     [InstallationController::class, 'index'])->name('installation');
         Route::get('/installation/create',              [InstallationController::class, 'create'])->name('installation.create');
         Route::get('/installation/show/{id}',           [InstallationController::class, 'show'])->name('installation.show');
         Route::post('/installation/store',              [InstallationController::class, 'store'])->name('installation.store');
         Route::get('/installation/edit/{id}',           [InstallationController::class, 'edit'])->name('installation.edit');
         Route::put('/installation/update/{id}',         [InstallationController::class, 'update'])->name('installation.update');
         Route::delete('/installation/delete/{id}',      [InstallationController::class, 'destroy'])->name('installation.destroy');
-        
+
         Route::get('/rural-community',                     [RuralCommunityController::class, 'index'])->name('rural-community');
         Route::get('/rural-community/create',              [RuralCommunityController::class, 'create'])->name('rural-community.create');
         Route::get('/rural-community/show/{id}',           [RuralCommunityController::class, 'show'])->name('rural-community.show');
@@ -209,7 +213,8 @@ Route::middleware([
         Route::post('/rural-community/updateContract/{id}', [RuralCommunityController::class, 'updateContract'])->name('rural-community.update.contract');
 
         Route::get('/payment/histories',                     [PaymentHistorieController::class, 'index'])->name('payment');
-        Route::get('/payment/histories/delete',                     [PaymentHistorieController::class, 'destroy'])->name('payment.destroy');
+        Route::delete('/payment/histories/delete/{id}',                     [PaymentHistorieController::class, 'destroy'])->name('payment.destroy');
+        Route::get('/payment/histories/to/excel',                     [PaymentHistorieController::class, 'exportExcel'])->name('payment.excel');
 
 
 
@@ -230,7 +235,6 @@ Route::middleware([
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
         Route::get('/sistema/configuracion/background/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::put('/sistema/configuracion/background/{}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
-
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
@@ -315,9 +319,11 @@ Route::middleware([
         Route::get('/tickets/create/usuario',            [TicketController::class, 'create_user'])->name('tickets.usuario.create');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store_user'])->name('tickets.usuario.store');
         Route::get('/tickets/edit/usuario/{id}',         [TicketController::class, 'edit_user'])->name('tickets.usuario.edit')->middleware(['ticket']);
-        Route::get('/tickets/update/usuario/{id}',         [TicketController::class, 'update_user'])->name('tickets.usuario.update')->middleware(['ticket']);;
-        Route::delete('/tickets/delete/usuario/{id}',    [TicketController::class, 'destroy_user'])->name('tickets.usuario.destroy')->middleware(['ticket']);;
+        Route::get('/tickets/update/usuario/{id}',         [TicketController::class, 'update_user'])->name('tickets.usuario.update')->middleware(['ticket']);
+        Route::delete('/tickets/delete/usuario/{id}',    [TicketController::class, 'destroy_user'])->name('tickets.usuario.destroy')->middleware(['ticket']);
 
+
+        Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
     });
 
 
@@ -327,11 +333,10 @@ Route::middleware([
             <p>Gracias por unirte a nuestra plataforma. Esperamos que disfrutes de la experiencia.</p>
             <p>Saludos,<br>El equipo de Laravel</p>
         ";
-    
+
         Mail::html($htmlContent, function ($message) {
             $message->to('l20030020@fresnillo.tecnm.mx')
-                    ->subject('¡Bienvenido a nuestra plataforma!');
+                ->subject('¡Bienvenido a nuestra plataforma!');
         });
     });
-    Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
 });

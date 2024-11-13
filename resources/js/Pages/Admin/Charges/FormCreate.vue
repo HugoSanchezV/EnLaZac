@@ -102,7 +102,7 @@ const submit = () => {
             >
               <option :value="null" selected>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ "Contracto: "+contract.id + " - Usuario: " + contract.user.name  + " - Plan: "+ contract.plan.name }}
+                  {{ "Contracto: "+contract.id + " - Usuario: " + contract?.user?.name  + " - Plan: "+ contract?.plan?.name }}
               </option>
             </select>
         </div>

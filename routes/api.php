@@ -10,8 +10,8 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/paypal/create-order', [PayPalController::class, 'createOrder']);
-Route::post('/paypal/capture-order', [PayPalController::class, 'captureOrder']);
+Route::post('/paypal/create-order', [PayPalController::class, 'createOrder'])->middleware('web', 'auth:sanctum');
+Route::post('/paypal/capture-order', [PayPalController::class, 'captureOrder'])->middleware('web', 'auth:sanctum');
 
 Route::post('/telegram/webhook', [TelegramController::class, 'webhook'])->name('telegram.webhook');
 Route::post('/telegram/import/contact', [TelegramMadelineController::class, 'importContact'])->name('telegram.contact.import');

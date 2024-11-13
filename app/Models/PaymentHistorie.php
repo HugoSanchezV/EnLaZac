@@ -18,4 +18,8 @@ class PaymentHistorie extends Model
         'transaction_id',
         'receipt_url',
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }

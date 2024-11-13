@@ -56,6 +56,8 @@ export default {
                 draggable: true,
               }
             );
+
+            
           } else {
             toast.error("No se realizo el pago", {
               position: POSITION.TOP_CENTER,
