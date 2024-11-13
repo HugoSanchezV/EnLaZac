@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ScheduledTask\StoreScheduledTaskRequest;
+use App\Http\Requests\ScheduledTask\UpdateScheduledTaskRequest;
 use Illuminate\Http\Request;
 use App\Models\ScheduledTask;
 use Illuminate\Support\Facades\Schedule;
@@ -32,15 +34,34 @@ class ScheduledTaskController extends Controller
             'task' => $task,
             'title' => $request->task,
         ]);
+    }
+    public function store(StoreScheduledTaskRequest $request)
+    {   
+       // dd($request);
+        $validatedData = $request->validated();
+        ScheduledTask::create([
+            'task_name' => $validatedData['name'],
+            'period' => $validatedData['period'],
+            'status' => $validatedData['status'],
+        ]);
+        return redirect()->route('settings.background')->with('success', 'La Tarea se ha sido Actualizado Con Éxito');
 
+    }
+    public function update(UpdateScheduledTaskRequest $request, $id){
+        $task = ScheduledTask::findOrFail($id);
+        $validatedData = $request->validated();
 
-
+        $task->period = $validatedData['period'];
+        $task->status = $validatedData['status'];
+        $task->save();
+        
+        return redirect()->route('settings.background')->with('success', 'La Tarea se ha sido Actualizado Con Éxito');
     }
     public function toggleTask(Request $request)
     {
 
         //Agregar nombre de las tareas
-        $validatedData = $request->validate(['user_id' => 'in: "ping-routers","device-stats","check-contracts"' ]);
+        $validatedData = $request->validate(['task_name' => 'in: "ping-routers","device-stats","check-contracts"' ]);
         $task = ScheduledTask::where('task_name', $validatedData['name'])->first();
 
         if ($task) {
@@ -71,9 +92,9 @@ class ScheduledTaskController extends Controller
 
 
     }
-    public function status($id)
+    public function status($name)
     {
-        $task = ScheduledTask::find($id);
+        $task = ScheduledTask::where('task_name',$name)->first();
         if ($task) {
             return $task->status;
         }

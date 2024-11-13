@@ -14,6 +14,7 @@ const toRouteExport = "contracts.excel";
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
   "id",
+  "dispositivo",
   "usuario",
   "plan internet",
   "comunidad",
@@ -26,6 +27,7 @@ const filters = [
 
 const headers = [
   "Id",
+  'Dispositivo',
   "Usuarios",
   "Plan Internet",
   "Comunidad",
@@ -144,6 +146,9 @@ export default {
         this.attribute = "id";
       }
 
+      if (this.attribute === "dispositivo") {
+        this.attribute = "device_id";
+      }
       if (this.attribute === "usuario") {
         this.attribute = "user_id";
       }

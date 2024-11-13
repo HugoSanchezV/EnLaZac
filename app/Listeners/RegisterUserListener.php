@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\RegisterUserNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Config;
 
 class RegisterUserListener
@@ -31,11 +32,19 @@ class RegisterUserListener
         
         $mail = MailSetting::first();
 
-        User::whereIn('admin', [1, 2])
-        ->each(function(User $user) use ($event, $mail) {
-            Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML());
-            Notification::send($user, new RegisterUserNotification($event->user));
-        });
+        try{
+            User::whereIn('admin', [1, 2])
+            ->each(function(User $user) use ($event, $mail) {
+                if($mail) {
+                    Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML());
+                }
+                Notification::send($user, new RegisterUserNotification($event->user));
+            });
+        }catch(\Exception $e)
+        {
+            throw new Exception('Error' . $e->getMessage());
+        }
+       
     }
 
     public function createSubject($event){

@@ -19,9 +19,11 @@ class ContractWarningEvent
      * Create a new event instance.
      */
     public $contract;
-    public function __construct(Contract $contract)
+    public $days;
+    public function __construct(Contract $contract, $days)
     {
         $this->contract = $contract;
+        $this->days = $days;
     }
 
     /**

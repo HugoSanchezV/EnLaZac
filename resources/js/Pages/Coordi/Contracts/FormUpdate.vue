@@ -9,17 +9,17 @@ import GoogleMaps from '@/Components/GoogleMaps.vue'
 
 const props = defineProps({
   contract: Object,
-  users: Array,
+  devices: Array,
   plans: Array,
   community: Array,
 });
 
 const form = useForm({
-  user_id: "0",
-  plan_id: "0",
+  device_id: "",
+  plan_id: "",
   start_date: "",
   end_date: "",
-  active: "0",
+  active: "",
   address: "",
   rural_community_id: "",
   geolocation:{
@@ -31,7 +31,7 @@ const lat = ref(null);
 const lng = ref(null); 
 onMounted(() => {
   if (props.contract) {
-    form.user_id = props.contract.user_id || "";
+    form.device_id = props.contract.device_id || "";
     form.plan_id = props.contract.plan_id || "";
     form.address = props.contract.address || "";
     form.start_date = props.contract.start_date || "";
@@ -42,7 +42,8 @@ onMounted(() => {
     lng.value = form.geolocation.longitude = props.contract.geolocation.longitude || "0";
   }
 
-  if(form.active == true){
+  if(form.active == true)
+  {
     document.getElementById('activated').checked = true;
   }
 });
@@ -74,19 +75,19 @@ const submit = () => {
   <div class="mt-5 pl-5 pr-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
-        <InputLabel for="user_id" value="ID del Usuario" />
+        <InputLabel for="device_id" value="ID del Usuario" />
         <div class="mt-2">
             <select
-              v-model="form.user_id"
+              v-model="form.device_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
               <option value="null" selected>Selecciona una opción</option>
-              <option v-for="user in users" :key="user.id" :value="user.id">
-                  {{ user.id + " - " + user.name }}
+              <option v-for="device in devices" :key="device.id" :value="device.id">
+                  {{ device.id + " - " + device.address }}
               </option>
             </select>
         </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
+        <InputError class="mt-2" :message="form.errors.device_id" />
       </div>
 
       <div class="mt-4">

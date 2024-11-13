@@ -89,10 +89,10 @@ class PlanController extends Controller
     //Muestra la información del plan de internet y del usuario en específico
     public function show($id)
     {
-        $plans = Plan::findOrFail($id);
+        $plan = Plan::findOrFail($id);
 
         return Inertia::render('Coordi/Plans/Show', [
-            'plan' => $plans,
+            'plan' => $plan,
         ]);
     }
 

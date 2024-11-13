@@ -77,7 +77,7 @@ class ChargeController extends Controller
     public function edit($id)
     {
         $charge = Charge::findOrFail($id);
-        $contracts = Contract::with('user', 'plan')->get();
+        $contracts = Contract::with('device', 'plan')->get();
 
         return Inertia::render('Admin/Charges/Edit', [
             'charge' => $charge,
@@ -115,8 +115,8 @@ class ChargeController extends Controller
 
     public function create()
     {
-        $contracts = Contract::with('user', 'plan')->get();
-
+        $contracts = Contract::with('device', 'plan')->get();
+        
         return Inertia::render(
             'Admin/Charges/Create',
             [

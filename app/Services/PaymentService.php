@@ -24,7 +24,7 @@ class PaymentService
             $pay->amount = $amount;
             Log::info('entre al poderoso');
             foreach($cart as $item) {
-                $pay->content = $item['id'] . ', ' . $item['description'] . ', ' . $item['amount'];
+                $pay->content = $item['description'] . ", " . $item['amount']."\n";
             }
             Log::info('salido del poderoro');
 
@@ -58,6 +58,7 @@ class PaymentService
             $charge = new ChargeController();
             foreach ($charges as $cha) {
                 $charge->updatePaid($cha['id']);
+                if($cha[''] == '')
             }
         } catch (Exception $e) {
             Log::info("Entro a excepcion");

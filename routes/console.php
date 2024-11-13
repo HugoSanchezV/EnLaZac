@@ -3,6 +3,7 @@
 use App\Models\ScheduledTask;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -12,160 +13,107 @@ Artisan::command('inspire', function () {
 //Schedule de Ping-devices 
 
 Schedule::call(function () {
-
+   // Log::info('Tarea ejecutada');
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
-    $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
+    // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
-    if($taskRouter->period == "everyFiveMinutes")
+    // Log::info('dsad');
+    if($taskRouter->period == "everyFiveMinutes" && $taskRouter->status)
     {
-        if ($taskRouter->status) {
-    
-            Artisan::call('app:ping-routers');
-        }
-        
+        Artisan::call('app:ping-routers'); 
     }
-    if($taskContract->period == "everyFiveMinutes")
+
+    // if($taskContract->period == "everyFiveMinutes" && $taskContract->status)
+    // {
+    //    Artisan::call('app:check-contracts');  
+    // }
+
+    if($taskDevice->period == "everyFiveMinutes" && $taskDevice->status)
     {
-        if ($taskContract->status) {
-    
-            Artisan::call('app:check-contracts');
-        }
-        
-    }
-    if($taskDevice->period == "everyFiveMinutes")
-    {
-        if ($taskDevice->status) {
-    
-            Artisan::call('app:device-stats');
-        }
-        
+        Artisan::call('app:device-stats'); 
     }
 })->everyFiveMinutes();
 
 Schedule::call(function () {
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
-    $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
+    // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
-    if($taskRouter->period == "everyFifteenMinutes")
+    if($taskRouter->period == "everyFifteenMinutes" && $taskRouter->status)
     {
-        if ($taskRouter->status) {
-    
-            Artisan::call('app:ping-routers');
-        }
-        
+        Artisan::call('app:ping-routers'); 
     }
-    if($taskContract->period == "everyFifteenMinutes")
+
+    // if($taskContract->period == "everyFifteenMinutes" && $taskContract->status)
+    // {
+    //     Artisan::call('app:check-contracts');   
+    // }
+
+    if($taskDevice->period == "everyFifteenMinutes" && $taskDevice->status)
     {
-        if ($taskContract->status) {
-    
-            Artisan::call('app:check-contracts');
-        }
-        
-    }
-    if($taskDevice->period == "everyFifteenMinutes")
-    {
-        if ($taskDevice->status) {
-    
-            Artisan::call('app:device-stats');
-        }
-        
+        Artisan::call('app:device-stats'); 
     }
   
 })->everyFifteenMinutes();
 
 Schedule::call(function () {
-    $task = ScheduledTask::where('task_name', 'ping-routers')->first();
+    // $task = ScheduledTask::where('task_name', 'ping-routers')->first();
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
-    $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
+    // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
-    if($taskRouter->period == "everyThirtyMinutes")
+    if($taskRouter->period == "everyThirtyMinutes" && $taskRouter->status)
     {
-        if ($taskRouter->status) {
-    
-            Artisan::call('app:ping-routers');
-        }
-        
+        Artisan::call('app:ping-routers');  
     }
-    if($taskContract->period == "everyThirtyMinutes")
+
+    // if($taskContract->period == "everyThirtyMinutes" && $taskContract->status)
+    // {
+    //     Artisan::call('app:check-contracts');  
+    // }
+
+    if($taskDevice->period == "everyThirtyMinutes" && $taskDevice->status)
     {
-        if ($taskContract->status) {
-    
-            Artisan::call('app:check-contracts');
-        }
-        
-    }
-    if($taskDevice->period == "everyThirtyMinutes")
-    {
-        if ($taskDevice->status) {
-    
-            Artisan::call('app:device-stats');
-        }
-        
+        Artisan::call('app:device-stats');
     }
 
 })->everyThirtyMinutes();
 
 Schedule::call(function () {
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
-    $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
+    // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
-    if($taskRouter->period == "hourly")
+    if($taskRouter->period == "hourly" && $taskRouter->status)
     {
-        if ($taskRouter->status) {
-    
-            Artisan::call('app:ping-routers');
-        }
-        
+        Artisan::call('app:ping-routers'); 
     }
-    if($taskContract->period == "hourly")
+    // if($taskContract->period == "hourly" && $taskContract->status)
+    // {
+    //     Artisan::call('app:check-contracts');  
+    // }
+    if($taskDevice->period == "hourly" && $taskDevice->status)
     {
-        if ($taskContract->status) {
-    
-            Artisan::call('app:check-contracts');
-        }
-        
-    }
-    if($taskDevice->period == "hourly")
-    {
-        if ($taskDevice->status) {
-    
-            Artisan::call('app:device-stats');
-        }
-        
+        Artisan::call('app:device-stats'); 
     }
  
 })->hourly();
 
 Schedule::call(function () {
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
-    $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
+    // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
-    if($taskRouter->period == "daily")
+    if($taskRouter->period == "daily" && $taskRouter->status)
     {
-        if ($taskRouter->status) {
-    
-            Artisan::call('app:ping-routers');
-        }
-        
+        Artisan::call('app:ping-routers');
     }
-    if($taskContract->period == "daily")
+    // if($taskContract->period == "daily" && $taskContract->status)
+    // {
+    //     Artisan::call('app:check-contracts');
+    // }
+    if($taskDevice->period == "daily" && $taskDevice->status)
     {
-        if ($taskContract->status) {
-    
-            Artisan::call('app:check-contracts');
-        }
-        
-    }
-    if($taskDevice->period == "daily")
-    {
-        if ($taskDevice->status) {
-    
-            Artisan::call('app:device-stats');
-        }
-        
+        Artisan::call('app:device-stats');    
     }
 
 })->daily();
 
 Schedule::command('app:check-contracts')->daily();
-Schedule::command('app:device-stats')->everyFiveMinutes();
+// Schedule::command('app:device-stats')->everyFiveMinutes();

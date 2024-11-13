@@ -106,7 +106,7 @@ const submit = () => {
               </option>
             </select>
         </div>
-        <InputError class="mt-2" :message="form.errors.user_id" />
+        <InputError class="mt-2" :message="form.errors.contract_id" />
       </div>
 
       <div class="mt-4">
@@ -133,7 +133,7 @@ const submit = () => {
             autofocus
             autocomplete="amount"
           />
-          <InputError class="mt-2" :message="form.errors.dateamount_paid" />
+          <InputError class="mt-2" :message="form.errors.amount" />
       </div>
       <div class="mt-4 flex gap-4">
         <InputLabel for="active" value="¿Cargo pagado?" />

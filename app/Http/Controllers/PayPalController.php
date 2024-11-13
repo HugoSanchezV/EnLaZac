@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
 use App\Services\PaymentService;
 use Exception;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
@@ -17,6 +16,9 @@ class PayPalController extends Controller
     {
         // Log::info('Este es el log');
         // $token = "";
+        Log::info(Auth::id());
+
+
         try {
             $paypalModule = new PayPalClient;
 

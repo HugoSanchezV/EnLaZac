@@ -84,6 +84,9 @@ const destroy = (id, data) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
+    case "device_id":
+      return "Dispositivo";
+      break;
     case "user_id":
       return "Usuario";
       break;

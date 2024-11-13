@@ -10,9 +10,12 @@ const props = defineProps({
 });
 </script>
 <style>
-.container{
+
+@media (min-width: 768px) {
+  .container{
   display: flex;
   justify-content: space-evenly;
+}
 }
 
 </style>

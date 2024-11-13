@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Config;
 use App\Services\MailNotificationService;
 use Illuminate\Support\Facades\Mail;
 use App\Jobs\Mailing;
+use Exception;
+
 class PingTecnicoListener
 {
     /**
@@ -30,12 +32,20 @@ class PingTecnicoListener
      */
     public function handle(PingTecnicoEvent $event): void
     {
-        $mail = MailSetting::first();
-        $user = User::where('id', $event->ping->user_id)->get()->first();
-
-        Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML());
+        try{
+            $mail = MailSetting::first();
+            $user = User::where('id', $event->ping->user_id)->get()->first();
+            if($mail){
+                Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML());
+            }
         
-        Notification::send($user, new PingTecnicoNotification($event->ping));
+            
+            Notification::send($user, new PingTecnicoNotification($event->ping));
+        }catch(\Exception $e)
+        {
+            throw new Exception('Error' . $e->getMessage());
+        }
+        
     }  
     public function createSubject($event){
         return "Revision del dispositivo no. ".$event->ping->device_id;

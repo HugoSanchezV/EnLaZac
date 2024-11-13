@@ -9,10 +9,7 @@ const props = defineProps({
   charges:{
     type: Array
   },
-  cost_service: {
-    type: Number
-  },
-  contract:{
+  contracts:{
     type: Object
   }
 });
@@ -24,31 +21,47 @@ const props = defineProps({
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:content>
-      
-
     <div class="flex justify-start w-full">
       <div class="w-full">
-        <div class="payment-process"></div>
-  
-      <div>
-        <h2>Proceso de Pago - Servicio de Internet</h2>
-      </div>
-      <div class="mt-3 mb-3">
-        <label for="">El valor unitario de tu plan es de $</label>
-        <span>{{ cost_service }}</span>
-      </div>
       <!-- Selección de meses -->
-      <div class="select-months">
-        <label for="months">Seleccionar meses a pagar: </label>
-        <select v-model="selectedMonths" @change="addMonthToCart">
-          <option value="0" selected>--Seleccionar mes--</option>
-          <option v-for="n in 12" :key="n" :value="n">{{ n }} mes(es)</option>
-        </select>
-        
+      <div class="contracts-table mt-5">
+        <h3>Contratos del Usuario</h3>
+        <table class="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 p-2">ID</th>
+              <th class="border border-gray-300 p-2">Fecha de Inicio</th>
+              <th class="border border-gray-300 p-2">Fecha de Fin</th>
+              <th class="border border-gray-300 p-2">Precio</th>
+              <th class="border border-gray-300 p-2">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="contract in contracts" :key="contract.id">
+              <td class="border border-gray-300 p-2">{{ contract.id }}</td>
+              <td class="border border-gray-300 p-2">{{ contract.start_date }}</td>
+              <td class="border border-gray-300 p-2">{{ contract.end_date }}</td>
+              <td class="border border-gray-300 p-2">{{ formatCurrency(contract.plan.price) }}</td>
+              <td class="border border-gray-300 p-2">
+                <select v-model="selectedMonthsPerContract[contract.id]" class="border border-gray-400 p-1 mr-2">
+                  <option value="0">--Seleccionar meses--</option>
+                  <option v-for="n in 12" :key="n" :value="n">{{ n }} mes(es)</option>
+                </select>
+                <button
+                  class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+                  :disabled="isInCart(contract.id)"
+                  @click="addContractToCart(contract)"
+                >
+                  {{ isInCart(contract.id) ? 'Ya agregado' : 'Agregar al carrito' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      
+
       <!-- Tabla de cargos generados -->
-      <div class="client-charges">
+      <div v-if="charges !== 0" class="client-charges">
         <h3>Cargos del Cliente</h3>
         <table>
           <thead>
@@ -117,6 +130,142 @@ const props = defineProps({
     </template>
   </dashboard-base>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      selectedMonths: 0,
+      selectedMonthsPerContract: {}, // Para manejar los meses seleccionados por contrato
+      cart: [],
+      clientCharges: [], // Cargos obtenidos de la base de datos
+      totalAmount: 0,
+      serviceAdded: false, // Nueva bandera para controlar si ya se ha agregado el servicio
+      paymentError: '',
+      showPayment: false,
+    };
+  },
+  methods: {
+    // Función para agregar los meses seleccionados al carrito
+    addContractToCart(contract) {
+      const months = this.selectedMonthsPerContract[contract.id] || 0;
+      //console.log(contract);
+      if (months <= 0) {
+        alert('Por favor selecciona la cantidad de meses a pagar.');
+        return;
+      }
+      if (this.isInCart(`${contract.id}-${contract.device.address}`, 'contract')) {
+        alert('Este contrato ya ha sido agregado.');
+        return;
+      }
+
+      const amount = contract.plan.price * months;
+
+      this.cart.push({
+        id: `${contract.id}-${contract.device.address}`, // Identificador único
+        contractId: contract.id, // ID real del contrato para referencia
+        type: 'contract',
+        description: `Contrato #${contract.id} (${months} mes(es))`,
+        amount,
+      });
+
+      this.calculateTotal();
+      this.selectedMonthsPerContract[contract.id] = 0; // Reiniciar selección
+    },
+    // Función para agregar un cargo de la tabla de cargos al carrito
+    addChargeToCart(charge) {
+      if (this.isInCart(charge.id, 'charge')) {
+        alert('Este cargo ya ha sido agregado.');
+        return;
+      }
+
+      this.cart.push({
+        id: charge.id,
+        type: 'charge', // Distinción de tipo
+        description: charge.description,
+        amount: charge.amount,
+      });
+
+      this.calculateTotal();
+    },
+    
+    // Verificar si un cargo ya está en el carrito
+    isInCart(itemId, itemType) {
+      return this.cart.some((item) => item.id === itemId && item.type === itemType);
+    },
+    
+    // Función para remover un artículo del carrito
+    removeFromCart(index) {
+      const removedItem = this.cart[index];
+      if (removedItem.id === 'service') {
+        this.serviceAdded = false; // Permitir agregar el servicio de nuevo si es eliminado
+        this.selectedMonths = 0;
+      }
+      this.cart.splice(index, 1);
+      this.calculateTotal();
+    },
+    
+    // Cálculo del total
+    calculateTotal() {
+      this.totalAmount = this.cart.reduce((acc, item) => acc + item.amount, 0);
+
+      if (this.totalAmount < 1) {
+        this.showPayment = false;
+      }
+    },
+    
+    // Formateo de la moneda
+    formatCurrency(value) {
+      return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
+    },
+    warning(){
+      const toast = useToast();
+        toast(
+          {
+            component: BaseQuestion,
+            props: {
+              message: "Ya seleccionaste un servicio",
+            },
+          },
+          {
+            type: TYPE.ERROR,
+            position: POSITION.TOP_CENTER,
+            timeout: 10000,
+          }
+        );
+    },
+    error(){
+      const toast = useToast();
+        toast(
+          {
+            component: BaseQuestion,
+            props: {
+              message: "¿Selecciona un servicio o cargo?",
+            },
+          },
+          {
+            type: TYPE.ERROR,
+            position: POSITION.TOP_CENTER,
+            timeout: 10000,
+          }
+        );
+    },
+    // Función para procesar el pago
+    processPayment() {
+      if (this.cart.length === 0) {
+        this.error();
+        //this.paymentError = 'Agregar por lo menos un artículo a pagar';
+        this.showPayment = false;
+      } else {
+        this.paymentError = '';
+        this.showPayment = true;
+        // Aquí llamarías a un componente o función externa que maneje el proceso de pago
+        console.log('Procesando pago con los siguientes artículos:', this.cart);
+        // Lógica para continuar con el pago, integración con tu componente de pago
+      }
+    }
+  },
+};
+</script>
 <style scoped>
 /* Contenedor principal */
 .card {
@@ -279,128 +428,3 @@ button.process-payment:hover {
   background-color: #219150;
 }
 </style>
-<script>
-export default {
-  data() {
-    return {
-      selectedMonths: 0,
-      cart: [],
-      clientCharges: [], // Cargos obtenidos de la base de datos
-      totalAmount: 0,
-      serviceAdded: false, // Nueva bandera para controlar si ya se ha agregado el servicio
-      paymentError: '',
-      showPayment: false,
-    };
-  },
-  methods: {
-    // Función para agregar los meses seleccionados al carrito
-    addMonthToCart() {
-      if (this.serviceAdded) {
-        this.warning();
-        return;
-      }
-
-      const serviceItem = {
-        id: 'service', // Asignar un id único para el servicio
-        description: `Servicio por ${this.selectedMonths} mes(es)`,
-        amount: this.cost_service * this.selectedMonths
-      };
-      this.cart.push(serviceItem);
-      this.serviceAdded = true; // Marcar que ya se agregó el servicio
-      this.calculateTotal();
-    },
-    
-    // Función para agregar un cargo de la tabla de cargos al carrito
-    addChargeToCart(charge) {
-      if (this.isInCart(charge.id)) {
-        alert('Este cargo ya ha sido agregado.');
-        return;
-      }
-      this.cart.push({
-        id: charge.id, // Incluir el id para evitar duplicados
-        description: charge.description,
-        amount: charge.amount
-      });
-      this.calculateTotal();
-    },
-    
-    // Verificar si un cargo ya está en el carrito
-    isInCart(itemId) {
-      return this.cart.some(item => item.id === itemId);
-    },
-    
-    // Función para remover un artículo del carrito
-    removeFromCart(index) {
-      const removedItem = this.cart[index];
-      if (removedItem.id === 'service') {
-        this.serviceAdded = false; // Permitir agregar el servicio de nuevo si es eliminado
-        this.selectedMonths = 0;
-      }
-      this.cart.splice(index, 1);
-      this.calculateTotal();
-    },
-    
-    // Cálculo del total
-    calculateTotal() {
-      this.totalAmount = this.cart.reduce((acc, item) => acc + item.amount, 0);
-      
-      if(this.totalAmount < 1)
-      {
-        this.showPayment = false;
-      }
-  
-    },
-    
-    // Formateo de la moneda
-    formatCurrency(value) {
-      return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
-    },
-    warning(){
-      const toast = useToast();
-        toast(
-          {
-            component: BaseQuestion,
-            props: {
-              message: "Ya seleccionaste un servicio",
-            },
-          },
-          {
-            type: TYPE.ERROR,
-            position: POSITION.TOP_CENTER,
-            timeout: 10000,
-          }
-        );
-    },
-    error(){
-      const toast = useToast();
-        toast(
-          {
-            component: BaseQuestion,
-            props: {
-              message: "¿Selecciona un servicio o cargo?",
-            },
-          },
-          {
-            type: TYPE.ERROR,
-            position: POSITION.TOP_CENTER,
-            timeout: 10000,
-          }
-        );
-    },
-    // Función para procesar el pago
-    processPayment() {
-      if (this.cart.length === 0) {
-        this.error();
-        //this.paymentError = 'Agregar por lo menos un artículo a pagar';
-        this.showPayment = false;
-      } else {
-        this.paymentError = '';
-        this.showPayment = true;
-        // Aquí llamarías a un componente o función externa que maneje el proceso de pago
-        console.log('Procesando pago con los siguientes artículos:', this.cart);
-        // Lógica para continuar con el pago, integración con tu componente de pago
-      }
-    }
-  },
-};
-</script>
