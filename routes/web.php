@@ -38,10 +38,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\MercadoPagoSettingController;
-use App\Http\Controllers\MercadoPagoController;
-use App\Http\Controllers\SMSController;
-use App\Http\Controllers\MercadoPagoDataController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -58,62 +54,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-
-   
-    //Mercado Pago
-    Route::middleware(['auth', 'verified'])->group(function () {
-    // Route::get('/settings/mercadopago', [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
-    // Route::post('/settings/mercadopago', [MercadoPagoSettingController::class, 'store'])->name('settings.mercadopago.store');
-    // Route::put('/settings/mercadopago', [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
-    // Route::delete('/settings/mercadopago/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('settings.mercadopago.destroy');
-    
-});
-
-    // Rutas para MercadoPagoController
-Route::post('/create-preference', [MercadoPagoController::class, 'createPaymentPreference']);
-Route::get('/mercadopago/success', [MercadoPagoController::class, 'success'])->name('mercadopago.success');
-Route::get('/mercadopago/failed', [MercadoPagoController::class, 'failed'])->name('mercadopago.failed');
-Route::post('/mercadopago/webhook', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
-
-// Rutas para MercadoPagoSettingController
-Route::prefix('settings')->name('settings.')->middleware('auth')->group(function () {
-    Route::prefix('mercadopago')->name('mercadopago.')->group(function () {
-        // Mostrar el formulario de edición de configuraciones
-        Route::get('/edit', [MercadoPagoSettingController::class, 'edit'])->name('edit');
-        
-        // Guardar una nueva configuración
-        Route::post('/store', [MercadoPagoSettingController::class, 'store'])->name('store');
-        
-        // Mostrar una configuración específica
-        Route::get('/{id}', [MercadoPagoSettingController::class, 'show'])->name('show');
-        
-        // Actualizar una configuración existente
-        Route::put('/update', [MercadoPagoSettingController::class, 'update'])->name('update');
-        
-        // Eliminar una configuración
-        Route::delete('/destroy/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('destroy');
-    });
-});
-
-// Rutas para MercadoPagoDataController
-Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('auth')->group(function () {
-    // Listar todas las transacciones
-    Route::get('/', [MercadoPagoDataController::class, 'index'])->name('index');
-    
-    // Crear una nueva transacción
-    Route::post('/', [MercadoPagoDataController::class, 'store'])->name('store');
-    
-    // Mostrar una transacción específica
-    Route::get('/{id}', [MercadoPagoDataController::class, 'show'])->name('show');
-    
-    // Actualizar una transacción específica
-    Route::put('/{id}', [MercadoPagoDataController::class, 'update'])->name('update');
-    
-    // Eliminar una transacción específica
-    Route::delete('/{id}', [MercadoPagoDataController::class, 'destroy'])->name('destroy');
-});
-
-    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+    Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
     //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
@@ -284,7 +225,7 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
         Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
-
+        //Route::get('/sistema/configuracion/mercadopago/update',      [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopagp.edit');
         Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
         Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');

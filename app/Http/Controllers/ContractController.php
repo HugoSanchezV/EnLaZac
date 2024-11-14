@@ -27,29 +27,29 @@ class ContractController extends Controller
     public function index(Request $request)
     {
         $query = Contract::query();
-
-
+        
+        
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    ->orWhere('device_id', 'like', "%$search%")
-                    ->orWhere('plan_id', 'like', "%$search%")
-                    ->orWhere('start_date', 'like', "%$search%")
-                    ->orWhere('end_date', 'like', "%$search%")
-                    ->orWhere('active', 'like', "%$search%")
-                    ->orWhere('address', 'like', "%$search%")
-                    ->orWhere('rural_community_id', 'like', "%$search%");
+                ->orWhere('device_id', 'like', "%$search%")
+                ->orWhere('plan_id', 'like', "%$search%")
+                ->orWhere('start_date', 'like', "%$search%")
+                ->orWhere('end_date', 'like', "%$search%")
+                ->orWhere('active', 'like', "%$search%")
+                ->orWhere('address', 'like', "%$search%")
+                ->orWhere('rural_community_id', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
         }
-
+        
         if ($request->attribute) {
             $query->orderBy($request->attribute, $request->order);
         } else {
             $query->orderBy('id', 'asc');
         }
-
+        
         $contract = $query->with('device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
@@ -61,10 +61,11 @@ class ContractController extends Controller
                 'end_date' => $item->end_date,
                 'active' => $item->active,
                 'address' => $item->address,
-                          
+                
             ];
         });
-
+        
+        
 
         $totalContractsCount = Contract::count();
 

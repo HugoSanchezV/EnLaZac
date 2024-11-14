@@ -2,10 +2,6 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
 const props = defineProps({
-    user: {
-        type: Object,
-        required: true,  // El usuario es obligatorio
-    },
     ticket: {
         type: Array,
         required: true,  // Los tickets son obligatorios
@@ -20,7 +16,7 @@ const props = defineProps({
       },
       contract:
       {
-        type: [Object, null],
+        type: Array,
         required: true,
       },
 });
@@ -30,10 +26,10 @@ const props = defineProps({
 
 <template>
   <!-- Contenedor principal con estilo para mostrar la información del usuario -->
-  <div class="bg-white shadow-md rounded-lg border border-gray-200">
+  <div class="bg-white shadow-md rounded-lg border border-gray-200 mt2">
     <!-- Encabezado de la tarjeta de información del usuario -->
     <div class="px-6 py-4 bg-gray-50">
-      <h3 class="text-lg leading-6 font-semibold text-gray-800">Información del Usuario</h3>
+      <h3 class="text-lg leading-6 font-semibold text-gray-800">Contrato ID: {{ contract.id }}</h3>
       <p class="mt-1 text-sm text-gray-500">Detalles sobre el contrato y el dispositivo asignado</p>
     </div>
     <!-- Contenido del contrato del usuario -->
@@ -42,32 +38,6 @@ const props = defineProps({
       <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         
         <!-- Muestra el nombre del usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Id</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.id }}</dd>
-        </div>
-
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Nombre</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.name }}</dd>
-        </div>
-
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Alias</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.alias }}</dd>
-        </div>
-
-        <!-- Muestra el email del usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Email</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.email }}</dd>
-        </div>
-        
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Creado en</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ formattedDate }}</dd>
-        </div>
-
         <!-- Muestra la dirección del usuario -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Dirección</dt>
