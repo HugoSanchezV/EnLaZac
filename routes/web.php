@@ -113,7 +113,7 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
     Route::delete('/{id}', [MercadoPagoDataController::class, 'destroy'])->name('destroy');
 });
 
-    // Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+    Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
     //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios

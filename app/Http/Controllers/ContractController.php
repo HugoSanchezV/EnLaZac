@@ -140,10 +140,10 @@ class ContractController extends Controller
             $order
         );
 
-        $contract = $query->with('user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
+        $contract = $query->with('device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'user_id' => $item->user->name ?? 'Sin asignar',
+                'user_id' => $item->device->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',
                 'start_date' => $item->start_date,
