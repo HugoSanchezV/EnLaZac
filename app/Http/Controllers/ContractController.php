@@ -116,6 +116,7 @@ class ContractController extends Controller
                     ->orWhereHas('ruralCommunity', function ($communityQuery) use ($search) {
                         $communityQuery->where('name', 'like', "%$search%");
                     });
+                    
             });
         }
 
