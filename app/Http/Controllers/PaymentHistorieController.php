@@ -86,6 +86,7 @@ class PaymentHistorieController extends Controller
         ]);
     }
 
+<<<<<<< Updated upstream
     public function destroy(Request $request, $id)
     {
         $data = [
@@ -133,5 +134,15 @@ class PaymentHistorieController extends Controller
             ];
         };
         return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Payments' . now() . '.xlsx');
+=======
+    public function show(string $id)
+    {
+
+        $paymentHistorie = PaymentHistorie::with('user', 'contract','transaction')->findOrFail($id);
+
+        return Inertia::render('Admin/PaymentHistorie/Show', [
+            'paymentHistorie' => $paymentHistorie,
+        ]);
+>>>>>>> Stashed changes
     }
 }

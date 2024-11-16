@@ -114,4 +114,13 @@ class RuralCommunityController extends Controller
             return Redirect::route('rural-community', $data)->with('error', 'Error al cargar el registro');
         }
     }
+
+    public function show(string $id)
+    {
+        $ruralcommunity = RuralCommunity::findOrFail($id);
+
+        return Inertia::render('Admin/RuralCommunity/Show', [
+            'ruralcommunity' => $ruralcommunity,
+        ]);
+    }
 }

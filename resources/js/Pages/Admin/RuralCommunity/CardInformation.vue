@@ -1,192 +1,151 @@
-
 <script setup>
 import { Link } from "@inertiajs/vue3";
+import { defineProps } from 'vue';
+
 const props = defineProps({
-    user: {
+    ruralcommunity: {
         type: Object,
-        required: true,  // El usuario es obligatorio
+        required: true,  
     },
-    ticket: {
-        type: Array,
-        required: true,  // Los tickets son obligatorios
-    },
-   plan: {
-        type: [Object, null],
-        required: true,
-    },
-    device:{
-        type: [Object, null],
-        required: true,
-      },
-      contract:
-      {
-        type: [Object, null],
-        required: true,
-      },
 });
-
-
 </script>
 
 <template>
-  <!-- Contenedor principal con estilo para mostrar la información del usuario -->
-  <div class="bg-white shadow-md rounded-lg border border-gray-200">
-    <!-- Encabezado de la tarjeta de información del usuario -->
-    <div class="px-6 py-4 bg-gray-50">
-      <h3 class="text-lg leading-6 font-semibold text-gray-800">Información del Usuario</h3>
-      <p class="mt-1 text-sm text-gray-500">Detalles sobre el contrato y el dispositivo asignado</p>
+  <!-- Contenedor principal con estilo mejorado -->
+  <div class="bg-white shadow-lg rounded-xl border border-gray-200 transition-transform transform hover:scale-105">
+    <!-- Encabezado de la tarjeta con color suave -->
+    <div class="px-6 py-5 bg-green-500 rounded-t-xl">
+      <h3 class="text-xl font-semibold text-white">Información de la Comunidad Rural</h3>
+      <p class="mt-1 text-sm text-green-200">Detalles completos sobre la comunidad rural seleccionada</p>
     </div>
-    <!-- Contenido del contrato del usuario -->
-    <div class="border-t border-gray-100 px-6 py-4">
-      <!-- Lista de detalles sobre el usuario en un diseño de rejilla -->
-      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <!-- Contenido de la comunidad rural -->
+    <div class="border-t border-gray-200 px-6 py-6">
+      <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         
-        <!-- Muestra el nombre del usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Id</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.id }}</dd>
+        <!-- ID de la comunidad -->
+        <div>
+          <dt class="text-sm font-medium text-gray-600">ID de la Comunidad</dt>
+          <dd class="mt-1 text-lg text-gray-800">{{ ruralcommunity.id }}</dd>
         </div>
 
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Nombre</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.name }}</dd>
+        <!-- Nombre de la comunidad -->
+        <div>
+          <dt class="text-sm font-medium text-gray-600">Nombre de la Comunidad</dt>
+          <dd class="mt-1 text-lg text-gray-800">{{ ruralcommunity.name }}</dd>
         </div>
 
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Alias</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.alias }}</dd>
-        </div>
-
-        <!-- Muestra el email del usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Email</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.email }}</dd>
-        </div>
-        
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Creado en</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ formattedDate }}</dd>
-        </div>
-
-        <!-- Muestra la dirección del usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Dirección</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ contract === null ? "Sin asignar" : contract.address }}</dd>
-        </div>
-
-        
-        
-
-        <!-- Muestra el teléfono del usuario -->
-        <div v-if="contract != null" class="sm:col-span-2">
-          <div >
-            <dt class="text-sm font-medium text-gray-600">Geolocalización</dt>
-            <dd class="mt-1 text-sm text-gray-900">
-              <GoogleMaps 
-              :lat="parseInt(contract.geolocation.latitude)"
-              :lng="parseInt(contract.geolocation.longitude)"
-              :clic=false
-              />
-            </dd>
-          </div>
-        </div>
-        <div v-else class="sm:col-span-1">
-          <div >
-            <dt class="text-sm font-medium text-gray-600">Geolocalización</dt>
-            <dd class="mt-1 text-sm text-gray-900">
-              <p>Sin asignar</p>
-            </dd>
-          </div>
-        </div>
-
-        
-
-        <!-- Muestra el tipo de plan del usuario 
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Tipo de Plan</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ user.contract }}</dd>
-        </div>-->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Contrato asignado</dt>
-          <Link 
-            :href="route('contracts.show', contract.id)"
-            class="cursor-pointer"
-          >
-            <dd class="mt-1 text-sm text-gray-900">{{ contract === null ? "Sin asignar" : contract.id }}</dd>
-          </Link>
-        </div>
-
-        <!-- Muestra el costo del plan -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Plan afiliado</dt>
-          <Link :href="route('plans.show', plan.id)">
-            <dd class="mt-1 text-sm text-gray-900">{{ plan === null ? "Sin asignar" : plan.name }}</dd>
-          </Link>
-        </div>
-
-        <!-- Muestra el número de tickets enviados por el usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Tickets Enviados</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ ticket.length }}</dd>
-        </div>
-
-        <!-- Muestra el dispositivo asignado al usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Dispositivo Asignado</dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            {{ device === null ? "Sin asignar" : device.device_internal_id  }}
-          
-          </dd>
+        <!-- Costo de instalación -->
+        <div>
+          <dt class="text-sm font-medium text-gray-600">Costo de Instalación</dt>
+          <dd class="mt-1 text-lg text-gray-800">{{ ruralcommunity.installation_cost }}</dd>
         </div>
 
       </dl>
+      <!-- Botón de acción -->
+      <div class="mt-6 text-right">
+        <Link href="/comunidades-rurales/{{ ruralcommunity.id }}" class="inline-block bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors">
+          Ver Detalles
+        </Link>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-import GoogleMaps from '@/Components/GoogleMaps.vue'
-export default {
-  components: {
-        GoogleMaps,
-        Link,
-    },
-    computed: {
-    formattedDate() {
-      // Convertimos la fecha ISO a un objeto Date
-      const date = new Date(this.user.created_at);
-      
-      // Formateamos como "DD/MM/YYYY HH:mm"
-      const formattedDate = date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
-      return formattedDate;
+    <style scoped>
+    /* Estilos personalizados adicionales */
+
+    .bg-green-500 {
+      background-color: #10B981; /* Verde suave */
     }
-  }
-};
-</script>
-<style scoped>
-/* Estilos personalizados para el componente */
-.bg-gray-50 {
-  background-color: #f9fafb;  /* Fondo gris claro */
-}
 
-.text-gray-900 {
-  color: #1f2937;  /* Texto gris oscuro */
-}
+    .text-green-500 {
+      color: #10B981; /* Verde suave */
+    }
 
-.text-gray-600 {
-  color: #4b5563;  /* Texto gris medio */
-}
+    .text-green-200 {
+      color: #6EE7B7; /* Verde claro */
+    }
 
-.border-gray-100 {
-  border-color: #f3f4f6;  /* Borde gris claro */
-}
+    .transition-transform {
+      transition: transform 0.3s ease;
+    }
 
-.border-gray-200 {
-  border-color: #e5e7eb;  /* Borde gris */
-}
+    .hover\:scale-105:hover {
+      transform: scale(1.05);
+    }
 
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);  /* Sombra para la tarjeta */
-}
-</style>
+    .hover\:bg-green-600:hover {
+      background-color: #059669; /* Verde más oscuro */
+    }
+
+    /* Mejoras de Tipografía */
+    .text-lg {
+      font-size: 1.125rem; /* 18px */
+    }
+
+    .text-xl {
+      font-size: 1.25rem; /* 20px */
+    }
+
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .font-medium {
+      font-weight: 500;
+    }
+
+    .text-sm {
+      font-size: 0.875rem; /* 14px */
+    }
+
+    /* Mejoras de Espaciado */
+    .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .py-5 {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+
+    .py-6 {
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+    }
+
+    .mt-1 {
+      margin-top: 0.25rem;
+    }
+
+    .mt-6 {
+      margin-top: 1.5rem;
+    }
+
+    .mr-3 {
+      margin-right: 0.75rem;
+    }
+
+    /* Bordes y Sombras */
+    .rounded-xl {
+      border-radius: 0.75rem;
+    }
+
+    .border-gray-200 {
+      border-color: #e5e7eb;
+    }
+
+    .border-gray-100 {
+      border-color: #f3f4f6;
+    }
+
+    .shadow-lg {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                  0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    }
+
+    .bg-white {
+      background-color: #ffffff;
+    }
+    </style>
