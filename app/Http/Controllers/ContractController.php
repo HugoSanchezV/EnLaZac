@@ -11,12 +11,14 @@ use App\Http\Requests\Contract\StoreContractRequest;
 use App\Http\Requests\Contract\UpdateContractRequest;
 use App\Models\Charge;
 use App\Models\Device;
+use App\Models\InventorieDevice;
 use App\Models\RuralCommunity;
 use App\Services\RuralCommunityService;
 use Carbon\Carbon;
 
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -30,44 +32,27 @@ class ContractController extends Controller
     {
         $query = Contract::query();
 
+
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    // ->orWhere('user_id', 'like', "%$search%")
-                    ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'like', "%$search%");
-                    })
-                    // ->orWhere('plan_id', 'like', "%$search%")
-                    ->orWhereHas('plan', function ($planQuery) use ($search) {
-                        $planQuery->where('name', 'like', "%$search%");
-                    })
+                    ->orWhere('device_id', 'like', "%$search%")
+                    ->orWhere('plan_id', 'like', "%$search%")
                     ->orWhere('start_date', 'like', "%$search%")
                     ->orWhere('end_date', 'like', "%$search%")
                     ->orWhere('active', 'like', "%$search%")
                     ->orWhere('address', 'like', "%$search%")
-                    ->orWhereHas('ruralCommunity', function ($communityQuery) use ($search) {
-                        $communityQuery->where('name', 'like', "%$search%");
-                    });
-                // ->orWhere('rural_community_id', 'like', "%$search%");
+                    ->orWhere('rural_community_id', 'like', "%$search%");
+                // Puedes agregar más campos si es necesario
             });
         }
 
-        // if ($request->attribute) {
-        //     $query->orderBy($request->attribute, $request->order);
-        // } else {
-        //     $query->orderBy('id', 'asc');
-        // }
-
-        $order = 'asc';
-        if ($request->order && isNull($request->order)) {
-            $order = $request->order;
+        if ($request->attribute) {
+            $query->orderBy($request->attribute, $request->order);
+        } else {
+            $query->orderBy('id', 'asc');
         }
-        $query->orderBy(
-            $request->attribute ?: 'id',
-            $order
-        );
-
 
         $contract = $query->with('device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
@@ -83,6 +68,7 @@ class ContractController extends Controller
 
             ];
         });
+
 
 
         $totalContractsCount = Contract::count();
@@ -192,6 +178,57 @@ class ContractController extends Controller
             'Coordi/Contracts/Create',
             [
                 'devices' => $devices,
+                'plans' => $plans,
+                'community' => $community,
+            ]
+        );
+    }
+
+    public function create2()
+    {
+        $community = RuralCommunity::all();
+        // $inventorie = InventorieDevice::where('state', 1)
+        //     ->get();
+        // $ids = $inventorie->pluck('id');
+
+        // $devices = Device::whereIn('device_id', $ids)->whereNotNull('user_id')->get();
+        // esto son dispostivos de device table madafaker 
+        $devices_used = Device::with('inventorieDevice')->whereNotNull('device_id')->whereNotNull('user_id')->get();
+
+        $inv_devices = $devices_used->pluck('inventorieDevice');
+        // $inv_devices_ids = $inv_devices->pluck('id');
+        $device_no_contract = Contract::all();
+
+
+        $available_devices = [];
+        foreach ($inv_devices as $device) {
+            // Filtrar la colección de contratos para ver si el inv_device_id coincide con el id del dispositivo
+            foreach ($device_no_contract as $value) {
+                if(!($device->id === $value->id)) {
+                    $available_devices[] = $device;
+                }
+            }
+        }
+
+
+        // $available_devices = $inv_devices->filter(function ($device) use ($device_no_contract) {
+        //     return !$device_no_contract->contains('inv_device_id', $device->id);
+        // });
+        // dd($inv_devices);
+
+        // $inventorieId = $inventorie->pluck('id');
+        // $device = Device::whereNotIn('device_internal_id', $inventorieId);
+        // $devices = Device::with('inventorieDevice')->whereNotNull('device_internal_id');
+
+        // $internal = $devices->pluck('');
+        // $devices = Device::select('id', 'address')->whereNotNull('user_id')->whereNotIn('')->get();
+        // $users = User::select('id', 'name')->where('admin', '=', '0')->get();
+
+        $plans = Plan::select('id', 'name')->get();
+        return Inertia::render(
+            'Coordi/Contracts/Create',
+            [
+                'devices' => $available_devices,
                 'plans' => $plans,
                 'community' => $community,
             ]

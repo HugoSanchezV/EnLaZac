@@ -47,6 +47,8 @@ class CheckContracts extends Command
         
         //END_DATE es igual a la fecha de corte
         $service = new ChargeService();
+
+        
         $contractTerms = $controllerContract->getContracts($today);
 
         //INSERTAR CONSULTA DE PAGOS
@@ -122,12 +124,11 @@ class CheckContracts extends Command
                     if(($assigned->day >= 16) && ($assigned->day < 32))
                     {
                         //Le cobra no el proximo mes, sino el siguiente
-                       if(self::incomingMonth($assigned, $today, 2, 1, 6)){
+                        if(self::incomingMonth($assigned, $today, 2, 1, 6)){
                             self::conditional($endDate, $contract, $today, $service);
-                       }
+                        }
     
                     }else if (($assigned->day >= 6)&&($assigned->day <= 15)){
-                        
                         //Condicionar si paga el siguiente mes o  el proximo
                         if(self::incomingMonth($assigned, $today, 1, 1,6))
                         {

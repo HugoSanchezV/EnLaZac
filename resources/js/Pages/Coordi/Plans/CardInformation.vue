@@ -1,4 +1,3 @@
-
 <script setup>
 import { Link } from "@inertiajs/vue3";
 const props = defineProps({
@@ -41,18 +40,27 @@ const props = defineProps({
         </div>
 
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">rafaga limite</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ plan.burst_limit }}</dd>
+          <dt class="text-sm font-medium text-gray-600">Rafaga limite</dt>
+          <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.burst_limit.upload_limits }}</dd>
+          <dd class="mt-1 text-sm text-gray-900">Bajada: {{ plan.burst_limit.download_limits }}</dd>
         </div>
 
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">tiempo rafaga</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ plan.burst_time }}</dd>
+          <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.burst_time.upload_limits }}</dd>
+          <dd class="mt-1 text-sm text-gray-900">Bajada: {{ plan.burst_time.download_limits }}</dd>
         </div>
 
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">limite</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ plan.limite_at }}</dd>
+          <dt class="text-sm font-medium text-gray-600">limite ent</dt>
+          <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.limite_at.upload_limits}}</dd>
+          <dd class="mt-1 text-sm text-gray-900">Bajada: {{ plan.limite_at.download_limits}}</dd>
+        </div>
+
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">limite maximo</dt>
+          <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.max_limit.upload_limits}}</dd>
+          <dd class="mt-1 text-sm text-gray-900">Bajada: {{ plan.max_limit.download_limits}}</dd>
         </div>
 
       </dl>

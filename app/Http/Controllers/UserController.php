@@ -11,6 +11,7 @@ use App\Exports\GenericExport;
 use App\Imports\UserImport;
 use App\Models\Plan;
 use App\Models\PreRegisterUser;
+use App\Models\Ticket;
 use App\Models\TelegramAccount;
 use App\Services\TelegramService;
 use App\Services\UserService;
@@ -109,24 +110,32 @@ class UserController extends Controller
     }
     public function show($id)
     {
-        $user = User::with('ticket', 'contract', 'device', 'telegramAccount')->findOrFail($id);
+        $user = User::with('ticket', 'device.contract')->findOrFail($id);
+        
+        $devices = $user->device;  // Suponiendo que es una colección de dispositivos
+        $contracts = [];
 
-        $contract = $user->contract->first();
-        $device = $user->device->first();
-        $plan = null;
-        if (!is_null($contract)) {
-            $plan = Plan::find($contract->plan_id);
+        foreach ($devices as $device) {
+            // Verifica si el dispositivo tiene un contrato
+            $contract = $device->contract ?? null;
+            $plan = $contract ? Plan::find($contract->plan_id) : null;
+
+            // Añadir los datos del dispositivo, contrato y plan al arreglo
+            $contracts[] = [
+                'device' => $device,
+                'contract' => $contract,
+                'plan' => $plan,
+            ];
         }
 
-
+        dd($contracts);
         return Inertia::render('Admin/Users/Show', [
             'user' => $user,
-            'ticket' => $user->ticket,
-            'contract' => $contract,
-            'plan' => $plan,
-            'device' => $device,
+            'ticket' => Ticket::where('user_id', $id)->count(),
+            'contracts' => $contracts
         ]);
     }
+
     public function store(StoreUserRequest $request)
     {
         try {

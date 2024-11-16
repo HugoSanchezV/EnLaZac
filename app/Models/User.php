@@ -69,11 +69,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Ticket::class);
     }
-    public function contract()
-    {
-
-        return $this->hasMany(Contract::class);
-    }
     public function device()
     {
         return $this->hasMany(Device::class);

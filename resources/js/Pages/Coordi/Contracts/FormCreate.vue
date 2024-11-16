@@ -149,6 +149,7 @@ const submit = () => {
 
 <template>
   <div class="mt-5">
+    {{ devices }}
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
         <InputLabel for="device_id" value="ID del dispositivo" />
@@ -160,7 +161,7 @@ const submit = () => {
               <option v-if="devices.length === 0" disabled value="">No hay dispositivos con usuario</option>
               <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="device in devices" :key="device.id" :value="device.id">
-                  {{ device.id + " - " + device.address }}
+                  {{ device.id + " - " + device.mac_address }}
               </option>
             </select>
         </div>

@@ -12,7 +12,7 @@ const props = defineProps({
 
 <template>
   <!-- Contenedor principal centrado con fondo degradado profesional -->
-  <div class="min-h-screen bg-gradient-to-r from-blue-100 to-purple-200 flex items-center justify-center p-6">
+  <div class="min-h-screen flex items-center justify-center p-6">
     <!-- Tarjeta de información del dispositivo -->
     <div class="bg-white shadow-2xl rounded-3xl border border-gray-200 w-full max-w-3xl">
       <!-- Encabezado de la tarjeta con degradado -->
@@ -64,37 +64,34 @@ const props = defineProps({
               {{ devices.disabled ? 'Deshabilitado' : 'Activo' }}
             </dd>
           </div>
-
-          <!-- ID dispositivo en inventario -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">ID Dispositivo Inventario</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ devices.inventorieDevice === null ? 'Sin asignar' : devices.inventorieDevice.id }}
-            </dd>
-          </div>
-
-          <!-- ID usuario -->
+            <!-- ID usuario -->
           <div>
             <dt class="text-sm font-medium text-indigo-600">ID Usuario</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ devices.user_id === null ? "Sin asignar" : devices.user_id }}
-            </dd>
+            <div v-if="devices.user_id !== undefined">
+              <Link :href="route('usuarios.show', devices.user_id)">
+                <dd class="mt-1 text-lg font-semibold text-gray-900">
+                  {{ devices.user_id === null ? "Sin asignar" : devices.user_id }}
+                </dd>
+              </Link>
+            </div>
+            <div v-else>
+              <dd class="mt-1 text-lg font-semibold text-gray-900">
+                Sin asignar
+              </dd>
+            </div>
           </div>
 
-          <!-- Nombre del usuario -->
+         
+            <div>
+                  <!-- Nombre del usuario -->
           <div>
             <dt class="text-sm font-medium text-indigo-600">Nombre del Usuario</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">
               {{ devices.user === null ? 'Sin asignar' : devices.user.name }}
             </dd>
           </div>
+            </div>
         </dl>
-        <!-- Enlace de acción (opcional) -->
-        <div class="mt-8 text-center">
-          <Link href="#" class="text-indigo-600 hover:text-indigo-800 font-semibold">
-            Ver más detalles &rarr;
-          </Link>
-        </div>
       </div>
     </div>
   </div>

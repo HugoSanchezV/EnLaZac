@@ -29,6 +29,9 @@ use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
 use App\Http\Controllers\MailSettingController;
 use App\Http\Controllers\InstallationController;
+use App\Http\Controllers\MercadoPagoController;
+use App\Http\Controllers\MercadoPagoDataController;
+use App\Http\Controllers\MercadoPagoSettingController;
 use App\Http\Controllers\PaymentHistorieController;
 use App\Models\InventorieDevice;
 use App\Models\PerformanceDevice;
@@ -38,10 +41,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\MercadoPagoSettingController;
-use App\Http\Controllers\MercadoPagoController;
-use App\Http\Controllers\SMSController;
-use App\Http\Controllers\MercadoPagoDataController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -225,7 +224,7 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
 
         //Contracts Coordi
         Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
-        Route::get('/contracts/create',          [ContractController::class, 'create'])->name('contracts.create');
+        Route::get('/contracts/create',          [ContractController::class, 'create2'])->name('contracts.create');
         Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
         Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
@@ -292,7 +291,7 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
         Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
-
+        //Route::get('/sistema/configuracion/mercadopago/update',      [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopagp.edit');
         Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
         Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');

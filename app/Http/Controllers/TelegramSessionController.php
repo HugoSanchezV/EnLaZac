@@ -12,16 +12,16 @@ class TelegramSessionController extends Controller
 
     public function __invoke ()
     {
-        $settings = [];
-        $settings['authorization']['default_temp_auth_key_expires_in'] = 86400*7;
-        $this->madelineProto = new \danog\MadelineProto\API('session.madeline', $setting);
-        $this->madelineProto->async(true);
+        // $settings = [];
+        // $settings['authorization']['default_temp_auth_key_expires_in'] = 86400*7;
+        // $this->madelineProto = new \danog\MadelineProto\API('session.madeline', $setting);
+        // $this->madelineProto->async(true);
 
-        $this->madelineProto->loop(function () {
+        // $this->madelineProto->loop(function () {
 
-            $response = yield $this->madelineProto->start();
+        //     $response = yield $this->madelineProto->start();
 
-            return;
-        });
+        //     return;
+        // });
     }
 }
