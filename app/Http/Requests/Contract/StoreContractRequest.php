@@ -22,7 +22,7 @@ class StoreContractRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'device_id' => 'required|exists:devices,id',
+            'device_id' => 'required|exists:inventorie_devices,id',
             'plan_id'=> 'required|exists:plans,id',
             'start_date'=> 'required',
             'end_date'=> 'required',

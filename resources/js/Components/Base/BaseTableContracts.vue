@@ -400,7 +400,6 @@ const getTag = (cellIndex) => {
   
   <script>
 import { Link, router } from "@inertiajs/vue3";
-import { route } from "vendor/tightenco/ziggy/src/js";
 export default {
   components: {
     Link,

@@ -11,7 +11,7 @@ class Contract extends Model
 
     public $fillable = [
         'id',
-        'device_id',
+        'inv_device_id',
         'plan_id',
         'start_date',
         'end_date',
@@ -24,10 +24,10 @@ class Contract extends Model
     protected $casts = [
         'geolocation'  => 'array',
     ];
-    
+
     public function device()
     {
-        return $this->belongsTo(Device::class);
+        return $this->belongsTo(InventorieDevice::class, 'inv_device_id');
     }
     public function plan()
     {

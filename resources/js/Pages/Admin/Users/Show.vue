@@ -12,6 +12,9 @@
         <div class="p-8 rounded-lg w-2/3">
           <CardInformationUser :user="user"/>
           <!-- Iterar sobre el arreglo de contratos y enviar cada dispositivo, contrato y plan al componente -->
+          <pre>
+            
+          </pre>
           <div v-for="(item, index) in contracts" :key="index">
             <CardInformation 
               :ticket="ticket" 

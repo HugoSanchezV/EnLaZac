@@ -111,7 +111,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::with('ticket', 'device.contract')->findOrFail($id);
-
+        
         $devices = $user->device;  // Suponiendo que es una colección de dispositivos
         $contracts = [];
 
@@ -128,6 +128,7 @@ class UserController extends Controller
             ];
         }
 
+        dd($contracts);
         return Inertia::render('Admin/Users/Show', [
             'user' => $user,
             'ticket' => Ticket::where('user_id', $id)->count(),

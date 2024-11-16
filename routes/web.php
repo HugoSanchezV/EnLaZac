@@ -224,7 +224,7 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
 
         //Contracts Coordi
         Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
-        Route::get('/contracts/create',          [ContractController::class, 'create'])->name('contracts.create');
+        Route::get('/contracts/create',          [ContractController::class, 'create2'])->name('contracts.create');
         Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
         Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
