@@ -105,10 +105,13 @@ class ContractController extends Controller
     {
         $query = Contract::query();
 
+        $days = intval($request->days) ?? 5;
+
+        // dd($days);
         // Filtro para contratos que faltan 5 días o menos para terminar
         // if ($request->has('days_remaining') && $request->input('days_remaining') == 5) {
         $today = Carbon::now()->toDateString();
-        $targetDate = Carbon::now()->addDays(5)->toDateString();
+        $targetDate = Carbon::now()->addDays($days)->toDateString();
         $query->whereBetween('end_date', [$today, $targetDate]);
         // }
 
@@ -172,7 +175,7 @@ class ContractController extends Controller
     //Muestra la información del contrato y del usuario en específico
     public function show($id)
     {
-        $contract = Contract::with('user','router')->findOrFail($id);
+        $contract = Contract::with('user', 'router')->findOrFail($id);
 
         return Inertia::render('Coordi/Contracts/Show', [
             'contract' => $contract,
@@ -183,7 +186,7 @@ class ContractController extends Controller
     {
         $community = RuralCommunity::all();
         $devices = Device::select('id', 'address')->whereNotNull('user_id')->get();
-       // $users = User::select('id', 'name')->where('admin', '=', '0')->get();
+        // $users = User::select('id', 'name')->where('admin', '=', '0')->get();
         $plans = Plan::select('id', 'name')->get();
         return Inertia::render(
             'Coordi/Contracts/Create',
@@ -324,7 +327,6 @@ class ContractController extends Controller
 
     public function extendEndDate(Request $request, $id)
     {
-        dd('Entraste');
         // Validar la cantidad de días
         $request->validate([
             'days' => 'required|integer|min:1',
@@ -350,6 +352,11 @@ class ContractController extends Controller
         //     'message' => 'Fecha de finalización extendida exitosamente',
         //     'new_end_date' => $newEndDate->toDateString(),
         // ]);
-        return Redirect::route('reaming.contracts')->with('success', 'Fecha de finalización extendida exitosamente');
+        return Redirect::route('reaming.contracts', [
+            'days' => $request->daysFilter,
+            'q' => $request->q,
+            'order' => $request->order,
+            'attribute' => $request->attribute,
+        ])->with('success', 'Fecha de finalización extendida exitosamente');
     }
 }

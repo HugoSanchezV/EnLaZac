@@ -43,7 +43,7 @@ class TicketListener
                     }
                     Notification::send($user, new TicketNotification($event->ticket));
         
-                    Log::error("Error al enviar notificación/correo al usuario {$user->id}: {$e->getMessage()}");
+                    // Log::error("Error al enviar notificación/correo al usuario {$user->id}: {$e->getMessage()}");
             
             });
         }catch(\Exception $e){
