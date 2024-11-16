@@ -14,7 +14,29 @@ import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 const toRouteExport = "routers.devices.excel";
 const urlComplete = route(toRouteExport, route().params.router);
 
-const destroy = (id) => {
+const getOriginal = (data) => {
+  if (data === "id interno") {
+    return "device_internal_id";
+  }
+
+  if (data === "dispositivo") {
+    return "device_id";
+  }
+
+  if (data === "usuario") {
+    return "user_id";
+  }
+
+  if (data === "comentario") {
+    return "comment";
+  }
+
+  if (data === "ip") {
+    return "address";
+  }
+};
+
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -31,11 +53,23 @@ const destroy = (id) => {
         accept: () => {
           const url = route("devices.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          const attributeUrl = getOriginal(data.attribute);
+          router.delete(
+            url,
+            {
+              preserveState: true,
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -75,7 +109,7 @@ const closeDeviceModal = (id) => {
   isModalDeviceOpen.value[id] = false;
 };
 
-const confirmSelectionDevice = (row, select) => {
+const confirmSelectionDevice = (row, select, data) => {
   if (select.selectId === null) {
     const toast = useToast();
     toast.error("Selecciona un dispositivo", {
@@ -90,18 +124,24 @@ const confirmSelectionDevice = (row, select) => {
     if (row.user_id) {
       user_id = row.user_id.id;
     }
+
+    const attributeUrl = getOriginal(data.attribute);
     router.put(url, {
       address: row.address,
       router_id: route().params.router,
       comment: row.comment,
       user_id: user_id,
       device_id: select.selectId,
+      // request data filters
+      q: data.searchQuery,
+      attribute: attributeUrl,
+      order: data.order,
     });
     closeModal();
   }
 };
 
-const confirmSelectionUser = (row, select) => {
+const confirmSelectionUser = (row, select, data) => {
   if (select.selectId === null) {
     const toast = useToast();
     toast.error("Selecciona un usuario", {
@@ -115,12 +155,18 @@ const confirmSelectionUser = (row, select) => {
     if (row.device_id) {
       device_id = row.device_id.id;
     }
+    const attributeUrl = getOriginal(data.attribute);
+
     router.put(url, {
       address: row.address,
       router_id: route().params.router,
       comment: row.comment,
       user_id: select.selectId,
       device_id: device_id,
+
+      q: data.searchQuery,
+      attribute: attributeUrl,
+      order: data.order,
     });
     closeModal();
   }
@@ -267,8 +313,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentUser,
+              order: currentOrder,
+              attribute: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -324,7 +370,13 @@ const getTag = (cellIndex) => {
                 <modal-users
                   :show="isModalDeviceOpen[row.id]"
                   @close="closeDeviceModal(row.id)"
-                  @selectData="confirmSelectionDevice(row, $event)"
+                  @selectData="
+                    confirmSelectionDevice(row, $event, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   :data="inv_devices"
                   :id="row.id"
                   :title="
@@ -368,7 +420,13 @@ const getTag = (cellIndex) => {
                 <modal-users
                   :show="isModalOpen[row.id]"
                   @close="closeModal(row.id)"
-                  @selectData="confirmSelectionUser(row, $event)"
+                  @selectData="
+                    confirmSelectionUser(row, $event, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   :data="users"
                   :id="row.id"
                   :title="
@@ -510,7 +568,13 @@ const getTag = (cellIndex) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
@@ -622,7 +686,6 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentUser,
         order: this.currentOrder,
       });
     },
@@ -633,7 +696,6 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentUser,
         order: this.currentOrder,
       });
     },
@@ -643,7 +705,6 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentUser,
         order: this.currentOrder,
       });
     },

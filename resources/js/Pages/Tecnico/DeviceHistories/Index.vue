@@ -12,22 +12,22 @@ const { histories, totalHistoriesCount } = toRefs(props);
 const toRouteExport = "historieDevices.excel";
 
 const headers = [
-  "state",
+  "estado",
   "id",
-  "comment",
-  "mac address",
-  "user",
-  "creator",
-  "date",
+  "comentario",
+  "mac",
+  "usuario",
+  "creador",
+  "fecha",
 ];
 const filters = [
   "id",
-  "comment",
-  "device_id",
-  "user_id",
-  "creator_id",
-  "state",
-  "created_at",
+  "comentario",
+  "mac",
+  "usuario",
+  "creador",
+  "estado",
+  "fecha",
 ];
 </script>
 
@@ -118,6 +118,31 @@ export default {
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
+
+      
+      if (props.attribute === "comentario") {
+        this.attribute = "comment";
+      }
+
+      if (props.attribute === "mac") {
+        this.attribute = "device_id";
+      }
+
+      if (props.attribute === "usuario") {
+        this.attribute = "user_id";
+      }
+
+      if (props.attribute === "creador") {
+        this.attribute = "creator_id";
+      }
+
+      if (props.attribute === "estado") {
+        this.attribute = "state";
+      }
+
+      if (props.attribute === "fecha") {
+        this.attribute = "created_at";
+      }
 
       //   if (props.attribute === "mac address") {
       //     this.attribute = "mac_address";

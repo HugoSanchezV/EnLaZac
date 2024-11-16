@@ -137,7 +137,7 @@ class StatisticsController extends Controller
     }
     public function store(){}
     public function activeContract()
-    {return Contract::with('user','plan')->where('active','1')->get();}
+    {return Contract::with('device','plan')->where('active','1')->get();}
     
     public function userCount()
     {return User::all();}

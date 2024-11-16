@@ -8,7 +8,32 @@ import BaseQuestion from "./BaseQuestion.vue";
 import FilterOrderBase from "./FilterOrderBase.vue";
 
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const getOriginal = (data) => {
+  if (data === "id") {
+    return "id";
+  }
+  if (data === "asunto") {
+    return "subject";
+  }
+
+  if (data === "descripción") {
+    return "description";
+  }
+
+  if (data === "estado") {
+    return "status";
+  }
+  if (data === "usuario") {
+    return "user_id";
+  }
+  if (data === "creación") {
+    return "created_at";
+  }
+
+  return data;
+};
+
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -24,12 +49,24 @@ const destroy = (id) => {
       listeners: {
         accept: () => {
           const url = route("tickets.destroy", id);
+          const attributeUrl = getOriginal(data.attribute);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          router.delete(
+            url,
+            {
+              preserveState: true,
+              data: {
+                q: data.q,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -101,9 +138,8 @@ const getTag = (cellIndex) => {
   }
 };
 
-
 const subString = (text) => {
-  return text.substr(0, 15) + '...';
+  return text.substr(0, 15) + "...";
 };
 </script>
 <style>
@@ -255,8 +291,8 @@ const subString = (text) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentUser,
+              filter: currentFilter,
+              order: currentOrder,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -505,7 +541,13 @@ const subString = (text) => {
               </Link>
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      q: searchQuery,
+                      order: currentOrder,
+                      attribute: currentFilter,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg

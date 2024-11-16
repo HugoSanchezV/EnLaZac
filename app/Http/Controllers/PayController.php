@@ -47,7 +47,6 @@ class PayController extends Controller
         }catch(Exception $e)
         {
             return Redirect::route('dashboard')->with('error', 'No fue posible cargar los pagos');
-
         } 
     }
 }

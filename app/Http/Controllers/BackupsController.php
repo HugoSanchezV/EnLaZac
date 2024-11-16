@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
+use function PHPUnit\Framework\isNull;
+
 class BackupsController extends Controller
 {
     /**
@@ -36,11 +38,14 @@ class BackupsController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'desc');
+        $order = 'desc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         $backups = $query->latest()->paginate(8)->through(function ($item) {
             $date = Carbon::parse($item->created_at);
@@ -75,18 +80,23 @@ class BackupsController extends Controller
 
     public function destroy(Backup $backup, Request $request)
     {
+        $data = [
+            "q" => $request->q ?? null,
+            "attribute" => $request->attribute ?? null,
+            "order" => $request->order ?? null,
+        ];
         try {
             $filePath = storage_path('app/backup/' . $backup->path);
 
             if (File::exists($filePath)) {
                 File::delete($filePath);
             } else {
-                return Redirect::route('backups')->with('error', 'El archivo de backup no existe.');
+                return Redirect::route('backups', $data)->with('error', 'El archivo de backup no existe.');
             }
             $backup->delete();
-            return Redirect::route('backups')->with('success', 'Backup eliminado con éxito ');
+            return Redirect::route('backups', $data)->with('success', 'Backup eliminado con éxito ');
         } catch (Exception $e) {
-            return Redirect::route('backups')->with('error', 'Error al eliminar Backup');
+            return Redirect::route('backups', $data)->with('error', 'Error al eliminar Backup');
         }
     }
 

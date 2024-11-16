@@ -9,11 +9,13 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\TicketNotification;
 use App\Events\TicketEvent;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class TicketController extends Controller
@@ -99,15 +101,15 @@ class TicketController extends Controller
 
     public function store(StoreTicketRequest $request)
     {
-        if($request->user_id == null){
+        if ($request->user_id == null) {
             $user_id = Auth::id();
         } else {
             $user_id = $request->user_id;
         }
-        
+
         $validatedData = $request->validated();
 
-       // print('HOLAAA');
+        // print('HOLAAA');
         $ticket = Ticket::create([
             'subject' => $validatedData['subject'],
             'description' => $validatedData['description'],
@@ -120,7 +122,7 @@ class TicketController extends Controller
         return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
     }
 
-    
+
 
     public function edit($id)
     {
@@ -166,11 +168,24 @@ class TicketController extends Controller
 
         return redirect()->route('tickets')->with('success', 'Estado del Ticket Actualizado Con Éxito');
     }
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $ticket = Ticket::findOrFail($id);
-        $ticket->delete();
-        return Redirect::route('tickets')->with('success', 'Ticket Eliminado Con Éxito');
+        try {
+            $ticket = Ticket::findOrFail($id);
+            $ticket->delete();
+
+            return Redirect::route('tickets', [
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])->with('success', 'Ticket Eliminado Con Éxito');
+        } catch (Exception $e) {
+            return Redirect::route('tickets', [
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])->with('error', 'Error al cargar el registro');
+        }
     }
 
     static function make_ticket_notification($ticket)
@@ -182,6 +197,7 @@ class TicketController extends Controller
     public function index_user(Request $request)
     {
         $userId = Auth::id(); // Obtén el ID del usuario autenticado
+        Log::info(Auth::id());
         $query = Ticket::query();
 
         // Filtra los tickets por el usuario autenticado
@@ -254,9 +270,9 @@ class TicketController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-       self::make_ticket_notification($ticket);
+        self::make_ticket_notification($ticket);
 
-        return redirect()->route('tickets.usuario')->with('success', 'Ticket creado con éxito');    
+        return redirect()->route('tickets.usuario')->with('success', 'Ticket creado con éxito');
     }
     public function edit_user($id)
     {
@@ -275,7 +291,11 @@ class TicketController extends Controller
         return Redirect::route('tickets.usuario')->with('success', 'Ticket Eliminado Con Éxito');
     }
     public function create_user()
-    {        
+    {
         return Inertia::render('User/Tickets/Create');
+    }
+
+    static function user_id(){
+        return Auth::id();
     }
 }

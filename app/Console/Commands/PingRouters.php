@@ -6,6 +6,8 @@ use App\Events\RouterDiagnosisEvent;
 use App\Http\Controllers\PingController;
 use App\Models\Ping;
 use App\Models\Router;
+use App\Services\TelegramService;
+use App\Services\UserTelegramService;
 use Illuminate\Console\Command;
 
 class PingRouters extends Command
@@ -30,20 +32,20 @@ class PingRouters extends Command
         $routers = Router::all();
         $message = "";
 
-        foreach($routers as $router)
-        {
+        foreach ($routers as $router) {
 
-            $message = $message."Router: ".$router->ip_address."\n Estado: ".self::sendPing($router->ip_address, $router->id);
+            $message = $message . "Router: " . $router->ip_address . "\n Estado: " . self::sendPing($router->ip_address, $router->id);
         }
         self::enviarCorreo($message);
+        UserTelegramService::sendMessageToAdmin(new TelegramService(), $message);
     }
     public function sendPing($ip, $id)
     {
         if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             "Dirección IP no válida: " . $ip . "\n";
-          //  return false;
+            //  return false;
         }
-    
+
         // Determinar el comando 'ping' según el sistema operativo
         if (stripos(PHP_OS, 'WIN') === 0) {
             // Comando para Windows
@@ -57,39 +59,33 @@ class PingRouters extends Command
             // Para Windows, verificar si se recibió el número completo de respuestas
 
 
-            if (strpos($pingResult, 'recibidos = 4') == true) 
-            {
+            if (strpos($pingResult, 'recibidos = 4') == true) {
                 $message = "Todos los paquetes recibidos.\n";
                 self::ping_register($message, $id);
                 return $message;
-               // return true;
-              //  return true;
-            } else if (strpos($pingResult, 'recibidos = 3') == true) 
-            {
+                // return true;
+                //  return true;
+            } else if (strpos($pingResult, 'recibidos = 3') == true) {
                 $message = "Se recibieron 3 paquetes.\n";
                 self::ping_register($message, $id);
                 return $message;
-               // return false;
-               // return false;
-            }else if (strpos($pingResult, 'recibidos = 2') == true) 
-            {
+                // return false;
+                // return false;
+            } else if (strpos($pingResult, 'recibidos = 2') == true) {
                 $message = "Se recibieron 2 paquetes.\n";
                 self::ping_register($message, $id);
                 return $message;
-            }else if (strpos($pingResult, 'recibidos = 1') == true) 
-            {
-                $message ="Se recibió 1 paquete.\n";
+            } else if (strpos($pingResult, 'recibidos = 1') == true) {
+                $message = "Se recibió 1 paquete.\n";
                 self::ping_register($message, $id);
                 return $message;
-
-            }else{
+            } else {
                 $message = "Perdida total de paquetes.\n";
                 self::ping_register($message, $id);
                 return $message;
             }
             self::ping_register($message, $id);
             return $pingResult;
-            
         } else {
             // Para Linux/macOS, verificar si no hay pérdida de paquetes
             if (strpos($pingResult, '0% packet loss') !== false) {
@@ -106,19 +102,19 @@ class PingRouters extends Command
             self::ping_register($message, $id);
             return $pingResult;
         }
-
     }
-    public function ping_register($content, $id){
+    public function ping_register($content, $id)
+    {
         $ping = new Ping();
         $controlador = new PingController();
-    
+
         $ping->content = $content;
         $ping->router_id = $id;
 
         $controlador->store($ping);
-        
     }
-    public function enviarCorreo($message){
+    public function enviarCorreo($message)
+    {
         event(new RouterDiagnosisEvent($message));
     }
 }

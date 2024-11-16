@@ -9,7 +9,7 @@ const props = defineProps({
 });
 
 const { payments } = toRefs(props);
-//const toRouteExport = "contracts.excel";
+const toRouteExport = "payment.excel";
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
@@ -20,7 +20,7 @@ const filters = [
   "contenido",
   "metodo de pago",
   "id de transacción",
-  "link de recepción",
+  // "link de recepción",
   "fecha de pago"
 ];
 
@@ -32,7 +32,7 @@ const headers = [
   "Contenido",
   "Método de pago",
   "Id de Transacción",
-  "Link de Recepción",
+  // "Link de Recepción",
   "Fecha de Pago",
   "Acciones",
 ];
@@ -51,7 +51,7 @@ const headers = [
     <template v-slot:content>
       <div>
         <div v-if="props.totalPaymentsCount > 0">
-          <!-- <base-export-excel :toRouteExport="toRouteExport"></base-export-excel> -->
+          <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <!-- Esta es el inicio de la tabla -->
           <base-table-payments
             :headers="headers"
@@ -121,7 +121,7 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("payments");
+      const link = route("payment");
 
   //    console.log(props.searchQuery);
 
@@ -130,9 +130,6 @@ export default {
       this.type = props.type;
       this.order = props.order;
 
-      if (this.attribute === "id") {
-        this.attribute = "id";
-      }
 
       if (this.attribute === "usuario") {
         this.attribute = "user_id";
@@ -142,28 +139,28 @@ export default {
         this.attribute = "contract_id";
       }
       
-      if (this.order === "monto") {
-        this.order = "amount";
+      if (this.attribute === "monto") {
+        this.attribute = "amount";
       }
 
       if (this.attribute === "contenido") {
         this.attribute = "content";
       }
 
-      if (this.order === "metodo de pago") {
-        this.order = "payment_method";
+      if (this.attribute === "metodo de pago") {
+        this.attribute = "payment_method";
       }
 
-      if (this.order === "id de transacción") {
-        this.order = "transaction_id";
+      if (this.attribute === "id de transacción") {
+        this.attribute = "transaction_id";
       }
 
-      if (this.order === "link de recepción") {
-        this.order = "receipt_url";
-      }
+      // if (this.attribute === "link de recepción") {
+      //   this.attribute = "receipt_url";
+      // }
 
-      if (this.order === "fecha de pago") {
-        this.order = "created_at";
+      if (this.attribute === "fecha de pago") {
+        this.attribute = "created_at";
       }
 
       this.$inertia.get(

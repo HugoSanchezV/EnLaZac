@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Http\Requests\Charge\StoreChargeRequest;
 use App\Http\Requests\Charge\UpdateChargeRequest;
 use App\Models\Charge;
@@ -10,7 +11,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Contract;
 use Illuminate\Support\Facades\Redirect;
 use Carbon\Carbon;
+use Exception;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+
+use function PHPUnit\Framework\isNull;
 
 class ChargeController extends Controller
 {
@@ -32,11 +37,14 @@ class ChargeController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         $charges = $query->latest()->paginate(8)->through(function ($item) {
             return [
@@ -50,7 +58,6 @@ class ChargeController extends Controller
             ];
         });
 
-        
         $totalChargesCount = Charge::count();
 
         return Inertia::render('Admin/Charges/Charges', [
@@ -63,7 +70,7 @@ class ChargeController extends Controller
                 'total' => $charges->total(),
             ],
             'success' => session('success') ?? null,
-            'totalChargesCount' => $totalChargesCount 
+            'totalChargesCount' => $totalChargesCount
         ]);
     }
 
@@ -92,21 +99,20 @@ class ChargeController extends Controller
         $charge->date_paid = Carbon::now();
 
         $charge->save();
-
     }
     public function store_schedule(Charge $request)
-    {   
-        
+    {
+
         Charge::create([
             'contract_id' => $request->contract_id,
             'description' => $request->description,
             'amount' => $request->amount,
             'paid' => $request->paid
         ]);
-       // print('Cargo creado');
-       // return redirect()->route('')->with('success', 'Ticket creado con éxito');
+        // print('Cargo creado');
+        // return redirect()->route('')->with('success', 'Ticket creado con éxito');
     }
- 
+
     public function create()
     {
         $contracts = Contract::with('device', 'plan')->get();
@@ -119,7 +125,7 @@ class ChargeController extends Controller
         );
     }
     public function store(StoreChargeRequest $request)
-    {   
+    {
         Charge::create([
             'contract_id' => $request->contract_id,
             'description' => $request->description,
@@ -127,14 +133,61 @@ class ChargeController extends Controller
             'paid' => $request->paid,
             'date_paid' => $request->date_paid,
         ]);
-        
+
         return redirect()->route('charges')->with('success', 'El cargo ha sido creado con éxito');
     }
-    
-    public function destroy($id)
+
+    public function destroy(Request $request, $id)
     {
-        $charge = Charge::findOrFail($id);
-        $charge->delete();
-        return Redirect::route('charges')->with('success', 'Cargo fue Eliminado Con Éxito');
+        $data  = [
+            "q" => $request->q ?? null,
+            "attribute" => $request->attribute ?? null,
+            "order" => $request->order ?? null,
+        ];
+        try {
+            $charge = Charge::findOrFail($id);
+            $charge->delete();
+            return Redirect::route('charges', $data)->with('success', 'Cargo fue Eliminado Con Éxito');
+        } catch (Exception $e) {
+            return Redirect::route('charges', $data)->with('error', 'Error al cargar el registro');
+        }
+    }
+
+    public function exportExcel()
+    {
+        try {
+            $query = Charge::with(['contract.plan']);
+
+            throw new Exception("hola");
+            $headings = [
+                'ID',
+                'CONTRATO ID',
+                'CONTRATO NOMBRE',
+                'PLAN ID',
+                'PLAN NOMBRE',
+                'DESCRIPCION',
+                'CANTIDAD',
+                '¿PAGADO?',
+                'FECHA DE PAGO',
+            ];
+
+            $mappingCallback = function ($charge) {
+                return [
+                    'id' => $charge->id,
+                    'contract_id' => $charge->contract ? $charge->contract->id : null,
+                    'contract' => $charge->contract ? $charge->contract->address : null, // Ajusta según el campo correcto
+                    'plan_id' => $charge->contract && $charge->contract->plan ? $charge->contract->plan->id : null,
+                    'plan_name' => $charge->contract && $charge->contract->plan ? $charge->contract->plan->name : null,
+                    'description' => $charge->description,
+                    'amount' => $charge->amount,
+                    'paid' => $charge->paid ? "SI" : "NO",
+                    'date_paid' => $charge->date_paid,
+                ];
+            };
+
+            return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'cargos.xlsx');
+        } catch (Exception $e) {
+            return Redirect::back()->with('error', 'Error al cargar el registro');
+        }
     }
 }

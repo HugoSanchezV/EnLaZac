@@ -103,6 +103,8 @@ const menuItems = ref([
     subItems: [
       // { name: "Principal", route: "tickets" },
       { name: "Estadísticas", route: "dashboard" },
+      { name: "Pagos", route: "payment" },
+      { name: "Proximos a corte", route: "reaming.contracts" },
     ],
   },
   {
@@ -113,6 +115,7 @@ const menuItems = ref([
     subItems: [
       { name: "Usuarios", route: "usuarios" },
       { name: "Contratos", route: "contracts" },
+      { name: "Cargos", route: "charges" },
     ],
   },
 
@@ -125,6 +128,7 @@ const menuItems = ref([
       { name: "Routers", route: "routers" },
       { name: "Dispositivos", route: "devices" },
       { name: "Planes", route: "plans" },
+      { name: "Comunidades", route: "rural-community" },
     ],
   },
   {

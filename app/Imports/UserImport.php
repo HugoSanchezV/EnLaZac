@@ -3,6 +3,8 @@
 namespace App\Imports;
 
 use App\Models\User;
+use App\Services\TelegramService;
+use App\Services\UserTelegramService;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -17,7 +19,7 @@ class UserImport implements ToModel, WithHeadingRow, WithValidation
      */
     public function model(array $row)
     {
-        return new User([
+        $user = new User([
             'name' => $row['nombre'],
             'email' => $row['email'],
             'alias' => $row['alias'],
@@ -25,6 +27,16 @@ class UserImport implements ToModel, WithHeadingRow, WithValidation
             'password' => Hash::make($row['password']),
             'admin' => $row['role'] === 1 ? 0 : $row['role'],
         ]);
+
+        $user->save();
+
+        UserTelegramService::createContactTelegramSendMessage([
+            "name" => $user->name,
+            "alias" => $user->alias,
+            "phone" => '52' . $user->phone,
+        ], new TelegramService());
+
+        return $user;
     }
 
     /**

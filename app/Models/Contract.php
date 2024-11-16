@@ -9,7 +9,7 @@ class Contract extends Model
 {
     use HasFactory;
 
-    public $fillable =[
+    public $fillable = [
         'id',
         'device_id',
         'plan_id',
@@ -20,7 +20,7 @@ class Contract extends Model
         'rural_community_id',
         'geolocation',
     ];
-    
+
     protected $casts = [
         'geolocation'  => 'array',
     ];
@@ -40,5 +40,10 @@ class Contract extends Model
     public function installations()
     {
         return $this->hasMany(Installation::class, 'contract_id');
+    }
+
+    public function charges()
+    {
+        return $this->hasMany(Charge::class);
     }
 }

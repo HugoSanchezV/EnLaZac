@@ -2,7 +2,7 @@
 namespace App\Services;
 
 use App\Models\Router;
-use App\Models\RouterosAPI as ModelsRouterosAPI;
+use App\Models\RouterosApi as ModelsRouterosAPI;
 use Illuminate\Support\Facades\Crypt;
 
 class RouterOSService

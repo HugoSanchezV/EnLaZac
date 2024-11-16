@@ -1,38 +1,43 @@
 <script setup>
-import { toRefs, watch } from "vue";
 import { useToast, POSITION } from "vue-toastification";
 
 const props = defineProps({
   pingDevice: Object,
+  router: Object,
   pagination: Object,
-  success: String,
   totalPingDeviceCount: Number,
   totalDeviceFail: Number,
   users: Object,
 });
 
-const { pings, success } = toRefs(props);
-const toast = useToast();
-
-watch(success, (newValue) => {
-  if (newValue) {
-    toast.success(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
-});
-
-const headers = ["id", "dispositivo", "router", "dirección", "encargado", "estado", "creado", "acciones"];
-const filters = ["id", "dispositivo","router", "dirección", "encargado", "estado", "creado"];
+const headers = [
+  "id",
+  "dispositivo",
+  "router",
+  "ip",
+  "encargado",
+  "estado",
+  "creado",
+  "acciones",
+];
+const filters = ["id", "ip", "encargado", "creado"];
 </script>
 
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div class="flex justify-between">
-        <div>
-          <h4>Pings a dispositivos</h4>
+        <div class="flex justify-center items-center gap-2">
+          <h4>Hisotial de Pings</h4>
+        </div>
+
+        <div class="flex justify-center items-center gap-2">
+          <span class="material-symbols-outlined" style="font-size: 35px">
+            router
+          </span>
+          <span v-if="router" class="bg-slate-200 rounded-md px-2 py-1">
+            {{ router?.ip_address }}1
+          </span>
         </div>
       </div>
     </template>
@@ -43,8 +48,9 @@ const filters = ["id", "dispositivo","router", "dirección", "encargado", "estad
           <base-table-ping-device
             :headers="headers"
             :rows="rows"
+            :routerObject="router ?? null"
             :users="users"
-            :totalDeviceFail= "totalDeviceFail"
+            :totalDeviceFail="totalDeviceFail"
             :filters="filters"
             :show="true"
             :edit="true"
@@ -98,6 +104,10 @@ export default {
 
   props: {
     pingDevice: Object,
+    router: {
+      type: Object,
+      defauld: null,
+    },
     pagination: Object,
     success: String,
     totalPingDeviceCount: Number,
@@ -116,39 +126,43 @@ export default {
 
   methods: {
     search(props) {
-      const link = route("pingDevice");
-
       this.q = props.searchQuery;
       this.attribute = props.attribute;
-      this.type = props.type;
       this.order = props.order;
 
-      if (this.attribute === "dispositivo") {
+      let $url = this.router
+        ? "router.device.ping.historie"
+        : "device.ping.historie";
+
+      const link = route($url, this?.router?.id ?? null);
+
+      // if (this.attribute === "dispositivo") {
+      //   this.attribute = "device_id";
+      // }
+
+      // if (this.attribute === "estado") {
+      //   this.attribute = "status";
+      // }
+
+      if (this.attribute === "ip") {
         this.attribute = "device_id";
-      }
-      if (this.attribute === "router") {
-        this.attribute = "router_id";
-      }
-
-      if (this.attribute === "dirección") {
-        this.attribute = "address";
-      }
-
-      if (this.attribute === "estado") {
-        this.attribute = "status";
       }
 
       if (this.attribute === "creado") {
-        this.attribute = "create_at";
+        this.attribute = "created_at";
       }
-      
+
       if (this.attribute === "encargado") {
         this.attribute = "user_id";
       }
 
       this.$inertia.get(
         link,
-        { q: this.q, attribute: this.attribute, type: this.type, order:this.order },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },
@@ -156,25 +170,8 @@ export default {
 
   watch: {
     pingDevice() {
-      const toast = useToast();
       this.rows = this.pingDevice.data;
-      if (this.success) {
-        toast.success(this.success, {
-          position: POSITION.TOP_CENTER,
-          draggable: true,
-        });
-      }
     },
-  },
-
-  beforeMount() {
-    const toast = useToast();
-    if (this.success) {
-      toast.success(this.success, {
-        position: POSITION.TOP_CENTER,
-        draggable: true,
-      });
-    }
   },
 };
 </script>

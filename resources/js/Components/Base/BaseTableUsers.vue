@@ -6,9 +6,10 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterBase from "@/Pages/Admin/Users/FilterBase.vue";
+import { usePage } from "@inertiajs/vue3";
 
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -23,8 +24,31 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("usuarios.destroy", id);
+          var typeUser = "todos";
+          if (data.type === "cliente") {
+            typeUser = 0;
+          } else if (data.type === "coordinador") {
+            typeUser = 2;
+          } else if (data.type === "tecnico") {
+            typeUser = 3;
+          }
 
+          if (data.attribute === "nombre") {
+            data.attribute = "name";
+          }
+
+          if (data.attribute === "número") {
+            data.attribute = "phone";
+          }
+
+          console.log(data.type);
+          const url = route("usuarios.destroy", {
+            id: id,
+            q: data.searchQuery,
+            attribute: data.attribute,
+            type: typeUser,
+            order: data.order,
+          });
           router.delete(url, () => {
             onError: (error) => {
               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
@@ -54,12 +78,11 @@ const nameCell = (cellIndex) => {
 };
 
 const getTag = (cell) => {
-
-  if (cell === 'name') {
-    return 'Nombre'
-  } 
-  return cell
-}
+  if (cell === "name") {
+    return "Nombre";
+  }
+  return cell;
+};
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -254,7 +277,8 @@ const getTag = (cell) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
+              order: currentOrder,
+              attribute: currentFilter,
               type: currentUser,
             })
           "
@@ -264,7 +288,7 @@ const getTag = (cell) => {
       </div>
     </div>
 
-    <table  class="w-full text-sm text-left text-gray-500 lg:table md:table">
+    <table class="w-full text-sm text-left text-gray-500 lg:table md:table">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50">
         <tr>
           <th></th>
@@ -353,7 +377,9 @@ const getTag = (cell) => {
             </div>
             <div v-else>
               <div class="flex gap-1">
-                <span class="lg:hidden md:hidden block font-bold lowercase">{{ getTag(cellIndex) }}:</span>
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }}:</span
+                >
                 {{ cell }}
               </div>
             </div>
@@ -417,7 +443,14 @@ const getTag = (cell) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      type: this.currentUser,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg
@@ -498,8 +531,7 @@ export default {
 
       return this.rows;
       //CLAVE: 123
-     if (this.searchQuery) {
-      
+      if (this.searchQuery) {
       }
       // return this.rows.filter((row) =>
       //   row.some((cell) =>

@@ -27,11 +27,6 @@ const filters = [
   "nombre",
   "descripción",
   'precio',
-  "burst_limit",
-  "burst_threshold",
-  "burst_time",
-  "limite_at",
-  "max_limit",
 ];
 </script>
 
@@ -143,14 +138,14 @@ export default {
       if (this.attribute === "id") {
         this.attribute = "id";
       }
-      if (this.order === "nombre") {
-        this.order = "name";
+      if (this.attribute === "nombre") {
+        this.attribute = "name";
       }
-      if (this.order === "descripción") {
-        this.order = "description";
+      if (this.attribute === "descripción") {
+        this.attribute = "description";
       }
-      if (this.order === "precio") {
-        this.order = "price";
+      if (this.attribute === "precio") {
+        this.attribute = "price";
       }     
       this.$inertia.get(
         link,

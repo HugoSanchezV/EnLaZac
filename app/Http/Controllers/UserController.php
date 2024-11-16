@@ -12,8 +12,10 @@ use App\Imports\UserImport;
 use App\Models\Plan;
 use App\Models\PreRegisterUser;
 use App\Models\Ticket;
+use App\Models\TelegramAccount;
+use App\Services\TelegramService;
 use App\Services\UserService;
-use Carbon\Carbon;
+use App\Services\UserTelegramService;
 use Dotenv\Exception\ValidationException;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -23,9 +25,18 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function PHPUnit\Framework\isNull;
+
 class UserController extends Controller
 {
     //
+    protected $telegramService;
+
+    public function __construct(TelegramService $telegramService)
+    {
+        $this->telegramService = $telegramService;
+    }
+
     public function index(Request $request)
     {
         $query = User::query();
@@ -48,11 +59,19 @@ class UserController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'asc');
+        // }
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         $users = $query->latest()->paginate(8)->through(function ($item) {
             return [
@@ -119,7 +138,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         try {
-            DB::transaction(function () use ($request) {
+            $user = DB::transaction(function () use ($request) {
                 $validatedData = $request->validated();
                 $user = User::create([
                     'name' => $validatedData['name'],
@@ -137,10 +156,47 @@ class UserController extends Controller
                 }
 
                 self::make_register_notification($user);
+
+                return $user;
             });
-            return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito', 'user');
+
+            $chatId = UserTelegramService::createContactTelegramSendMessage([
+                'name' => $request->name,
+                'alias' => $request->alias,
+                'phone' => '52' . $request->phone,
+            ], $this->telegramService);
+
+            if ($chatId) {
+                TelegramAccount::create([
+                    'chat_id' => $chatId,
+                    'user_id' => $user->id,
+                ]);
+            }
+            $message = isset($chatId) ? 'Agregado a telegram' : 'Sin telegram';
+
+            return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito ' . $message, 'user');
         } catch (Exception $e) {
             return redirect()->route('usuarios')->with('success', 'Hubo un problema al crear el registro', 'user');
+        }
+    }
+
+    public function createContactTelegram($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $result = UserTelegramService::createContactTelegramSendMessage([
+                "name" => $user->name,
+                "alias" => $user->alias ?? $user->id,
+                "phone" => $user->phone,
+            ], $this->telegramService);
+
+            if ($result) {
+                return redirect()->route('usuarios.show', $user->id)->with('success', 'Se ha agregado el usurio correctamente');
+            } else {
+                return redirect()->route('usuarios.show', $user->id)->with('error', 'El usuario no tiene telegram o no se encutra disposnible');
+            }
+        } catch (Exception $e) {
+            return redirect()->route('usuarios.show', $user->id)->with('error', 'Hubo un problema al agregar el contacto');
         }
     }
 
@@ -184,14 +240,31 @@ class UserController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
-            $user = User::findOrFail($id);
-            $user->delete();
-            return Redirect::route('usuarios')->with('success', 'Usuario Eliminado Con Éxito ');
-        } catch (Exception $e) {
-            return Redirect::route('usuarios')->with('success', 'Ocurrio un error con el registro');
+            DB::transaction(function () use ($id) {
+                $user = User::findOrFail($id);
+
+                $telegram = $user->telegramAccount;
+
+                $result = false;
+                if ($telegram) {
+                    $result = UserTelegramService::destroyContact($this->telegramService, $telegram->chat_id);
+                }
+                if (!$result && isset($telegram)) {
+                    throw new Exception('El contacto en telegram no se ha podido eliminar, vuleve intentar', 0);
+                }
+
+                $user->delete();
+            });
+            return Redirect::route('usuarios', $request->query())->with('success', 'Usuario Eliminado Con Éxito ');
+        } catch (\Exception $e) {
+            if ($e->getCode() === 0) {
+                return Redirect::route('usuarios', $request->query())->with('error', $e->getMessage());
+            } else {
+                return Redirect::route('usuarios', $request->query())->with('error', 'Ocurrio un error con el registro');
+            }
         }
     }
 
@@ -245,6 +318,38 @@ class UserController extends Controller
             }
         } catch (Exception $e) {
             return Redirect::route('usuarios')->with('error', 'Error al Importar ' . $e->getMessage());
+        }
+    }
+
+
+    public function messageTelegram($id)
+    {
+        try {
+            $user = User::with('telegramAccount')->findOrFail($id);
+            return Inertia::render('Admin/Users/TelegramMessage', [
+                "user" => $user,
+                'success' => session('success') ?? null,
+                'error' => session('error') ?? null,
+            ]);
+        } catch (Exception $e) {
+            return Redirect::route('usuarios')->with('error', 'Error al cargar el registro ');
+        }
+    }
+
+    public function sendMessageTelegram(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'chat_id' => 'required|numeric|exists:telegram_accounts,chat_id',
+                'message' => 'required|string|max:500|min:4',
+            ]);
+
+            $result = UserTelegramService::sendMessage($this->telegramService, $validatedData["chat_id"], $validatedData["message"]);
+            if ($result) {
+                return redirect()->route('usuarios.show', $request->user_id)->with('success', 'Se ha enviado el mensaje correctamente');
+            }
+        } catch (Exception $e) {
+            return redirect()->route('usuarios.show', $request->user_id)->with('error', 'Error al envair mensaje');
         }
     }
 }

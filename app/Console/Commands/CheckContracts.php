@@ -10,6 +10,11 @@ use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\Contract;
 use App\Models\Device;
+use App\Models\Charge;
+use App\Models\TelegramAccount;
+use App\Services\TelegramService;
+use App\Services\UserTelegramService;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class CheckContracts extends Command
@@ -42,6 +47,8 @@ class CheckContracts extends Command
         
         //END_DATE es igual a la fecha de corte
         $service = new ChargeService();
+
+        
         $contractTerms = $controllerContract->getContracts($today);
 
         //INSERTAR CONSULTA DE PAGOS
@@ -58,10 +65,8 @@ class CheckContracts extends Command
             if($contract->active == 1){
                 self::checkInstallation($contract, $today, $endDate, $service);
             }
-
         }
         $this->info('Se han verificado los contratos.');
-
     }
     private function conditional($endDate, $contract, $today, $service)
     {
@@ -119,12 +124,11 @@ class CheckContracts extends Command
                     if(($assigned->day >= 16) && ($assigned->day < 32))
                     {
                         //Le cobra no el proximo mes, sino el siguiente
-                       if(self::incomingMonth($assigned, $today, 2, 1, 6)){
+                        if(self::incomingMonth($assigned, $today, 2, 1, 6)){
                             self::conditional($endDate, $contract, $today, $service);
-                       }
+                        }
     
                     }else if (($assigned->day >= 6)&&($assigned->day <= 15)){
-                        
                         //Condicionar si paga el siguiente mes o  el proximo
                         if(self::incomingMonth($assigned, $today, 1, 1,6))
                         {
@@ -157,8 +161,10 @@ class CheckContracts extends Command
     private function cargoPorPago($service , Contract $contract)
     {$service->createChargeCourtDate($contract);}
 
-    private function extra_charge($service, Contract $contract)
-    {$service->createChargeMounthsDebt($contract);}
+    public function extra_charge($service, Contract $contract)
+    {
+        $service->createChargeMounthsDebt($contract);
+    }
 
     private function sendEmail($contract, $days)
     {

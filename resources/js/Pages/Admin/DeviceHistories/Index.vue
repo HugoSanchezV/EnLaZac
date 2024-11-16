@@ -12,23 +12,23 @@ const { histories, totalHistoriesCount } = toRefs(props);
 const toRouteExport = "historieDevices.excel";
 
 const headers = [
-  "state",
+  "estado",
   "id",
-  "comment",
-  "mac address",
-  "user",
-  "creator",
-  "date",
+  "comentario",
+  "mac",
+  "usuario",
+  "creador",
+  "fecha",
   "acciones",
 ];
 const filters = [
   "id",
-  "comment",
-  "device_id",
-  "user_id",
-  "creator_id",
-  "state",
-  "created_at",
+  "comentario",
+  "mac",
+  "usuario",
+  "creador",
+  "estado",
+  "fecha",
 ];
 </script>
 
@@ -37,7 +37,7 @@ const filters = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Hisotirial del Inventario</h2>
+          <h2>Historial del Inventario</h2>
         </div>
       </div>
     </template>
@@ -85,6 +85,7 @@ import { Link } from "@inertiajs/vue3";
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import InventorieTable from "./InventorieTable.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
+import { usePage } from "@inertiajs/vue3";
 
 export default {
   components: {
@@ -127,12 +128,39 @@ export default {
       //   if (props.attribute === "descripción") {
       //     this.attribute = "description";
       //   }
+      //       const filters = [
+      //   "id",
+      //   "comment",
+      //   "device_id",
+      //   "user_id",
+      //   "creator_id",
+      //   "state",
+      //   "created_at",
+      // ];
 
-      //   if (props.attribute === "marca") {
-      //     this.attribute = "brand";
-      //   }
+      if (props.attribute === "comentario") {
+        this.attribute = "comment";
+      }
 
-      console.log(props.type);
+      if (props.attribute === "mac") {
+        this.attribute = "device_id";
+      }
+
+      if (props.attribute === "usuario") {
+        this.attribute = "user_id";
+      }
+
+      if (props.attribute === "creador") {
+        this.attribute = "creator_id";
+      }
+
+      if (props.attribute === "estado") {
+        this.attribute = "state";
+      }
+
+      if (props.attribute === "fecha") {
+        this.attribute = "created_at";
+      }
 
       this.$inertia.get(
         link,

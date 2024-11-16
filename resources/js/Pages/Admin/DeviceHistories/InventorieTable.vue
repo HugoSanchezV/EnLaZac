@@ -8,7 +8,35 @@ import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 const defaultOrder = "DESC";
 // ACCION DE ELIMINAR1
-const destroy = (id) => {
+const getOriginal = (data) => {
+  if (data === "estado") {
+    return "state";
+  }
+
+  if (data === "mac") {
+    return "device_id";
+  }
+
+  if (data === "comentario") {
+    return "comment";
+  }
+
+  if (data === "usuario") {
+    return "user";
+  }
+
+  if (data === "creador") {
+    return "creator";
+  }
+
+  if (data === "fecha") {
+    return "created_at";
+  }
+
+  return data;
+};
+
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -24,12 +52,24 @@ const destroy = (id) => {
       listeners: {
         accept: () => {
           const url = route("historieDevices.destroy", id);
+          const attributeUrl = getOriginal(data.attribute);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          router.delete(
+            url,
+            {
+              preserveState: true,
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -175,8 +215,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentUser,
+              attribute: currentFilter,
+              order: currentOrder,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -207,9 +247,9 @@ const getTag = (cellIndex) => {
             class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'device'">
-              <Link href="#">
+              <span v-if="cell">
                 {{ cell.mac_address }}
-              </Link>
+              </span>
             </div>
             <div v-else-if="cellIndex === 'user' && cell !== null">
               <Link href="#">
@@ -293,7 +333,13 @@ const getTag = (cellIndex) => {
             <div class="sm:flex gap-4 flex actions">
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg

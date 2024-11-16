@@ -91,7 +91,7 @@ onMounted( () => {
 
           <p>IP: {{ device.address }}</p>
 
-            <p v-if="user !== null">Usuario: {{ user.name }}</p>
+            <p v-if="user !== null && user?.name">Usuario: {{ user?.name }}</p>
             <p v-else>Usuario: Sin asignar</p>
         </div>
 

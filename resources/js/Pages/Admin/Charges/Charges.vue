@@ -9,14 +9,14 @@ const props = defineProps({
 });
 
 const { charges } = toRefs(props);
-//const toRouteExport = "contracts.excel";
+const toRouteExport = "charges.excel";
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
   "id",
   "contrato",
   "descripción",
-  "monto",
+"monto",
   "¿pagado?",
   "fecha del pago",
   "fecha de creación",
@@ -48,7 +48,9 @@ const headers = [
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
-            <span class="material-symbols-outlined" style="font-size: 16px;"> contract </span>
+            <span class="material-symbols-outlined" style="font-size: 16px">
+              contract
+            </span>
 
             Crear cargo
           </Link>
@@ -58,7 +60,7 @@ const headers = [
     <template v-slot:content>
       <div>
         <div v-if="props.totalChargesCount > 0">
-          <!-- <base-export-excel :toRouteExport="toRouteExport"></base-export-excel> -->
+          <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <!-- Esta es el inicio de la tabla -->
           <base-table-charges
             :headers="headers"
@@ -131,7 +133,7 @@ export default {
     search(props) {
       const link = route("charges");
 
-  //    console.log(props.searchQuery);
+      //    console.log(props.searchQuery);
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
@@ -150,19 +152,19 @@ export default {
         this.attribute = "description";
       }
 
-      if (this.order === "monto") {
-        this.order = "amount";
+      if (this.attribute === "monto") {
+        this.attribute = "amount";
       }
-      if (this.order === "¿pagado?") {
-        this.order = "paid";
-      }
-
-      if (this.order === "fecha de pago") {
-        this.order = "date_paid";
+      if (this.attribute === "¿pagado?") {
+        this.attribute = "paid";
       }
 
-      if (this.order === "fecha de creación") {
-        this.order = "created_at";
+      if (this.attribute === "fecha del pago") {
+        this.attribute = "date_paid";
+      }
+
+      if (this.attribute === "fecha de creación") {
+        this.attribute = "created_at";
       }
 
       this.$inertia.get(

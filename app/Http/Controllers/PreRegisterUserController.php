@@ -101,15 +101,20 @@ class PreRegisterUserController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $data = [
+            "q" => $request->q ?? null,
+            "attribute" => $request->attribute ?? null,
+            "order" => $request->order ?? null,
+        ];
         try {
             $register = PreRegisterUser::findOrFail($id);
             $register->delete();
-            return redirect()->route('usuarios.pre.register')->with('success', 'Se ha eliminado el número con éxito');
+            return redirect()->route('usuarios.pre.register', $data)->with('success', 'Se ha eliminado el número con éxito');
         } catch (Exception $e) {
             dd('ERROR AL ELIMINAR ARCHIVO' . $e->getMessage());
-            return redirect()->route('usuarios.pre.register')->with('error', 'Ha sucedido un error con el registro');
+            return redirect()->route('usuarios.pre.register', $data)->with('error', 'Ha sucedido un error con el registro');
         }
     }
 }
