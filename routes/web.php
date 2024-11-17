@@ -29,18 +29,16 @@ use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
 use App\Http\Controllers\MailSettingController;
 use App\Http\Controllers\InstallationController;
+use App\Http\Controllers\InstallationSettingsController;
 use App\Http\Controllers\MercadoPagoController;
 use App\Http\Controllers\MercadoPagoDataController;
 use App\Http\Controllers\MercadoPagoSettingController;
 use App\Http\Controllers\PaymentHistorieController;
-use App\Models\InventorieDevice;
-use App\Models\PerformanceDevice;
-use App\Models\PingDeviceHistorie;
-use App\Services\WebRouterService;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\ServiceVariablesController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -205,15 +203,15 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/inventorie/devices/to/excel',          [InventorieDevicesController::class, 'exportExcel'])->name('inventorie.devices.excel');
         Route::post('/inventorie/devices/histories/import/excel',          [InventorieDevicesController::class, 'importExcel'])->name('historieDevices.import.excel');
 
-        Route::get('/inventorie/devices/histories',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
-        Route::get('/inventorie/devices/histories/show/{mac_address}',          [DeviceHistoriesController::class, 'index'])->name('historieDevices.show');
-        Route::get('/inventorie/devices/histories/to/excel/{id}',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel.historie');
+        Route::get('/inventorie/devices/histories',                      [DeviceHistoriesController::class, 'index'])->name('historieDevices.index');
+        Route::get('/inventorie/devices/histories/show/{mac_address}',   [DeviceHistoriesController::class, 'index'])->name('historieDevices.show');
+        Route::get('/inventorie/devices/histories/to/excel/{id}',        [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel.historie');
 
-        Route::delete('/inventorie/devices/histories/{device}/delete',          [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');
-        Route::get('/inventorie/devices/histories/to/excel',          [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
+        Route::delete('/inventorie/devices/histories/{device}/delete',   [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');
+        Route::get('/inventorie/devices/histories/to/excel',             [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
-        Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
+        Route::post('/tickets/statusUpdate/{id}',[TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
         Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
         Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
         Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
@@ -232,8 +230,8 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
         Route::get('/contracts/to/excel',        [ContractController::class, 'exportExcel'])->name('contracts.excel');
 
-        Route::get('/contracts/days/remaining',                 [ContractController::class, 'index_remainig'])->name('reaming.contracts');
-        Route::post('/contracts/days/remaining/{id}',                 [ContractController::class, 'extendEndDate'])->name('reaming.contracts.extend');
+        Route::get('/contracts/days/remaining',         [ContractController::class, 'index_remainig'])->name('reaming.contracts');
+        Route::post('/contracts/days/remaining/{id}',   [ContractController::class, 'extendEndDate'])->name('reaming.contracts.extend');
 
         //Planes de internet
         Route::get('/plans',                     [PlanController::class, 'index'])->name('plans');
@@ -251,7 +249,7 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/charges/edit/{id}',           [ChargeController::class, 'edit'])->name('charges.edit');
         Route::put('/charges/update/{id}',         [ChargeController::class, 'update'])->name('charges.update');
         Route::delete('/charges/delete/{id}',      [ChargeController::class, 'destroy'])->name('charges.destroy');
-        Route::get('/charges/to/excel',      [ChargeController::class, 'exportExcel'])->name('charges.excel');
+        Route::get('/charges/to/excel',            [ChargeController::class, 'exportExcel'])->name('charges.excel');
 
         Route::get('/installation',                     [InstallationController::class, 'index'])->name('installation');
         Route::get('/installation/create',              [InstallationController::class, 'create'])->name('installation.create');
@@ -271,16 +269,16 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::post('/rural-community/updateContract/{id}', [RuralCommunityController::class, 'updateContract'])->name('rural-community.update.contract');
 
         Route::get('/payment/histories',                     [PaymentHistorieController::class, 'index'])->name('payment');
-        Route::delete('/payment/histories/delete/{id}',                     [PaymentHistorieController::class, 'destroy'])->name('payment.destroy');
-        Route::get('/payment/histories/to/excel',                     [PaymentHistorieController::class, 'exportExcel'])->name('payment.excel');
+        Route::delete('/payment/histories/delete/{id}',      [PaymentHistorieController::class, 'destroy'])->name('payment.destroy');
+        Route::get('/payment/histories/to/excel',            [PaymentHistorieController::class, 'exportExcel'])->name('payment.excel');
 
 
 
-        Route::get('/sistema/backups',      [BackupsController::class, 'index'])->name('backups');
-        Route::post('/sistema/backups/create',      [BackupsController::class, 'createBackup'])->name('backups.create');
-        Route::delete('/sistema/backups/delete/{backup}',      [BackupsController::class, 'destroy'])->name('backups.destroy');
-        Route::delete('/sistema/backups/clear',      [BackupsController::class, 'clear'])->name('backups.clear');
-        Route::get('/sistema/backups/download/{backup}',      [BackupsController::class, 'download'])->name('backups.download');
+        Route::get('/sistema/backups',                    [BackupsController::class, 'index'])->name('backups');
+        Route::post('/sistema/backups/create',            [BackupsController::class, 'createBackup'])->name('backups.create');
+        Route::delete('/sistema/backups/delete/{backup}', [BackupsController::class, 'destroy'])->name('backups.destroy');
+        Route::delete('/sistema/backups/clear',           [BackupsController::class, 'clear'])->name('backups.clear');
+        Route::get('/sistema/backups/download/{backup}',  [BackupsController::class, 'download'])->name('backups.download');
 
         // Settings
         Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
@@ -291,12 +289,22 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
         Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
-        //Route::get('/sistema/configuracion/mercadopago/update',      [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopagp.edit');
+
         Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
         Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
 
+        Route::get('/sistema/configuracion/servicio/variables',                        [ServiceVariablesController::class, 'edit'])->name('settings.service.variable');
+        Route::put('/sistema/configuracion/servicio/variables/update/cutoffday',       [ServiceVariablesController::class, 'updateCutOffDay'])->name('settings.service.variable.update.cuttoffday');
+        Route::put('/sistema/configuracion/servicio/variables/update/exemptionperiod', [ServiceVariablesController::class, 'updateExemptionPeriod'])->name('settings.service.variable.exemptionperiod');
 
+        Route::get('/sistema/configuracion/instalacion',                     [InstallationSettingsController::class, 'index'])->name('settings.installation');
+        Route::get('/sistema/configuracion/instalacion/create',              [InstallationSettingsController::class, 'create'])->name('settings.installation.create');
+        Route::get('/sistema/configuracion/instalacion/show/{id}',           [InstallationSettingsController::class, 'show'])->name('settings.installation.show');
+        Route::post('/sistema/configuracion/instalacion/store',              [InstallationSettingsController::class, 'store'])->name('settings.installation.store');
+        Route::get('/sistema/configuracion/instalacion/edit/{id}',           [InstallationSettingsController::class, 'edit'])->name('settings.installation.edit');
+        Route::put('/sistema/configuracion/instalacion/update/{id}',         [InstallationSettingsController::class, 'update'])->name('settings.installation.update');
+        Route::delete('/sistema/configuracion/instalacion/delete/{id}',      [InstallationSettingsController::class, 'destroy'])->name('settings.installation.destroy');
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
@@ -326,7 +334,7 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/tecnico/routers/show/{id}',        [TechnicalRouterController::class, 'show'])->name('technical.routers.show');
 
         Route::get('/tecnico/routers/{id}/sync',        [TechnicalRouterController::class, 'sync'])->name('technical.routers.sync');
-        Route::get('/tecnico/routers/ping/{id}',     [TechnicalRouterController::class, 'sendPing'])->name('technical.routers.ping');
+        Route::get('/tecnico/routers/ping/{id}',        [TechnicalRouterController::class, 'sendPing'])->name('technical.routers.ping');
 
         // -- devices
         Route::get('/tecnico/routers/{router}/devices',     [TechnicalRouterController::class, 'devices'])->name('technical.routers.devices');

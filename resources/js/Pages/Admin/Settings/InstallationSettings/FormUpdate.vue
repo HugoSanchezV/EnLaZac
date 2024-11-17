@@ -1,45 +1,52 @@
 <script setup>
+import { onMounted, ref } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
-import {ref, onMounted, toRefs} from 'vue';
-import { useToast, TYPE, POSITION } from "vue-toastification";
-
-import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-
+import GoogleMaps from '@/Components/GoogleMaps.vue'
 
 const props = defineProps({
-  contracts: {
-    type: Array,
-
-  },
+  installation: Object,
+  contracts: Array,
 });
 
 const form = useForm({
-  contract_id: "",
-  description: "",
+  contract_id: "0",
+  description: "0",
   assigned_date: "",
 });
 
-const submit = () => {form.post(route("installation.store"));};
+onMounted(() => {
+  if (props.installation) {
+    form.contract_id = props.installation.contract_id || "";
+    form.description = props.installation.description || "";
+    form.assigned_date = props.installation.assigned_date || "";
+  }
+});
+
+const submit = () => {
+  form.put(route("installation.update", { id: props.installation }));
+};
+
 </script>
 
+
 <template>
-  <div class="mt-5">
+  <div class="mt-5 pl-5 pr-5">
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
-        <InputLabel for="contract_id" value="ID del contrato" />
+        <InputLabel for="contract_id" value="ID del Usuario" />
         <div class="mt-2">
             <select
               v-model="form.contract_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option v-if="contracts.length === 0" disabled value="">No hay registro de contratos</option>
+              <option v-if="contracts.length === 0" disabled value="">No hay registro de usuarios</option>
               <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ contract.id + " - " + contract.device.device.user.name }}
+                  {{ contract.id + " - " + contract.user.name }}
               </option>
             </select>
         </div>
@@ -103,6 +110,7 @@ const submit = () => {form.post(route("installation.store"));};
     </form>
   </div>
 </template>
+
 <style scoped>
 .switch {
   position: relative;

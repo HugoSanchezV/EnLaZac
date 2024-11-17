@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("installation.destroy", id);
+          const url = route("settings.installation.create", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -44,15 +44,12 @@ const destroy = (id) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "contract_id":
-      return "Contrato";
-      break;
-    case "description":
-      return "Descripción";
+    case "installation_id":
+      return "Usuario";
       break;
 
-    case "assigned_date":
-      return "Fecha Asignada";
+    case "exemption_months":
+      return "Mes Extendido";
       break;
 
     default:
@@ -210,15 +207,7 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-              <div v-if="cellIndex === 'description'">
-                <div v-if="cell === '1'">
-                  <h2>Instalación en el domicilio</h2>
-                </div>
-                <div v-if="cell === '2'">
-                  <h2>Cambio de domicilio</h2>
-                </div>
-              </div>
-              <div v-else class="flex gap-1">
+              <div  class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span
                 >
@@ -251,17 +240,8 @@ const getTag = (cellIndex) => {
                 Mostrar
               </Link>
               <Link
-                :href="route('settings.installation.edit', row.id)"
-                v-if="show"
-                class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-              <span class="material-symbols-outlined" style="font-size: 16px;"> edit_calendar </span>
-
-                Primer pago
-              </Link>
-              <Link
                 v-if="edit"
-                :href="route('installation.edit', row.id)"
+                :href="route('settings.installation.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg
@@ -314,7 +294,6 @@ const getTag = (cellIndex) => {
   
   <script>
 import { Link, router } from "@inertiajs/vue3";
-import RouterTable from "@/Pages/Admin/Routers/RouterTable.vue";
 export default {
   components: {
     Link,
@@ -355,7 +334,7 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentInstallation: "todos",
+      currentInstallationSettings: "todos",
       currentOrder: "ASC",
     };
   },
@@ -386,18 +365,18 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentInstallation,
+        type: this.currentInstallationSettings,
         order: this.currentOrder,
       });
     },
 
-    selectInstallation(installation) {
-      this.currentInstallation = installation;
+    selectInstallationSettings(installationSettings) {
+      this.currentInstallationSettings = installationSettings;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentInstallation,
+        type: this.currentInstallationSettings,
         order: this.currentOrder,
       });
     },
@@ -407,7 +386,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentInstallation,
+        type: this.currentInstallationSettings,
         order: this.currentOrder,
       });
     },

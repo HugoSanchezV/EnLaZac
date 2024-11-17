@@ -52,4 +52,9 @@ class ServiceController extends Controller
             'totalServicesCount' => $totalServicesCount 
         ]);
     }
+
+    public function getCutOffDay()
+    {
+        
+    }
 }

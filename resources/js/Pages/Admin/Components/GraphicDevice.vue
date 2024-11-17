@@ -110,8 +110,6 @@ const byteMax = () => {
     }else{
       const MaxUploadByte = Math.max(...props.upload_byte); 
       const AvgUploadByte = avgByteUpload();
-      console.log(AvgUploadByte+ " :    "+props.upload_byte);
-
       const CurrentUploadByte = props.upload_byte[props.upload_byte.length-1];
       document.getElementById('avg-byte-upload'+props.type).textContent = (AvgUploadByte*1024).toFixed(5);
       document.getElementById('tasa-byte-upload'+props.type).textContent = MaxUploadByte;
@@ -127,8 +125,6 @@ const byteMax = () => {
     }else{
       const MaxDownloadByte = Math.max(...props.download_byte);
       const AvgDownloadByte = avgByteDownload();
-      console.log(AvgDownloadByte+ " :    "+props.download_byte);
-
       const CurrentDownloadByte = props.download_byte[props.download_byte.length-1];
       document.getElementById('avg-byte-download'+props.type).textContent = (AvgDownloadByte*1024).toFixed(5);
       document.getElementById('tasa-byte-download'+props.type).textContent = MaxDownloadByte;
@@ -145,7 +141,6 @@ const rateMax = () => {
 
       const MaxUploadRate = Math.max(...props.upload_rate); 
       const AvgUploadRate = avgRateUpload();
-      console.log(AvgUploadRate);
       const CurrentUploadRate = props.upload_rate[props.upload_rate.length-1];
       document.getElementById('avg-rate-upload'+props.type).textContent = (AvgUploadRate*1024).toFixed(5);
       document.getElementById('tasa-rate-upload'+props.type).textContent = MaxUploadRate;
@@ -159,7 +154,6 @@ const rateMax = () => {
     }else{
       const MaxDownloadRate = Math.max(...props.download_rate);
       const AvgDownloadRate = avgRateDownload();
-      console.log(AvgDownloadRate);
       const CurrentDownloadRate = props.download_rate[props.download_rate.length-1];
       document.getElementById('avg-rate-download'+props.type).textContent = (AvgDownloadRate*1024).toFixed(5);
       document.getElementById('tasa-rate-download'+props.type).textContent = MaxDownloadRate;
@@ -187,10 +181,17 @@ const chartByteInstance = ref(null);
 
 onMounted(async () => {
   await nextTick();
+
+  if(props.type == 'Year'){
+
+    console.log(props.target);
+  }
   const ctxRate = document.getElementById("rateGraphic" + props.type);
   const ctxByte = document.getElementById("byteGraphic" + props.type);
 
-  setFomartTarget();
+ 
+      setFomartTarget();
+    
 
   rateMax();
   byteMax();

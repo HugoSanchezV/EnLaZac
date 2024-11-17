@@ -83,6 +83,7 @@ class ContractController extends Controller
                 'total' => $contract->total(),
             ],
             'success' => session('success') ?? null,
+            'error' => session('error') ?? null,
             'totalContractsCount' => $totalContractsCount
         ]);
     }
@@ -197,19 +198,34 @@ class ContractController extends Controller
         $devices_used = Device::with('inventorieDevice')->whereNotNull('device_id')->whereNotNull('user_id')->get();
 
         $inv_devices = $devices_used->pluck('inventorieDevice');
+        //dd();
         // $inv_devices_ids = $inv_devices->pluck('id');
         $device_no_contract = Contract::all();
-
+       // dd("dssd");
 
         $available_devices = [];
-        foreach ($inv_devices as $device) {
-            // Filtrar la colección de contratos para ver si el inv_device_id coincide con el id del dispositivo
-            foreach ($device_no_contract as $value) {
-                if(!($device->id === $value->id)) {
-                    $available_devices[] = $device;
+        //dd($device_no_contract->count());
+        ///dd($inv_devices);
+        if($device_no_contract->count() !== 0){
+
+            foreach ($inv_devices as $device) {
+                // Filtrar la colección de contratos para ver si el inv_device_id coincide con el id del dispositivo
+                foreach ($device_no_contract as $value) {
+                    //dd($device->id);
+                    if(!($device->inv_device_id === $value->id)) {
+                        $available_devices[] = $device;
+                    }
                 }
             }
+        }else{
+           // dd("QQui");
+            foreach ($inv_devices as $device) {
+                // Filtrar la colección de contratos para ver si el inv_device_id coincide con el id del dispositivo
+               
+                $available_devices [] = $device;
+            }
         }
+//dd($available_devices);
 
 
         // $available_devices = $inv_devices->filter(function ($device) use ($device_no_contract) {
@@ -238,24 +254,28 @@ class ContractController extends Controller
 
     public function store(StoreContractRequest $request)
     {
+        try{
 
-        //dd('LLega aqui');
-        $validatedData = $request->validated();
-        $contract = Contract::create([
-            'device_id' => $validatedData['device_id'],
-            'plan_id' => $validatedData['plan_id'],
-            'start_date' => $validatedData['start_date'],
-            'end_date' => $validatedData['end_date'],
-            'active' => $validatedData['active'],
-            'address' => $validatedData['address'],
-            'rural_community_id' => $validatedData['rural_community_id'],
-            'geolocation' => $validatedData['geolocation'],
-        ]);
-
-        self::createCharge($contract);
-        //     RuralCommunityService::update($id, $request->community);
-
-        return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
+            //dd('LLega aqui');
+            $validatedData = $request->validated();
+            $contract = Contract::create([
+                'device_id' => $validatedData['device_id'],
+                'plan_id' => $validatedData['plan_id'],
+                'start_date' => $validatedData['start_date'],
+                'end_date' => $validatedData['end_date'],
+                'active' => $validatedData['active'],
+                'address' => $validatedData['address'],
+                'rural_community_id' => $validatedData['rural_community_id'],
+                'geolocation' => $validatedData['geolocation'],
+            ]);
+    
+            self::createCharge($contract);
+            //     RuralCommunityService::update($id, $request->community);
+    
+            return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
+        }catch(Exception $e){
+            return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato');
+        }
     }
     private function createCharge($contract)
     {

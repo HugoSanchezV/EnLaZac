@@ -62,7 +62,6 @@ const submit = () => {
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
-        <h2>Interes por fecha de corte: </h2>
         <div class="mt-2">
           <InputLabel for="period" value="Periodo" />
 

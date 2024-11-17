@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exemption_periods', function (Blueprint $table) {
+        Schema::create('installation_settings', function (Blueprint $table) {
             $table->id();
-            $table->integer('start_day'); // Fecha de inicio de exención
-            $table->integer('end_day');   // Fecha de fin de exención
-            $table->integer('month_next');
-            $table->integer('month_after_next');
+            $table->foreignId('installation_id')->constrained('installations')->onDelete('set null'); // Relación con cliente
+            $table->integer('exemption_months')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exemption_periods');
+        Schema::dropIfExists('installation_settings');
     }
 };

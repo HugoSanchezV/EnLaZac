@@ -3,27 +3,25 @@ import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
-  installation: Object,
+  installationSettings: Object,
   pagination: Object,
-  totalInstallationCount: Number,
+  totalInstallationSettingsCount: Number,
 });
 
-const { installation } = toRefs(props);
+const { installationSt } = toRefs(props);
 // const toRouteExport = "contracts.excel";
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
   "id",
-  "contrato",
-  'descripción',
-  "fecha asignada",
+  "usuario",
+  "mes extendido",
 ];
 
 const headers = [
   "Id",
-  "Contracto",
-  "Descripción",
-  "Fecha asignada",
+  "Usuario",
+  "Mes Extendido",
   "Acciones",
 ];
 </script>
@@ -33,36 +31,27 @@ const headers = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Instalaciones</h2>
+          <h2>Configuración de Instalación</h2>
         </div>
-        <div class="flex gap-2">
+        <div>
           <Link
-            :href="route('settings.installation')"
-            method="get"
-            class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
-          >
-            <span class="material-symbols-outlined" style="font-size: 16px;"> edit_calendar </span>
-
-             Primer Mes - Plazo
-          </Link>
-          <Link
-            :href="route('installation.create')"
+            :href="route('settings.installation.create')"
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
             <span class="material-symbols-outlined" style="font-size: 16px;"> settings_input_antenna </span>
 
-            Crear Instalación
+            Crear Instalación Personalizada
           </Link>
         </div>
       </div>
     </template>
     <template v-slot:content>
       <div>
-        <div v-if="props.totalInstallationCount > 0">
+        <div v-if="props.totalInstallationSettingsCount > 0">
           <!-- <base-export-excel :toRouteExport="toRouteExport"></base-export-excel> -->
           <!-- Esta es el inicio de la tabla -->
-          <base-table-installations
+          <base-table-installation-settings
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -70,14 +59,14 @@ const headers = [
             :edit="true"
             :del="true"
             @search="search"
-          ></base-table-installations>
+          ></base-table-installation-settings>
           <!-- Este es el fin de la tabla -->
           <base-pagination
-            v-if="installation.data.length > 0"
-            :links="installation.links"
+            v-if="installationSettings.data.length > 0"
+            :links="installationSettings.links"
             :pagination="pagination"
-            :current="installation.current_page"
-            :total="installation.last_page"
+            :current="installationSettings.current_page"
+            :total="installationSettings.last_page"
             :data="{
               q: q,
               attribute: attribute,
@@ -103,26 +92,26 @@ const headers = [
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableInstallations from "@/Components/Base/BaseTableInstallations.vue";
+import BaseTableInstallationSettings from "@/Components/Base/BaseTableInstallationSettings.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {
   components: {
     Link,
     DashboardBase,
-    BaseTableInstallations,
+    BaseTableInstallationSettings,
     BasePagination,
   },
 
   props: {
-    installation: Object,
+    installationSettings: Object,
     pagination: Object,
-    totalInstallationCount: Number,
+    totalInstallationSettingsCount: Number,
   },
 
   data() {
     return {
-      rows: this.installation.data,
+      rows: this.installationSettings.data,
       q: "",
       attribute: "id",
       type: "todos",
@@ -131,7 +120,7 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("installation");
+      const link = route("settings.installation");
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
@@ -142,15 +131,11 @@ export default {
         this.attribute = "id";
       }
 
-      if (this.attribute === "contrato") {
-        this.attribute = "contract_id";
+      if (this.attribute === "usuario") {
+        this.attribute = "installation_id";
       }
-      if (this.attribute === "descripción") {
-        this.attribute = "description";
-      }
-
-      if (this.attribute === "fecha asignada") {
-        this.attribute = "assigned_date";
+      if (this.attribute === "mes extendido") {
+        this.attribute = "exemption_months";
       }
 
       this.$inertia.get(
@@ -166,8 +151,8 @@ export default {
     },
   },
   watch: {
-    installation() {
-      this.rows = this.installation.data;
+    installationSettings() {
+      this.rows = this.installationSettings.data;
     },
   },
 };

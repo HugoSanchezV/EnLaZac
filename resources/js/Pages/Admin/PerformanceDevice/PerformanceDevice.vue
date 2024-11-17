@@ -36,8 +36,8 @@ const props = defineProps({
 });
 
 onMounted( () => {
-  console.log(props.weekPerformance);
-  console.log(props.todayPerformance);
+  // console.log(props.weekPerformance);
+  // console.log(props.todayPerformance);
 });
 </script>
 <style>

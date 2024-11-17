@@ -70,19 +70,26 @@ class ChargeController extends Controller
                 'total' => $charges->total(),
             ],
             'success' => session('success') ?? null,
+            'error' => session('error') ?? null,
             'totalChargesCount' => $totalChargesCount
         ]);
     }
 
     public function edit($id)
     {
-        $charge = Charge::findOrFail($id);
-        $contracts = Contract::with('device', 'plan')->get();
+        try{
 
-        return Inertia::render('Admin/Charges/Edit', [
-            'charge' => $charge,
-            'contracts' => $contracts,
-        ]);
+            $charge = Charge::findOrFail($id);
+            $contracts = Contract::with('device', 'plan')->get();
+    
+            return Inertia::render('Admin/Charges/Edit', [
+                'charge' => $charge,
+                'contracts' => $contracts,
+            ]);
+        }catch(Exception $e)
+        {
+            return redirect()->route('charges')->with('error', 'Hubo un error al obtener la información del registro');
+        }
     }
     public function update(UpdateChargeRequest $request, $id)
     {

@@ -21,6 +21,7 @@
     "dependencies": {
         "@googlemaps/js-api-loader": "^1.16.8",
         "chart.js": "^4.4.4",
+        "flatpickr": "^4.6.13",
         "vue-toastification": "^2.0.0-rc.5"
     }
 }

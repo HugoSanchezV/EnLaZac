@@ -6,6 +6,7 @@ use App\Http\Requests\Installation\StoreInstallationRequest;
 use App\Http\Requests\Installation\UpdateInstallationRequest;
 use App\Models\Contract;
 use App\Models\Installation;
+use App\Models\InstallationSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
@@ -68,7 +69,7 @@ class InstallationController extends Controller
         // ->whereNotIn('id', $contractIds)
         // ->orWhere('id', $installation->contract_id)
         // ->get();
-        $contracts = Contract::with('user')->get();
+        $contracts = Contract::with('device.device.user')->get();
         
         
         return Inertia::render('Admin/Installation/Edit', [
@@ -90,7 +91,8 @@ class InstallationController extends Controller
         
         // $contractIds = Installation::select('contract_id')->get();
         // $contracts = Contract::with('user')->whereNotIn('id', $contractIds)->get();
-        $contracts = Contract::with('user')->get();
+        $contracts = Contract::with('device.device.user')->get();
+       // dd($contracts);
         return Inertia::render('Admin/Installation/Create',[
             'contracts' => $contracts
         ]);
@@ -98,22 +100,18 @@ class InstallationController extends Controller
     public function store(StoreInstallationRequest $request)
     {   
         $validatedData = $request->validated();
-        $installation = Installation::create([
+        $installation =  Installation::create([
             'contract_id' => $validatedData['contract_id'],
             'description' => $validatedData['description'],
             'assigned_date' => $validatedData['assigned_date'],
         ]);
+
+        InstallationSetting::create([
+            'installation_id' => $installation->id,
+        ]);
         
       //  $this->setFirstMonthPayment($installation);
         return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
-    }
-    public function setFirstMonthPayment($installation)
-    {
-        $date = Carbon::parse($installation->assigned_date);
-        if($date->day > 16)
-        {
-            
-        }
     }
     
     public function destroy($id)
