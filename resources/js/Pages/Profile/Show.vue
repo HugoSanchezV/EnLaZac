@@ -14,7 +14,7 @@ defineProps({
 </script>
 
 <template>
-    <AppLayoutAdmin title="Profile">
+    <AppLayoutAdmin title="Perfil">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Configura tu perfil

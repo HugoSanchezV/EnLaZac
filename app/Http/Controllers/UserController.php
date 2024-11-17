@@ -128,7 +128,6 @@ class UserController extends Controller
             ];
         }
 
-        dd($contracts);
         return Inertia::render('Admin/Users/Show', [
             'user' => $user,
             'ticket' => Ticket::where('user_id', $id)->count(),
