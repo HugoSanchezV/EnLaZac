@@ -95,6 +95,7 @@ class PlanController extends Controller
         return Inertia::render('Coordi/Plans/Show', [
             'plan' => $plan,
         ]);
+        
     }
 
     public function create()

@@ -1,44 +1,56 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
+import { defineProps } from 'vue';
+import { FaRegIdBadge, FaRegListAlt, FaRegFileAlt, FaRegClock, FaRegCalendarAlt, FaRegChartBar } from 'vue-icons/fa'; // Ejemplo de importación de íconos
+
 const props = defineProps({
     plan: {
         type: Object,
-        required: true,  // El usuario es obligatorio
+        required: true,  
     },
 });
-
-
 </script>
 
 <template>
-  <!-- Contenedor principal con estilo para mostrar la información del usuario -->
-  <div class="bg-white shadow-md rounded-lg border border-gray-200">
-    <!-- Encabezado de la tarjeta de información del usuario -->
-    <div class="px-6 py-4 bg-gray-50">
-      <h3 class="text-lg leading-6 font-semibold text-gray-800">Información del Plan</h3>
-      <p class="mt-1 text-sm text-gray-500">Detalles sobre el plan</p>
+  <!-- Contenedor principal con estilo mejorado -->
+  <div class="bg-white shadow-lg rounded-xl border border-gray-200 transition-transform transform hover:scale-105">
+    <!-- Encabezado de la tarjeta con color primario -->
+    <div class="px-6 py-5 bg-blue-600 rounded-t-xl">
+      <h3 class="text-xl font-semibold text-white">Información del Plan</h3>
+      <p class="mt-1 text-sm text-blue-200">Detalles completos sobre el plan seleccionado</p>
     </div>
-    <!-- Contenido del contrato del usuario -->
-    <div class="border-t border-gray-100 px-6 py-4">
-      <!-- Lista de detalles sobre el usuario en un diseño de rejilla -->
-      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <!-- Contenido del plan -->
+    <div class="border-t border-gray-200 px-6 py-6">
+      <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         
-        <!-- Muestra el nombre del usuario -->
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Id</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ plan.id }}</dd>
+        <!-- Id del plan -->
+        <div class="flex items-start">
+          <FaRegIdBadge class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">ID del Plan</dt>
+            <dd class="mt-1 text-lg text-gray-800">{{ plan.id }}</dd>
+          </div>
         </div>
 
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Nombre del plan</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ plan.name}}</dd>
+        <!-- Nombre del plan -->
+        <div class="flex items-start">
+          <FaRegListAlt class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Nombre del Plan</dt>
+            <dd class="mt-1 text-lg text-gray-800">{{ plan.name }}</dd>
+          </div>
         </div>
 
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Descripsion</dt>
-          <dd class="mt-1 text-sm text-gray-900">{{ plan.description }}</dd>
+        <!-- Descripción del plan -->
+        <div class="flex items-start">
+          <FaRegFileAlt class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Descripción</dt>
+            <dd class="mt-1 text-lg text-gray-800">{{ plan.description }}</dd>
+          </div>
         </div>
 
+<<<<<<< Updated upstream
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Rafaga limite</dt>
           <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.burst_limit.upload_limits }}</dd>
@@ -61,38 +73,70 @@ const props = defineProps({
           <dt class="text-sm font-medium text-gray-600">limite maximo</dt>
           <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.max_limit.upload_limits}}</dd>
           <dd class="mt-1 text-sm text-gray-900">Bajada: {{ plan.max_limit.download_limits}}</dd>
+=======
+        <!-- Límite de ráfaga -->
+        <div class="flex items-start">
+          <FaRegClock class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Límite de Ráfaga</dt>
+            <dd class="mt-1 text-lg text-gray-800">{{ plan.burst_limit }}</dd>
+          </div>
+        </div>
+
+        <!-- Tiempo de ráfaga -->
+        <div class="flex items-start">
+          <FaRegCalendarAlt class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Tiempo de Ráfaga</dt>
+            <dd class="mt-1 text-lg text-gray-800">{{ plan.burst_time }}</dd>
+          </div>
+        </div>
+
+        <!-- Límite del plan -->
+        <div class="flex items-start">
+          <FaRegChartBar class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Límite</dt>
+            <dd class="mt-1 text-lg text-gray-800">{{ plan.limite_at }}</dd>
+          </div>
+>>>>>>> Stashed changes
         </div>
 
       </dl>
+      <!-- Botón de acción -->
+      <div class="mt-6 text-right">
+        <Link href="/planes/{{ plan.id }}" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+          Ver Detalles
+        </Link>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
-</script>
 <style scoped>
-/* Estilos personalizados para el componente */
-.bg-gray-50 {
-  background-color: #f9fafb;  /* Fondo gris claro */
+/* Estilos personalizados adicionales */
+
+.bg-blue-600 {
+  background-color: #3b82f6; /* Azul vibrante */
 }
 
-.text-gray-900 {
-  color: #1f2937;  /* Texto gris oscuro */
+.text-blue-600 {
+  color: #3b82f6; /* Azul vibrante */
 }
 
-.text-gray-600 {
-  color: #4b5563;  /* Texto gris medio */
+.text-blue-200 {
+  color: #bfdbfe; /* Azul claro */
 }
 
-.border-gray-100 {
-  border-color: #f3f4f6;  /* Borde gris claro */
+.transition-transform {
+  transition: transform 0.3s ease;
 }
 
-.border-gray-200 {
-  border-color: #e5e7eb;  /* Borde gris */
+.hover\:scale-105:hover {
+  transform: scale(1.05);
 }
 
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);  /* Sombra para la tarjeta */
+.hover\:bg-blue-700:hover {
+  background-color: #1d4ed8; /* Azul más oscuro */
 }
 </style>
