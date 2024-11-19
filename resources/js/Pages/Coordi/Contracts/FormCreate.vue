@@ -8,6 +8,11 @@ import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
+import flatpickr from "flatpickr";
+
+import { monthSelectPlugin } from "flatpickr/dist/plugins/monthSelect";
+import monthSelect from 'flatpickr/dist/plugins/monthSelect';
+import "flatpickr/dist/plugins/monthSelect/style.css";
 
 
 const props = defineProps({
@@ -31,7 +36,7 @@ const props = defineProps({
 //const selectedUser = ref(null);
 
 const form = useForm({
-  device_id: "",
+  inv_device_id: "",
   plan_id: "",
   start_date: "",
   end_date: "",
@@ -63,6 +68,18 @@ const getPosition = () =>{
     });
   }
 }
+function addMonth(dateString) {
+  const [year, month] = dateString.split("-").map(Number); // Divide "2024-11" en año y mes
+  const date = new Date(year, month - 1); // Crea un objeto Date (mes indexado desde 0)
+
+  date.setMonth(date.getMonth() + 1); // Sumar un mes
+
+  // Formatea la nueva fecha a "Y-m"
+  const newYear = date.getFullYear();
+  const newMonth = String(date.getMonth() + 1).padStart(2, "0"); // Mes con dos dígitos
+
+  return `${newYear}-${newMonth}`;
+}
 onMounted(() => {
   getPosition();
   // Obtener el input de fecha
@@ -71,17 +88,37 @@ onMounted(() => {
   // Inicializar el valor con el día 5 del mes actual
   const today = new Date();
   //alert(today);
-  form.start_date = setDayToFive(today);
-  onDateChange();
 
-  // // Escuchar los cambios del input
-  // datePicker.addEventListener('change', function(event) {
-  //     // Obtener la fecha seleccionada por el usuario
-  //     const selectedDate = new Date(event.target.value);
-  //     // Forzar el día 5 en la fecha seleccionada
-  //     event.target.value = setDayToFive(selectedDate);});
+  flatpickr("#start_date", {
+      plugins: [
+      monthSelect({
+              shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
+              dateFormat: "Y-m", // Formato de valor en el input
+              altFormat: "F Y", // Formato de valor alternativo mostrado
+              theme: "dark" // Tema oscuro
+          })
+      ],
+      defaultDate: form.start_date || null, // Establece un valor predeterminado si existe
+      onChange: function (selectedDates, dateStr) {
+       // alert(dateStr);
+        form.start_date = dateStr; // Asigna el valor al formato "m.y"
+        form.end_date = addMonth(form.start_date);
+      //  console.log("Fecha seleccionada:", form.start_date.value);
+      },
+  });
+  flatpickr("#end_date", {
+      plugins: [
+      monthSelect({
+              shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
+              dateFormat: "Y-m", // Formato de valor en el input
+              altFormat: "F Y", // Formato de valor alternativo mostrado
+              theme: "dark" // Tema oscuro
+          })
+      ]
+  });
+  // form.start_date = setDayToFive(today);
+  // onDateChange();
 
-  //  console.log(form.start_date);
 
 });
 const getCurrentLocation = () =>
@@ -90,13 +127,13 @@ const getCurrentLocation = () =>
    form.geolocation.longitude = lng;
     getPosition();
 }
-const onDateChange= () =>{
-  // console.log("ENTRA");
-  // Imprimir la fecha seleccionada en la consola
-  const date = new Date(form.start_date);
-  date.setMonth(date.getMonth() + 1);
-  form.end_date = date.toISOString().split('T')[0];
-  }
+// const onDateChange= () =>{
+//   // console.log("ENTRA");
+//   // Imprimir la fecha seleccionada en la consola
+//   const date = new Date(form.start_date);
+//   date.setMonth(date.getMonth() + 1);
+//   form.end_date = date.toISOString().split('T')[0];
+//   }
 
 const showWarning = (id) => {
   const toast = useToast();
@@ -127,35 +164,28 @@ const submit = () => {
   } else {
     form.active = false;
   }
-  if(form.device_id == "" || form.plan_id == "" || form.rural_community_id == "")
-  {
-    showWarning();
-  }else{
+
     console.log(form);
     form.post(route("contracts.store"));
-  }
+
+
 
 };
 
 
- // Función para siempre seleccionar el día 5 del mes
- function setDayToFive(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
-  const day = '05'; // Forzar el día 5
-  return `${year}-${month}-${day}`;
-}
+
+
+
 </script>
 
 <template>
   <div class="mt-5">
-    {{ devices }}
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
-        <InputLabel for="device_id" value="ID del dispositivo" />
+        <InputLabel for="inv_device_id" value="ID del dispositivo" />
         <div class="mt-2">
             <select
-              v-model="form.device_id"
+              v-model="form.inv_device_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
               <option v-if="devices.length === 0" disabled value="">No hay dispositivos con usuario</option>
@@ -165,7 +195,7 @@ const submit = () => {
               </option>
             </select>
         </div>
-        <InputError class="mt-2" :message="form.errors.device_id" />
+        <InputError class="mt-2" :message="form.errors.inv_device_id" />
       </div>
 
       <div class="mt-4">
@@ -200,28 +230,30 @@ const submit = () => {
         </div>
         <InputError class="mt-2" :message="form.errors.rural_community_id" />
       </div>
+      
       <div class="mt-4 flex justify-between">
         <div>
           <InputLabel for="start_date" value="Fecha de Inicio" />
-          <TextInput
+          <input
             id="start_date"
             v-model="form.start_date"
-            type="date"
-            class="mt-1 block w-full"
+            type="text"
+            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
             required
             autofocus
             autocomplete="start_date"
             @input="onDateChange"
           />
+          
           <InputError class="mt-2" :message="form.errors.start_date" />
         </div>
         <div>
           <InputLabel for="end_date" value="Fecha de Terminación" />
-          <TextInput
+          <input
             id="end_date"
             v-model="form.end_date"
-            type="date"
-            class="mt-1 block w-full"
+            type="text"
+            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
             required
             autofocus
             autocomplete="end_date"

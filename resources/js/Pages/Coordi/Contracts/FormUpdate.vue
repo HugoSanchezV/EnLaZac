@@ -6,6 +6,8 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import GoogleMaps from '@/Components/GoogleMaps.vue'
+import monthSelect from 'flatpickr/dist/plugins/monthSelect';
+import "flatpickr/dist/plugins/monthSelect/style.css";
 
 const props = defineProps({
   contract: Object,
@@ -15,7 +17,7 @@ const props = defineProps({
 });
 
 const form = useForm({
-  device_id: "",
+  inv_device_id: "",
   plan_id: "",
   start_date: "",
   end_date: "",
@@ -29,9 +31,23 @@ const form = useForm({
 });
 const lat = ref(null);
 const lng = ref(null); 
+
+
+function addMonth(dateString) {
+  const [year, month] = dateString.split("-").map(Number); // Divide "2024-11" en año y mes
+  const date = new Date(year, month - 1); // Crea un objeto Date (mes indexado desde 0)
+
+  date.setMonth(date.getMonth() + 1); // Sumar un mes
+
+  // Formatea la nueva fecha a "Y-m"
+  const newYear = date.getFullYear();
+  const newMonth = String(date.getMonth() + 1).padStart(2, "0"); // Mes con dos dígitos
+
+  return `${newYear}-${newMonth}`;
+}
 onMounted(() => {
   if (props.contract) {
-    form.device_id = props.contract.device_id || "";
+    form.inv_device_id = props.contract.inv_device_id || "";
     form.plan_id = props.contract.plan_id || "";
     form.address = props.contract.address || "";
     form.start_date = props.contract.start_date || "";
@@ -46,6 +62,36 @@ onMounted(() => {
   {
     document.getElementById('activated').checked = true;
   }
+
+  flatpickr("#start_date", {
+      plugins: [
+      monthSelect({
+              shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
+              dateFormat: "Y-m", // Formato de valor en el input
+              altFormat: "F Y", // Formato de valor alternativo mostrado
+              theme: "dark" // Tema oscuro
+          })
+      ],
+      defaultDate: form.start_date || null, // Establece un valor predeterminado si existe
+      onChange: function (selectedDates, dateStr) {
+       // alert(dateStr);
+        form.start_date = dateStr; // Asigna el valor al formato "m.y"
+        form.end_date = addMonth(form.start_date);
+      //  console.log("Fecha seleccionada:", form.start_date.value);
+      },
+  });
+  flatpickr("#end_date", {
+      plugins: [
+      monthSelect({
+              shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
+              dateFormat: "Y-m", // Formato de valor en el input
+              altFormat: "F Y", // Formato de valor alternativo mostrado
+              theme: "dark" // Tema oscuro
+          })
+      ]
+  });
+  // form.start_date = setDayToFive(today);
+  // onDateChange();
 });
 
 const updateStatus = () =>{
@@ -75,15 +121,16 @@ const submit = () => {
   <div class="mt-5 pl-5 pr-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>
-        <InputLabel for="device_id" value="ID del Usuario" />
+        <InputLabel for="inv_device_id" value="ID del Usuario" />
         <div class="mt-2">
             <select
-              v-model="form.device_id"
+              v-model="form.inv_device_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option value="null" selected>Selecciona una opción</option>
+              <option v-if="devices.length === 0" disabled value="">No hay dispositivos con usuario</option>
+              <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="device in devices" :key="device.id" :value="device.id">
-                  {{ device.id + " - " + device.address }}
+                  {{ device.id + " - " + device.mac_address }}
               </option>
             </select>
         </div>
@@ -109,24 +156,26 @@ const submit = () => {
       <div class="mt-4 flex justify-between">
         <div>
           <InputLabel for="start_date" value="Fecha de Inicio" />
-          <TextInput
+          <input
             id="start_date"
             v-model="form.start_date"
-            type="date"
-            class="mt-1 block w-full"
+            type="text"
+            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
             required
             autofocus
             autocomplete="start_date"
+            @input="onDateChange"
           />
+          
           <InputError class="mt-2" :message="form.errors.start_date" />
         </div>
         <div>
           <InputLabel for="end_date" value="Fecha de Terminación" />
-          <TextInput
+          <input
             id="end_date"
             v-model="form.end_date"
-            type="date"
-            class="mt-1 block w-full"
+            type="text"
+            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
             required
             autofocus
             autocomplete="end_date"

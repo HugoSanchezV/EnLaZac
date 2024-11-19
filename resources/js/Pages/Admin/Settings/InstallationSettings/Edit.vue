@@ -2,16 +2,17 @@
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div class="flex justify-between">
-        <h2 v-if="title === 'device-stats'">Configurar la obtención de estadísiticas de los dispositivos</h2>
-        <h2 v-if="title === 'ping-routers'">Configurar el envio de pings a los routers</h2>
-        <h2 v-if="title === 'check-contracts'">Configurar la verificación de los contratos</h2>
+        <h2>Editar Instalación</h2>
+        <span
+          class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md"
+          >{{ installationSetting.id}}</span>
       </div>
     </template>
 
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :task="task" :title="title"/>
+          <FormUpdate :installationSetting="installationSetting" :installation="installation"/>
         </div>
       </div>
     </template>
@@ -28,14 +29,14 @@ export default {
     DashboardBase,
   },
   props: {
-    task: {
+    installationSetting: {
       type: Object,
       required: true,
     },
-    title:{
-      type: String,
+    installation: {
+      type: Object,
       required: true,
-    }
+    },
   },
 };
 </script>

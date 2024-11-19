@@ -94,11 +94,11 @@ class RouterOSService
             $this->disconnect();
     
             
-            
         }else{
            // dd("nulo");
             return null;
         }
+        //dd($trafficData);
         // Retornar los datos de tráfico
         return $trafficData;
         // Obtener el tráfico de las colas simples

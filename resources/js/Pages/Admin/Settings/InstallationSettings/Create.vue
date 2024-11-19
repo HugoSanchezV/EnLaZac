@@ -1,10 +1,10 @@
 <script setup>
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import Form from "./FormCreate.vue";
-
+import Installation from "../../Installation/Installation.vue";
 const props = defineProps({
-  contracts: {
-    type: Object,
+  installations: {
+    type: Array,
   },
 });
 
@@ -20,7 +20,7 @@ const props = defineProps({
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :contracts="contracts" />
+          <Form :installations="installations"/>
         </div>
       </div>
     </template>

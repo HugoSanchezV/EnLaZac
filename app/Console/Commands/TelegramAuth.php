@@ -36,6 +36,6 @@ class TelegramAuth extends Command
         //     $this->error('Error al iniciar sesión: ' . $e->getMessage());
         // }
 
-        // return 0;
+         return 0;
     }
 }

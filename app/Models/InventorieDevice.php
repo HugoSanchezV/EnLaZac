@@ -10,6 +10,7 @@ class InventorieDevice extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'mac_address',
         'status',
         'description',
@@ -18,7 +19,7 @@ class InventorieDevice extends Model
 
     public function device()
     {
-        return $this->hasOne(Device::class, 'id');
+        return $this->hasOne(Device::class, 'device_id', 'id');
     }
     public function histories()
     {
