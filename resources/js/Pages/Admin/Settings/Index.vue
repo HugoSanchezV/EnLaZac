@@ -162,7 +162,7 @@ import { Link } from "@inertiajs/vue3";
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="size-7"
+                  class="size-10"
                 >
                   <path
                     stroke-linecap="round"
@@ -171,7 +171,7 @@ import { Link } from "@inertiajs/vue3";
                   />
                 </svg>
 
-                <span>Segundo plano</span>
+                <span class="text-md">Segundo plano</span>
               </div>
             </Link>
           </div>
@@ -179,17 +179,6 @@ import { Link } from "@inertiajs/vue3";
         <div>
           <h2 class="m-2">Variables de cobro</h2>
           <div class="block md:flex">
-            <Link :href="route('settings.interest')">
-              <div
-                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
-              >
-                <span class="material-symbols-outlined" style="font-size: 30px">
-                  attach_money
-                </span>
-
-                <span>Intereses</span>
-              </div>
-            </Link>
             <Link :href="route('settings.service.variable')">
               <div
                 class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
@@ -201,6 +190,7 @@ import { Link } from "@inertiajs/vue3";
                 <span>Variable del servicio</span>
               </div>
             </Link>
+
             <Link :href="route('settings.installation')">
               <div
                 class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
@@ -212,10 +202,20 @@ import { Link } from "@inertiajs/vue3";
                 <span>Configurar Variable de Instalación</span>
               </div>
             </Link>
-          </div>
-          
-        </div>
 
+            <Link :href="route('settings.interest')">
+              <div
+                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
+              >
+                <span class="material-symbols-outlined" style="font-size: 30px">
+                  attach_money
+                </span>
+
+                <span>Configurar Intereses</span>
+              </div>
+            </Link>
+          </div>
+        </div>
       </div>
       <div class="block md:flex gap-6">
         <div>
@@ -225,7 +225,7 @@ import { Link } from "@inertiajs/vue3";
               <div
                 class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
               >
-                <span class="material-symbols-outlined"  style="font-size: 35px;">
+                <span class="material-symbols-outlined" style="font-size: 35px">
                   settings_account_box
                 </span>
 

@@ -36,7 +36,6 @@ use App\Http\Controllers\MercadoPagoDataController;
 use App\Http\Controllers\MercadoPagoSettingController;
 use App\Http\Controllers\PaymentHistorieController;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ServiceVariablesController;
@@ -212,7 +211,7 @@ Route::middleware([
         Route::get('/inventorie/devices/histories/to/excel',             [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
         //Tickets coordi
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
-        Route::post('/tickets/statusUpdate/{id}',[TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
+        Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
         Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
         Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
         Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
@@ -310,7 +309,6 @@ Route::middleware([
         Route::put('/sistema/configuracion/instalacion/update/{id}',         [InstallationSettingsController::class, 'update'])->name('settings.installation.update');
         Route::delete('/sistema/configuracion/instalacion/delete/{id}',      [InstallationSettingsController::class, 'destroy'])->name('settings.installation.destroy');
         Route::get('/sistema/configuracion/instalacion/edit/from/installation{id}',           [InstallationSettingsController::class, 'editFromInstallation'])->name('settings.installation.edit.installation');
-
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
@@ -408,19 +406,5 @@ Route::middleware([
         Route::get('/pagos/local/check/',                     [LocalPayController::class, 'checkStatus'])->name('local.pay.check');
         Route::delete('/pagos/local/delete/{id}',                     [LocalPayController::class, 'destroy'])->name('local.pay.delete');
         // Route::post('/pagos/local/store',                     [LocalPayController::class, 'store'])->name('local.pay.store');
-    });
-
-
-    Route::get('/test-mail', function () {
-        $htmlContent = "
-            <h1>¡Bienvenido!</h1>
-            <p>Gracias por unirte a nuestra plataforma. Esperamos que disfrutes de la experiencia.</p>
-            <p>Saludos,<br>El equipo de Laravel</p>
-        ";
-
-        Mail::html($htmlContent, function ($message) {
-            $message->to('l20030020@fresnillo.tecnm.mx')
-                ->subject('¡Bienvenido a nuestra plataforma!');
-        });
     });
 });

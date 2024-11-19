@@ -28,7 +28,7 @@ class PayController extends Controller
             //dd($device);
             $deviceIds = $device->pluck('id');
             //  dd($deviceIds);
-            $contracts = Contract::with('plan', 'device')->where('device_id', $deviceIds)->get();
+            $contracts = Contract::with('plan', 'inventorieDevice')->where('device_id', $deviceIds)->get();
             // dd($contracts);
             if ($contracts->isEmpty()) {
                 // Si no hay contratos, inicializar valores
@@ -47,6 +47,7 @@ class PayController extends Controller
                 'contracts' => $contracts,
             ]);
         } catch (Exception $e) {
+            dd($e->getMessage());
             return Redirect::route('dashboard')->with('error', 'No fue posible cargar los pagos');
         }
     }
