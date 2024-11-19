@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\PaymentReceived;
+use App\Services\PaymentService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class MercadoPagoController extends Controller
 {
@@ -18,25 +21,30 @@ class MercadoPagoController extends Controller
 
         // Token de acceso a Mercado Pago
         $accessToken = "APP_USR-1185876763191395-110614-ff589a305022fcfd67c464b58d746b18-2080399408";
-        
+
         // Detalles del producto como un array de items
-        $items = [
-            [
-                "title" => "Producto de ejemplo",
+        $items = [];
+
+        foreach ($request->cart as $item) {
+            $items[] = [
+                "title" => $item["description"],
+                "description" => $item["type"] . " " .  ($item["months"] ?? ""),
+                "id" => $item["id"],
                 "quantity" => 1,
-                "unit_price" => 100.0,
+                "unit_price" => $item["amount"],
                 "currency_id" => "MXN"
-            ]
-        ];
+            ];
+            //$item["amount"]
+        }
 
-        // Información del comprador
+        $user = Auth::user();
+
         $payer = [
-            "name" => "hols",
-            "surname" => "hugo",
-            "email" => "i@admin.com",
+            "name" => $user->name,
+            "surname" => $user->alias ?? $user->name,
+            "email" => $user->email,
         ];
 
-        // Crear los datos de la solicitud de preferencia
         $requestData = [
             "items" => $items,
             "payer" => $payer,
@@ -49,7 +57,7 @@ class MercadoPagoController extends Controller
                 "success" => route('mercadopago.success'),
                 "failure" => route('mercadopago.failed')
             ],
-            "notification_url" => "https://abcd1234.ngrok.io/mercadopago/webhook", // Cambia esta URL cada vez que reinicies ngrok
+            "notification_url" => route('mercadopago.webhook'), // Cambia esta URL cada vez que reinicies ngrok
             "statement_descriptor" => "Servicio de red",
             "external_reference" => "1234567890",
             "expires" => false,
@@ -126,5 +134,100 @@ class MercadoPagoController extends Controller
             Log::error('Error al obtener el estado del pago', ['message' => $e->getMessage()]);
             return null;
         }
+    }
+
+    public function success(Request $request)
+    {
+
+        $data = self::getPayment($request);
+
+        $items = [];
+
+        foreach ($data["additional_info"]["items"] as $item) {
+            if (trim($item["description"]) === "charge") {
+
+                $items[] = [
+                    "description" => $item["title"],
+                    "type" => trim($item["description"]),
+                    "amount" => $item["unit_price"],
+                    "id" => $item["id"],
+                ];
+            } else {
+                $id_contract = explode("-", $item["id"]);
+                $contract_and_months = explode(" ", $item["description"]);
+
+                $items[] = [
+                    "description" => $item["title"],
+                    "months" => intval($contract_and_months[1]),
+                    "type" => trim($contract_and_months[0]),
+                    "amount" => $item["unit_price"],
+                    "contractId" => $id_contract[0],
+                ];
+            }
+        }
+        self::update(
+            $data["transaction_amount"],
+            $items,
+            $request->collection_id,
+        );
+
+        return Redirect::route('pays')->with('success', 'Se ha realizado el pago, graicas por estarr con nosotros');
+    }
+
+    public function getPayment(Request $request)
+    {
+        // Obtén el payment_id o collection_id del request
+        $paymentId = $request->input('collection_id');
+
+        // Access token de Mercado Pago (asegúrate de protegerlo)
+        $accessToken = env('MERCADO_PAGO_ACCESS_TOKEN'); // Usa una variable de entorno para mayor seguridad
+
+        // URL para consultar el pago
+        $url = "https://api.mercadopago.com/v1/payments/{$paymentId}";
+
+        // Configurar la solicitud cURL
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer {$accessToken}"
+        ]);
+
+        // Ejecutar la solicitud
+        $response = curl_exec($ch);
+
+        // Manejar errores
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            return response()->json(['error' => 'Error al consultar Mercado Pago: ' . $error], 500);
+        }
+
+        // Cerrar la conexión cURL
+        curl_close($ch);
+
+        // Decodificar la respuesta JSON
+        return json_decode($response, true);
+    }
+
+    public function failed(Request $request)
+    {
+        return Redirect::route('pays')->with('error', 'Hubo un error, no se realizo el pago');
+    }
+
+    public function update($amount, $cart, $transaction)
+    {
+        $payment = new PaymentService();
+
+
+        $payment->createPayment(
+            $amount,
+            $cart,
+            $transaction,
+            "https://www.mercadopago.com.mx/activities/1?q=" . $transaction,
+            "Mercado Pago",
+            "Mercado Pago",
+        );
+        $payment->updateDataPayments($cart);
     }
 }

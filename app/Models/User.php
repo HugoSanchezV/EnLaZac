@@ -83,4 +83,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(PaymentHistorie::class);
     }
+
+    public function localPay()
+    {
+        return $this->hasMany(LocalPay::class);
+    }
 }

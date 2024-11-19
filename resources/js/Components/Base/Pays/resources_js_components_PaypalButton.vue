@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Contenedor principal para centrar -->
     <div id="paypal-button-container"></div>
   </div>
 </template>
@@ -33,7 +34,8 @@ export default {
           const response = await axios.post("/api/paypal/create-order", {
             amount: this.totalAmount,
           });
-          console.log(response);
+          console.log(this.allCart);
+
           return response.data.id;
         },
 
@@ -41,10 +43,8 @@ export default {
           const response = await axios.post("/api/paypal/capture-order", {
             orderID: data.orderID,
             amount: this.totalAmount,
-            mounths: this.selectedMonths,
-            contract: this.contract,
             charges: this.cartCharge,
-            cart: this.allCart
+            cart: this.allCart,
           });
 
           const toast = useToast();
@@ -56,8 +56,6 @@ export default {
                 draggable: true,
               }
             );
-
-            
           } else {
             toast.error("No se realizo el pago", {
               position: POSITION.TOP_CENTER,

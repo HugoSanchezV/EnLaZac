@@ -126,7 +126,6 @@ class BackupsController extends Controller
 
     public function createBackup(Request $request)
     {
-
         try {
             $databaseName = env('DB_DATABASE');
             $username = env('DB_USERNAME');

@@ -29,6 +29,7 @@ use App\Http\Controllers\TechnicalRouterController;
 use App\Http\Controllers\TechnicalTicketController;
 use App\Http\Controllers\MailSettingController;
 use App\Http\Controllers\InstallationController;
+use App\Http\Controllers\LocalPayController;
 use App\Http\Controllers\MercadoPagoController;
 use App\Http\Controllers\MercadoPagoDataController;
 use App\Http\Controllers\MercadoPagoSettingController;
@@ -58,61 +59,61 @@ Route::middleware([
 ])->group(function () {
 
 
-   
+
     //Mercado Pago
     Route::middleware(['auth', 'verified'])->group(function () {
-    // Route::get('/settings/mercadopago', [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
-    // Route::post('/settings/mercadopago', [MercadoPagoSettingController::class, 'store'])->name('settings.mercadopago.store');
-    // Route::put('/settings/mercadopago', [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
-    // Route::delete('/settings/mercadopago/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('settings.mercadopago.destroy');
-    
-});
+        // Route::get('/settings/mercadopago', [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
+        // Route::post('/settings/mercadopago', [MercadoPagoSettingController::class, 'store'])->name('settings.mercadopago.store');
+        // Route::put('/settings/mercadopago', [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
+        // Route::delete('/settings/mercadopago/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('settings.mercadopago.destroy');
+
+    });
 
     // Rutas para MercadoPagoController
-Route::post('/create-preference', [MercadoPagoController::class, 'createPaymentPreference']);
-Route::get('/mercadopago/success', [MercadoPagoController::class, 'success'])->name('mercadopago.success');
-Route::get('/mercadopago/failed', [MercadoPagoController::class, 'failed'])->name('mercadopago.failed');
-Route::post('/mercadopago/webhook', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
+    Route::post('/mercadopago/create-preference', [MercadoPagoController::class, 'createPaymentPreference'])->name('mercadopago.create');
+    Route::get('/mercadopago/success', [MercadoPagoController::class, 'success'])->name('mercadopago.success');
+    Route::get('/mercadopago/failed', [MercadoPagoController::class, 'failed'])->name('mercadopago.failed');
+    Route::post('/mercadopago/webhook', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
 
-// Rutas para MercadoPagoSettingController
-Route::prefix('settings')->name('settings.')->middleware('auth')->group(function () {
-    Route::prefix('mercadopago')->name('mercadopago.')->group(function () {
-        // Mostrar el formulario de edición de configuraciones
-        Route::get('/edit', [MercadoPagoSettingController::class, 'edit'])->name('edit');
-        
-        // Guardar una nueva configuración
-        Route::post('/store', [MercadoPagoSettingController::class, 'store'])->name('store');
-        
-        // Mostrar una configuración específica
-        Route::get('/{id}', [MercadoPagoSettingController::class, 'show'])->name('show');
-        
-        // Actualizar una configuración existente
-        Route::put('/update', [MercadoPagoSettingController::class, 'update'])->name('update');
-        
-        // Eliminar una configuración
-        Route::delete('/destroy/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('destroy');
+    // Rutas para MercadoPagoSettingController
+    Route::prefix('settings')->name('settings.')->middleware('auth')->group(function () {
+        Route::prefix('mercadopago')->name('mercadopago.')->group(function () {
+            // Mostrar el formulario de edición de configuraciones
+            Route::get('/edit', [MercadoPagoSettingController::class, 'edit'])->name('edit');
+
+            // Guardar una nueva configuración
+            Route::post('/store', [MercadoPagoSettingController::class, 'store'])->name('store');
+
+            // Mostrar una configuración específica
+            Route::get('/{id}', [MercadoPagoSettingController::class, 'show'])->name('show');
+
+            // Actualizar una configuración existente
+            Route::put('/update', [MercadoPagoSettingController::class, 'update'])->name('update');
+
+            // Eliminar una configuración
+            Route::delete('/destroy/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('destroy');
+        });
     });
-});
 
-// Rutas para MercadoPagoDataController
-Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('auth')->group(function () {
-    // Listar todas las transacciones
-    Route::get('/', [MercadoPagoDataController::class, 'index'])->name('index');
-    
-    // Crear una nueva transacción
-    Route::post('/', [MercadoPagoDataController::class, 'store'])->name('store');
-    
-    // Mostrar una transacción específica
-    Route::get('/{id}', [MercadoPagoDataController::class, 'show'])->name('show');
-    
-    // Actualizar una transacción específica
-    Route::put('/{id}', [MercadoPagoDataController::class, 'update'])->name('update');
-    
-    // Eliminar una transacción específica
-    Route::delete('/{id}', [MercadoPagoDataController::class, 'destroy'])->name('destroy');
-});
+    // Rutas para MercadoPagoDataController
+    Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('auth')->group(function () {
+        // Listar todas las transacciones
+        Route::get('/', [MercadoPagoDataController::class, 'index'])->name('index');
 
-     Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
+        // Crear una nueva transacción
+        Route::post('/', [MercadoPagoDataController::class, 'store'])->name('store');
+
+        // Mostrar una transacción específica
+        Route::get('/{id}', [MercadoPagoDataController::class, 'show'])->name('show');
+
+        // Actualizar una transacción específica
+        Route::put('/{id}', [MercadoPagoDataController::class, 'update'])->name('update');
+
+        // Eliminar una transacción específica
+        Route::delete('/{id}', [MercadoPagoDataController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
     //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
@@ -296,7 +297,9 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
         Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
 
-
+        Route::get('/pagos/local/index',                     [LocalPayController::class, 'search'])->name('local.pay.search');
+        Route::get('/pagos/local/cobro/show/{id}',                     [LocalPayController::class, 'showAdmin'])->name('local.pay.cobro.show');
+        Route::post('/pagos/local/confirm/{token}',                     [LocalPayController::class, 'confirmLocalPay'])->name('local.pay.confirm');
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);
@@ -386,6 +389,14 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
 
 
         Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
+        Route::get('/mecadopago/success',                     [MercadoPagoController::class, 'success']);
+        Route::get('/mecadopago/failed',                     [MercadoPagoController::class, 'failed']);
+
+        Route::post('/pagos/local/store',                     [LocalPayController::class, 'store'])->name('local.pay.store');
+        Route::get('/pagos/local/show/{id}',                     [LocalPayController::class, 'show'])->name('local.pay.show');
+        Route::get('/pagos/local/check/',                     [LocalPayController::class, 'checkStatus'])->name('local.pay.check');
+        Route::delete('/pagos/local/delete/{id}',                     [LocalPayController::class, 'destroy'])->name('local.pay.delete');
+        // Route::post('/pagos/local/store',                     [LocalPayController::class, 'store'])->name('local.pay.store');
     });
 
 

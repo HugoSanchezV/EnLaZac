@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentHistorie extends Model
 {
     use HasFactory;
-    public $fillable =[
+    public $fillable = [
         'id',
         'user_id',
-        'contract_id',
+        'worker',
         'amount',
         'content',
         'payment_method',
@@ -19,7 +19,12 @@ class PaymentHistorie extends Model
         'receipt_url',
     ];
 
-    public function user() {
+    protected $casts = [
+        'content' => 'array',
+    ];
+
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

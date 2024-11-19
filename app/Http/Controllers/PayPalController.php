@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Auth;
 use App\Services\PaymentService;
 use Exception;
@@ -16,9 +17,6 @@ class PayPalController extends Controller
     {
         // Log::info('Este es el log');
         // $token = "";
-        Log::info(Auth::id());
-
-
         try {
             $paypalModule = new PayPalClient;
 
@@ -34,7 +32,7 @@ class PayPalController extends Controller
                     [
                         "amount" => [
                             "currency_code" => "MXN",
-                            "value" => '1.0'
+                            "value" => strval($request->amount)
                         ]
                     ]
                 ]
@@ -58,6 +56,10 @@ class PayPalController extends Controller
 
     public function captureOrder(Request $request)
     {
+        Log::info("Entre al metodo");
+        Log::info(json_encode($request->all()));
+        Log::info("estas en el final de todo ");
+
         try {
 
             $paypalModule = new PayPalClient;
@@ -83,14 +85,11 @@ class PayPalController extends Controller
             // Log::info("Arriba log");
 
             if ($response['status'] === 'COMPLETED') {
-                // self::update(
-                //     $request->amount,
-                //     $request->mounths,
-                //     $request->contract,
-                //     $request->charges,
-                //     $request->cart,
-                //     $transaction_id,
-                // );
+                self::update(
+                    $request->amount,
+                    $request->cart,
+                    $transaction_id,
+                );
 
                 // return redirect()->route('pays')->with('success', 'Se ha realizado la operación con éxito');
                 return response()->json(['status' => 'success'], 200);
@@ -98,29 +97,31 @@ class PayPalController extends Controller
             }
         } catch (Exception $e) {
             Log::info("Error al hacer el pago " . $e->getMessage());
-            Log::info("" );
+            Log::info("");
             // return response()->json(['status' => 'error'], 500);
             return redirect()->route('pays')->with('error', 'Hubo un problema al procesar el pago. Inténtalo de nuevo.');
         }
     }
-    public function update($amount, $months, $contract, $charges, $cart, $transaction)
+    public function update($amount, $cart,  $transaction)
     {
         $payment = new PaymentService();
 
         $payment->createPayment(
             $amount,
-            $contract,
             $cart,
             $transaction,
-            "https://www.paypal.com/activity/payment/{$transaction}"
+            "https://www.paypal.com/activity/payment/{$transaction}",
+            "PayPal"
         );
 
-        if ($months > 0) {
-            $payment->updateContract($contract, $months);
-        }
+        // if ($months > 0) {
+        //     $payment->updateContract($contract, $months);
+        // }
 
-        if (count($charges) > 0) {
-            $payment->updateCharge($charges);
-        }
+        // if (count($charges) > 0) {
+        //     $payment->updateCharge($charges);
+        // }
+
+        $payment->updateDataPayments($cart);
     }
 }

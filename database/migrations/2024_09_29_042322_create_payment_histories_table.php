@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('payment_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('contract_id')->constrained('contracts');
+            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->string('worker');
             $table->decimal('amount', 10, 2);
-            $table->text('content');
+            $table->json('content');
             $table->string('payment_method');
             $table->string('transaction_id')->unique();
             $table->string('receipt_url');

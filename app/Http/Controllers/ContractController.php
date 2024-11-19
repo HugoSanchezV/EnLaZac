@@ -119,7 +119,6 @@ class ContractController extends Controller
                     ->orWhereHas('ruralCommunity', function ($communityQuery) use ($search) {
                         $communityQuery->where('name', 'like', "%$search%");
                     });
-                    
             });
         }
 
@@ -205,7 +204,7 @@ class ContractController extends Controller
         foreach ($inv_devices as $device) {
             // Filtrar la colección de contratos para ver si el inv_device_id coincide con el id del dispositivo
             foreach ($device_no_contract as $value) {
-                if(!($device->id === $value->id)) {
+                if (!($device->id === $value->id)) {
                     $available_devices[] = $device;
                 }
             }
@@ -303,18 +302,23 @@ class ContractController extends Controller
 
     public function updateMonths($months, $id)
     {
-        $contract = Contract::findOrFail($id);
-        $today = Carbon::today();
+        try {
+            $contract = Contract::findOrFail($id);
+            $today = Carbon::today();
 
-        //if($today->day >  ) 
-        // Convertir `end_date` a una instancia de Carbon para manipular la fecha
-        $endDate = Carbon::parse($contract->end_date);
+            //if($today->day >  ) 
+            // Convertir `end_date` a una instancia de Carbon para manipular la fecha
+            $endDate = Carbon::parse($contract->end_date);
 
-        // Sumar los meses a la fecha de finalización
-        $contract->end_date = $endDate->addMonths($months);
+            // Sumar los meses a la fecha de finalización
+            $contract->end_date = $endDate->addMonths(intval($months));
 
-        // Guardar los cambios
-        $contract->save();
+            // Guardar los cambios
+            $contract->save();
+        } catch (Exception $e) {
+            Log::info("Error en updateMonths " . $e->getMessage());
+            return throw new Exception($e->getMessage());
+        }
     }
 
     public function destroy(Request $request, $id)

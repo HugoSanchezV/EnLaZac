@@ -105,6 +105,7 @@ const menuItems = ref([
       { name: "Estadísticas", route: "dashboard" },
       { name: "Pagos", route: "payment" },
       { name: "Proximos a corte", route: "reaming.contracts" },
+      { name: "Cobro local", route: "local.pay.search" },
     ],
   },
   {

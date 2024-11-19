@@ -3,129 +3,172 @@
 import DashboardBase from "@/Pages/DashboardBase.vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
-import GetData from "./GetData.vue"
+import GetData from "./GetData.vue";
 
 const props = defineProps({
-  charges:{
-    type: Array
+  charges: {
+    type: Array,
   },
-  contracts:{
-    type: Object
-  }
+  contracts: {
+    type: Object,
+  },
 });
-
-
-
 </script>
 
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:content>
-    <div class="flex justify-start w-full">
-      <div class="w-full">
-      <!-- Selección de meses -->
-      <div class="contracts-table mt-5">
-        <h3>Contratos del Usuario</h3>
-        <table class="table-auto w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th class="border border-gray-300 p-2">ID</th>
-              <th class="border border-gray-300 p-2">Fecha de Inicio</th>
-              <th class="border border-gray-300 p-2">Fecha de Fin</th>
-              <th class="border border-gray-300 p-2">Precio</th>
-              <th class="border border-gray-300 p-2">Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="contract in contracts" :key="contract.id">
-              <td class="border border-gray-300 p-2">{{ contract.id }}</td>
-              <td class="border border-gray-300 p-2">{{ contract.start_date }}</td>
-              <td class="border border-gray-300 p-2">{{ contract.end_date }}</td>
-              <td class="border border-gray-300 p-2">{{ formatCurrency(contract.plan.price) }}</td>
-              <td class="border border-gray-300 p-2">
-                <select v-model="selectedMonthsPerContract[contract.id]" class="border border-gray-400 p-1 mr-2">
-                  <option value="0">--Seleccionar meses--</option>
-                  <option v-for="n in 12" :key="n" :value="n">{{ n }} mes(es)</option>
-                </select>
-                <button
-                  class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
-                  :disabled="isInCart(contract.id)"
-                  @click="addContractToCart(contract)"
-                >
-                  {{ isInCart(contract.id) ? 'Ya agregado' : 'Agregar al carrito' }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="m-5 flex flex-wrap lg:flex-nowrap gap-5">
+        <!-- Sección de las tablas -->
+        <div class="flex-1 w-2/3 bg-white shadow rounded-lg p-5">
+          <!-- Tabla de contratos -->
+          <div class="contracts-table mt-5">
+            <h3 class="text-lg font-bold mb-3">Contratos del Usuario</h3>
+            <table
+              class="table-auto w-full border-collapse border border-gray-300 text-sm"
+            >
+              <thead>
+                <tr>
+                  <th class="border border-gray-300 p-2">ID</th>
+                  <th class="border border-gray-300 p-2">Fecha de Inicio</th>
+                  <th class="border border-gray-300 p-2">Fecha de Fin</th>
+                  <th class="border border-gray-300 p-2">Precio</th>
+                  <th class="border border-gray-300 p-2">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="contract in contracts" :key="contract.id">
+                  <td class="border border-gray-300 p-2">{{ contract.id }}</td>
+                  <td class="border border-gray-300 p-2">
+                    {{ contract.start_date }}
+                  </td>
+                  <td class="border border-gray-300 p-2">
+                    {{ contract.end_date }}
+                  </td>
+                  <td class="border border-gray-300 p-2">
+                    {{ formatCurrency(contract.plan.price) }}
+                  </td>
+                  <td
+                    class="border border-gray-300 p-2 flex items-center gap-2"
+                  >
+                    <select
+                      v-model="selectedMonthsPerContract[contract.id]"
+                      class="border border-gray-400 p-1"
+                    >
+                      <option value="0">--Seleccionar meses--</option>
+                      <option v-for="n in 12" :key="n" :value="n">
+                        {{ n }} mes(es)
+                      </option>
+                    </select>
+                    <button
+                      class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+                      :disabled="isInCart(contract.id)"
+                      @click="addContractToCart(contract)"
+                    >
+                      {{
+                        isInCart(contract.id)
+                          ? "Ya agregado"
+                          : "Agregar al carrito"
+                      }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-      <!-- Tabla de cargos generados -->
-      <div v-if="charges !== 0" class="client-charges">
-        <h3>Cargos del Cliente</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Descripción</th>
-              <th>Monto</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="charge in charges" :key="charge.id">
-              <td>{{ charge.description }}</td>
-              <td>{{ formatCurrency(charge.amount) }}</td>
-              <td>
-                <button :disabled="isInCart(charge.id)" @click="addChargeToCart(charge)">
-                  {{ isInCart(charge.id) ? 'Ya agregado' : 'Agregar al carrito' }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <!-- Tabla de cargos generados -->
+          <div v-if="charges !== 0" class="client-charges mt-5">
+            <h3 class="text-lg font-bold mb-3">Cargos del Cliente</h3>
+            <table
+              class="table-auto w-full border-collapse border border-gray-300 text-sm"
+            >
+              <thead>
+                <tr>
+                  <th class="border border-gray-300 p-2">Descripción</th>
+                  <th class="border border-gray-300 p-2">Monto</th>
+                  <th class="border border-gray-300 p-2">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="charge in charges" :key="charge.id">
+                  <td class="border border-gray-300 p-2">
+                    {{ charge.description }}
+                  </td>
+                  <td class="border border-gray-300 p-2">
+                    {{ formatCurrency(charge.amount) }}
+                  </td>
+                  <td class="border border-gray-300 p-2">
+                    <button
+                      class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+                      :disabled="isInCart(charge.id)"
+                      @click="addChargeToCart(charge)"
+                    >
+                      {{
+                        isInCart(charge.id)
+                          ? "Ya agregado"
+                          : "Agregar al carrito"
+                      }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-      <!-- Tabla del carrito -->
-      <div class="cart">
-        <h3>Carrito</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Concepto</th>
-              <th>Monto</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in cart" :key="index">
-              <td>{{ item.description }}</td>
-              <td>{{ formatCurrency(item.amount) }}</td>
-              <td><button @click="removeFromCart(index)">Eliminar</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <!-- Tabla del carrito -->
+          <div class="cart mt-5">
+            <h3 class="text-lg font-bold mb-3">Carrito</h3>
+            <table
+              class="table-auto w-full border-collapse border border-gray-300 text-sm"
+            >
+              <thead>
+                <tr>
+                  <th class="border border-gray-300 p-2">Concepto</th>
+                  <th class="border border-gray-300 p-2">Monto</th>
+                  <th class="border border-gray-300 p-2">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in cart" :key="index">
+                  <td class="border border-gray-300 p-2">
+                    {{ item.description }}
+                  </td>
+                  <td class="border border-gray-300 p-2">
+                    {{ formatCurrency(item.amount) }}
+                  </td>
+                  <td class="border border-gray-300 p-2">
+                    <button
+                      class="bg-red-500 text-white px-3 py-1 rounded"
+                      @click="removeFromCart(index)"
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-      <!-- Label del total -->
-      <div class="total-label">
-        <h4>Total a pagar: {{ formatCurrency(totalAmount) }}</h4>
-      </div>
+          <!-- Total -->
+          <div class="total-label mt-5 text-right">
+            <h4 class="text-lg font-bold">
+              Total a pagar: {{ formatCurrency(totalAmount) }}
+            </h4>
+          </div>
+        </div>
 
-      <!-- Botón para realizar el pago -->
-      <button class="pay" @click="processPayment">Realizar Pago</button>
-    </div>
-    <!-- Mensaje de error si no hay artículos en el carrito -->
-  </div>
-  
+        <!-- Sección de métodos de pago -->
+        <div class="w-full md:w-1/3 bg-gray-100 shadow rounded-lg p-5">
+          <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
+          <button class="pay process-payment" @click="processPayment">
+            Realizar Pago
+          </button>
 
-      <div v-if="showPayment">
-        <GetData
-          :totalAmount="totalAmount"
-          :selectedMonths = "selectedMonths"
-          :contract = "contract"
-          :cart = "cart"
-        >
-        </GetData>
+          <div v-if="showPayment">
+            <GetData :totalAmount="totalAmount" :cart="cart"> </GetData>
+          </div>
+        </div>
       </div>
     </template>
   </dashboard-base>
@@ -134,13 +177,13 @@ const props = defineProps({
 export default {
   data() {
     return {
-      selectedMonths: 0,
+      selectedMonths: 1,
       selectedMonthsPerContract: {}, // Para manejar los meses seleccionados por contrato
       cart: [],
       clientCharges: [], // Cargos obtenidos de la base de datos
       totalAmount: 0,
       serviceAdded: false, // Nueva bandera para controlar si ya se ha agregado el servicio
-      paymentError: '',
+      paymentError: "",
       showPayment: false,
     };
   },
@@ -150,60 +193,67 @@ export default {
       const months = this.selectedMonthsPerContract[contract.id] || 0;
       //console.log(contract);
       if (months <= 0) {
-        alert('Por favor selecciona la cantidad de meses a pagar.');
+        alert("Por favor selecciona la cantidad de meses a pagar.");
         return;
       }
-      if (this.isInCart(`${contract.id}-${contract.device.address}`, 'contract')) {
-        alert('Este contrato ya ha sido agregado.');
+
+      if (this.isInCart(`${contract.id}-${contract.device_id}`, "contract")) {
+        alert("Este contrato ya ha sido agregado.");
         return;
       }
 
       const amount = contract.plan.price * months;
 
       this.cart.push({
-        id: `${contract.id}-${contract.device.address}`, // Identificador único
+        id: `${contract.id}-${contract.device_id}`, // Identificador único
         contractId: contract.id, // ID real del contrato para referencia
-        type: 'contract',
+        type: "contract",
+        months: months ?? null,
         description: `Contrato #${contract.id} (${months} mes(es))`,
         amount,
       });
 
       this.calculateTotal();
-      this.selectedMonthsPerContract[contract.id] = 0; // Reiniciar selección
+      this.selectedMonthsPerContract[contract.id] = 0; // Reiniciar selección'
+
+      console.log(this.cart);
     },
     // Función para agregar un cargo de la tabla de cargos al carrito
     addChargeToCart(charge) {
-      if (this.isInCart(charge.id, 'charge')) {
-        alert('Este cargo ya ha sido agregado.');
+      if (this.isInCart(charge.id, "charge")) {
+        alert("Este cargo ya ha sido agregado.");
         return;
       }
 
       this.cart.push({
         id: charge.id,
-        type: 'charge', // Distinción de tipo
+        contract: charge.contract_id,
+        type: "charge", // Distinción de tipo
         description: charge.description,
         amount: charge.amount,
       });
 
       this.calculateTotal();
     },
-    
+
     // Verificar si un cargo ya está en el carrito
     isInCart(itemId, itemType) {
-      return this.cart.some((item) => item.id === itemId && item.type === itemType);
+      return this.cart.some(
+        (item) => item.id === itemId && item.type === itemType
+      );
     },
-    
+
     // Función para remover un artículo del carrito
     removeFromCart(index) {
       const removedItem = this.cart[index];
-      if (removedItem.id === 'service') {
+      if (removedItem.id === "service") {
         this.serviceAdded = false; // Permitir agregar el servicio de nuevo si es eliminado
         this.selectedMonths = 0;
       }
       this.cart.splice(index, 1);
       this.calculateTotal();
     },
-    
+
     // Cálculo del total
     calculateTotal() {
       this.totalAmount = this.cart.reduce((acc, item) => acc + item.amount, 0);
@@ -212,42 +262,45 @@ export default {
         this.showPayment = false;
       }
     },
-    
+
     // Formateo de la moneda
     formatCurrency(value) {
-      return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
+      return new Intl.NumberFormat("es-MX", {
+        style: "currency",
+        currency: "MXN",
+      }).format(value);
     },
-    warning(){
+    warning() {
       const toast = useToast();
-        toast(
-          {
-            component: BaseQuestion,
-            props: {
-              message: "Ya seleccionaste un servicio",
-            },
+      toast(
+        {
+          component: BaseQuestion,
+          props: {
+            message: "Ya seleccionaste un servicio",
           },
-          {
-            type: TYPE.ERROR,
-            position: POSITION.TOP_CENTER,
-            timeout: 10000,
-          }
-        );
+        },
+        {
+          type: TYPE.ERROR,
+          position: POSITION.TOP_CENTER,
+          timeout: 10000,
+        }
+      );
     },
-    error(){
+    error() {
       const toast = useToast();
-        toast(
-          {
-            component: BaseQuestion,
-            props: {
-              message: "¿Selecciona un servicio o cargo?",
-            },
+      toast(
+        {
+          component: BaseQuestion,
+          props: {
+            message: "¿Selecciona un servicio o cargo?",
           },
-          {
-            type: TYPE.ERROR,
-            position: POSITION.TOP_CENTER,
-            timeout: 10000,
-          }
-        );
+        },
+        {
+          type: TYPE.ERROR,
+          position: POSITION.TOP_CENTER,
+          timeout: 10000,
+        }
+      );
     },
     // Función para procesar el pago
     processPayment() {
@@ -256,13 +309,13 @@ export default {
         //this.paymentError = 'Agregar por lo menos un artículo a pagar';
         this.showPayment = false;
       } else {
-        this.paymentError = '';
+        this.paymentError = "";
         this.showPayment = true;
         // Aquí llamarías a un componente o función externa que maneje el proceso de pago
-        console.log('Procesando pago con los siguientes artículos:', this.cart);
+        console.log("Procesando pago con los siguientes artículos:", this.cart);
         // Lógica para continuar con el pago, integración con tu componente de pago
       }
-    }
+    },
   },
 };
 </script>
@@ -336,7 +389,8 @@ table {
   overflow: hidden;
 }
 
-th, td {
+th,
+td {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
