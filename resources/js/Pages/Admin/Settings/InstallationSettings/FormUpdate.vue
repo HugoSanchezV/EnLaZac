@@ -8,79 +8,56 @@ import TextInput from "@/Components/TextInput.vue";
 import GoogleMaps from '@/Components/GoogleMaps.vue'
 
 const props = defineProps({
+  installationSetting: Object,
   installation: Object,
-  contracts: Array,
 });
 
 const form = useForm({
-  contract_id: "0",
-  description: "0",
-  assigned_date: "",
+  exemption_months: "",
 });
 
 onMounted(() => {
-  if (props.installation) {
-    form.contract_id = props.installation.contract_id || "";
-    form.description = props.installation.description || "";
-    form.assigned_date = props.installation.assigned_date || "";
+  if (props.installationSetting) {
+    form.exemption_months = props.installationSetting.exemption_months || "";
   }
 });
 
 const submit = () => {
-  form.put(route("installation.update", { id: props.installation }));
+  form.put(route("settings.installation.update", { id: props.installationSetting }));
 };
 
 </script>
 
-
 <template>
-  <div class="mt-5 pl-5 pr-5">
+  <div class="mt-5">
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
-        <InputLabel for="contract_id" value="ID del Usuario" />
+        <InputLabel for="installation_id" value="ID de la instalación" />
         <div class="mt-2">
-            <select
-              v-model="form.contract_id"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              <option v-if="contracts.length === 0" disabled value="">No hay registro de usuarios</option>
-              <option v-else value="" disabled>Selecciona una opción</option>
-              <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ contract.id + " - " + contract.user.name }}
-              </option>
-            </select>
+          <TextInput
+            id="installation_id"
+            v-model="installation.contract.device.device.user.name"
+            type="text"
+            class="mt-1 block w-full"
+            autofocus
+            readonly  
+          />
         </div>
-        <InputError class="mt-2" :message="form.errors.contract_id" />
-      </div>
-
-      <div class="mt-2">
-        <InputLabel for="description" value="Descripción" />
-        <div class="mt-2">
-            <select
-              v-model="form.description"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              <option disabled value="">Selecciona la descripción</option>
-              <option :value="1">Instalación en el domicilio</option>
-              <option :value="2">Cambio de domicilio</option>
-            </select>
-        </div>
-        <InputError class="mt-2" :message="form.errors.description" />
+        <InputError class="mt-2" :message="form.errors.installation_id" />
       </div>
 
       <div class="mt-2 ">
-          <InputLabel for="assigned_date" value="Fecha Asignada" />
+          <InputLabel for="exemption_months" value="Mes/es asignado" />
           <TextInput
-            id="assigned_date"
-            v-model="form.assigned_date"
-            type="date"
+            id="exemption_months"
+            v-model="form.exemption_months"
+            type="number"
             class="mt-1 block w-full"
-            required
             autofocus
-            autocomplete="assigned_date"
+            autocomplete="exemption_months"
             @input="onDateChange"
           />
-          <InputError class="mt-2" :message="form.errors.assigned_date" />
+          <InputError class="mt-2" :message="form.errors.exemption_months" />
       </div>
 
       <div class="flex items-center justify-end mt-4">
@@ -104,7 +81,7 @@ const submit = () => {
             />
           </svg>
 
-          Enviar Contrato
+          Guardar Configuracion
         </PrimaryButton>
       </div>
     </form>

@@ -34,10 +34,10 @@ class InstallationController extends Controller
             $query->orderBy('id', 'asc');
         }
 
-        $installation = $query->latest()->paginate(8)->through(function ($item) {
+        $installation = $query->with('contract.device.device.user')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'contract_id' => $item->contract_id,
+                'contract_id' => $item->contract->device->device->user->name,
                 'description' => $item->description,
                 'assigned_date' => $item->assigned_date,
             ];
@@ -92,6 +92,7 @@ class InstallationController extends Controller
         // $contractIds = Installation::select('contract_id')->get();
         // $contracts = Contract::with('user')->whereNotIn('id', $contractIds)->get();
         $contracts = Contract::with('device.device.user')->get();
+        dd($contracts);
        // dd($contracts);
         return Inertia::render('Admin/Installation/Create',[
             'contracts' => $contracts

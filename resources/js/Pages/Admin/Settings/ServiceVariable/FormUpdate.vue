@@ -107,7 +107,6 @@ const submitExemptionPeriod = () => {
           <TextInput 
           type="number" 
           class="mt-1 block w-full"
-         
           v-model="formCutOff.day" 
           required
           placeholder="Selecciona un día" />

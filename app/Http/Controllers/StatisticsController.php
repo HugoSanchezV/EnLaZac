@@ -143,13 +143,13 @@ class StatisticsController extends Controller
     }
     public function store(){}
     public function activeContract()
-    {return Contract::with('device','plan')->where('active','1')->get();}
+    {return Contract::where('active','1')->get();}
     
     public function userCount()
     {return User::all();}
 
     public function morrososCount()
-    {return (Contract::with('user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
+    {return (Contract::with('device.device.user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
 
     public function activeDevices()
     {return (Device::where('disabled','0')->get());}

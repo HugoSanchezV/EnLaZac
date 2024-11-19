@@ -25,7 +25,7 @@ class Contract extends Model
         'geolocation'  => 'array',
     ];
 
-    public function device()
+    public function inventorieDevice()
     {
         return $this->belongsTo(InventorieDevice::class, 'inv_device_id');
     }

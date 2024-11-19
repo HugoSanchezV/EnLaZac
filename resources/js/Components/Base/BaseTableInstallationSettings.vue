@@ -23,7 +23,7 @@ const destroy = (id) => {
 
       listeners: {
         accept: () => {
-          const url = route("settings.installation.create", id);
+          const url = route("settings.installation.destroy", id);
 
           router.delete(url, () => {
             onError: (error) => {
@@ -241,7 +241,7 @@ const getTag = (cellIndex) => {
               </Link>
               <Link
                 v-if="edit"
-                :href="route('settings.installation.edit', row.id)"
+                :href="route('settings.installation.edit',row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <svg

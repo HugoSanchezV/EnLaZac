@@ -93,11 +93,18 @@ class ChargeController extends Controller
     }
     public function update(UpdateChargeRequest $request, $id)
     {
-        $charge = Charge::findOrFail($id);
+        try{
 
-        $validatedData = $request->validated();
-        $charge->update($validatedData);
-        return redirect()->route('charges')->with('success', 'Cargo Actualizado Con Éxito');
+            $charge = Charge::findOrFail($id);
+    
+            $validatedData = $request->validated();
+            $charge->update($validatedData);
+            return redirect()->route('charges')->with('success', 'Cargo Actualizado Con Éxito');
+        }catch(Exception $e)
+        {
+            return redirect()->route('charges')->with('error', 'Error Al Actualizar El Cargo');
+
+        }
     }
     public function updatePaid($id)
     {
@@ -132,16 +139,24 @@ class ChargeController extends Controller
         );
     }
     public function store(StoreChargeRequest $request)
-    {
-        Charge::create([
-            'contract_id' => $request->contract_id,
-            'description' => $request->description,
-            'amount' => $request->amount,
-            'paid' => $request->paid,
-            'date_paid' => $request->date_paid,
-        ]);
+    {  
+        try{
 
-        return redirect()->route('charges')->with('success', 'El cargo ha sido creado con éxito');
+            $validatedData = $request->validated();
+            Charge::create([
+                'contract_id' => $validatedData['contract_id'],
+                'description' =>$validatedData['description'],
+                'amount' =>$validatedData['amount'],
+                'paid' => $validatedData['paid'],
+                'date_paid' => $validatedData['date_paid'],
+            ]);
+    
+            return redirect()->route('charges')->with('success', 'El cargo ha sido creado con éxito');
+        }catch(Exception $e)
+        {
+            return redirect()->route('charges')->with('error', 'Hubo un error al crear el cargo');
+
+        }
     }
 
     public function destroy(Request $request, $id)

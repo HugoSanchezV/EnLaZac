@@ -22,10 +22,10 @@ class StoreContractRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'device_id' => 'required|exists:inventorie_devices,id',
+            'inv_device_id' => 'required|exists:inventorie_devices,id',
             'plan_id'=> 'required|exists:plans,id',
-            'start_date'=> 'required',
-            'end_date'=> 'required',
+            'start_date' => 'required|date_format:Y-m', // Fecha de inicio en formato Y-m
+            'end_date' => 'required|date_format:Y-m|after:start_date', // Fecha de fin en formato Y-m y después de start_date
             'active'=> 'required',
             'address'=> 'required|max:100',
             'rural_community_id'=> 'required|exists:rural_communities,id',
@@ -37,10 +37,13 @@ class StoreContractRequest extends FormRequest
     public function messages()
     {
         return [
-            'device.required' => 'El id del dispositivo es un campo obligatorio.',
-            'device.exist' => 'El id del dispositivo debe existir.',
+            'inv_device_id.required' => 'El id del dispositivo es un campo obligatorio.',
+            'inv_device_id.exist' => 'El id del dispositivo debe existir.',
             'plan_id.required' => 'El id del plan de internet es un campo obligatorio.',
             'plan_id.exist' => 'El id del plan de internet debe existir.',
+            'start_date.date_format' => 'La fecha de inicio debe tener el formato Año-Mes (Y-m).',
+            'end_date.date_format' => 'Esta fecha debe tener el formato Año-Mes (Y-m).',
+            'end_date.after' => 'Esta fecha debe ser posterior a la fecha de inicio.',
             'start_date.required' => 'La fecha de inicio es un campo obligatorio.',
             'end_date.required' => 'La fecha de terminación es un campo obligatorio.',
             'address.required' => 'La direccion es un campo obligatorio.',

@@ -22,20 +22,23 @@ const form = useForm({
   exemption_months: "",
 });
 
-const submit = () => {form.post(route("settings.installation.store"));};
+const submit = () => {
+  //alert(form.installation_id);
+  form.post(route("settings.installation.store"));
+  };
 </script>
 
 <template>
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
-        <InputLabel for="contract_id" value="ID de la instalación" />
+        <InputLabel for="installation_id" value="ID de la instalación" />
         <div class="mt-2">
             <select
-              v-model="form.contract_id"
+              v-model="form.installation_id"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option v-if="installations.length === 0" disabled value="">No hay registro de contratos</option>
+              <option v-if="installations.length === 0" disabled value="">No hay registro de instalaciones disponibles</option>
               <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="installation in installations" :key="installation.id" :value="installation.id">
                   {{ installation.id + " - "+ installation.contract.device.device.user.name}}
@@ -52,7 +55,6 @@ const submit = () => {form.post(route("settings.installation.store"));};
             v-model="form.exemption_months"
             type="number"
             class="mt-1 block w-full"
-            required
             autofocus
             autocomplete="exemption_months"
             @input="onDateChange"

@@ -15,6 +15,6 @@ class InstallationSetting extends Model
 
     public function installation()
     {
-        return $this->hasOne(Installation::class);
+        return $this->hasOne(Installation::class, 'id','installation_id');
     }
 }

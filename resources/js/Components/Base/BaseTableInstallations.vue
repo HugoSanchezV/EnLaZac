@@ -251,7 +251,7 @@ const getTag = (cellIndex) => {
                 Mostrar
               </Link>
               <Link
-                :href="route('settings.installation.edit', row.id)"
+                :href="route('settings.installation.edit.installation', row.id)"
                 v-if="show"
                 class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >

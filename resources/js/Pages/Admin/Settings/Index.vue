@@ -174,6 +174,11 @@ import { Link } from "@inertiajs/vue3";
                 <span>Segundo plano</span>
               </div>
             </Link>
+          </div>
+        </div>
+        <div>
+          <h2 class="m-2">Variables de cobro</h2>
+          <div class="block md:flex">
             <Link :href="route('settings.interest')">
               <div
                 class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
@@ -208,8 +213,11 @@ import { Link } from "@inertiajs/vue3";
               </div>
             </Link>
           </div>
+          
         </div>
 
+      </div>
+      <div class="block md:flex gap-6">
         <div>
           <h2 class="m-2">Perfil</h2>
           <div class="block md:flex">
@@ -254,7 +262,6 @@ import { Link } from "@inertiajs/vue3";
             </Link>
           </div>
         </div>
-
       </div>
     </template>
   </dashboard-base>

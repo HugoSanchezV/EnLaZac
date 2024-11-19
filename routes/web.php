@@ -305,6 +305,8 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/sistema/configuracion/instalacion/edit/{id}',           [InstallationSettingsController::class, 'edit'])->name('settings.installation.edit');
         Route::put('/sistema/configuracion/instalacion/update/{id}',         [InstallationSettingsController::class, 'update'])->name('settings.installation.update');
         Route::delete('/sistema/configuracion/instalacion/delete/{id}',      [InstallationSettingsController::class, 'destroy'])->name('settings.installation.destroy');
+        Route::get('/sistema/configuracion/instalacion/edit/from/installation{id}',           [InstallationSettingsController::class, 'editFromInstallation'])->name('settings.installation.edit.installation');
+
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);

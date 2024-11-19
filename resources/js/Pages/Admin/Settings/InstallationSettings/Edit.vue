@@ -5,14 +5,14 @@
         <h2>Editar Instalación</h2>
         <span
           class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md"
-          >{{ installation.id}}</span>
+          >{{ installationSetting.id}}</span>
       </div>
     </template>
 
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :contracts="contracts" :installation="installation"/>
+          <FormUpdate :installationSetting="installationSetting" :installation="installation"/>
         </div>
       </div>
     </template>
@@ -29,12 +29,12 @@ export default {
     DashboardBase,
   },
   props: {
-    installation: {
+    installationSetting: {
       type: Object,
       required: true,
     },
-    contracts: {
-      type: Array,
+    installation: {
+      type: Object,
       required: true,
     },
   },
