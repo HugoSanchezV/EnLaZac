@@ -197,7 +197,7 @@ export default {
         return;
       }
 
-      if (this.isInCart(`${contract.id}-${contract.device_id}`, "contract")) {
+      if (this.isInCart(`${contract.id}-${contract.inv_device_id}`, "contract")) {
         alert("Este contrato ya ha sido agregado.");
         return;
       }

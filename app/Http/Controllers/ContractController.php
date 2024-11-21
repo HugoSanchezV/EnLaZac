@@ -228,6 +228,7 @@ class ContractController extends Controller
             );
         }catch(Exception $e)
         {
+            dd($e);
             return redirect()->route('contracts')->with('error', 'Hubo un error al obtener los registros');
 
         }
@@ -259,6 +260,7 @@ class ContractController extends Controller
     
             return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
         }catch(Exception $e){
+            dd($e);
             return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato');
         }
     }
