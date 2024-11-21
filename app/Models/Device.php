@@ -22,23 +22,16 @@ class Device extends Model
         "creation_time",
         "disabled"
     ];
-
-    public function router() {
-        return $this->belongsTo(Router::class);
-    }
-    public function contract() {
-
-        return $this->hasOne(Contract::class);
+    public function user() {
+        return $this->belongsTo(User::class);
     }
     public function inventorieDevice() {
         return $this->belongsTo(InventorieDevice::class, 'device_id');
     }
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function router() {
+        return $this->belongsTo(Router::class);
     }
 
-    public function contracts () {
-        return $this->hasMany(Contract::class);
-    }
+
 }

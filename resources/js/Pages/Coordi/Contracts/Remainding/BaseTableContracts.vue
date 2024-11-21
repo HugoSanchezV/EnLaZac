@@ -1,86 +1,5 @@
 <script setup>
-import { router } from "@inertiajs/vue3";
-
-import { useToast, TYPE, POSITION } from "vue-toastification";
-
-import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
-
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
-
-const getOriginal = (data) => {
-  if (data.attribute === "id") {
-    return "id";
-  }
-
-  if (data.attribute === "usuario") {
-    return "user_id";
-  }
-
-  if (data.attribute === "plan internet") {
-    return "plan_id";
-  }
-
-  if (data.attribute === "fecha de inicio") {
-    return "start_date";
-  }
-
-  if (data.attribute === "fecha de terminación") {
-    return "end_date";
-  }
-
-  if (data.attribute === "¿activo?") {
-    return "active";
-  }
-
-  if (data.attribute === "dirección") {
-    return "address";
-  }
-  if (data.attribute === "comunidad") {
-    return "community";
-  }
-};
-
-// ACCION DE ELIMINAR
-const extendsDate = (id, data) => {
-  const toast = useToast();
-
-  toast(
-    {
-      component: BaseQuestion,
-      props: {
-        message: "¿Estas seguro de extende el contrato?",
-        accept: true,
-        cancel: true,
-        textConfirm: "Extender",
-      },
-
-      listeners: {
-        accept: () => {
-          const original = getOriginal(data.attribute);
-
-          const url = route("reaming.contracts", {
-            id: id,
-            q: data.searchQuery,
-            attribute: original,
-            order: data.order,
-          });
-
-          router.post(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
-        },
-      },
-    },
-
-    {
-      type: TYPE.WARNING,
-      position: POSITION.TOP_CENTER,
-      timeout: 10000,
-    }
-  );
-};
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
@@ -202,6 +121,22 @@ const getTag = (cellIndex) => {
 
         <!-- Final dfrop nbuton  -->
       </div>
+
+      <div class="flex gap-2 items-center mb-4">
+        <label for="daysRemaining" class="text-sm text-gray-500"
+          >Días restantes:</label
+        >
+        <input
+          type="number"
+          id="daysRemaining"
+          v-model="daysFilter"
+          @input="filterContracts"
+          min="1"
+          placeholder="Ej. 5"
+          class="block p-2 text-sm text-gray-900 border border-gray-300 rounded-lg w-20 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
       <!-- final de filtros -->
       <div class="relative">
         <div
@@ -260,20 +195,7 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'geolocation'">
-              {{
-                typeof cell === "object"
-                  ? JSON.stringify(cell)
-                      .replace(/[{}""]/g, "")
-                      .replace(/[:]/g, ": ")
-                      .replace(/[,]/g, " | ")
-                      .replace("latitude", "Latitud")
-                      .replace("longitude", "Longitud")
-                      .replace("null", "Sin locación")
-                  : String(cell).replace(/[{}]/g, "")
-              }}
-            </div>
-            <div v-else-if="cellIndex === 'active'">
+            <div v-if="cellIndex === 'active'">
               <div v-if="cell === 0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -303,6 +225,19 @@ const getTag = (cellIndex) => {
                 </svg>
               </div>
             </div>
+            <div v-else-if="cellIndex === 'end_date'">
+              <span
+                :class="{
+                  'text-green-500': daysRemaining(row.end_date) > 5,
+                  'text-yellow-500':
+                    daysRemaining(row.end_date) <= 5 &&
+                    daysRemaining(row.end_date) > 1,
+                  'text-red-500': daysRemaining(row.end_date) === 1,
+                }"
+              >
+                {{ daysRemaining(row.end_date) }} días restantes
+              </span> con fecha {{ cell }}
+            </div>
             <div v-else>
               <div class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
@@ -314,55 +249,10 @@ const getTag = (cellIndex) => {
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
-              <!-- <Link
-                href="#"
-                v-if="show"
-                class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-                  />
-                </svg>
-
-                Mostrar
-              </Link> -->
-              <!-- <Link
-                v-if="edit"
-                :href="route('contracts.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                  />
-                </svg>
-
-                Editar
-              </Link> -->
-
-              <div v-if="del">
+              <div>
                 <button
                   @click="
-                    extendsDate(row.id, {
+                    openModal(row.id, {
                       searchQuery: this.searchQuery,
                       attribute: this.currentFilter,
                       order: this.currentOrder,
@@ -381,6 +271,48 @@ const getTag = (cellIndex) => {
         </tr>
       </tbody>
     </table>
+    <div>
+      <div v-if="showExtendModal">
+        <div
+          class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center"
+        >
+          <div class="bg-white p-6 rounded shadow-lg w-96">
+            <h2 class="text-lg font-bold mb-4">
+              <span class="bg-gray-400 text-white px-2 py-1 rounded-md"
+                >ID: {{ selectedContractId }}</span
+              >
+              Extender contrato
+            </h2>
+
+            <label for="extendDays" class="block text-sm mb-2"
+              >Días a extender:</label
+            >
+            <input
+              type="number"
+              id="extendDays"
+              v-model="extendDays"
+              min="1"
+              max="30"
+              class="block w-full p-2 border border-gray-300 rounded"
+            />
+            <div class="mt-4 flex justify-end gap-2">
+              <button
+                @click="closeModal"
+                class="px-4 py-2 bg-white border rounded-md hover:bg-gray-100"
+              >
+                Cancelar
+              </button>
+              <button
+                @click="submitExtension"
+                class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
   
@@ -428,6 +360,10 @@ export default {
       currentFilter: "id",
       currentContract: "todos",
       currentOrder: "ASC",
+      daysFilter: 5,
+      extendDays: 5,
+      showExtendModal: false,
+      selectedContractId: null,
     };
   },
   computed: {
@@ -485,6 +421,85 @@ export default {
 
     filterData() {
       console.log(this.searchQuery);
+    },
+    filterContracts() {
+      const url = route("reaming.contracts", { days: this.daysFilter });
+      router.visit(url, { method: "get", preserveState: true });
+    },
+    openModal(contractId, data) {
+      this.selectedContractId = contractId;
+      this.showExtendModal = true;
+    },
+    closeModal() {
+      this.showExtendModal = false;
+      this.extendDays = 0;
+      this.selectedContractId = null;
+    },
+
+    submitExtension() {
+      const url = route("reaming.contracts.extend", {
+        id: this.selectedContractId,
+      });
+
+      const attributeUrl = this.getOriginal(this.currentFilter);
+      router.post(
+        url,
+        {
+          days: this.extendDays,
+          daysFilter: this.daysFilter,
+          q: this.searchQuery,
+          attribute: attributeUrl,
+          order: this.currentOrder,
+        },
+        {
+          onSuccess: () => {
+            this.$toast.success("Contrato extendido correctamente");
+            this.closeModal();
+          },
+          onError: () => {
+            this.$toast.error("Hubo un error al extender el contrato");
+          },
+        }
+      );
+      this.closeModal();
+    },
+
+    getOriginal(data) {
+      if (data.attribute === "id") {
+        return "id";
+      }
+
+      if (data.attribute === "usuario") {
+        return "user_id";
+      }
+
+      if (data.attribute === "plan internet") {
+        return "plan_id";
+      }
+
+      if (data.attribute === "fecha de inicio") {
+        return "start_date";
+      }
+
+      if (data.attribute === "fecha de terminación") {
+        return "end_date";
+      }
+
+      if (data.attribute === "¿activo?") {
+        return "active";
+      }
+
+      if (data.attribute === "dirección") {
+        return "address";
+      }
+      if (data.attribute === "comunidad") {
+        return "community";
+      }
+    },
+    daysRemaining(endDate) {
+      return Math.ceil(
+        (new Date(endDate) - new Date()) / (1000 * 60 * 60 * 24)
+      );
     },
   },
 };

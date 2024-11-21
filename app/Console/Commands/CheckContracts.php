@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Events\ContractWarningEvent;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\InstallationSettingsController;
+use App\Http\Controllers\ServiceVariablesController;
 use App\Services\ChargeService;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
@@ -42,32 +44,34 @@ class CheckContracts extends Command
         //Verificar por que a partir de las 10 pm, lo toma como el siguiente dia 
 
         $controllerContract = new ContractController();
-
-       // $this->info('DIA DE HOY : '.$diaT);
         
         //END_DATE es igual a la fecha de corte
         $service = new ChargeService();
-
+        $serviceVariable = new ServiceVariablesController();
+        $installationSt = new InstallationSettingsController();
+        $exemption  =  $serviceVariable->getExemptionPeriods();
+        $cutoffday = $serviceVariable->getCutOffDay();
         
         $contractTerms = $controllerContract->getContracts($today);
 
-        //INSERTAR CONSULTA DE PAGOS
         $this->info($contractTerms);
 
-        //INSERTAR CONDICION PARA SABER SI EL USUARIO HA PAGADO
-
-        //Configurar fecha de corte jaajaja
-        // if($diaT == 6){
-
-        // }
-        foreach($contractTerms as $contract){
-            $endDate = Carbon::parse($contract->end_date);
-            if($contract->active == 1){
-                self::checkInstallation($contract, $today, $endDate, $service);
+        if($cutoffday && $exemption){
+            
+            if ($today->day == $serviceVariable->getCutOffDay())
+            {
+                foreach($contractTerms as $contract){
+                    $endDate = Carbon::parse($contract->end_date);
+                    if($contract->active == 1){
+                        self::checkInstallation($contract, $today, $endDate, $service, $exemption, $installationSt);
+                    }
+                }
             }
         }
+
         $this->info('Se han verificado los contratos.');
     }
+
     private function conditional($endDate, $contract, $today, $service)
     {
         if(($endDate->year == $today->year)&&($endDate->month == $today->month)){
@@ -111,53 +115,102 @@ class CheckContracts extends Command
             }
         }
     }
-    private function checkInstallation($contract, $today, $endDate, $service)
+    private function checkInstallation($contract, $today, $endDate, $service, $exemption, $installationSt)
     {
+
+        //Verificar si el contrato tiene una instalación asignada
         if (!$contract->installations->isEmpty()){
 
+            //Iterar cada instalación asignada al contrato
             foreach($contract->installations as $installation)
             {
                 $assigned = Carbon::parse($installation->assigned_date);
-                //Después del 16 -> personalizable
-                if($assigned->year >= $today->year){
 
-                    if(($assigned->day >= 16) && ($assigned->day < 32))
-                    {
-                        //Le cobra no el proximo mes, sino el siguiente
-                        if(self::incomingMonth($assigned, $today, 2, 1, 6)){
-                            self::conditional($endDate, $contract, $today, $service);
-                        }
-    
-                    }else if (($assigned->day >= 6)&&($assigned->day <= 15)){
-                        //Condicionar si paga el siguiente mes o  el proximo
-                        if(self::incomingMonth($assigned, $today, 1, 1,6))
-                        {
-                             self::conditional($endDate, $contract, $today, $service);
-                        }
+                //Después del 16 -> personalizable
+                //if($assigned->year >= $today->year){
+                // BUSCAR SI LA INSTALACION TIENE OTRO MES CONFIGURADO 
+                
+                if(($assigned->day >= $exemption->end_day))
+                {
+                    $months = $installationSt->getExemptionMonth($installation->id);
+                    if($months){
+                        $exemptionMonth = $months;
                     }else{
+                        $exemptionMonth = $exemption->month_after_next;
+                    }
+                    
+                    //Le cobra no el proximo mes, sino el siguiente
+                    if(self::incomingMonth(
+                    $assigned, 
+                    $today, 
+                    $exemptionMonth, 
+                    )){
                         self::conditional($endDate, $contract, $today, $service);
                     }
+
+                }else if (($assigned->day >= $exemption->start_day)&&($assigned->day <= $exemption->end_day)){
+                    $months = $installationSt->getExemptionMonth($installation->id);
+
+                    if($months){
+                        $exemptionMonth = $months;
+                    }else{
+                        $exemptionMonth = $exemption->month_next;
+                    }
+                    
+                    //Condicionar si paga el siguiente mes o  el proximo
+                    if(self::incomingMonth(
+                    $assigned, 
+                    $today, 
+                    $exemptionMonth, 
+                    ))
+                    {
+                        self::conditional($endDate, $contract, $today, $service);
+                    }
+                }else{
+                    self::conditional($endDate, $contract, $today, $service);
                 }
+               // }
             }
         }else{
             self::conditional($endDate, $contract, $today, $service);
         }
     }
-    private function incomingMonth($assigned, $today, $increase, $start, $end){
-        if($assigned->month+$increase == $today->month)
-        {
-            if(($today->day >= $start) && ($today->day < $end))
-            {
-                return true;
-            }
-        }else if($assigned->month < $today->month || $assigned->year < $today->year){
-            if(($today->day >= $start) && ($today->day < $end))
-            {
-                return true;
-            }
+    private function incomingMonth($assigned, $today, $increase){
+        /* 
+            Comparación si después los meses que se excluyo el pago de servicio
+            son iguales al mes actual
+        */ 
+
+        $finalMonth = $assigned->month + $increase;
+        $year = $assigned->year;
+
+        //Obtener el mes y el año de acuerdo al incremento del rango de fechas
+        if($finalMonth > 12){
+            $year = $year + intval($finalMonth / 12);
+            while($finalMonth > 12)
+                $finalMonth -= 12;   
         }
-        return false;
+
+        if(($year == $today->year))
+        {
+            if(($finalMonth <= $today->month))
+            {
+                //Mes cedido
+                return false;
+            }
+               
+        /*
+            Comparación en caso de que la fecha de instalación es a finales de año
+        */
+        }else if($year > $today->year)
+        {
+            //Mes cedido
+            return false;
+  
+        }
+        return true;
     }
+
     private function cargoPorPago($service , Contract $contract)
     {$service->createChargeCourtDate($contract);}
 

@@ -251,6 +251,15 @@ const getTag = (cellIndex) => {
                 Mostrar
               </Link>
               <Link
+                :href="route('settings.installation.edit.installation', row.id)"
+                v-if="show"
+                class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+              <span class="material-symbols-outlined" style="font-size: 16px;"> edit_calendar </span>
+
+                Primer pago
+              </Link>
+              <Link
                 v-if="edit"
                 :href="route('installation.edit', row.id)"
                 class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -305,6 +314,7 @@ const getTag = (cellIndex) => {
   
   <script>
 import { Link, router } from "@inertiajs/vue3";
+import RouterTable from "@/Pages/Admin/Routers/RouterTable.vue";
 export default {
   components: {
     Link,

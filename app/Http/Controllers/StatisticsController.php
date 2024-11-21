@@ -39,6 +39,7 @@ class StatisticsController extends Controller
         $userCount = self::userCount();
 
         $trafficData = self::conectar();
+     //   dd($trafficData);
         if(empty($trafficData)){
             $target = [];
             $upload_rate = [];
@@ -52,7 +53,6 @@ class StatisticsController extends Controller
             foreach($trafficData as $data)
             {
                 if(!is_null($data)){
-
                     foreach($data as $dt){
                         $targetTemp[] = $dt['target'];
                     
@@ -119,6 +119,7 @@ class StatisticsController extends Controller
         {
             foreach($routers as $r)
             {
+               // dd($trafficData);
                 try{   
 
                     $routerOSService = RouterOSService::getInstance();
@@ -127,23 +128,28 @@ class StatisticsController extends Controller
                         $trafficData[] = $trafficDat;
                         $this->route [] = $r->id;
                     }
+                    
                 } catch (Exception $e) {
-                        return Redirect::route('dashboard')->with('error', $e->getMessage());
+                    return Redirect::route('dashboard')->with('error', $e->getMessage());
                 }
+                
             }
+           // dd("holas");
+        }else{
+           // dd("no router");
         }
         
         return $trafficData;
     }
     public function store(){}
     public function activeContract()
-    {return Contract::with('device','plan')->where('active','1')->get();}
+    {return Contract::where('active','1')->get();}
     
     public function userCount()
     {return User::all();}
 
     public function morrososCount()
-    {return (Contract::with('user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
+    {return (Contract::with('device.device.user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
 
     public function activeDevices()
     {return (Device::where('disabled','0')->get());}

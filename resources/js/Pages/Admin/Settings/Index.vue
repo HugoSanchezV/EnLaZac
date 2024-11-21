@@ -110,6 +110,29 @@ import { Link } from "@inertiajs/vue3";
               </div>
             </Link>
 
+            <Link :href="route('usuarios')">
+              <div
+                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-7"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
+                  />
+                </svg>
+
+                <span>Telegram</span>
+              </div>
+            </Link>
+
             <Link :href="route('settings.email.edit')">
               <div
                 class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
@@ -119,6 +142,94 @@ import { Link } from "@inertiajs/vue3";
                 </span>
 
                 <span>Correo</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div class="block md:flex gap-6">
+        <div>
+          <h2 class="m-2">Automatizaciones</h2>
+          <div class="block md:flex">
+            <Link :href="route('settings.background')">
+              <div
+                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="size-10"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495"
+                  />
+                </svg>
+
+                <span class="text-md">Segundo plano</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+        <div>
+          <h2 class="m-2">Variables de cobro</h2>
+          <div class="block md:flex">
+            <Link :href="route('settings.service.variable')">
+              <div
+                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
+              >
+                <span class="material-symbols-outlined" style="font-size: 30px">
+                  design_services
+                </span>
+
+                <span>Variable del servicio</span>
+              </div>
+            </Link>
+
+            <Link :href="route('settings.installation')">
+              <div
+                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
+              >
+                <span class="material-symbols-outlined" style="font-size: 30px">
+                  edit_calendar
+                </span>
+
+                <span>Configurar Variable de Instalación</span>
+              </div>
+            </Link>
+
+            <Link :href="route('settings.interest')">
+              <div
+                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
+              >
+                <span class="material-symbols-outlined" style="font-size: 30px">
+                  attach_money
+                </span>
+
+                <span>Configurar Intereses</span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div class="block md:flex gap-6">
+        <div>
+          <h2 class="m-2">Perfil</h2>
+          <div class="block md:flex">
+            <Link :href="route('profile.show')">
+              <div
+                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
+              >
+                <span class="material-symbols-outlined" style="font-size: 35px">
+                  settings_account_box
+                </span>
+
+                <span>Perfil</span>
               </div>
             </Link>
           </div>
@@ -147,51 +258,6 @@ import { Link } from "@inertiajs/vue3";
                 </svg>
 
                 <span>Backup</span>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div class="block md:flex gap-6">
-        <div>
-          <h2 class="m-2">Automatizaciones</h2>
-          <div class="block md:flex">
-            <Link :href="route('settings.background')">
-              <div
-                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-7"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495"
-                  />
-                </svg>
-
-                <span>Segundo plano</span>
-              </div>
-            </Link>
-            <Link :href="route('settings.interest')">
-              <div
-                class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
-              >
-              <svg xmlns="http://www.w3.org/2000/svg" 
-              height="33px" 
-              viewBox="0 -960 960 960" 
-              width="33px" 
-              >
-              <path d="m96-528 192-336 192 336H96Zm192 384q-60 0-102-42.24t-42-101.55Q144-348 186-390q42-42 102-42t102 42q42 42 42 102t-42 102q-42 42-102 42Zm.21-72Q318-216 339-237.21t21-51Q360-318 338.79-339t-51-21Q258-360 237-338.79t-21 51Q216-258 237.21-237t51 21ZM221-600h134l-67-119-67 119Zm307 456v-288h288v288H528Zm72-72h144v-144H600v144Zm72-312q-54-45-89.06-74.59-35.05-29.58-56-52Q506-677 497.5-696q-8.5-19-8.5-42.67 0-42.62 28-71.97Q545-840 589.46-840q25.54 0 46.04 10.5T672-797q16-22 37-32.5t46.18-10.5Q799-840 827-810.64q28 29.35 28 71.97 0 23.67-8 42.67t-29.13 41.2q-21.13 22.2-56.5 51.5Q726-574 672-528Zm0-96q68-57 89.5-78.5T783-740q0-11-8-19.5t-18.74-8.5q-8.26 0-15.26 4t-12 10l-57 53-56-53q-6-6-13.21-10-7.2-4-14.79-4-11 0-19 8.5t-8 19.5q0 17 22.5 39t88.5 77Zm0-77Zm-383 48Zm0 362Zm382 0Z"
-              /></svg>
-
-                <span>Intereses</span>
               </div>
             </Link>
           </div>

@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id(); // Id autoincremental
-            $table->unsignedBigInteger('inv_device_id')->nullable()->constrained('inventorie_devices')->onDelete('set null'); // Llave foránea a users
-            $table->unsignedBigInteger('plan_id')->nullable()->constrained('plans')->onDelete('set null'); // Llave foránea a plans
+            $table->unsignedBigInteger('inv_device_id')->constrained('inventorie_devices')->onDelete('set null'); // Llave foránea a users
+            $table->unsignedBigInteger('plan_id')->constrained('plans')->onDelete('set null'); // Llave foránea a plans
             $table->date('start_date');
             $table->date('end_date');
             $table->boolean('active');
             $table->string('address'); // Dirección del contrato
-            $table->foreignId('rural_community_id')->nullable()->constrained('rural_communities');
+            $table->foreignId('rural_community_id')->constrained('rural_communities');
             $table->json('geolocation'); // Ubicacion de tipo JSON para poner la Latitud y la Longitud
             $table->timestamps(); // Campos created_at y updated_at
         });

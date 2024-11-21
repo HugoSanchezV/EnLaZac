@@ -1,7 +1,6 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
 import { defineProps } from 'vue';
-import { FaRegIdBadge, FaRegListAlt, FaRegFileAlt, FaRegClock, FaRegCalendarAlt, FaRegChartBar } from 'vue-icons/fa'; // Ejemplo de importación de íconos
 
 const props = defineProps({
     plan: {
@@ -50,7 +49,6 @@ const props = defineProps({
           </div>
         </div>
 
-<<<<<<< Updated upstream
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Rafaga limite</dt>
           <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.burst_limit.upload_limits }}</dd>
@@ -73,33 +71,6 @@ const props = defineProps({
           <dt class="text-sm font-medium text-gray-600">limite maximo</dt>
           <dd class="mt-1 text-sm text-gray-900">Subida: {{ plan.max_limit.upload_limits}}</dd>
           <dd class="mt-1 text-sm text-gray-900">Bajada: {{ plan.max_limit.download_limits}}</dd>
-=======
-        <!-- Límite de ráfaga -->
-        <div class="flex items-start">
-          <FaRegClock class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
-          <div>
-            <dt class="text-sm font-medium text-gray-600">Límite de Ráfaga</dt>
-            <dd class="mt-1 text-lg text-gray-800">{{ plan.burst_limit }}</dd>
-          </div>
-        </div>
-
-        <!-- Tiempo de ráfaga -->
-        <div class="flex items-start">
-          <FaRegCalendarAlt class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
-          <div>
-            <dt class="text-sm font-medium text-gray-600">Tiempo de Ráfaga</dt>
-            <dd class="mt-1 text-lg text-gray-800">{{ plan.burst_time }}</dd>
-          </div>
-        </div>
-
-        <!-- Límite del plan -->
-        <div class="flex items-start">
-          <FaRegChartBar class="text-blue-600 w-6 h-6 mr-3 mt-1"/>
-          <div>
-            <dt class="text-sm font-medium text-gray-600">Límite</dt>
-            <dd class="mt-1 text-lg text-gray-800">{{ plan.limite_at }}</dd>
-          </div>
->>>>>>> Stashed changes
         </div>
 
       </dl>

@@ -54,10 +54,30 @@ import { Link } from "@inertiajs/vue3";
 // Opciones disponibles en la aplicación
 const options = [
   { label: "Dashboard", route: "dashboard", icon: "earthquake" },
+
+  { label: "Pagos", route: "payment", icon: "payments" },
+  { label: "Eliminar Histoial de Pago", route: "payment", icon: "payments" },
+
+  { label: "Extender Contrato", route: "reaming.contracts", icon: "calendar_add_on" },
+
+  { label: "Crear Usuarios", route: "usuarios.create", icon: "group_add" },
+  { label: "Editar Usuarios", route: "usuarios", icon: "edit" },
+  { label: "Eliminar Usuarios", route: "usuarios", icon: "group_remove" },
+
   { label: "Usuarios", route: "usuarios", icon: "group" },
   { label: "Crear Usuarios", route: "usuarios.create", icon: "group_add" },
   { label: "Editar Usuarios", route: "usuarios", icon: "edit" },
   { label: "Eliminar Usuarios", route: "usuarios", icon: "group_remove" },
+
+  { label: "Pre-registro", route: "usuarios.pre.register", icon: "phone_iphone" },
+  { label: "Crear Pre-registro", route: "usuarios.pre.register.create", icon: "phone_iphone" },
+  { label: "Editar pre-registro", route: "usuarios.pre.register", icon: "phone_iphone" },
+  { label: "Eliminarr pre-registro", route: "usuarios.pre.register", icon: "phone_iphone" },
+ 
+  { label: "Cargos", route: "charges", icon: "attach_money" },
+  { label: "Crear Cargo", route: "charges.create", icon: "attach_money" },
+  { label: "Editar Cargo", route: "charges", icon: "attach_money" },
+  { label: "Eliminar Cargo", route: "charges", icon: "attach_money" },
 
   { label: "Routers", route: "routers", icon:"router" },
   { label: "Crear Router", route: "routers.create", icon:"add_circle" },
@@ -71,6 +91,9 @@ const options = [
   { label: "Editar en inventario", route: "inventorie.devices.index", icon:"edit" },
   { label: "Eliminar del inventario", route: "inventorie.devices.index", icon:"delete" },
 
+  { label: "Historial de Inventario", route: "historieDevices.index", icon:"history_toggle_off" },
+  { label: "Eliminar historial del inventario", route: "historieDevices.index", icon:"history_toggle_off" },
+
   { label: "Tickets de coordinación", route: "tickets", icon:"description" },
   { label: "Crear Ticket", route: "tickets.create", icon:"note_add" },
   { label: "Editar Ticket", route: "tickets", icon:"note_alt" },
@@ -81,12 +104,22 @@ const options = [
   { label: "Editar plan", route: "plans", icon:"edit" },
   { label: "Eliminar plan", route: "plans", icon:"delete" },
 
+  { label: "Comunidades", route: "rural-community", icon:"pin_drop" },
+  { label: "Crear comunidad", route: "rural-community.create", icon:"pin_drop" },
+  { label: "Editar plan", route: "rural-community", icon:"pin_drop" },
+  { label: "Eliminar plan", route: "rural-community", icon:"pin_drop" },
+
   { label: "Contratos", route: "contracts", icon:"contract" },
-  { label: "Crear contrato", route: "plans.create", icon:"receipt_long" },
-  { label: "Editar contrato", route: "plans", icon:"contract_edit" },
-  { label: "Eliminar contrato", route: "plans", icon:"contract_delete" },
-  //{ label: "Ajustes", route: "/ajustes" },
-  // Agrega más opciones según sea necesario
+  { label: "Crear contrato", route: "contracts.create", icon:"receipt_long" },
+  { label: "Editar contrato", route: "contracts", icon:"contract_edit" },
+  { label: "Eliminar contrato", route: "contracts", icon:"contract_delete" },
+
+  { label: "Configuración", route: "settings", icon:"settings" },
+  { label: "Paypal", route: "settings.paypal.edit", icon:"settings" },
+  { label: "Email", route: "settings.email.edit", icon:"mail" },
+  { label: "BackUp", route: "backups", icon:"database_upload" },
+  { label: "Intereses", route: "settings.interest", icon:"payments" },
+  { label: "Tareas en segundo plano", route: "settings.background", icon:"auto_transmission" },
 ];
 
 const searchQuery = ref("");

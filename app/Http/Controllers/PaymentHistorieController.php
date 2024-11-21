@@ -24,7 +24,7 @@ class PaymentHistorieController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('user_id', 'like', "%$search%")
-                    ->orWhere('contract_id', 'like', "%$search%")
+                    // ->orWhere('contract_id', 'like', "%$search%")
                     ->orWhere('amount', 'like', "%$search%")
                     ->orWhere('content', 'like', "%$search%")
                     ->orWhere('payment_method', 'like', "%$search%")
@@ -47,7 +47,7 @@ class PaymentHistorieController extends Controller
             return [
                 'id' => $item->id,
                 'user_id' => $item->user->name ?? 'None',
-                'contract_id' => $item->contract_id,
+                // 'contract_id' => $item->contract_id,
                 'amount' => $item->amount,
                 'content' => $item->content,
                 'payment_method' => $item->payment_method,
@@ -74,10 +74,9 @@ class PaymentHistorieController extends Controller
     }
     public function store(PaymentHistorie $request)
     {
-        Log::info(json_encode($request));
         PaymentHistorie::create([
             'user_id' => $request->user_id,
-            'contract_id' => $request->contract_id,
+            'worker' => $request["worker"],
             'amount' => $request->amount,
             'content' => $request->content,
             'payment_method' => $request->payment_method,
@@ -86,7 +85,6 @@ class PaymentHistorieController extends Controller
         ]);
     }
 
-<<<<<<< Updated upstream
     public function destroy(Request $request, $id)
     {
         $data = [
@@ -112,7 +110,7 @@ class PaymentHistorieController extends Controller
             'ID',
             'USUARIO ID',
             'USUARIO NOMBRE',
-            'CONTRATO ID',
+            'TRABAJADOR',
             'CANTIDAD',
             'CONTENIDO',
             'METODO DE PAGO',
@@ -125,7 +123,7 @@ class PaymentHistorieController extends Controller
                 $payment->id,
                 $payment->user_id,
                 $payment->user->name ?? null,
-                $payment->contract_id,
+                $payment->worker ?? null,
                 $payment->amount,
                 $payment->content,
                 $payment->payment_method,
@@ -134,15 +132,14 @@ class PaymentHistorieController extends Controller
             ];
         };
         return Excel::download(new GenericExport($query, $headings, $mappingCallback), 'Payments' . now() . '.xlsx');
-=======
+    }
     public function show(string $id)
     {
 
-        $paymentHistorie = PaymentHistorie::with('user', 'contract','transaction')->findOrFail($id);
+        $paymentHistorie = PaymentHistorie::with('user', 'transaction')->findOrFail($id);
 
         return Inertia::render('Admin/PaymentHistorie/Show', [
             'paymentHistorie' => $paymentHistorie,
         ]);
->>>>>>> Stashed changes
     }
 }

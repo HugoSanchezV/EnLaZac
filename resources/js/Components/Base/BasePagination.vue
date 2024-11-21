@@ -61,8 +61,9 @@ export default {
   methods: {
     prevPage() {
       if (this.pagination.prev_page_url) {
+        const url = this.pagination.prev_page_url.replace(/^http:/, 'https:');
         this.$inertia.get(
-          this.pagination.prev_page_url,
+          url,
           this.data,
           { preserveState: true, replace: true }
         );
@@ -70,8 +71,9 @@ export default {
     },
     nextPage() {
       if (this.pagination.next_page_url) {
+        const url = this.pagination.next_page_url.replace(/^http:/, 'https:');
         this.$inertia.get(
-          this.pagination.next_page_url,
+          url,
           this.data,
           { preserveState: true, replace: true }
         );

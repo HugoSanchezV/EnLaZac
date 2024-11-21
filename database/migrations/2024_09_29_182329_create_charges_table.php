@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('charges', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('contract_id')->constrained('contracts');
+            $table->foreignId('contract_id')->constrained('contracts')->onDelete('cascade');
             $table->string('description');
             $table->integer('amount');
             $table->boolean('paid');

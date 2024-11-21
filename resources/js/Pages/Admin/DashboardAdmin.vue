@@ -188,17 +188,18 @@ useGeneralNotifications();
                         </div>
                     </div>
                   </button>
-                  <modal-contracts
-                    :show="isModalContractsOpen"
-                    @close="closeContractsModal()"
-                    @selectData="confirmSelectionContracts($event)"
-                    :data="activeContract"
+                  <modal-morrosos
+                    :show="isModalMorrososOpen"
+                    @close="closeMorrososModal()"
+                    @selectData="confirmSelectionMorrosos($event)"
+                    :data="morrosos"
                     :title="
                       'Selecciona un dispositivo del inventario para la conexión '
                     "
                     item-text="mac_address"
                   >
-                </modal-contracts>
+                </modal-morrosos>
+                 
                 </div>
                 <div class="frame">
                   <button
@@ -216,18 +217,18 @@ useGeneralNotifications();
                         </div>
                     </div>
                   </button>
-
-                  <modal-morrosos
-                    :show="isModalMorrososOpen"
-                    @close="closeMorrososModal()"
-                    @selectData="confirmSelectionMorrosos($event)"
-                    :data="morrosos"
+                  <modal-contracts
+                    :show="isModalContractsOpen"
+                    @close="closeContractsModal()"
+                    @selectData="confirmSelectionContracts($event)"
+                    :data="activeContract"
                     :title="
                       'Selecciona un dispositivo del inventario para la conexión '
                     "
                     item-text="mac_address"
                   >
-                </modal-morrosos>
+                </modal-contracts>
+                  
                 </div>
 
                 <div class="frame">

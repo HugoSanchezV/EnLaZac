@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('exemption_periods', function (Blueprint $table) {
             $table->id();
+            $table->integer('start_day'); // Fecha de inicio de exención
+            $table->integer('end_day');   // Fecha de fin de exención
+            $table->integer('month_next');
+            $table->integer('month_after_next');
             $table->timestamps();
         });
     }

@@ -13,7 +13,7 @@
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :contract="contract" :users="users" :plans="plans" :community="community"/>
+          <FormUpdate :contract="contract" :devices="devices" :plans="plans" :community="community"/>
         </div>
       </div>
     </template>
@@ -34,7 +34,7 @@ export default {
       type: Object,
       required: true,
     },
-    users: {
+    devices: {
       type: Array,
       required: true,
     },
