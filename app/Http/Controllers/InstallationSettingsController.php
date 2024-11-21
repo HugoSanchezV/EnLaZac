@@ -34,7 +34,7 @@ class InstallationSettingsController extends Controller
             $query->orderBy('id', 'asc');
         }
 
-        $installationSt = $query->with('installation.contract.device.device.user')->latest()->paginate(8)->through(function ($item) {
+        $installationSt = $query->with('installation.contract.inventorieDevice.device.user')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
                 //'installation_id' => $item->installation_id,
@@ -70,7 +70,7 @@ class InstallationSettingsController extends Controller
                     'installation_id' => $id,
                 ]);
             }
-            $installation = Installation::with('contract.device.device.user')->findOrFail($installationSetting->installation_id);
+            $installation = Installation::with('contract.inventorieDevice.device.user')->findOrFail($installationSetting->installation_id);
 
 
             return Inertia::render('Admin/Settings/InstallationSettings/Edit', [
@@ -91,7 +91,7 @@ class InstallationSettingsController extends Controller
             //dd();
             $installationSetting  = InstallationSetting::findOrFail($id);
 
-            $installation = Installation::with('contract.device.device.user')->findOrFail($installationSetting->installation_id);
+            $installation = Installation::with('contract.inventorieDevice.device.user')->findOrFail($installationSetting->installation_id);
 
             return Inertia::render('Admin/Settings/InstallationSettings/Edit', [
                 'installationSetting' => $installationSetting,
@@ -115,7 +115,7 @@ class InstallationSettingsController extends Controller
     public function create()
     {
         try{
-            $installations = Installation::with('contract.device.device.user')
+            $installations = Installation::with('contract.inventorieDevice.device.user')
             ->whereNotIn('id', function ($query) {
                 $query->select('installation_id')->from('installation_settings');
             })
@@ -123,10 +123,10 @@ class InstallationSettingsController extends Controller
             // $settings = InstallationSetting::all();
             // $installationIds = $settings->pluck('installation_id');
 
-            // $installations = Installation::with('contract.device.device.user')
+            // $installations = Installation::with('contract.inventorieDevice.device.user')
             // ->whereNotIn('id',$installationIds)
             // ->get();
-           // $installations = Installation::with('contract.device.device.user')->get();
+           // $installations = Installation::with('contract.inventorieDevice.device.user')->get();
            // dd($installations);
             
             return Inertia::render(
@@ -173,11 +173,6 @@ class InstallationSettingsController extends Controller
         } catch (Exception $e) {
             return Redirect::route('settings.installation', $data)->with('errror', 'Error al cargar el registro');
         }
-    }
-
-    public function getExemptionMonth()
-    {
-        
     }
     
 }

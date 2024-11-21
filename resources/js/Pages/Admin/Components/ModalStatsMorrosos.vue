@@ -22,10 +22,13 @@
                   <!-- Itera sobre los registros -->
                   <li v-for="(morroso, index) in morrosos" :key="morroso.id" class="record-item">
                     <div class="record-info">
-                      <p><strong>{{ morroso.id }}:</strong> {{ morroso.user.name }}</p>
+                      <p>
+                        <strong>{{ morroso.id }}:</strong> 
+                        de {{ morroso.inventorie_device.device.user.name}} 
+                        - Fecha de terminación: {{ morroso.end_date }}&nbsp;&nbsp;&nbsp;</p>
                     </div>
                     <!-- Botón Mostrar -->
-                    <Link   class="show-button">Mostrar</Link>
+                    <Link :href="route('contracts.show',morroso.id)" class="show-button">Mostrar</Link>
                   </li>
                 </ul>
               </div>

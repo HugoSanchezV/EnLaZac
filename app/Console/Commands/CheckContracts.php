@@ -13,10 +13,6 @@ use Carbon\Carbon;
 use App\Models\Contract;
 use App\Models\Device;
 use App\Models\Charge;
-use App\Models\TelegramAccount;
-use App\Services\TelegramService;
-use App\Services\UserTelegramService;
-use Illuminate\Support\Facades\Log;
 use Exception;
 
 class CheckContracts extends Command
@@ -66,7 +62,21 @@ class CheckContracts extends Command
                         self::checkInstallation($contract, $today, $endDate, $service, $exemption, $installationSt);
                     }
                 }
+            }else if($today->day == 25){
+                foreach($contractTerms as $contract){
+                    $endDate = Carbon::parse($contract->end_date);
+                    if($contract->active == 1){
+                        if($endDate < $today){
+                            self::cargoPorPago($service, $contract);
+
+                        }
+                    }
+                }
             }
+            //Extender condición para los contratos a los que se le extendió el día de pago
+
+        }else{
+            $this->info('No se ha ingresado el dia de corte y los dias de excepcion de plazos de primer pago');
         }
 
         $this->info('Se han verificado los contratos.');
@@ -149,6 +159,7 @@ class CheckContracts extends Command
                     }
 
                 }else if (($assigned->day >= $exemption->start_day)&&($assigned->day <= $exemption->end_day)){
+                    
                     $months = $installationSt->getExemptionMonth($installation->id);
 
                     if($months){

@@ -36,7 +36,7 @@ const submit = () => {
         <div class="mt-2">
           <TextInput
             id="installation_id"
-            v-model="installation.contract.device.device.user.name"
+            v-model="installation.contract.inventorie_device.device.user.name"
             type="text"
             class="mt-1 block w-full"
             autofocus

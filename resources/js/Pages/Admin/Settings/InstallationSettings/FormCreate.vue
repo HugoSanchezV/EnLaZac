@@ -41,7 +41,7 @@ const submit = () => {
               <option v-if="installations.length === 0" disabled value="">No hay registro de instalaciones disponibles</option>
               <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="installation in installations" :key="installation.id" :value="installation.id">
-                  {{ installation.id + " - "+ installation.contract.device.device.user.name}}
+                  {{ installation.id + " - "+ installation.contract.inventorie_device.device.user.name}}
               </option>
             </select>
         </div>
