@@ -16,47 +16,16 @@ class MercadoPagoSettingController extends Controller
      */
     public function edit()
     {
-        $settings = MercadoPagoSetting::first(); // Recupera la primera configuración
+        $settings = MercadoPagoSetting::first();
         return Inertia::render('Admin/Settings/MercadoPago/Edit', [
             'settings' => $settings
         ]);
     }
 
     /**
-     * Guardar una nueva configuración de MercadoPago.
+     * Guardar o actualizar la configuración de MercadoPago.
      */
-    public function store(Request $request)
-    {
-        // Validar los datos de la solicitud
-        $request->validate([
-            'mode' => 'required|in:sandbox,live',
-            'sandbox_client_id' => 'required|string',
-            'sandbox_client_secret' => 'required|string',
-            'live_client_id' => 'nullable|string',
-            'live_client_secret' => 'nullable|string',
-            'currency' => 'required|string',
-        ]);
-
-        // Crear y guardar la configuración
-        $setting = MercadoPagoSetting::create($request->all());
-
-        // Retornar la nueva configuración creada
-        return response()->json($setting, 201);
-    }
-
-    /**
-     * Mostrar una configuración específica.
-     */
-    public function show($id)
-    {
-        $setting = MercadoPagoSetting::findOrFail($id);
-        return response()->json($setting);
-    }
-
-    /**
-     * Actualizar una configuración de MercadoPago.
-     */
-    public function update(Request $request)
+    public function storeOrUpdate(Request $request)
     {
         $request->validate([
             'mode' => 'required|in:sandbox,live',
@@ -68,44 +37,46 @@ class MercadoPagoSettingController extends Controller
         ]);
 
         try {
+            $fields = $request->only([
+                'mode',
+                'sandbox_client_id',
+                'sandbox_client_secret',
+                'live_client_id',
+                'live_client_secret',
+                'currency',
+            ]);
+
             $setting = MercadoPagoSetting::first();
-            if (!$setting) {
-                // Si no existe ninguna configuración, crear una nueva
-                MercadoPagoSetting::create([
-                    'mode' => $request->mode,
-                    'sandbox_client_id' => $request->sandbox_client_id,
-                    'sandbox_client_secret' => $request->sandbox_client_secret,
-                    'live_client_id' => $request->live_client_id,
-                    'live_client_secret' => $request->live_client_secret,
-                    'currency' => $request->currency,
-                ]);
+            if ($setting) {
+                $setting->update($fields);
+                $message = 'Configuración actualizada con éxito.';
             } else {
-                // Si existe, actualizar la configuración existente
-                $setting->update($request->only([
-                    'mode',
-                    'sandbox_client_id',
-                    'sandbox_client_secret',
-                    'live_client_id',
-                    'live_client_secret',
-                    'currency',
-                ]));
+                MercadoPagoSetting::create($fields);
+                $message = 'Configuración creada con éxito.';
             }
 
-            return Redirect::route('settings.mercadopago.edit')->with('success', 'Configuración Actualizada Con Éxito');
+            return Redirect::route('settings.mercadopago.edit')->with('success', $message);
         } catch (Exception $e) {
-            Log::error('Error al actualizar configuración de MercadoPago', ['message' => $e->getMessage()]);
-            return Redirect::route('settings.mercadopago.edit')->with('error', 'Hubo un error al actualizar las credenciales');
+            Log::error('Error al guardar configuración de MercadoPago', [
+                'error' => $e->getMessage(),
+                'input' => $request->all(),
+            ]);
+            return Redirect::route('settings.mercadopago.edit')->with('error', 'Hubo un error al guardar las credenciales.');
         }
     }
 
     /**
-     * Eliminar una configuración de MercadoPago.
+     * Eliminar la configuración de MercadoPago.
      */
     public function destroy($id)
     {
-        $setting = MercadoPagoSetting::findOrFail($id);
-        $setting->delete();
-
-        return response()->json(null, 204);
+        try {
+            $setting = MercadoPagoSetting::findOrFail($id);
+            $setting->delete();
+            return response()->json(['message' => 'Configuración eliminada con éxito.'], 200);
+        } catch (Exception $e) {
+            Log::error('Error al eliminar configuración de MercadoPago', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Hubo un error al eliminar la configuración.'], 500);
+        }
     }
 }

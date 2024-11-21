@@ -41,6 +41,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\SMSSettingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -112,11 +113,8 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
     Route::delete('/{id}', [MercadoPagoDataController::class, 'destroy'])->name('destroy');
 });
 
-<<<<<<< Updated upstream
     Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
-=======
-     Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
->>>>>>> Stashed changes
+
     //MIDLEWARE ADMINISTRADOR
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
@@ -295,11 +293,11 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
         Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
         Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
-        //Route::get('/sistema/configuracion/mercadopago/update',      [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopagp.edit');
+        Route::get('/sistema/configuracion/mercadopago/update',      [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
         Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
         Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
-
+        Route::get('/sistema/configuracion/SMS',      [SMSSettingController::class, 'edit'])->name('settings.sms.edit');
 
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
@@ -391,6 +389,13 @@ Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('
 
         Route::get('/pagos',                     [PayController::class, 'index'])->name('pays');
     });
+
+    //SMS
+    Route::get('/settings/sms/edit', [SMSSettingController::class, 'edit'])->name('settings.sms.edit');
+    Route::post('/settings/sms/store', [SMSSettingController::class, 'store'])->name('settings.sms.store');
+    Route::put('/settings/sms/update', [SMSSettingController::class, 'update'])->name('settings.sms.update');
+    Route::delete('/settings/sms/{id}', [SMSSettingController::class, 'destroy'])->name('settings.sms.destroy');
+
 
 
     Route::get('/test-mail', function () {
