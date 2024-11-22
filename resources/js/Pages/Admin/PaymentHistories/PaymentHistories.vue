@@ -15,21 +15,21 @@ const toRouteExport = "payment.excel";
 const filters = [
   "id",
   "usuario",
-  "contrato",
+  // "contrato",
   "monto",
   "contenido",
   "metodo de pago",
   "id de transacción",
   // "link de recepción",
-  "fecha de pago"
+  "fecha de pago",
 ];
 
 const headers = [
   "Id",
-  "Usuario",
-  "Contrato",
+  "Cliente",
+  "Encagado",
   "Monto",
-  "Contenido",
+  // "Contenido",
   "Método de pago",
   "Id de Transacción",
   // "Link de Recepción",
@@ -123,13 +123,12 @@ export default {
     search(props) {
       const link = route("payment");
 
-  //    console.log(props.searchQuery);
+      //    console.log(props.searchQuery);
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
-
 
       if (this.attribute === "usuario") {
         this.attribute = "user_id";
@@ -138,7 +137,7 @@ export default {
       if (this.attribute === "contrato") {
         this.attribute = "contract_id";
       }
-      
+
       if (this.attribute === "monto") {
         this.attribute = "amount";
       }

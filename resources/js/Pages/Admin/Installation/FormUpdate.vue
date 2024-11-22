@@ -5,7 +5,7 @@ import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import GoogleMaps from '@/Components/GoogleMaps.vue'
+import GoogleMaps from "@/Components/GoogleMaps.vue";
 
 const props = defineProps({
   installation: Object,
@@ -29,7 +29,6 @@ onMounted(() => {
 const submit = () => {
   form.put(route("installation.update", { id: props.installation }));
 };
-
 </script>
 
 
@@ -39,16 +38,26 @@ const submit = () => {
       <div>
         <InputLabel for="contract_id" value="ID del Usuario" />
         <div class="mt-2">
-            <select
-              v-model="form.contract_id"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          <select
+            v-model="form.contract_id"
+            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          >
+            <option v-if="contracts.length === 0" disabled value="">
+              No hay registro de usuarios
+            </option>
+            <option v-else value="" disabled>Selecciona una opción</option>
+            <option
+              v-for="contract in contracts"
+              :key="contract.id"
+              :value="contract.id"
             >
-              <option v-if="contracts.length === 0" disabled value="">No hay registro de usuarios</option>
-              <option v-else value="" disabled>Selecciona una opción</option>
-              <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ contract.id + " - " + contract.inventorie_device.device.user.name }}
-              </option>
-            </select>
+              {{
+                contract.id +
+                " - " +
+                contract.inventorieDevice?.device?.user?.name
+              }}
+            </option>
+          </select>
         </div>
         <InputError class="mt-2" :message="form.errors.contract_id" />
       </div>
@@ -56,31 +65,31 @@ const submit = () => {
       <div class="mt-2">
         <InputLabel for="description" value="Descripción" />
         <div class="mt-2">
-            <select
-              v-model="form.description"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              <option disabled value="">Selecciona la descripción</option>
-              <option :value="1">Instalación en el domicilio</option>
-              <option :value="2">Cambio de domicilio</option>
-            </select>
+          <select
+            v-model="form.description"
+            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          >
+            <option disabled value="">Selecciona la descripción</option>
+            <option :value="1">Instalación en el domicilio</option>
+            <option :value="2">Cambio de domicilio</option>
+          </select>
         </div>
         <InputError class="mt-2" :message="form.errors.description" />
       </div>
 
-      <div class="mt-2 ">
-          <InputLabel for="assigned_date" value="Fecha Asignada" />
-          <TextInput
-            id="assigned_date"
-            v-model="form.assigned_date"
-            type="date"
-            class="mt-1 block w-full"
-            required
-            autofocus
-            autocomplete="assigned_date"
-            @input="onDateChange"
-          />
-          <InputError class="mt-2" :message="form.errors.assigned_date" />
+      <div class="mt-2">
+        <InputLabel for="assigned_date" value="Fecha Asignada" />
+        <TextInput
+          id="assigned_date"
+          v-model="form.assigned_date"
+          type="date"
+          class="mt-1 block w-full"
+          required
+          autofocus
+          autocomplete="assigned_date"
+          @input="onDateChange"
+        />
+        <InputError class="mt-2" :message="form.errors.assigned_date" />
       </div>
 
       <div class="flex items-center justify-end mt-4">

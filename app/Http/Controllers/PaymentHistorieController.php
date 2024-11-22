@@ -24,9 +24,10 @@ class PaymentHistorieController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('user_id', 'like', "%$search%")
+                    ->orWhere('worker', 'like', "%$search%")
                     // ->orWhere('contract_id', 'like', "%$search%")
                     ->orWhere('amount', 'like', "%$search%")
-                    ->orWhere('content', 'like', "%$search%")
+                    // ->orWhere('content', 'like', "%$search%")
                     ->orWhere('payment_method', 'like', "%$search%")
                     ->orWhere('transaction_id', 'like', "%$search%")
                     ->orWhere('receipt_url', 'like', "%$search%");
@@ -47,9 +48,9 @@ class PaymentHistorieController extends Controller
             return [
                 'id' => $item->id,
                 'user_id' => $item->user->name ?? 'None',
-                // 'contract_id' => $item->contract_id,
+                'worker' => $item->worker,
                 'amount' => $item->amount,
-                'content' => $item->content,
+                // 'content' => $item->content,
                 'payment_method' => $item->payment_method,
                 'transaction_id' => $item->transaction_id,
                 'created_at' => $item->created_at->format('Y-m-d H:i'),

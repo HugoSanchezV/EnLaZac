@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\GenericExport;
 use App\Models\Contract;
-use App\Models\User;
 use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
@@ -12,19 +11,13 @@ use App\Http\Requests\Contract\UpdateContractRequest;
 use App\Models\Charge;
 use App\Models\CutOffDay;
 use App\Models\Device;
-use App\Models\InventorieDevice;
 use App\Models\RuralCommunity;
-use App\Services\RuralCommunityService;
 use Carbon\Carbon;
-
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-
-use function PHPUnit\Framework\isNull;
 
 class ContractController extends Controller
 {

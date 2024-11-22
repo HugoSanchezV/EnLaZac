@@ -40,6 +40,16 @@ const getOriginal = (data) => {
     return "created_at";
   }
 };
+
+const separateWorker = (data) => {
+  const espacioIndex = data.indexOf(" ");
+
+  // Extrae la parte antes y después del primer espacio
+  const number = data.slice(0, espacioIndex);
+  const name = data.slice(espacioIndex + 1);
+
+  return { number: number, name: name };
+};
 // ACCION DE ELIMINAR
 const destroy = (id, data) => {
   const toast = useToast();
@@ -276,7 +286,17 @@ const getTag = (cellIndex) => {
             class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div>
-              <div class="flex gap-1">
+              <div class="flex gap-1" v-if="cellIndex === 'worker'">
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+                <Link
+                  :href="route('usuarios.show', separateWorker(cell).number)"
+                >
+                  <span>{{ separateWorker(cell).name }}</span>
+                </Link>
+              </div>
+              <div class="flex gap-1" v-else>
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span
                 >
