@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Exports\GenericExport;
 use App\Models\PaymentHistorie;
+use DragonCode\Contracts\Cashier\Config\Payment;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -33,6 +35,13 @@ class PaymentHistorieController extends Controller
                     ->orWhere('receipt_url', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
+        }
+
+        $total = DB::table('payment_histories')->sum('amount');
+        $total_month = $total;
+        if (isNull($request->date)) {
+            $query->where('created_at', 'like', $request->date . '%');
+            $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->sum('amount');
         }
 
         $order = 'asc';
@@ -70,7 +79,9 @@ class PaymentHistorieController extends Controller
                 'total' => $payment->total(),
             ],
             'success' => session('success') ?? null,
-            'totalPaymentsCount' => $totalPaymentsCount
+            'totalPaymentsCount' => $totalPaymentsCount,
+            'totalAmount' => $total,
+            'totalAmountMonth' => $total_month
         ]);
     }
     public function store(PaymentHistorie $request)
@@ -92,13 +103,43 @@ class PaymentHistorieController extends Controller
             "q" => $request->q ?? null,
             "attribute" => $request->attribute ?? null,
             "order" => $request->order ?? null,
+            "data" => $request->data ?? null,
         ];
+        
         try {
             $payment = PaymentHistorie::findOrFail($id);
             $payment->delete();
 
             return Redirect::route('payment', $data)->with('success', 'Registro eliminado en éxito');
         } catch (Exception $e) {
+            return Redirect::route('payment', $data)->with('error', 'Error al cargar el registro');
+        }
+    }
+
+    public function cutMonth($date, Request $request)
+    {
+        // dd($request->all());
+        $data = [
+            "q" => $request->q ?? null,
+            "attribute" => $request->attribute ?? null,
+            "order" => $request->order ?? null,
+            "data" => $date ?? null,
+        ];
+
+        DB::beginTransaction();
+        try {
+            $payments = PaymentHistorie::where('created_at', 'like', $date . '%')->get();
+
+            if ($payments->isEmpty()) {
+                return Redirect::route('payment', $data)->with('info', 'No hay registros para eliminar en este mes');
+            }
+
+            PaymentHistorie::destroy($payments->pluck('id'));
+
+            DB::commit();
+            return Redirect::route('payment', $data)->with('success', 'Se ha realizado el corte');
+        } catch (Exception $e) {
+            DB::rollBack();
             return Redirect::route('payment', $data)->with('error', 'Error al cargar el registro');
         }
     }

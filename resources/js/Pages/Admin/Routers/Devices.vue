@@ -40,7 +40,7 @@ const columns = ["id", "name"];
         <div class="md:mb-10">
           <h2>Conexiones</h2>
         </div>
-        <div class="block md:flex gap-1">
+        <div class="block flex-col columns-1 md:columns-3 gap-1">
           <div class="mb-1 md:mb-0">
             <Link
               :href="route('devices.all.ping', route().params.router)"

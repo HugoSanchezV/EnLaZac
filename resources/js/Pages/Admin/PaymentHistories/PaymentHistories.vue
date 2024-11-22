@@ -6,6 +6,8 @@ const props = defineProps({
   payments: Object,
   pagination: Object,
   totalPaymentsCount: Number,
+  totalAmount: Number,
+  totalAmountMonth: Number,
 });
 
 const { payments } = toRefs(props);
@@ -17,7 +19,7 @@ const filters = [
   "usuario",
   // "contrato",
   "monto",
-  "contenido",
+  // "contenido",
   "metodo de pago",
   "id de transacción",
   // "link de recepción",
@@ -51,6 +53,39 @@ const headers = [
     <template v-slot:content>
       <div>
         <div v-if="props.totalPaymentsCount > 0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+            <!-- Card para el total de pagos -->
+            <div
+              class="card-total-payments bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-lg shadow-md"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-xl font-bold">Total Recaudado</h3>
+                  <p class="text-3xl mt-2 font-semibold">${{ totalAmount }}</p>
+                </div>
+                <div class="icon bg-white p-3 rounded-full shadow-md">
+                  <i class="fas fa-dollar-sign text-blue-700 text-2xl"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card para el total del mes seleccionado -->
+            <div
+              class="card-monthly-payments bg-gradient-to-r from-green-500 to-green-700 text-white p-6 rounded-lg shadow-md"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-xl font-bold">Total del Mes</h3>
+                  <p class="text-3xl mt-2 font-semibold">
+                    ${{ totalAmountMonth }}
+                  </p>
+                </div>
+                <div class="icon bg-white p-3 rounded-full shadow-md">
+                  <i class="fas fa-calendar-alt text-green-700 text-2xl"></i>
+                </div>
+              </div>
+            </div>
+          </div>
           <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <!-- Esta es el inicio de la tabla -->
           <base-table-payments
@@ -117,6 +152,7 @@ export default {
       attribute: "id",
       type: "todos",
       order: "ASC",
+      date: null,
     };
   },
   methods: {
@@ -129,6 +165,7 @@ export default {
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
+      this.date = props.date;
 
       if (this.attribute === "usuario") {
         this.attribute = "user_id";
@@ -161,7 +198,7 @@ export default {
       if (this.attribute === "fecha de pago") {
         this.attribute = "created_at";
       }
-
+      
       this.$inertia.get(
         link,
         {
@@ -169,8 +206,9 @@ export default {
           attribute: this.attribute,
           type: this.type,
           order: this.order,
+          date: this.date,
         },
-        { preserveState: true, replace: true }
+        { preserveState: true, replace: true, preserveScroll: true }
       );
     },
   },
