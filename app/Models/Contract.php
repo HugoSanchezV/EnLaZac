@@ -29,6 +29,9 @@ class Contract extends Model
     {
         return $this->belongsTo(InventorieDevice::class, 'inv_device_id');
     }
+    public function paymentSanction(){
+        return $this->hasOne(PaymentSanction::class, 'id', 'contract_id');
+    }
     public function plan()
     {
         return $this->belongsTo(Plan::class);

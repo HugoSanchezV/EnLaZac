@@ -38,7 +38,7 @@ class InstallationSettingsController extends Controller
             return [
                 'id' => $item->id,
                 //'installation_id' => $item->installation_id,
-                'installation_id' => $item->installation->contract->device->device->user->name,
+                'installation_id' => $item->installation->contract->inventorieDevice->device->user->name,
                 'exemption_months' => $item->exemption_months,
 
             ];

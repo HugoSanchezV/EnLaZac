@@ -32,7 +32,7 @@ class ContractWarningListener
         try{
             $mail = MailSetting::first();
             
-            $user = User::findOrFail($event->contract->device->user->user_id);
+            $user = User::findOrFail($event->contract->inventorieDevice->user->user_id);
             
             if($mail){
 

@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contract;
 use App\Models\CutOffDay;
 use App\Models\ExemptionPeriod;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use InvalidArgumentException;
 
 class ServiceVariablesController extends Controller
 {
@@ -39,13 +42,51 @@ class ServiceVariablesController extends Controller
             $validated = $request->validate([
                 'day' => 'required|integer|min:1|max:31', // Validar que sea un día válido
             ]);
-            CutOffDay::updateOrCreate([], ['day' => $validated['day']]);
-
+            $cutOffDay = CutOffDay::updateOrCreate([], ['day' => $validated['day']]);
+            $this->changeAllContractEndDate($cutOffDay->day);
             return Redirect::route('settings.service.variable')->
             with('success', 'El Dia de Corte fue Actualizado Con Éxito');
         }catch(Exception $e){
             return Redirect::route('settings.service.variable')->
             with('error', 'Hubo un error al actualizar el dia de corte');
+        }
+    }
+    public function changeAllContractEndDate($day)
+    {
+        try {
+            // Validar el día
+            if (!is_numeric($day) || $day < 1 || $day > 31) {
+                throw new InvalidArgumentException('El día debe ser un número válido entre 1 y 31.');
+            }
+
+            // Convertir el día en formato de dos dígitos
+            $dayFormatted = str_pad($day, 2, '0', STR_PAD_LEFT);
+
+            //Transacción iniciada
+            DB::beginTransaction();
+
+            // Procesar contratos en lotes
+            Contract::chunk(100, function ($contracts) use ($dayFormatted) {
+                foreach ($contracts as $contract) {
+                    // Formatear las fechas
+                    $contract->start_date = Carbon::parse($contract->start_date)->format('Y-m') . '-' . $dayFormatted;
+                    $contract->end_date = Carbon::parse($contract->end_date)->format('Y-m') . '-' . $dayFormatted;
+
+                    // Guardar cambios
+                    $contract->save();
+                }
+            });
+            //Transacción confirmada
+            DB::commit();
+
+
+            Log::info("Las fechas de todos los contratos se actualizaron correctamente.");
+        } catch (Exception $e) {
+            //Revertir los cambios
+            DB::rollBack();
+
+            // Registrar el error
+            Log::error("Error al cambiar las fechas de los contratos: " . $e->getMessage());
         }
     }
     public function updateExemptionPeriod(Request $request){

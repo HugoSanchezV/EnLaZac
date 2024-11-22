@@ -105,7 +105,7 @@ const headers = [
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableContracts from "@/Components/Base/BaseTableContracts.vue";
+import BaseTableContracts from "@/Pages/Coordi/Contracts/BaseTableContracts.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {

@@ -6,6 +6,7 @@ use App\Exports\GenericExport;
 use App\Http\Requests\Device\StoreDeviceRequest;
 use App\Http\Requests\Device\UpdateDeviceRequest;
 use App\Imports\AllDeviceImport;
+use App\Models\Contract;
 use App\Models\Device;
 use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
@@ -20,6 +21,7 @@ use Illuminate\Validation\Rule;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -614,6 +616,30 @@ class DevicesController extends Controller
     public function AllsetDeviceStatus(Device $device, $url = 'devices')
     {
         return $this->setDeviceStatus($device, $url);
+    }
+
+    public function disconectUser(Contract $contract){
+
+        try{
+            $inv_device = InventorieDevice::with('device')->where('inv_device_id', $contract->inv_device_id)->first();
+                
+            $devices = $inv_device->device->id;
+            
+            if($devices)
+            {
+                // foreach($devices  as $device)
+                // {
+                if($devices->disabled == 0)
+                {
+                    $devices->disabled = 1;
+
+                    $this->setDeviceStatusContrato($devices);
+                }
+               // }
+            }
+        }catch(Exception $e){
+            Log::error($e);
+        }
     }
 
     public function setDeviceStatusContrato(Device $device)

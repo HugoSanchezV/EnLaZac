@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('installation_settings', function (Blueprint $table) {
+        Schema::create('payment_sanctions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('installation_id')->nullable()->constrained('installations')->onDelete('cascade'); // Relación con cliente
-            $table->integer('exemption_months')->nullable();
+            $table->foreignId('contract_id')->contains('contracts')->onDelete('cascade');
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('installation_settings');
+        Schema::dropIfExists('payment_sanctions');
     }
 };
