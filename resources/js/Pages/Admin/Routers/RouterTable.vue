@@ -32,7 +32,6 @@ const destroy = (id, data) => {
 
       listeners: {
         accept: () => {
-
           const attributeUrl = getOriginal(data.attribute);
           const url = route("routers.destroy", {
             id: id,
@@ -297,7 +296,7 @@ const getTag = (cellIndex) => {
                   />
                 </svg>
 
-                Dispositivos
+                Conexiones
               </Link>
 
               <div

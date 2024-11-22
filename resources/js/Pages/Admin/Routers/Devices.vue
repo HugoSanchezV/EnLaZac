@@ -38,7 +38,7 @@ const columns = ["id", "name"];
     <template v-slot:namePage>
       <div class="flex justify-between flex-col md:flex-row">
         <div class="md:mb-10">
-          <h2>Dispositivos</h2>
+          <h2>Conexiones</h2>
         </div>
         <div class="block md:flex gap-1">
           <div class="mb-1 md:mb-0">
@@ -49,7 +49,7 @@ const columns = ["id", "name"];
               <span class="material-symbols-outlined" style="font-size: 16px">
                 hub
               </span>
-              Ping a dispositivos
+              Ping a Conexinoes
             </Link>
           </div>
           <div>

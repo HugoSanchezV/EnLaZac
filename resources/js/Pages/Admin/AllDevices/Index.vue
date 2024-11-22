@@ -48,7 +48,7 @@ const columns = ["id", "name"];
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Dispositivos</h2>
+          <h2>Todas las Conexiones</h2>
         </div>
         <div class="flex gap-2 flex-col md:flex-row">
           <div>
