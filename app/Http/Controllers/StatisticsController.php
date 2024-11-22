@@ -39,7 +39,7 @@ class StatisticsController extends Controller
         $userCount = self::userCount();
 
         $trafficData = self::conectar();
-     //   dd($trafficData);
+
         if(empty($trafficData)){
             $target = [];
             $upload_rate = [];
@@ -149,12 +149,13 @@ class StatisticsController extends Controller
     {return User::all();}
 
     public function morrososCount()
-    {return (Contract::with('device.device.user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
+    {return (Contract::with('inventorieDevice.device.user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
 
     public function activeDevices()
     {return (Device::where('disabled','0')->get());}
 
     public function currentTickets()
-    {$currentDate = Carbon::now()->format('Y-m-d');  // Obtener solo la fecha actual
+    {
+     $currentDate = Carbon::now()->format('Y-m-d');  // Obtener solo la fecha actual
      return Ticket::with('user')->whereDate('created_at', $currentDate)->get();}
 }

@@ -34,7 +34,7 @@ class InstallationController extends Controller
             $query->orderBy('id', 'asc');
         }
 
-        $installation = $query->with('contract.device.device.user')->latest()->paginate(8)->through(function ($item) {
+        $installation = $query->with('contract.inventorieDevice.device.user')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
                 'contract_id' => $item->contract->device->device->user->name,
@@ -43,7 +43,7 @@ class InstallationController extends Controller
             ];
         });
 
-        
+
         $totalInstallationCount = Installation::count();
 
         return Inertia::render('Admin/Installation/Installation', [
@@ -56,7 +56,7 @@ class InstallationController extends Controller
                 'total' => $installation->total(),
             ],
             'success' => session('success') ?? null,
-            'totalInstallationCount' => $totalInstallationCount 
+            'totalInstallationCount' => $totalInstallationCount
         ]);
     }
     public function edit($id)
@@ -69,9 +69,9 @@ class InstallationController extends Controller
         // ->whereNotIn('id', $contractIds)
         // ->orWhere('id', $installation->contract_id)
         // ->get();
-        $contracts = Contract::with('device.device.user')->get();
-        
-        
+        $contracts = Contract::with('inventorieDevice.device.user')->get();
+
+
         return Inertia::render('Admin/Installation/Edit', [
             'installation' => $installation,
             'contracts' => $contracts
@@ -79,7 +79,7 @@ class InstallationController extends Controller
     }
     public function update(UpdateInstallationRequest $request, $id)
     {
-        
+
         $installation = Installation::findOrFail($id);
 
         $validatedData = $request->validated();
@@ -88,18 +88,18 @@ class InstallationController extends Controller
     }
     public function create()
     {
-        
+
         // $contractIds = Installation::select('contract_id')->get();
         // $contracts = Contract::with('user')->whereNotIn('id', $contractIds)->get();
-        $contracts = Contract::with('device.device.user')->get();
-        dd($contracts);
-       // dd($contracts);
-        return Inertia::render('Admin/Installation/Create',[
+        $contracts = Contract::with('inventorieDevice.device.user')->get();
+      
+        // dd($contracts);
+        return Inertia::render('Admin/Installation/Create', [
             'contracts' => $contracts
         ]);
     }
     public function store(StoreInstallationRequest $request)
-    {   
+    {
         $validatedData = $request->validated();
         $installation =  Installation::create([
             'contract_id' => $validatedData['contract_id'],
@@ -110,17 +110,15 @@ class InstallationController extends Controller
         InstallationSetting::create([
             'installation_id' => $installation->id,
         ]);
-        
-      //  $this->setFirstMonthPayment($installation);
+
+        //  $this->setFirstMonthPayment($installation);
         return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
     }
-    
+
     public function destroy($id)
     {
         $community = Installation::findOrFail($id);
         $community->delete();
         return Redirect::route('installation')->with('success', 'La Instalación fue Eliminado Con Éxito');
     }
-
-
 }

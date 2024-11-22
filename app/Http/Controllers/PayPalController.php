@@ -46,7 +46,6 @@ class PayPalController extends Controller
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
-                // 'MADAFALE' => $token
             ];
 
             return response()->json($errorData);

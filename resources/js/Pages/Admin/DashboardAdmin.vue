@@ -14,7 +14,7 @@ const props = defineProps({
       default: true,
     },
     morrosos: {
-      type: Object,
+      type: Array,
     },
     activeDevice: {
       type: Object,

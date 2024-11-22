@@ -39,7 +39,7 @@ const submit = () => {form.post(route("installation.store"));};
               <option v-if="contracts.length === 0" disabled value="">No hay registro de contratos</option>
               <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ contract.id + " - " + contract.device.device.user.name }}
+                  {{ contract.id + " - " + contract.inventorie_device.device.user.name }}
               </option>
             </select>
         </div>

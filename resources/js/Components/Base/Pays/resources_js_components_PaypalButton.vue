@@ -27,7 +27,8 @@ export default {
     },
   },
   mounted() {
-    paypal
+    try {
+      paypal
       .Buttons({
         createOrder: async (data, actions) => {
           // alert("bien");
@@ -70,6 +71,9 @@ export default {
         },
       })
       .render("#paypal-button-container");
+    } catch (error) {
+      console.log(error.message)
+    }
   },
 };
 </script>
