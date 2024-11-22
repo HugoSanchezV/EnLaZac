@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use App\Models\Contract;
 use App\Models\Device;
 use App\Models\Charge;
+use App\Models\InventorieDevice;
 use Exception;
 
 class CheckContracts extends Command
@@ -37,32 +38,42 @@ class CheckContracts extends Command
     public function handle()
     {
         $today = Carbon::today();
-        //Verificar por que a partir de las 10 pm, lo toma como el siguiente dia 
 
-        $controllerContract = new ContractController();
-        
-        //END_DATE es igual a la fecha de corte
-        $service = new ChargeService();
         $serviceVariable = new ServiceVariablesController();
-        $installationSt = new InstallationSettingsController();
         $exemption  =  $serviceVariable->getExemptionPeriods();
         $cutoffday = $serviceVariable->getCutOffDay();
         
-        $contractTerms = $controllerContract->getContracts($today);
+        
 
-        $this->info($contractTerms);
+        if($cutoffday && $exemption)
+        {    
+            
 
-        if($cutoffday && $exemption){
+           // $this->info("Dia de corte");
             
             if ($today->day == $serviceVariable->getCutOffDay())
             {
+                $controllerContract = new ContractController();
+            
+                //END_DATE es igual a la fecha de corte
+                $service = new ChargeService();
+            
+                $installationSt = new InstallationSettingsController();
+                $contractTerms = $controllerContract->getContracts($today);
+                $this->info($contractTerms->count());
+
                 foreach($contractTerms as $contract){
                     $endDate = Carbon::parse($contract->end_date);
-                    if($contract->active == 1){
-                        self::checkInstallation($contract, $today, $endDate, $service, $exemption, $installationSt);
-                    }
+                    //if($contract->active == 1){
+                    self::checkInstallation($contract, $today, $endDate, $service, $exemption, $installationSt);
+                   //}
                 }
             }else if($today->day == 25){
+                $controllerContract = new ContractController();
+            
+                $service = new ChargeService();
+
+                $contractTerms = $controllerContract->getContracts($today);
                 foreach($contractTerms as $contract){
                     $endDate = Carbon::parse($contract->end_date);
                     if($contract->active == 1){
@@ -79,7 +90,7 @@ class CheckContracts extends Command
             $this->info('No se ha ingresado el dia de corte y los dias de excepcion de plazos de primer pago');
         }
 
-        $this->info('Se han verificado los contratos.');
+   //     $this->info('Se han verificado los contratos.');
     }
 
     private function conditional($endDate, $contract, $today, $service)
@@ -196,7 +207,8 @@ class CheckContracts extends Command
         $year = $assigned->year;
 
         //Obtener el mes y el año de acuerdo al incremento del rango de fechas
-        if($finalMonth > 12){
+        if($finalMonth > 12)
+        {
             $year = $year + intval($finalMonth / 12);
             while($finalMonth > 12)
                 $finalMonth -= 12;   
@@ -226,37 +238,18 @@ class CheckContracts extends Command
     {$service->createChargeCourtDate($contract);}
 
     public function extra_charge($service, Contract $contract)
-    {
-        $service->createChargeMounthsDebt($contract);
-    }
+    {$service->createChargeMounthsDebt($contract);}
 
     private function sendEmail($contract, $days)
-    {
-        event(new ContractWarningEvent($contract, $days));
-    }
+    {event(new ContractWarningEvent($contract, $days));}
+
     private function disconectUser($contract)
     {
-        try{
-            $devices = Device::findOrFail($contract->device_id);
-            
-            if($devices)
-            {
-                foreach($devices  as $device)
-                {
-                    if($device->disabled == 0)
-                    {
-                        $device->disabled = 1;
-                        $controller = new DevicesController();
-    
-                        $controller->setDeviceStatusContrato($device);
-                    }
-                }
-                
-            }
-        }catch(Exception $e){
-            throw new Exception('Error' . $e->getMessage());
-        }
+        $deviceController = new DevicesController();
         
-        $this->info('\n SE TERMINO DE ENVIAR.\n');
+        $deviceController->disconectUser($contract);
+
+            //Determinar bien 
+        $this->info('\n SE DESCONECTO AL USUARIO.\n');
     }
 }

@@ -2,10 +2,12 @@
 import { router } from "@inertiajs/vue3";
 
 import { useToast, TYPE, POSITION } from "vue-toastification";
+import { ref } from "vue";
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
+import ModalSanction from "./Component/ModalSanction.vue";
 
-import BaseQuestion from "./BaseQuestion.vue";
+import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
-import FilterOrderBase from "./FilterOrderBase.vue";
 
 const getOriginal = (data) => {
   if (data.attribute === "id") {
@@ -111,6 +113,17 @@ const getTag = (cellIndex) => {
       return cellIndex;
       break;
   }
+};
+
+
+const isModalOpen = ref({});
+
+const openModal = (id) => {
+  isModalOpen.value[id] = true;
+};
+
+const closeModal = (id) => {
+  isModalOpen.value[id] = false;
 };
 </script>
 
@@ -361,6 +374,34 @@ const getTag = (cellIndex) => {
 
                 Editar
               </Link>
+              <div>
+                <button
+                  class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                  @click="openModal(row.id)"
+                >
+                  
+                </button>
+                <modal-sanction
+                  :show="isModalOpen[row.id]"
+                  @close="closeModal(row.id)"
+                  @selectData="
+                    confirmSelection(
+                      row,
+                      $event,
+                      routerObject,
+                      searchQuery,
+                      currentOrder,
+                      currentFilter
+                    )
+                  "
+                  :data="users"
+                  :id="row.id"
+                  :title="'Selecciona un técnico a notificar'"
+                  item-text="name"
+                >
+                </modal-sanction>
+           
+              </div>
 
               <div v-if="del">
                 <button
@@ -400,6 +441,7 @@ const getTag = (cellIndex) => {
   
   <script>
 import { Link, router } from "@inertiajs/vue3";
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 export default {
   components: {
     Link,
@@ -433,6 +475,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    sanction:{
+      type: Array,
+      required: true,
+    }
   },
   data() {
     return {

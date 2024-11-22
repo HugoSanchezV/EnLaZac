@@ -351,28 +351,6 @@ const confirmSelectionTecnico = (
 
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
-              <!-- <Link
-                :href="route('device.show', row.id)"
-                v-if="show"
-                class="btn-modal flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-                  />
-                </svg>
-
-                Mostrar
-              </Link> -->
               <div v-if="users.length > 0">
                 <button
                   class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"

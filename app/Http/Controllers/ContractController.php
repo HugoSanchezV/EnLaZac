@@ -13,6 +13,7 @@ use App\Models\Charge;
 use App\Models\CutOffDay;
 use App\Models\Device;
 use App\Models\InventorieDevice;
+use App\Models\PaymentSanction;
 use App\Models\RuralCommunity;
 use App\Services\RuralCommunityService;
 use Carbon\Carbon;
@@ -55,7 +56,7 @@ class ContractController extends Controller
             $query->orderBy('id', 'asc');
         }
 
-        $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
+        $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity', 'paymentSanction')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
                 'inv_device_id' => $item->inventorieDevice->mac_address ?? 'Sin asignar',
@@ -69,7 +70,6 @@ class ContractController extends Controller
 
             ];
         });
-
 
 
         $totalContractsCount = Contract::count();
@@ -134,7 +134,7 @@ class ContractController extends Controller
         $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'user_id' => $item->device->device->user->name ?? 'Sin asignar',
+                'user_id' => $item->inventorieDevice->device->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',
                 'start_date' => $item->start_date,
@@ -252,12 +252,18 @@ class ContractController extends Controller
             ]);
 
             self::createCharge($contract);
+            self::sanction($contract);
             //     RuralCommunityService::update($id, $request->community);
 
             return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
         }catch(Exception $e){
             return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato');
         }
+    }
+    private function sanction(Contract $contract){
+        $controller = new PaymentSanctionController();
+
+        $controller->store($contract->id);
     }
     private function createCharge($contract)
     {
@@ -398,7 +404,7 @@ class ContractController extends Controller
 
     public function getContracts($today)
     {
-        return Contract::with('installations')->where('end_date', '<=', $today)->get();
+        return Contract::with('installations')->where('active', 1)->get();
     }
     public function exportExcel()
     {
@@ -419,7 +425,7 @@ class ContractController extends Controller
             return [
                 'id' => $contract->id,
                 'cliente id' => $contract->inventorieDevice->device->user->id ?? 'None',
-                'cliente' => $contractinventorieDevice->device->user->name ?? 'None',
+                'cliente' => $contract->inventorieDevice->device->user->name ?? 'None',
                 'plan' => $contract->plan->name ?? 'None',
                 'fecha incio' => $contract->start_date,
                 'fecha Fin' => $contract->end_date,
