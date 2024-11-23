@@ -22,7 +22,7 @@ class PaymentService
             $pay->user_id = Auth::id();
             $pay->worker = $worker;
             $pay->amount = $amount;
-            $pay->content = json_encode($cart);
+            $pay->content = $cart;
             $pay->payment_method = $method;
 
             $pay->transaction_id = $transaction;

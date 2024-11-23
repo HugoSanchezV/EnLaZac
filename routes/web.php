@@ -271,6 +271,7 @@ Route::middleware([
         Route::get('/payment/histories',                     [PaymentHistorieController::class, 'index'])->name('payment');
         Route::delete('/payment/histories/delete/{id}',      [PaymentHistorieController::class, 'destroy'])->name('payment.destroy');
         Route::delete('/payment/histories/cut/{date}',      [PaymentHistorieController::class, 'cutMonth'])->name('payment.cut.month');
+        Route::get('/payment/histories/show/{id}',      [PaymentHistorieController::class, 'show'])->name('payment.show');
         Route::get('/payment/histories/to/excel',            [PaymentHistorieController::class, 'exportExcel'])->name('payment.excel');
 
 

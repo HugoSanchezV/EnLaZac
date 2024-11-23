@@ -105,7 +105,7 @@ class PaymentHistorieController extends Controller
             "order" => $request->order ?? null,
             "data" => $request->data ?? null,
         ];
-        
+
         try {
             $payment = PaymentHistorie::findOrFail($id);
             $payment->delete();
@@ -177,10 +177,9 @@ class PaymentHistorieController extends Controller
     }
     public function show(string $id)
     {
+        $paymentHistorie = PaymentHistorie::with('user')->findOrFail($id);
 
-        $paymentHistorie = PaymentHistorie::with('user', 'transaction')->findOrFail($id);
-
-        return Inertia::render('Admin/PaymentHistorie/Show', [
+        return Inertia::render('Admin/PaymentHistories/Show', [
             'paymentHistorie' => $paymentHistorie,
         ]);
     }

@@ -1,163 +1,170 @@
 <script setup>
-import { Link } from "@inertiajs/vue3";
+import { defineProps } from "vue";
+import { ref } from "vue";
+import { useToast, TYPE, POSITION } from "vue-toastification";
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
+import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
-    paymentHistorie: {
-        type: Object,
-        required: true,  // El dispositivo es obligatorio
-    },
+  cart: {
+    type: Array,
+    default: () => [],
+  },
+  amount: {
+    type: Number,
+    default: 0.0,
+  },
+  token: {
+    type: String,
+    default: "",
+  },
+  user: {
+    type: Array,
+    default: [],
+  },
+  date: {
+    type: String,
+    default: "",
+  },
+  orderId: {
+    type: Number,
+    default: null,
+  },
 });
+
+// Estado para mostrar u ocultar el token
+const isTokenVisible = ref(false);
+
+// Método para alternar la visibilidad del token
+function toggleTokenVisibility() {
+  isTokenVisible.value = !isTokenVisible.value;
+}
+
+// Método para confirmar el pago
+function confirmPay(token, cart, amount) {
+  const toast = useToast();
+
+  toast(
+    {
+      component: BaseQuestion,
+      props: {
+        message: "¿Estas seguro confirmar el orden?",
+        accept: true,
+        cancel: true,
+        textConfirm: "Confirmar",
+      },
+      listeners: {
+        accept: () => {
+          const url = route("local.pay.confirm", { token: token });
+          router.post(url, {
+            token: token,
+            cart: cart,
+            amount: amount,
+          });
+        },
+      },
+    },
+    {
+      type: TYPE.WARNING,
+      position: POSITION.TOP_CENTER,
+      timeout: 10000,
+    }
+  );
+}
+
+const formattedDate = (date) => {
+  const dateObj = new Date(date);
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return dateObj.toLocaleDateString("es-ES", options);
+};
 </script>
 
 <template>
-  <!-- Contenedor principal centrado con fondo degradado profesional -->
-  <div class="min-h-screen bg-gradient-to-r from-blue-100 to-purple-200 flex items-center justify-center p-6">
-    <!-- Tarjeta de información del dispositivo -->
-    <div class="bg-white shadow-2xl rounded-3xl border border-gray-200 w-full max-w-3xl">
-      <!-- Encabezado de la tarjeta con degradado -->
-      <div class="px-8 py-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-3xl">
-        <h3 class="text-2xl font-bold text-white">Información del Historial de pagos</h3>
-        <p class="mt-2 text-sm text-indigo-200">
-          Detalles sobre el Historial de pagos
-        </p>
+  <div class="flex justify-center items-center w-full h-full" v-if="cart">
+    <div class="p-8 rounded-lg md:w-1/2 w-full">
+      <!-- Token y Botón de Comprobar Estado -->
+      <!-- <div class="text-gray-600 mb-4 text-center">
+        Selecciona la opción de cobro para limpiar los pagos del cliente
+      </div> -->
+      <div class="mb-4">
+        <span class="font-semibold">Total :</span> ${{ amount }}
       </div>
-      <!-- Contenido de la tarjeta -->
-      <div class="px-8 py-6">
-        <!-- Lista de detalles en un diseño de rejilla responsivo -->
-        <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          
-          <!-- ID del dispositivo -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">ID</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ paymentHistorie.id }}</dd>
+
+      <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center mb-4 gap-2">
+          <button
+            @click="toggleTokenVisibility"
+            class="text-gray-500 hover:text-gray-800"
+          >
+            <span class="material-symbols-outlined">
+              {{ isTokenVisible ? "visibility" : "visibility_off" }}
+            </span>
+          </button>
+          <span class="p-2 border rounded mr-2">
+            {{ isTokenVisible ? token : "********" }}
+          </span>
+        </div>
+        <!-- <div>
+          <button
+            @click="confirmPay(token, cart, amount)"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          >
+            Confirmar Pago
+          </button>
+        </div> -->
+      </div>
+
+      <!-- Lista de ítems del carrito -->
+      <div class="space-y-6">
+        <div
+          v-for="item in cart"
+          :key="item.id"
+          class="p-6 bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition duration-300"
+        >
+          <!-- Header de la tarjeta con la fecha y el tipo -->
+          <div class="flex justify-between items-center mb-4">
+            <div class="text-sm text-gray-500">
+              {{ formattedDate(date) }}
+            </div>
+            <div
+              class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded"
+            >
+              {{ item.type === "charge" ? "Cargo" : "Contrato" }}
+            </div>
           </div>
 
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">ID Del usuario</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ paymentHistorie.user === null ? 'Sin asignar' : paymentHistorie.user.id }}
-            </dd>
-          </div>
+          <!-- Título de la tarjeta -->
+          <h3 class="text-lg font-bold text-gray-900 mb-2">
+            {{ item.description }}
+          </h3>
 
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">ID Del contrato</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ paymentHistorie.contract === null ? 'Sin asignar' : paymentHistorie.contract.id }}
-            </dd>
-          </div>
+          <!-- Descripción del pago -->
+          <p class="text-gray-700 text-sm mb-4">
+            Monto a pagar: <strong>${{ item.amount }}</strong>
+          </p>
 
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">ID De la transaccion</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ paymentHistorie.transaction === null ? 'Sin asignar' : paymentHistorie.transaction.id }}
-            </dd>
+          <!-- Información del contrato y acciones -->
+          <div class="flex justify-between items-center">
+            <div class="text-gray-500 text-sm">
+              Contrato ID: <strong>{{ item.contract }}</strong>
+            </div>
+            <div class="flex items-center mt-4">
+              <p class="text-sm font-medium text-gray-800">
+                {{ user["name"] }}
+              </p>
+            </div>
           </div>
-
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">Cantidad</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ paymentHistorie.amount  }}</dd>
-          </div>
-
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">Contenido</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ paymentHistorie.content}}</dd>
-          </div>
-
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">Metodo de pago </dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ paymentHistorie.payment_method}}</dd>
-          </div>
-
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">URL recibida</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ paymentHistorie.receipt_url}}</dd>
-          </div>
-
-        </dl>
-        <!-- Enlace de acción (opcional) -->
-        <div class="mt-8 text-center">
-          <Link href="#" class="text-indigo-600 hover:text-indigo-800 font-semibold">
-            Ver más detalles &rarr;
-          </Link>
         </div>
       </div>
     </div>
   </div>
+  <div v-else>No hay datos para mostrar</div>
 </template>
 
-<script>
-export default {
-  props: ["paymentHistorie"],
-  data() {
-    return {
-      modificarPassword: false,
-    };
-  },
-};
-</script>
-
 <style scoped>
-/* Estilos personalizados adicionales */
-
-/* Fondo degradado para el contenedor principal */
-.bg-gradient-to-r {
-  background-image: linear-gradient(to right, #ebf8ff, #f3e8ff);
-}
-
-/* Colores de texto personalizados */
-.text-indigo-600 {
-  color: #4f46e5;
-}
-
-.text-indigo-200 {
-  color: #a5b4fc;
-}
-
-.text-indigo-800:hover {
-  color: #3730a3;
-}
-
-/* Degradados personalizados para el encabezado */
-.bg-gradient-to-r.from-indigo-500.to-purple-600 {
-  background-image: linear-gradient(to right, #6366f1, #a855f7);
-}
-
-/* Bordes redondeados personalizados */
-.rounded-3xl {
-  border-radius: 1.5rem;
-}
-
-/* Sombras personalizadas */
-.shadow-2xl {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Tipografía mejorada */
-.font-semibold {
-  font-weight: 600;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-}
-
-.text-gray-900 {
-  color: #111827;
-}
-
-.text-gray-700 {
-  color: #4b5563;
-}
-
-/* Efecto de transición para enlaces */
-a:hover {
-  text-decoration: underline;
-}
-
-/* Ajustes para mejorar la responsividad y apariencia */
-@media (min-width: 640px) {
-  .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
+.material-symbols-outlined {
+  font-size: 24px;
+  cursor: pointer;
 }
 </style>
