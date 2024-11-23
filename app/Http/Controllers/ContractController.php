@@ -16,10 +16,12 @@ use App\Models\PaymentSanction;
 use App\Models\RuralCommunity;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use Twilio\Rest\Microvisor\V1\DeviceContext;
 
 class ContractController extends Controller
 {
@@ -220,8 +222,7 @@ class ContractController extends Controller
                     'community' => $community,
                 ]
             );
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             return redirect()->route('contracts')->with('error', 'Hubo un error al obtener los registros');
         }
     }
@@ -229,32 +230,41 @@ class ContractController extends Controller
     public function store(StoreContractRequest $request)
     {
         try {
-            $cutOffDay = CutOffDay::first()->day;
+            DB::transaction(function () use ($request) {
+                $cutOffDay = CutOffDay::first()->day;
 
-            //dd('LLega aqui');
-            $validatedData = $request->validated();
+                //dd('LLega aqui');
+                $validatedData = $request->validated();
 
-            $contract = Contract::create([
-                'inv_device_id' => $validatedData['inv_device_id'],
-                'plan_id' => $validatedData['plan_id'],
-                'start_date' => $validatedData['start_date'] . "-" . $cutOffDay,
-                'end_date' => $validatedData['end_date'] . "-" . $cutOffDay,
-                'active' => $validatedData['active'],
-                'address' => $validatedData['address'],
-                'rural_community_id' => $validatedData['rural_community_id'],
-                'geolocation' => $validatedData['geolocation'],
-            ]);
+                $contract = Contract::create([
+                    'inv_device_id' => $validatedData['inv_device_id'],
+                    'plan_id' => $validatedData['plan_id'],
+                    'start_date' => $validatedData['start_date'] . "-" . $cutOffDay,
+                    'end_date' => $validatedData['end_date'] . "-" . $cutOffDay,
+                    'active' => $validatedData['active'],
+                    'address' => $validatedData['address'],
+                    'rural_community_id' => $validatedData['rural_community_id'],
+                    'geolocation' => $validatedData['geolocation'],
+                ]);
 
-            self::createCharge($contract);
-            self::sanction($contract);
+                self::createCharge($contract);
+                self::sanction($contract);
+
+                $plan = Plan::findOrFail($validatedData['plan_id'])->first();
+                $device = Device::where('device_id', $validatedData['inv_device_id'])->first();
+
+                $deviceController = new DevicesController();
+                $deviceController->setConsumePlanToDevice($device, $plan);
+            });
             //     RuralCommunityService::update($id, $request->community);
-
             return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
-        }catch(Exception $e){
+        } catch (Exception $e) {
+            dd($e->getMessage());
             return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato');
         }
     }
-    private function sanction(Contract $contract){
+    private function sanction(Contract $contract)
+    {
         $controller = new PaymentSanctionController();
 
         $controller->store($contract->id);
@@ -340,23 +350,38 @@ class ContractController extends Controller
 
     public function update(UpdateContractRequest $request, $id)
     {
-        $cutOffDay = CutOffDay::first()->day;
-        $contract = Contract::findOrFail($id);
+        try {
+            DB::transaction(function () use ($request, $id) {
+                $cutOffDay = CutOffDay::first()->day;
+                $contract = Contract::findOrFail($id);
 
-        $validatedData = $request->validated();
-        $contract->update(
-            [
-                'inv_device_id' => $validatedData['inv_device_id'],
-                'plan_id' => $validatedData['plan_id'],
-                'start_date' => $validatedData['start_date'] . "-" . $cutOffDay,
-                'end_date' => $validatedData['end_date'] . "-" . $cutOffDay,
-                'active' => $validatedData['active'],
-                'address' => $validatedData['address'],
-                'rural_community_id' => $validatedData['rural_community_id'],
-                'geolocation' => $validatedData['geolocation'],
-            ]
-        );
-        return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
+                $validatedData = $request->validated();
+
+                if ($contract->plan_id !== $validatedData['plan_id']) {
+                    $plan = Plan::findOrFail($validatedData['plan_id'])->first();
+                    $device = Device::where('device_id', $validatedData['inv_device_id'])->first();
+
+                    $deviceController = new DevicesController();
+                    $deviceController->setConsumePlanToDevice($device, $plan);
+                }
+
+                $contract->update(
+                    [
+                        'inv_device_id' => $validatedData['inv_device_id'],
+                        'plan_id' => $validatedData['plan_id'],
+                        'start_date' => $validatedData['start_date'] . "-" . $cutOffDay,
+                        'end_date' => $validatedData['end_date'] . "-" . $cutOffDay,
+                        'active' => $validatedData['active'],
+                        'address' => $validatedData['address'],
+                        'rural_community_id' => $validatedData['rural_community_id'],
+                        'geolocation' => $validatedData['geolocation'],
+                    ]
+                );
+            });
+            return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
+        } catch (Exception $e) {
+            return redirect()->route('contracts')->with('error', 'Error al cargar el registro');
+        }
     }
 
     public function updateMonths($months, $id)

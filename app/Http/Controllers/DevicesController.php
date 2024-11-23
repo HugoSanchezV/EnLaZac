@@ -14,6 +14,7 @@ use App\Models\Router;
 use App\Models\User;
 use App\Models\DeviceStatus;
 use App\Models\PingDeviceHistorie;
+use App\Models\Plan;
 use App\Services\DeviceService;
 use App\Services\RouterOSService;
 use Illuminate\Http\Request;
@@ -618,26 +619,25 @@ class DevicesController extends Controller
         return $this->setDeviceStatus($device, $url);
     }
 
-    public function disconectUser(Contract $contract){
+    public function disconectUser(Contract $contract)
+    {
 
-        try{
+        try {
             $inv_device = InventorieDevice::with('device')->where('inv_device_id', $contract->inv_device_id)->first();
-                
+
             $devices = $inv_device->device->id;
-            
-            if($devices)
-            {
+
+            if ($devices) {
                 // foreach($devices  as $device)
                 // {
-                if($devices->disabled == 0)
-                {
+                if ($devices->disabled == 0) {
                     $devices->disabled = 1;
 
                     $this->setDeviceStatusContrato($devices);
                 }
-               // }
+                // }
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Log::error($e);
         }
     }
@@ -757,6 +757,47 @@ class DevicesController extends Controller
             return Redirect::route('devices')->with('success', 'Archivo Importado Con Éxito ');
         } catch (\Exception $e) {
             return Redirect::route('devices')->with('error', 'Error al Importar, ' . $e->getMessage());
+        }
+    }
+
+
+    public function setConsumePlanToDevice(Device $device, Plan $plan)
+    {
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($device->router_id);
+
+            $burst_limit = $plan->burst_limit['upload_limits'] . 'M/' . $plan->burst_limit['download_limits'] . 'M';
+            $burst_threshold = $plan->burst_threshold['upload_limits'] . '/' . $plan->burst_threshold['download_limits'] . 'M';
+            $burst_time = $plan->burst_time['upload_limits'] . 's/' . $plan->burst_time['download_limits'] . 's';
+            $limite_at = $plan->limite_at['upload_limits'] . 'K/' . $plan->limite_at['download_limits'] . 'K';
+            $max_limit = $plan->max_limit['upload_limits'] . 'M/' . $plan->max_limit['download_limits'] . 'M';
+
+            $response = $routerOSService->executeCommand('/queue/simple/add', [
+                'burst-limit' => $burst_limit,
+                'burst-threshold' => $burst_threshold,
+                'burst-time' => $burst_time,
+                'limit-at' => $limite_at,
+                'max-limit' => $max_limit,
+                'target' => $device->address, // IP del dispositivo al que estás aplicando la regla
+            ]);
+
+            $routerOSService->disconnect();
+        } catch (Exception $e) {
+            throw new Exception('Error en setConsumePlantoDevice ' . $e->getmessage());
+        }
+    }
+
+    public function conectarTest()
+    {
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect(1);
+
+            $routerOSService->disconnect();
+            dd('Se conecto y se desconecto');
+        } catch (Exception $e) {
+            throw new Exception('Error en setConsumePlantoDevice ' . $e->getmessage());
         }
     }
 }

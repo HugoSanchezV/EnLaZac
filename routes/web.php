@@ -49,6 +49,7 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('test', [DevicesController::class, 'conectarTest']);
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
