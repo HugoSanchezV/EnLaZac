@@ -1,6 +1,5 @@
 <script setup>
 import { toRefs } from "vue";
-import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   installation: Object,
@@ -138,9 +137,6 @@ export default {
       this.type = props.type;
       this.order = props.order;
 
-      if (this.attribute === "id") {
-        this.attribute = "id";
-      }
 
       if (this.attribute === "contrato") {
         this.attribute = "contract_id";

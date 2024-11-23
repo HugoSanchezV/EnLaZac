@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
+use function PHPUnit\Framework\isNull;
+
 class InstallationSettingsController extends Controller
 {
     public function index(Request $request)
@@ -28,11 +30,16 @@ class InstallationSettingsController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // Ordenación
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+
 
         $installationSt = $query->with('installation.contract.inventorieDevice.device.user')->latest()->paginate(8)->through(function ($item) {
             return [
@@ -62,10 +69,10 @@ class InstallationSettingsController extends Controller
     }
     public function editFromInstallation($id)
     {
-        try{
-            $installationSetting  = InstallationSetting::where('installation_id',$id)->first();
-            if(!$installationSetting){
-                
+        try {
+            $installationSetting  = InstallationSetting::where('installation_id', $id)->first();
+            if (!$installationSetting) {
+
                 $installationSetting =  InstallationSetting::create([
                     'installation_id' => $id,
                 ]);
@@ -77,17 +84,17 @@ class InstallationSettingsController extends Controller
                 'installationSetting' => $installationSetting,
                 'installation' => $installation,
             ]);
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             //dd($e);
             return Redirect::back()->with('error', 'Error al cargar el registro');
 
-           // return redirect()->route('charges')->with('error', 'Hubo un error al obtener la información del registro');
+            // return redirect()->route('charges')->with('error', 'Hubo un error al obtener la información del registro');
         }
     }
-    public function edit($id){
+    public function edit($id)
+    {
 
-        try{
+        try {
             //dd();
             $installationSetting  = InstallationSetting::findOrFail($id);
 
@@ -97,10 +104,8 @@ class InstallationSettingsController extends Controller
                 'installationSetting' => $installationSetting,
                 'installation' => $installation,
             ]);
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return Redirect::back()->with('error', 'Error al cargar el registro');
-
         }
     }
     public function update(UpdateInstallationSettingsRequest $request, $id)
@@ -114,52 +119,50 @@ class InstallationSettingsController extends Controller
     }
     public function create()
     {
-        try{
+        try {
             $installations = Installation::with('contract.inventorieDevice.device.user')
-            ->whereNotIn('id', function ($query) {
-                $query->select('installation_id')->from('installation_settings');
-            })
-            ->get();
+                ->whereNotIn('id', function ($query) {
+                    $query->select('installation_id')->from('installation_settings');
+                })
+                ->get();
             // $settings = InstallationSetting::all();
             // $installationIds = $settings->pluck('installation_id');
 
             // $installations = Installation::with('contract.inventorieDevice.device.user')
             // ->whereNotIn('id',$installationIds)
             // ->get();
-           // $installations = Installation::with('contract.inventorieDevice.device.user')->get();
-           // dd($installations);
-            
+            // $installations = Installation::with('contract.inventorieDevice.device.user')->get();
+            // dd($installations);
+
             return Inertia::render(
                 'Admin/Settings/InstallationSettings/Create',
                 [
                     'installations' => $installations,
                 ]
             );
-        }catch(Exception $e)
-        {
-
+        } catch (Exception $e) {
         }
     }
 
     public function store(StoreInstallationSettingsRequest $request)
     {
-        try{
+        try {
             $validateData = $request->validated();
             //dd("Entro");
             InstallationSetting::create([
                 'installation_id' => $validateData['installation_id'],
-                'exemption_months' =>$validateData['exemption_months'],
+                'exemption_months' => $validateData['exemption_months'],
             ]);
             return Redirect::back()->with('success', 'La configuración ha sido creado con éxito');
 
-           // return redirect()->route('settings.installation')->with('success', 'La configuración ha sido creado con éxito');
-        }catch(Exception $e){
-           // return redirect()->route('settings.installation')->with('success', 'Error Al Crear La Configuración');
+            // return redirect()->route('settings.installation')->with('success', 'La configuración ha sido creado con éxito');
+        } catch (Exception $e) {
+            // return redirect()->route('settings.installation')->with('success', 'Error Al Crear La Configuración');
             return Redirect::back()->with('error', 'Error al cargar el registro');
         }
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $data = [
             "q" => $request->q ?? null,
@@ -174,5 +177,4 @@ class InstallationSettingsController extends Controller
             return Redirect::route('settings.installation', $data)->with('errror', 'Error al cargar el registro');
         }
     }
-    
 }

@@ -7,8 +7,20 @@ import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
 
+const getOriginal = (data) => {
+  if (data === "contrato") {
+    return "contract_id";
+  }
+  if (data === "descripción") {
+    return "description";
+  }
+
+  if (data === "fecha asignada") {
+    return "assigned_date";
+  }
+};
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -25,11 +37,23 @@ const destroy = (id) => {
         accept: () => {
           const url = route("installation.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          const attributeUrl = getOriginal(data.attribute);
+
+          router.delete(
+            url,
+            {
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -178,8 +202,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentInstallation,
+              order: currentOrder,
+              attribute: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -210,21 +234,20 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-              <div v-if="cellIndex === 'description'">
-                <div v-if="cell === '1'">
-                  <h2>Instalación en el domicilio</h2>
-                </div>
-                <div v-if="cell === '2'">
-                  <h2>Cambio de domicilio</h2>
-                </div>
+            <div v-if="cellIndex === 'description'">
+              <div v-if="cell === '1'">
+                <h2>Instalación en el domicilio</h2>
               </div>
-              <div v-else class="flex gap-1">
-                <span class="lg:hidden md:hidden block font-bold lowercase"
-                  >{{ getTag(cellIndex) }} :</span
-                >
-                {{ cell }}
+              <div v-if="cell === '2'">
+                <h2>Cambio de domicilio</h2>
               </div>
-            
+            </div>
+            <div v-else class="flex gap-1">
+              <span class="lg:hidden md:hidden block font-bold lowercase"
+                >{{ getTag(cellIndex) }} :</span
+              >
+              {{ cell }}
+            </div>
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
@@ -255,7 +278,9 @@ const getTag = (cellIndex) => {
                 v-if="show"
                 class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
-              <span class="material-symbols-outlined" style="font-size: 16px;"> edit_calendar </span>
+                <span class="material-symbols-outlined" style="font-size: 16px">
+                  edit_calendar
+                </span>
 
                 Primer pago
               </Link>
@@ -284,7 +309,13 @@ const getTag = (cellIndex) => {
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: searchQuery,
+                      order: currentOrder,
+                      attribute: currentFilter,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg

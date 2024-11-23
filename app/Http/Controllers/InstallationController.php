@@ -7,9 +7,12 @@ use App\Http\Requests\Installation\UpdateInstallationRequest;
 use App\Models\Contract;
 use App\Models\Installation;
 use App\Models\InstallationSetting;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
+
+use function PHPUnit\Framework\isNull;
 
 class InstallationController extends Controller
 {
@@ -28,11 +31,16 @@ class InstallationController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // Ordenación
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+
 
         $installation = $query->with('contract.inventorieDevice.device.user')->latest()->paginate(8)->through(function ($item) {
             return [
@@ -115,10 +123,19 @@ class InstallationController extends Controller
         return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        $community = Installation::findOrFail($id);
-        $community->delete();
-        return Redirect::route('installation')->with('success', 'La Instalación fue Eliminado Con Éxito');
+        $data = [
+            "q" => $request->q,
+            "attribute" => $request->attribute,
+            "order" => $request->order,
+        ];
+        try {
+            $community = Installation::findOrFail($id);
+            $community->delete();
+            return Redirect::route('installation', $data)->with('success', 'La Instalación fue Eliminado Con Éxito');
+        } catch (Exception  $e) {
+            return Redirect::route('installation', $data)->with('error', 'Error al cargar el registro');
+        }
     }
 }
