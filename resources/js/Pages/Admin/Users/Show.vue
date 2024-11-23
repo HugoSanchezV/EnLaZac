@@ -17,10 +17,9 @@
           </pre>
           <div v-for="(item, index) in contracts" :key="index">
             <CardInformation 
-              :ticket="ticket" 
               :device="item.device" 
               :contract="item.contract" 
-              :plan="item.plan" 
+              :plan="item.contract.plan" 
             />
           </div>
         </div>

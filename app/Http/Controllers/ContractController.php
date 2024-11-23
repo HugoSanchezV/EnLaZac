@@ -159,7 +159,43 @@ class ContractController extends Controller
     //Muestra la información del contrato y del usuario en específico
     public function show($id)
     {
-        $contract = Contract::with('user', 'router')->findOrFail($id);
+        // $contract = Contract::with('plan', 'ruralCommunity', 'inventorieDevice')->findOrFail($id);
+        // $contract = Contract::select(
+        //     'contracts.*',
+        //     'plans.*',
+        //     'rural_communities.*',
+        //     'inventorie_devices.*',
+        //     'devices.*',
+        //     'users.*'
+        // )
+        //     ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+        //     ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
+        //     ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
+        //     ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device
+        //     ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
+        //     ->where('contracts.id', $id)
+        //     ->first();
+
+        $contract = Contract::select(
+            'contracts.*', 
+            'plans.*', 
+            'rural_communities.*', 
+            'inventorie_devices.*', 
+            'devices.*', 
+            'contracts.id as contract_id', 
+            'plans.name as plan_name',
+            'devices.address as device_address',
+            'users.id as user_id', 
+            'users.name as user_name', 
+            'users.email as user_email' 
+        )
+        ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+        ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
+        ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
+        ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device (corrección del campo)
+        ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
+        ->where('contracts.id', $id)
+        ->first();
 
         return Inertia::render('Coordi/Contracts/Show', [
             'contract' => $contract,
@@ -250,11 +286,11 @@ class ContractController extends Controller
                 self::createCharge($contract);
                 self::sanction($contract);
 
-                $plan = Plan::findOrFail($validatedData['plan_id'])->first();
-                $device = Device::where('device_id', $validatedData['inv_device_id'])->first();
+                // $plan = Plan::findOrFail($validatedData['plan_id'])->first();
+                // $device = Device::where('device_id', $validatedData['inv_device_id'])->first();
 
-                $deviceController = new DevicesController();
-                $deviceController->setConsumePlanToDevice($device, $plan);
+                // $deviceController = new DevicesController();
+                // $deviceController->setConsumePlanToDevice($device, $plan);
             });
             //     RuralCommunityService::update($id, $request->community);
             return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');

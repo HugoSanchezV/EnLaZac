@@ -2,23 +2,22 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
 const props = defineProps({
-    ticket: {
-        type: Array,
-        required: true,  // Los tickets son obligatorios
-    },
-   plan: {
-        type: [Object, null],
-        required: true,
-    },
-    device:{
-        type: [Object, null],
-        required: true,
-      },
-      contract:
-      {
-        type: Array,
-        required: true,
-      },
+  ticket: {
+    type: Array,
+    required: false, // Los tickets son obligatorios
+  },
+  plan: {
+    type: [Object, null],
+    required: true,
+  },
+  device: {
+    type: [Object, null],
+    required: true,
+  },
+  contract: {
+    type: Array,
+    required: true,
+  },
 });
 </script>
 
@@ -27,8 +26,19 @@ const props = defineProps({
   <div class="bg-white shadow-md rounded-lg border border-gray-200 mt2">
     <!-- Encabezado de la tarjeta de información del usuario -->
     <div class="px-6 py-4 bg-gray-50">
-      <h3 class="text-lg leading-6 font-semibold text-gray-800">Contrato ID: {{ contract.id }}</h3>
-      <p class="mt-1 text-sm text-gray-500">Detalles sobre el contrato y el dispositivo asignado</p>
+      <div
+        class="text-lg flex justify-between leading-6 font-semibold text-gray-800"
+      >
+        <h3>Contrato ID: {{ contract[0].id }}</h3>
+        <Link
+          :href="route('contracts.show', contract[0].id)"
+          class="font-light bg-blue-500 text-white px-2 py-1 rounded-md"
+          >Ver más...</Link
+        >
+      </div>
+      <p class="mt-1 text-sm text-gray-500">
+        Detalles sobre el contrato y el dispositivo asignado
+      </p>
     </div>
     <!-- Contenido del contrato del usuario -->
     <div class="border-t border-gray-100 px-6 py-4">
@@ -39,7 +49,7 @@ const props = defineProps({
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Dirección</dt>
           <dd class="mt-1 text-sm text-gray-900">
-            {{ contract === null ? "Sin asignar" : contract.address }}
+            {{ contract === null ? "Sin asignar" : contract[0].address }}
           </dd>
         </div>
 
@@ -49,8 +59,8 @@ const props = defineProps({
             <dt class="text-sm font-medium text-gray-600">Geolocalización</dt>
             <dd class="mt-1 text-sm text-gray-900">
               <GoogleMaps
-                :lat="parseInt(contract.geolocation.latitude)"
-                :lng="parseInt(contract.geolocation.longitude)"
+                :lat="parseFloat(contract[0].geolocation.latitude)"
+                :lng="parseFloat(contract[0].geolocation.longitude)"
                 :clic="false"
               />
             </dd>
@@ -69,10 +79,10 @@ const props = defineProps({
           <dt class="text-sm font-medium text-gray-600">Contrato asignado</dt>
           <div v-if="contract !== null">
             <Link
-              :href="route('contracts.show', contract.id)"
+              :href="route('contracts.show', contract[0].id)"
               class="cursor-pointer text-blue-500 underline"
             >
-              <dd class="mt-1 text-sm text-gray-900">{{ contract.id }}</dd>
+              <dd class="mt-1 text-sm text-gray-900">{{ contract[0].id }}</dd>
             </Link>
           </div>
           <div v-else>
@@ -85,11 +95,15 @@ const props = defineProps({
           <dt class="text-sm font-medium text-gray-600">Plan afiliado</dt>
           <div v-if="plan !== null">
             <Link
-              :href="route('plans.show', plan.id)"
+              :href="route('plans.show', contract[0].plan.id)"
               class="cursor-pointer text-blue-500 underline"
             >
               <dd class="mt-1 text-sm text-gray-900">
-                {{ plan === null ? "Sin asignar" : plan.name }}
+                {{
+                  contract[0].plan === null
+                    ? "Sin asignar"
+                    : contract[0].plan.name
+                }}
               </dd>
             </Link>
           </div>
@@ -99,19 +113,19 @@ const props = defineProps({
         </div>
 
         <!-- Muestra el número de tickets enviados por el usuario -->
-        <div class="sm:col-span-1">
+        <!-- <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Tickets Enviados</dt>
           <dd class="mt-1 text-sm text-gray-900">{{ ticket.length }}</dd>
-        </div>
+        </div> -->
 
         <!-- Muestra el dispositivo asignado al usuario -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">
-            Dispositivo Asignado
+            IP Asignado
           </dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            {{ device === null ? "Sin asignar" : device.device_internal_id }}
-          </dd>
+          <Link :href="route('devices.show', device.id)" class="mt-1 text-sm text-gray-900">
+            {{ device === null ? "Sin asignar" : device.address }}
+          </Link>
         </div>
       </dl>
     </div>

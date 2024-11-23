@@ -195,7 +195,7 @@ class DevicesController extends Controller
     public function show(string $id)
     {
 
-        $devices = Device::with('user', 'router')->findOrFail($id);
+        $devices = Device::with('user', 'router', 'inventorieDevice')->findOrFail($id);
 
         return Inertia::render('Admin/Devices/Show', [
             'devices' => $devices,

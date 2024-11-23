@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Events\RegisterUserEvent;
 use App\Exports\GenericExport;
 use App\Imports\UserImport;
+use App\Models\Contract;
 use App\Models\Plan;
 use App\Models\PreRegisterUser;
 use App\Models\Ticket;
@@ -110,34 +111,34 @@ class UserController extends Controller
     }
     public function show($id)
     {
-        try{
+        try {
+            $user = User::with('device.inventorieDevice')->findOrFail($id);
 
-            $user = User::with('ticket', 'device.contract')->findOrFail($id);
-            
-            $devices = $user->device;  // Suponiendo que es una colección de dispositivos
+            $devices = $user->device;
+
             $contracts = [];
-    
+
             foreach ($devices as $device) {
                 // Verifica si el dispositivo tiene un contrato
-                $contract = $device->contract ?? null;
-                $plan = $contract ? Plan::find($contract->plan_id) : null;
-    
+                $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
+                // $plan = $contract ? Plan::find($contract->plan_id) : null;
+
                 // Añadir los datos del dispositivo, contrato y plan al arreglo
                 $contracts[] = [
                     'device' => $device,
                     'contract' => $contract,
-                    'plan' => $plan,
+                    // 'plan' => $plan,
                 ];
             }
-    
-           // dd($contracts);
+
+            // dd($contracts);
             return Inertia::render('Admin/Users/Show', [
                 'user' => $user,
-                'ticket' => Ticket::where('user_id', $id)->count(),
+                // 'ticket' => Ticket::where('user_id', $id)->count(),
                 'contracts' => $contracts
             ]);
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
+            dd($e->getMessage());
             return Redirect::route('usuarios')->with('error', 'Error al mostrar el usuario');
         }
     }
@@ -213,16 +214,14 @@ class UserController extends Controller
     }
     public function edit($id)
     {
-        try{
+        try {
 
             $user = User::findOrFail($id);
             return Inertia::render('Admin/Users/Edit', [
                 'user' => $user
             ]);
-        }catch(Exception $e)
-        {
-            return Redirect::route('usuarios')->with('error', 'Error al mostrar el registro del usuarios' );
-
+        } catch (Exception $e) {
+            return Redirect::route('usuarios')->with('error', 'Error al mostrar el registro del usuarios');
         }
     }
 
