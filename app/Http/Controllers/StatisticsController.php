@@ -134,9 +134,9 @@ class StatisticsController extends Controller
                 }
                 
             }
-           // dd("holas");
+            //dd($trafficData);
         }else{
-           // dd("no router");
+            //dd("no router");
         }
         
         return $trafficData;

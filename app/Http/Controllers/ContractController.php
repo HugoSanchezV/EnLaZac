@@ -11,17 +11,23 @@ use App\Http\Requests\Contract\UpdateContractRequest;
 use App\Models\Charge;
 use App\Models\CutOffDay;
 use App\Models\Device;
+use App\Models\ExemptionPeriod;
+use App\Models\ExtendContract;
+use App\Models\Installation;
 use App\Models\InventorieDevice;
 use App\Models\PaymentSanction;
 use App\Models\RuralCommunity;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Twilio\Rest\Microvisor\V1\DeviceContext;
+
+use function PHPUnit\Framework\throwException;
 
 class ContractController extends Controller
 {
@@ -67,11 +73,13 @@ class ContractController extends Controller
             ];
         });
 
+        $paymentSanction = Contract::with('paymentSanction')->get();
 
         $totalContractsCount = Contract::count();
 
         return Inertia::render('Coordi/Contracts/Contracts', [
             'contracts' => $contract,
+            'paymentSanction' => $paymentSanction,
             'pagination' => [
                 'links' => $contract->links()->elements[0],
                 'next_page_url' => $contract->nextPageUrl(),
@@ -266,8 +274,8 @@ class ContractController extends Controller
     public function store(StoreContractRequest $request)
     {
         try {
-            DB::transaction(function () use ($request) {
-                $cutOffDay = CutOffDay::first()->day;
+            DB::beginTransaction();
+            $cutOffDay = CutOffDay::first()->day;
 
                 //dd('LLega aqui');
                 $validatedData = $request->validated();
@@ -283,25 +291,26 @@ class ContractController extends Controller
                     'geolocation' => $validatedData['geolocation'],
                 ]);
 
-                self::createCharge($contract);
-                self::sanction($contract);
+            self::createCharge($contract);
+            self::sanction($contract);
+            self::extend($contract);
 
-                // $plan = Plan::findOrFail($validatedData['plan_id'])->first();
-                // $device = Device::where('device_id', $validatedData['inv_device_id'])->first();
-
-                // $deviceController = new DevicesController();
-                // $deviceController->setConsumePlanToDevice($device, $plan);
-            });
+            DB::commit();
             //     RuralCommunityService::update($id, $request->community);
             return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
-        } catch (Exception $e) {
-            dd($e->getMessage());
+        }catch(Exception $e){
+            DB::rollBack();
             return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato');
         }
     }
     private function sanction(Contract $contract)
     {
         $controller = new PaymentSanctionController();
+
+        $controller->store($contract->id);
+    }
+    private function extend(Contract $contract){
+        $controller = new ExtendContractController();
 
         $controller->store($contract->id);
     }
@@ -457,9 +466,9 @@ class ContractController extends Controller
         }
     }
 
-    public function getContracts($today)
+    public function getContracts()
     {
-        return Contract::with('installations')->where('active', 1)->get();
+        return Contract::with('installations.installationSettings')->where('active', 1)->get();
     }
     public function exportExcel()
     {
@@ -499,31 +508,103 @@ class ContractController extends Controller
             'days' => 'required|integer|min:1',
         ]);
 
-        // Buscar el contrato por su ID
-        $contract = Contract::find($id);
+        try{
+            // Buscar el contrato por su ID
+            $contract = Contract::find($id);
 
-        // Verificar que el contrato exista
-        if (!$contract) {
-            return Redirect::route('reaming.contracts')->with('error', 'Error a cargar el registro');
-            // return response()->json(['error' => 'Contrato no encontrado'], 404);
+            // Verificar que el contrato exista
+            if (!$contract) {
+                return Redirect::route('reaming.contracts')->with('error', 'Error a cargar el registro');
+                // return response()->json(['error' => 'Contrato no encontrado'], 404);
+            }
+
+            // Sumar los días a la fecha de finalización actual
+            $newEndDate = Carbon::parse($contract->end_date)->addDays($request->input('days'));
+
+            //Ingresar registro de la extensión
+            $this->addExtendContract($contract, $request->input('days'));
+
+            // Actualizar la fecha en el contrato
+            $contract->end_date = $newEndDate;
+            $contract->save();
+
+            // return response()->json([
+            //     'message' => 'Fecha de finalización extendida exitosamente',
+            //     'new_end_date' => $newEndDate->toDateString(),
+            // ]);
+            return Redirect::route('reaming.contracts', [
+                'days' => $request->daysFilter,
+                'q' => $request->q,
+                'order' => $request->order,
+                'attribute' => $request->attribute,
+            ])->with('success', 'Fecha de finalización extendida exitosamente');
+        }catch(Exception $e){
+            return Redirect::route('reaming.contracts', [
+                'days' => $request->daysFilter,
+                'q' => $request->q,
+                'order' => $request->order,
+                'attribute' => $request->attribute,
+            ])->with('success', 'Hubo un error al extender la fecha de finalización');
+        }
+    }
+    private function addExtendContract(Contract $contract, $day){
+        $controller = new ExtendContractController();
+        $controller->extend($contract->id, $day);
+        
+    }
+
+    public function updateContractDate(Installation $installation)
+    {
+        try{
+           // dd("DSDSD");
+            $contract = Contract::findOrFail($installation->contract_id);
+            $exemptionPeriod = ExemptionPeriod::first();
+    
+            $dateInst =Carbon::parse($installation->assigned_date);
+            if (!empty($installation->installationSettings) && !empty($installation->installationSettings->exemption_months)) {
+                $end = $dateInst->addMonths($installation->installationSettings->exemption_months);
+
+                if(Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay())
+                {
+                    $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end->month);
+                    //->addMonths($installation->installationSettings->exemption_months); ;    
+                }
+            }
+            else {
+                //dd($dateInst->day." | " .$exemptionPeriod->end_date);
+    
+                if(($dateInst->day >= $exemptionPeriod->start_day)&&($dateInst->day <= $exemptionPeriod->end_day))
+                {
+                   // dd('entro aca');
+                    $end = $dateInst->addMonths($exemptionPeriod->month_next);
+
+                    if(Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay()){
+
+                        $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end->month);
+                    }
+                }else if($dateInst->day > $exemptionPeriod->end_day){
+
+                    $end = $dateInst->addMonths($exemptionPeriod->month_after_next);
+                    if(Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay()){
+                        $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end);
+                    }
+                }
+    
+            }
+            $contract->save();
+
+
+        }catch(Exception $e){
+            Log::error($e);
+            throwException($e);
         }
 
-        // Sumar los días a la fecha de finalización actual
-        $newEndDate = Carbon::parse($contract->end_date)->addDays($request->input('days'));
 
-        // Actualizar la fecha en el contrato
-        $contract->end_date = $newEndDate;
-        $contract->save();
-
-        // return response()->json([
-        //     'message' => 'Fecha de finalización extendida exitosamente',
-        //     'new_end_date' => $newEndDate->toDateString(),
-        // ]);
-        return Redirect::route('reaming.contracts', [
-            'days' => $request->daysFilter,
-            'q' => $request->q,
-            'order' => $request->order,
-            'attribute' => $request->attribute,
-        ])->with('success', 'Fecha de finalización extendida exitosamente');
     }
+
+    public function getOriginalDate(Installation $installation){
+        
+    }
+
+
 }

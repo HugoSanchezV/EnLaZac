@@ -184,7 +184,7 @@ useGeneralNotifications();
                         </div>
 
                         <div>
-                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
+                            <p class="mt-2  text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
                         </div>
                     </div>
                   </button>

@@ -6,6 +6,7 @@ import { defineProps } from "vue";
 const props = defineProps({
   cutoffday: Number,
   exemptionPeriod: Object,
+  equipmentDay: Number,
 });
 
 </script>
@@ -20,7 +21,12 @@ const props = defineProps({
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :cutoffday="cutoffday" :exemptionPeriod="exemptionPeriod"/>
+          <FormUpdate 
+          :cutoffday="cutoffday" 
+          :exemptionPeriod="exemptionPeriod"
+          :equipmentDay = "equipmentDay"
+
+          />
         </div>
       </div>
     </template>

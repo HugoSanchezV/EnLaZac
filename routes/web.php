@@ -35,6 +35,7 @@ use App\Http\Controllers\MercadoPagoController;
 use App\Http\Controllers\MercadoPagoDataController;
 use App\Http\Controllers\MercadoPagoSettingController;
 use App\Http\Controllers\PaymentHistorieController;
+use App\Http\Controllers\PaymentSanctionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -227,6 +228,8 @@ Route::middleware([
         Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
         Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
+        Route::put('/contracts/payment/sanction/update/{id}',     [PaymentSanctionController::class, 'update'])->name('contracts.payment.sanction.update');
+        Route::put('/contracts/payment/sanction/store/{id}',      [PaymentSanctionController::class, 'store_activate'])->name('contracts.payment.sanction.store');
         Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
         Route::get('/contracts/to/excel',        [ContractController::class, 'exportExcel'])->name('contracts.excel');
@@ -303,6 +306,7 @@ Route::middleware([
         Route::get('/sistema/configuracion/servicio/variables',                        [ServiceVariablesController::class, 'edit'])->name('settings.service.variable');
         Route::put('/sistema/configuracion/servicio/variables/update/cutoffday',       [ServiceVariablesController::class, 'updateCutOffDay'])->name('settings.service.variable.update.cuttoffday');
         Route::put('/sistema/configuracion/servicio/variables/update/exemptionperiod', [ServiceVariablesController::class, 'updateExemptionPeriod'])->name('settings.service.variable.exemptionperiod');
+        Route::put('/sistema/configuracion/servicio/variables/update/equipmentcharge', [ServiceVariablesController::class, 'updateEquipmentChargeDay'])->name('settings.service.variable.equipmentchargeday');
 
         Route::get('/sistema/configuracion/instalacion',                     [InstallationSettingsController::class, 'index'])->name('settings.installation');
         Route::get('/sistema/configuracion/instalacion/create',              [InstallationSettingsController::class, 'create'])->name('settings.installation.create');

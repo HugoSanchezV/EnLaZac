@@ -1,25 +1,22 @@
 <template>
   <div v-if="show" class="fixed z-10 inset-0 overflow-y-auto">
-    <div
-      class="fixed inset-0 bg-gray-500 bg-opacity-10"
-      @click="closeModal"
-    ></div>
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-10" @click="closeModal"></div>
     <div class="flex items-center justify-center min-h-screen px-4">
-      <div
-        class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full"
-      >
+      <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-xs sm:w-full">
         <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
           <div class="sm:flex sm:items-start justify-center">
             <div class="text-center sm:mt-0 sm:ml-4 sm:text-left">
               <h3 class="text-lg leading-6 font-medium text-gray-900 text-wrap">
-                {{ props.title }}
+                {{ title }}
               </h3>
               <div class="mt-2">
                 <label class="switch">
-                  <input type="checkbox" 
-                  @change="getCurrentLocation"  
-                  checked 
-                  v-model="ubicacionManual" />
+                  <input
+                    type="checkbox"
+                    id="activated"
+                    @change="getCurrentLocation"
+                    v-model="selectStatus"
+                  />
                   <span class="slider round"></span>
                 </label>
               </div>
@@ -46,45 +43,53 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, defineProps, watch } from "vue";
+import { ref, defineEmits, defineProps, computed, watch } from "vue";
 
-const emit = defineEmits(["close", "selectData"]);
 const props = defineProps({
+  paymentSanction: Array,
   show: Boolean,
-  data: Object,
   id: Number,
   itemText: String,
   title: String,
 });
 
-const selectedUser = ref(null);
-const sanction = ref(props.data);
+// Emitir eventos
+const emit = defineEmits(["close", "selectData"]);
 
-// Resetea el usuario seleccionado cuando el modal se abre o cierra
+// Reactive data
+const selectStatus = ref(false);
+
+// Computed para obtener el contrato actual
+const currentSanction = computed(() =>
+  props.paymentSanction.find((contract) => contract.id === props.id) || null
+);
+
+// Watch para resetear datos cuando el modal cambia
 watch(
   () => props.show,
   (newVal) => {
-    if (!newVal) {
-      selectedUser.value = null; // Resetea la selección cuando se cierra el modal
+    if (newVal && currentSanction.value) {
+
+      selectStatus.value = !!currentSanction.value.payment_sanction?.status;
+    } else if (!newVal) {
+      
+      selectStatus.value = false;
     }
-  }
-);
-watch(
-  () => props.data,
-  (newValue) => {
-    sanction.value = newValue
-  }
+  },
+  { immediate: true } // Ejecutar inmediatamente al cargar
 );
 
+// Métodos
 const closeModal = () => {
   emit("close");
 };
 
 const confirmSelection = () => {
-  emit("selectData", { selectId: selectedUser.value, itemId: props.id });
-
+  //alert(ubicacionManual.value);
+  emit("selectData", { selectId: currentSanction.value.payment_sanction?.id, status: selectStatus.value });
   closeModal();
 };
+
 </script>
 <style scoped>
 .switch {
