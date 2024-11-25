@@ -16,7 +16,14 @@ const props = defineProps({
 
   },
 });
+onMounted(() => {
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
+  flatpickr("#assigned_date", { 
+    minDate: formattedDate
+  });
 
+});
 const form = useForm({
   contract_id: "",
   description: "",
@@ -30,7 +37,7 @@ const submit = () => {form.post(route("installation.store"));};
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
-        <InputLabel for="contract_id" value="ID del contrato" />
+        <InputLabel for="contract_id" value="Contrato" />
         <div class="mt-2">
             <select
               v-model="form.contract_id"
@@ -39,7 +46,11 @@ const submit = () => {form.post(route("installation.store"));};
               <option v-if="contracts.length === 0" disabled value="">No hay registro de contratos</option>
               <option v-else value="" disabled>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ contract.id + " - " + contract.inventorie_device.device.user.name }}
+                {{"ID: "+
+                contract.id +
+                " - Usuario: " +
+                contract.inventorie_device?.device?.user?.name
+              }}
               </option>
             </select>
         </div>
@@ -63,7 +74,17 @@ const submit = () => {form.post(route("installation.store"));};
 
       <div class="mt-2 ">
           <InputLabel for="assigned_date" value="Fecha Asignada" />
-          <TextInput
+
+          <input
+            id="assigned_date"
+            v-model="form.assigned_date"
+            type="text"
+            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+            required
+            autofocus
+            autocomplete="assigned_date"
+          />
+          <!-- <TextInput
             id="assigned_date"
             v-model="form.assigned_date"
             type="date"
@@ -72,7 +93,7 @@ const submit = () => {form.post(route("installation.store"));};
             autofocus
             autocomplete="assigned_date"
             @input="onDateChange"
-          />
+          /> -->
           <InputError class="mt-2" :message="form.errors.assigned_date" />
       </div>
 

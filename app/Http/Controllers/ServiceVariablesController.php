@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contract;
 use App\Models\CutOffDay;
+use App\Models\EquipmentChargeDay;
 use App\Models\ExemptionPeriod;
 use Carbon\Carbon;
 use Exception;
@@ -20,17 +21,22 @@ class ServiceVariablesController extends Controller
     {
         try{
             $cutOffDay = CutOffDay::first()->day ?? null;
+
+         //   dd($cutOffDay);
+            $equipmentDay = EquipmentChargeDay::first()->day ?? null;
             $exemptionPeriod = ExemptionPeriod::first();
-            ///dd("Dad");
+          //  dd($equipmentDay);
            // dd($cutOffDay);
             return Inertia::render('Admin/Settings/ServiceVariable/Edit', [
                 'cutoffday' => $cutOffDay,
+                'equipmentDay' => $equipmentDay,
                 'exemptionPeriod' =>$exemptionPeriod,
                 'success' => session('success') ?? null,
                 'error' => session('error') ?? null,
     
             ]);
         }catch(Exception $e){
+            dd($e);
             return Redirect::route('settings')->
             with('error', 'Hubo un error al mostrar las variables de servicio');
         }   
@@ -51,6 +57,23 @@ class ServiceVariablesController extends Controller
             with('error', 'Hubo un error al actualizar el dia de corte');
         }
     }
+    public function updateEquipmentChargeDay(Request $request)
+    {
+        try{
+            $validated = $request->validate([
+                'day' => 'required|integer|min:1|max:31', // Validar que sea un día válido
+            ]);
+            
+            EquipmentChargeDay::updateOrCreate([], ['day' => $validated['day']]);
+            //$this->changeAllContractEndDate($equipmentDay->day);
+            
+            return Redirect::route('settings.service.variable')->
+            with('success', 'El dia del cargo del equipo fue Actualizado Con Éxito');
+        }catch(Exception $e){
+            return Redirect::route('settings.service.variable')->
+            with('error', 'Hubo un error al actualizar el dia del cargo de equipo');
+        }
+    }
     public function changeAllContractEndDate($day)
     {
         try {
@@ -66,14 +89,22 @@ class ServiceVariablesController extends Controller
             DB::beginTransaction();
 
             // Procesar contratos en lotes
-            Contract::chunk(100, function ($contracts) use ($dayFormatted) {
+            Contract::with('extendContract')->chunk(100, function ($contracts) use ($dayFormatted) {
                 foreach ($contracts as $contract) {
                     // Formatear las fechas
-                    $contract->start_date = Carbon::parse($contract->start_date)->format('Y-m') . '-' . $dayFormatted;
-                    $contract->end_date = Carbon::parse($contract->end_date)->format('Y-m') . '-' . $dayFormatted;
 
-                    // Guardar cambios
-                    $contract->save();
+                    if($contract->extendContract){
+
+                        if(!$contract->extendContract->status)
+                        {
+                            $this->newDate($contract, $dayFormatted);
+                        }else{
+                            $this->newDateWithExtend($contract, $dayFormatted, $contract->extendContract->days);
+                        }
+                    }else{
+                        
+                        $this->newDate($contract, $dayFormatted);
+                    }
                 }
             });
             //Transacción confirmada
@@ -88,6 +119,27 @@ class ServiceVariablesController extends Controller
             // Registrar el error
             Log::error("Error al cambiar las fechas de los contratos: " . $e->getMessage());
         }
+    }
+    public function newDate(Contract $contract, $dayFormatted)
+    {
+        $contract->start_date = Carbon::parse($contract->start_date)->setDay((int)$dayFormatted);
+        $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$dayFormatted);
+
+        // Guardar cambios
+        $contract->save();
+    }
+    public function newDateWithExtend(Contract $contract, $dayFormatted, $day)
+    {
+        $endDate = Carbon::parse($contract->end_date);
+        $contract->end_date = $endDate->subDays($day)->toDateString();
+
+        $contract->start_date = Carbon::parse($contract->start_date)->setDay((int)$dayFormatted);
+        $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$dayFormatted);
+
+        $contract->end_date = Carbon::parse($contract->end_date)->addDays($day);
+
+        // Guardar cambios
+        $contract->save();
     }
     public function updateExemptionPeriod(Request $request){
         try{
@@ -116,6 +168,13 @@ class ServiceVariablesController extends Controller
             with('error', 'Hubo un error al actualizar los periodos');
         }
  
+    }
+    public function getEquipmentChargeDay(){
+        try{return EquipmentChargeDay::first()->day ?? null;}
+        catch(Exception $e){
+            Log::info($e);
+            return null;
+        }
     }
     public function getCutOffDay()
     {

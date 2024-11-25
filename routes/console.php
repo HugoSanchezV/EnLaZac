@@ -116,4 +116,5 @@ Schedule::call(function () {
 })->daily();
 
 Schedule::command('app:check-contracts')->daily();
+Schedule::command('app:update-contract-date')->daily();
 // Schedule::command('app:device-stats')->everyFiveMinutes();

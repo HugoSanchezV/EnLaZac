@@ -6,6 +6,7 @@ const props = defineProps({
   contracts: Object,
   pagination: Object,
   totalContractsCount: Number,
+  paymentSanction: Array,
 });
 
 const { contracts } = toRefs(props);
@@ -66,6 +67,7 @@ const headers = [
           <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <!-- Esta es el inicio de la tabla -->
           <base-table-contracts
+            :paymentSanction = "paymentSanction"
             :headers="headers"
             :rows="rows"
             :filters="filters"

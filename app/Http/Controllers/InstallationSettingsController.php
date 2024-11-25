@@ -143,7 +143,10 @@ class InstallationSettingsController extends Controller
         } catch (Exception $e) {
         }
     }
+    public function getExemptionMonth($id){
 
+        $installationSettings = InstallationSetting::where();
+    }
     public function store(StoreInstallationSettingsRequest $request)
     {
         try {

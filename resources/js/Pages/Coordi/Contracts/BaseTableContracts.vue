@@ -123,6 +123,35 @@ const openModal = (id) => {
 const closeModal = (id) => {
   isModalOpen.value[id] = false;
 };
+
+const confirmSelection = (row, select, data) => {
+  if(select.selectId != null){
+    const url = route("contracts.payment.sanction.update", select.selectId);
+    const attributeUrl = getOriginal(data.attribute);
+    router.put(url, {
+      status: select.status,
+      q: data.searchQuery,
+      attribute: attributeUrl,
+      order: data.order,
+    });
+
+   
+  }else{
+    if(select.status)
+    {
+      const url = route("contracts.payment.sanction.store", row.id);
+      const attributeUrl = getOriginal(data.attribute);
+      router.put(url, {
+        status: select.status,
+        q: data.searchQuery,
+        attribute: attributeUrl,
+        order: data.order,
+      });
+
+    }
+  }
+  closeModal();
+}
 </script>
 
 <template>
@@ -350,6 +379,35 @@ const closeModal = (id) => {
 
                 Mostrar
               </Link>
+              <div>
+                <button
+                  class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                  @click="openModal(row.id)"
+                >
+                  <span class="material-symbols-outlined">
+                    fmd_bad
+                  </span>
+                  Sanción
+                </button>
+                <modal-sanction
+                  :show="isModalOpen[row.id]"
+                  @close="closeModal(row.id)"
+                  @selectData="
+                     confirmSelection(row, $event, {
+                      searchQuery: this.searchQuery,
+                      attribute: this.currentFilter,
+                      order: this.currentOrder,
+                    })
+                  "
+                  :paymentSanction="paymentSanction"
+                  :id="row.id"
+                  :title="'Activar sanción al contrato'"
+                  item-text="name"
+                >
+                </modal-sanction>
+                
+           
+              </div>
               <Link
                 v-if="edit"
                 :href="route('contracts.edit', row.id)"
@@ -372,31 +430,6 @@ const closeModal = (id) => {
 
                 Editar
               </Link>
-              <div>
-                <button
-                  class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-                  @click="openModal(row.id)"
-                ></button>
-                <modal-sanction
-                  :show="isModalOpen[row.id]"
-                  @close="closeModal(row.id)"
-                  @selectData="
-                    confirmSelection(
-                      row,
-                      $event,
-                      routerObject,
-                      searchQuery,
-                      currentOrder,
-                      currentFilter
-                    )
-                  "
-                  :data="users"
-                  :id="row.id"
-                  :title="'Selecciona un técnico a notificar'"
-                  item-text="name"
-                >
-                </modal-sanction>
-              </div>
 
               <div v-if="del">
                 <button
@@ -470,7 +503,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    sanction: {
+    paymentSanction: {
       type: Array,
       required: true,
     },

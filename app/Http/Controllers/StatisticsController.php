@@ -154,9 +154,9 @@ class StatisticsController extends Controller
                     return Redirect::route('dashboard')->with('error', $e->getMessage());
                 }
             }
-            // dd("holas");
-        } else {
-            // dd("no router");
+            //dd($trafficData);
+        }else{
+            //dd("no router");
         }
 
         return $trafficData;

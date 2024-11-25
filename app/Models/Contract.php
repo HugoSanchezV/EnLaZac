@@ -24,13 +24,15 @@ class Contract extends Model
     protected $casts = [
         'geolocation'  => 'array',
     ];
-
-    public function inventorieDevice()
-    {
+    public function extendContract(){
+        return $this->hasOne(ExtendContract::class, 'contract_id','id');
+    }
+    public function inventorieDevice(){
         return $this->belongsTo(InventorieDevice::class, 'inv_device_id');
     }
     public function paymentSanction(){
-        return $this->hasOne(PaymentSanction::class, 'id', 'contract_id');
+        
+        return $this->belongsTo(PaymentSanction::class, 'contract_id', 'id');
     }
     public function plan()
     {

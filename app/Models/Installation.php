@@ -18,5 +18,8 @@ class Installation extends Model
     {
         return $this->belongsTo(Contract::class);
     }
+    public function installationSettings(){
+        return $this->hasOne(InstallationSetting::class, 'installation_id', 'id'); // Clave foránea correcta
+    }
 
 }

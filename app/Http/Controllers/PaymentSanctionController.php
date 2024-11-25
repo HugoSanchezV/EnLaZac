@@ -9,16 +9,31 @@ use Illuminate\Http\Request;
 
 class PaymentSanctionController extends Controller
 {
-    public function update(UpdatePaymentSanctionRequest $request, $id){
+    public function update(Request $request, $id, $url = 'contracts'){
 
+      // dd($request->status);
         try{
-            $paymentSanction = PaymentSanction::findOrFail($id);
-            $validatedData = $request->validate();
+            $validatedData = $request->validate(['status' => 'boolean',]);
 
-            $paymentSanction->update($validatedData);
+            $paymentSanction = PaymentSanction::findOrFail($id);
+
+            if($paymentSanction->status != $validatedData['status'])
+            {
+                $paymentSanction->status = !$paymentSanction->status;
+    
+                $message = $paymentSanction->status ? 'activada' : 'desactivada';
+    
+                $paymentSanction->update([
+    
+                    'status' => $paymentSanction->status,
+                ]);
+
+                return redirect()->route('contracts')->with('success', 'Sanción '.$message.' exitosamente');
+            }
+
         }catch(Exception $e)
         {
-
+            return redirect()->route('contracts')->with('error', 'Error al modificar la sanción');
         }
     }
 
@@ -29,7 +44,26 @@ class PaymentSanctionController extends Controller
             ]);
 
         }catch(Exception $e){
+            return redirect()->route('contracts')->with('error', 'Error al crear la sanción');
+        }
+    }
+    public function store_activate(Request $request, $id, $url = 'contracts'){
+       // dd("Sin ID");
+        try{
 
+            $validatedData = $request->validate(['status' => 'boolean',]);
+            if($validatedData['status'])
+            {
+                PaymentSanction::create([
+                    'contract_id' => $id,
+                    'status' => true,
+                ]);
+
+                return redirect()->route('contracts')->with('success', 'Sanción activada exitosamente');
+            }
+
+        }catch(Exception $e){
+            return redirect()->route('contracts')->with('error', 'Error al crear la sanción');
         }
     }
 
