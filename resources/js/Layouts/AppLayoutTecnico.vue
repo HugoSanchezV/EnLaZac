@@ -8,7 +8,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import SidebarTecnico from "./SidebarTecnico.vue";
-import BaseSearchHeader from "@/Components/Base/BaseSearchHeader.vue";
+import BaseSearchHeaderTechnical from "@/Components/BaseSearchHeaderTechnical.vue";
 defineProps({
   title: String,
 });
@@ -79,7 +79,7 @@ const formattedDate = (dateCreation) => {
           >
             <div class="flex justify-between h-16">
               <div class="hidden lg:block">
-                <base-search-header></base-search-header>
+                <base-search-header-technical></base-search-header-technical>
               </div>
 
               <div class="lg:hidden flex items-center">
@@ -575,7 +575,6 @@ export default {
         .get("/notifications/unread")
         .then((response) => {
           this.unreadNotifications = response.data;
-          
         })
         .catch((error) => {
           console.error("Error al obtener las notificaciones:", error);

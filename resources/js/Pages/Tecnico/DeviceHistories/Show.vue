@@ -1,15 +1,14 @@
 <script setup>
-import { toRefs } from "vue";
-import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 
 const props = defineProps({
   histories: Object,
   pagination: Object,
+  device: String,
   totalHistoriesCount: Number,
 });
 
 const toRouteExport = "historieDevices.excel.historie";
-const idExport = props.histories.data[0].id;
+// const idExport = props.histories.data[0].id;
 
 const headers = [
   "state",
@@ -58,6 +57,7 @@ const filters = [
         <inventorie-show-table
           :headers="headers"
           :rows="rows"
+          :device="device"
           :filters="filters"
           :show="true"
           :edit="true"
@@ -123,7 +123,7 @@ export default {
 
   methods: {
     search(props) {
-      const link = route("historieDevices.show");
+      const link = route("technical.historieDevices.show", this.device);
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
@@ -141,8 +141,6 @@ export default {
       //   if (props.attribute === "marca") {
       //     this.attribute = "brand";
       //   }
-
-      console.log(props.type);
 
       this.$inertia.get(
         link,

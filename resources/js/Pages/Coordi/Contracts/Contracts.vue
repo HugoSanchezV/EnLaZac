@@ -22,12 +22,11 @@ const filters = [
   "fecha de terminación",
   "¿activo?",
   "dirección",
-  
 ];
 
 const headers = [
   "Id",
-  'Dispositivo',
+  "Dispositivo",
   "Usuarios",
   "Plan Internet",
   "Comunidad",
@@ -52,9 +51,11 @@ const headers = [
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
-            <span class="material-symbols-outlined" style="font-size: 16px;"> contract </span>
+            <span class="material-symbols-outlined" style="font-size: 16px">
+              contract
+            </span>
 
-            Crear contrato
+            Crear contrato 
           </Link>
         </div>
       </div>

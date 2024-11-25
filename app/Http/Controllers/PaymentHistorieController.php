@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Exports\GenericExport;
 use App\Models\PaymentHistorie;
-use DragonCode\Contracts\Cashier\Config\Payment;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -17,9 +16,36 @@ use function PHPUnit\Framework\isNull;
 
 class PaymentHistorieController extends Controller
 {
+
+    protected $path = 'Admin/PaymentHistories/PaymentHistories';
+    public function __construct()
+    {
+        if (Auth::user()->admin === 2) {
+            $this->path = 'Coordi/PaymentHistories/PaymentHistories';
+        }
+    }
     public function index(Request $request)
     {
         $query = PaymentHistorie::query();
+
+        $user = Auth::user();
+
+        $total = 0;
+        $total_month = $total;
+        if (isNull($request->date)) {
+            $query->where('created_at', 'like', $request->date . '%');
+            $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->sum('amount');
+        }
+
+        if ($user->admin === 2) {
+            $query->where('worker', $user->id . ' ' . $user->name);
+
+            $total = DB::table('payment_histories')->where('worker', $user->id . ' ' . $user->name)->sum('amount');
+            $total_month = $total;
+        } else {
+            $total = DB::table('payment_histories')->sum('amount');
+            $total_month = $total;
+        }
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -35,13 +61,6 @@ class PaymentHistorieController extends Controller
                     ->orWhere('receipt_url', 'like', "%$search%");
                 // Puedes agregar más campos si es necesario
             });
-        }
-
-        $total = DB::table('payment_histories')->sum('amount');
-        $total_month = $total;
-        if (isNull($request->date)) {
-            $query->where('created_at', 'like', $request->date . '%');
-            $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->sum('amount');
         }
 
         $order = 'asc';
@@ -69,7 +88,7 @@ class PaymentHistorieController extends Controller
 
         $totalPaymentsCount = PaymentHistorie::count();
 
-        return Inertia::render('Admin/PaymentHistories/PaymentHistories', [
+        return Inertia::render($this->path, [
             'payments' => $payment,
             'pagination' => [
                 'links' => $payment->links()->elements[0],

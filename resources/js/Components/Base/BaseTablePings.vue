@@ -7,8 +7,21 @@ import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
 
+const getOriginal = (data) => {
+  if (data === "router") {
+    return "router_id";
+  }
+
+  if (data === "contenido") {
+    return "content";
+  }
+
+  if (data === "fecha") {
+    return "created_at";
+  }
+};
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -25,10 +38,15 @@ const destroy = (id) => {
         accept: () => {
           const url = route("pings.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
+          console.log(data)
+          const attributeUrl = getOriginal(data.attribute);
+          router.delete(url, {
+            preserveState: true,
+            data: {
+              q: data.searchQuery,
+              attribute: attributeUrl,
+              order: data.order,
+            },
           });
         },
       },
@@ -205,8 +223,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentPing,
+              order: currentOder,
+              type: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -239,7 +257,6 @@ const getTag = (cellIndex) => {
             class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div class="gap-2 w-full">
-            
               <div>
                 <div class="flex gap-1">
                   <span class="lg:hidden md:hidden block font-bold lowercase"
@@ -256,10 +273,15 @@ const getTag = (cellIndex) => {
 
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
-        
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: searchQuery,
+                      order: currentOrder,
+                      attribute: currentFilter,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg

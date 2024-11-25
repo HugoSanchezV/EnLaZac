@@ -8,7 +8,6 @@ import ModalSanction from "./Component/ModalSanction.vue";
 
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
-
 const getOriginal = (data) => {
   if (data.attribute === "id") {
     return "id";
@@ -59,7 +58,7 @@ const destroy = (id, data) => {
       listeners: {
         accept: () => {
           const original = getOriginal(data.attribute);
-          
+
           const url = route("contracts.destroy", {
             id: id,
             q: data.searchQuery,
@@ -114,7 +113,6 @@ const getTag = (cellIndex) => {
       break;
   }
 };
-
 
 const isModalOpen = ref({});
 
@@ -331,7 +329,7 @@ const closeModal = (id) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                :href="route('contracts.show',row.id)"
+                :href="route('contracts.show', row.id)"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -378,9 +376,7 @@ const closeModal = (id) => {
                 <button
                   class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                   @click="openModal(row.id)"
-                >
-                  
-                </button>
+                ></button>
                 <modal-sanction
                   :show="isModalOpen[row.id]"
                   @close="closeModal(row.id)"
@@ -400,7 +396,6 @@ const closeModal = (id) => {
                   item-text="name"
                 >
                 </modal-sanction>
-           
               </div>
 
               <div v-if="del">
@@ -475,10 +470,10 @@ export default {
       type: Boolean,
       required: true,
     },
-    sanction:{
+    sanction: {
       type: Array,
       required: true,
-    }
+    },
   },
   data() {
     return {
@@ -494,6 +489,8 @@ export default {
     filteredRows() {
       // if (!this.searchQuery) {
       return this.rows;
+      // if (this.searchQuery) {
+      // }
       //}
       // return this.rows.filter((row) =>
       //   row.some((cell) =>

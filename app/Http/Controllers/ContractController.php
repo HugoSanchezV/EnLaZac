@@ -11,11 +11,10 @@ use App\Http\Requests\Contract\UpdateContractRequest;
 use App\Models\Charge;
 use App\Models\CutOffDay;
 use App\Models\Device;
-use App\Models\InventorieDevice;
-use App\Models\PaymentSanction;
 use App\Models\RuralCommunity;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
@@ -23,13 +22,22 @@ use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 use Twilio\Rest\Microvisor\V1\DeviceContext;
 
+use function PHPUnit\Framework\isNull;
+
 class ContractController extends Controller
 {
+    protected $path = 'Coordi/Contracts';
     //
+    public function __construct()
+    {
+        if (Auth::user()->admin === 2) {
+            $this->path = 'Coordi/Contracts_Coordi';
+        }
+    }
+
     public function index(Request $request)
     {
         $query = Contract::query();
-
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -46,13 +54,29 @@ class ContractController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // Ordenación
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'asc');
+        // }
 
-        $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity', 'paymentSanction')->latest()->paginate(8)->through(function ($item) {
+        $contract = [];
+
+        $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity', 'paymentSanction')->latest()->paginate(8)->through(function ($item)  use ($request) {
+
+            // if ((Auth::user()->admin === 2) && (isset($request->q) || $request->q === '' || isNull($request->q))) {
+            //     return;
+            // }
+
             return [
                 'id' => $item->id,
                 'inv_device_id' => $item->inventorieDevice->mac_address ?? 'Sin asignar',
@@ -67,10 +91,12 @@ class ContractController extends Controller
             ];
         });
 
-
+        // if ($contract === null) {
+        //     dd('estas en el metodod');
+        // }
         $totalContractsCount = Contract::count();
 
-        return Inertia::render('Coordi/Contracts/Contracts', [
+        return Inertia::render($this->path . '/Contracts', [
             'contracts' => $contract,
             'pagination' => [
                 'links' => $contract->links()->elements[0],
@@ -104,9 +130,9 @@ class ContractController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'like', "%$search%");
-                    })
+                    // ->orWhereHas('user', function ($userQuery) use ($search) {
+                    //     $userQuery->where('name', 'like', "%$search%");
+                    // })
                     ->orWhereHas('plan', function ($planQuery) use ($search) {
                         $planQuery->where('name', 'like', "%$search%");
                     })
@@ -177,27 +203,27 @@ class ContractController extends Controller
         //     ->first();
 
         $contract = Contract::select(
-            'contracts.*', 
-            'plans.*', 
-            'rural_communities.*', 
-            'inventorie_devices.*', 
-            'devices.*', 
-            'contracts.id as contract_id', 
+            'contracts.*',
+            'plans.*',
+            'rural_communities.*',
+            'inventorie_devices.*',
+            'devices.*',
+            'contracts.id as contract_id',
             'plans.name as plan_name',
             'devices.address as device_address',
-            'users.id as user_id', 
-            'users.name as user_name', 
-            'users.email as user_email' 
+            'users.id as user_id',
+            'users.name as user_name',
+            'users.email as user_email'
         )
-        ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
-        ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
-        ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
-        ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device (corrección del campo)
-        ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
-        ->where('contracts.id', $id)
-        ->first();
+            ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+            ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
+            ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
+            ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device (corrección del campo)
+            ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
+            ->where('contracts.id', $id)
+            ->first();
 
-        return Inertia::render('Coordi/Contracts/Show', [
+        return Inertia::render($this->path . '/Show', [
             'contract' => $contract,
         ]);
     }
@@ -369,7 +395,7 @@ class ContractController extends Controller
             }
             $plans = Plan::select('id', 'name')->get();
             return Inertia::render(
-                'Coordi/Contracts/Edit',
+                $this->path . '/Edit',
                 [
                     'contract' => $contract,
                     'devices' => $available_devices,

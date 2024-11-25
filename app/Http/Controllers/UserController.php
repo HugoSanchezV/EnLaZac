@@ -32,15 +32,24 @@ class UserController extends Controller
 {
     //
     protected $telegramService;
+    protected $path = 'Admin';
 
     public function __construct(TelegramService $telegramService)
     {
         $this->telegramService = $telegramService;
+
+        if (Auth::user()->admin == 2) {
+            $this->path = 'Coordi';
+        }
     }
 
     public function index(Request $request)
     {
         $query = User::query();
+
+        if (Auth::user()->admin == 2) {
+            $query->where('admin', 0);
+        }
 
         if ($request->type !== null && $request->type !== 'todos') {
             $query->where('admin', '=', $request->type);
@@ -87,7 +96,7 @@ class UserController extends Controller
 
         $totalUsersCount = User::where('admin', '!=', 1)->count();
 
-        return Inertia::render('Admin/Users/Usuarios', [
+        return Inertia::render($this->path . '/Users/Usuarios', [
             'users' => $users,
             'pagination' => [
                 'links' => $users->links()->elements[0],
@@ -105,7 +114,7 @@ class UserController extends Controller
 
     public function create()
     {
-        return Inertia::render('Admin/Users/Create', [
+        return Inertia::render( $this->path . '/Users/Create', [
             'user' => Auth::user(),
         ]);
     }
@@ -217,7 +226,7 @@ class UserController extends Controller
         try {
 
             $user = User::findOrFail($id);
-            return Inertia::render('Admin/Users/Edit', [
+            return Inertia::render( $this->path . '/Users/Edit', [
                 'user' => $user
             ]);
         } catch (Exception $e) {

@@ -45,7 +45,7 @@ const columns = ["id", "name"];
         <div class="flex gap-2 flex-col md:flex-row">
           <div>
             <Link
-              :href="route('device.ping.historie')"
+              :href="route('technical.device.ping.historie')"
               class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
             >
               <span class="material-symbols-outlined" style="font-size: 18px">

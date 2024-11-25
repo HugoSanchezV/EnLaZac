@@ -9,14 +9,20 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Router;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 use function PHPUnit\Framework\isNull;
 
 class PingDeviceHistorieController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $url = 'Admin/PingDeviceHistorie/PingDevice')
     {
         $query = PingDeviceHistorie::query();
+
+        if (Auth::user()->admin === 3) {
+            $query->where('user_id', Auth::id());
+            $url = 'Tecnico/PingDeviceHistorie/PingDevice';
+        }
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -68,7 +74,7 @@ class PingDeviceHistorieController extends Controller
         $users = User::where('admin', '3')->get();
 
         // dd($users);
-        return Inertia::render('Admin/PingDeviceHistorie/PingDevice', [
+        return Inertia::render($url, [
             'pingDevice' => $pingDevice,
             'pagination' => [
                 'links' => $pingDevice->links()->elements[0],
@@ -84,7 +90,6 @@ class PingDeviceHistorieController extends Controller
 
         ]);
     }
-
 
     public function index2(Request $request, Router $router)
     {
@@ -156,6 +161,77 @@ class PingDeviceHistorieController extends Controller
         ]);
     }
 
+    public function index_technical(Request $request, Router $router)
+    {
+        //dd($router->id);
+        $query = PingDeviceHistorie::query();
+        $query->where('router_id', $router->id);
+        $query->where('user_id', Auth::id());
+
+        if ($request->has('q')) {
+            $search = $request->input('q');
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%$search%")
+                    ->orWhereHas('device', function ($q) use ($search) {
+                        $q->where('address', 'like', "%$search%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
+                    ->orWhere('created_at', 'like', "%$search%")
+                ;
+                // Puedes agregar más campos si es necesario
+            });
+        }
+
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
+        }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+
+        $pingDevice = $query->latest()->paginate(8)->through(function ($item) {
+            return [
+                'id' => $item->id,
+                'device_id' => $item->device_id,
+                'router_id' => $item->router->ip_address,
+                'address' => $item->device->address,
+                'user_id' => $item->user->name ?? 'Sin asignar',
+                'status' => $item->status,
+                'created_at' => $item->created_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
+        $totalDeviceFail = PingDeviceHistorie::whereNotIn('status', [
+            '1 paquete perdido',
+            'Se han recibido todos lo paquetes exitosamente'
+        ])->count();
+
+        $totalPingDeviceCount = PingDeviceHistorie::count();
+        $users = User::where('admin', '3')->get();
+
+        // dd($users);
+        return Inertia::render('Tecnico/PingDeviceHistorie/PingDevice', [
+            'pingDevice' => $pingDevice,
+            'router' => $router ?? null,
+            'pagination' => [
+                'links' => $pingDevice->links()->elements[0],
+                'next_page_url' => $pingDevice->nextPageUrl(),
+                'prev_page_url' => $pingDevice->previousPageUrl(),
+                'per_page' => $pingDevice->perPage(),
+                'total' => $pingDevice->total(),
+            ],
+            'success' => session('success') ?? null,
+            'totalPingDeviceCount' => $totalPingDeviceCount,
+            'totalDeviceFail' => $totalDeviceFail,
+            'users' => $users
+
+        ]);
+    }
+
     public function create(PingDeviceHistorie $request)
     {
         $validatedData = $request->validated();
@@ -206,9 +282,10 @@ class PingDeviceHistorieController extends Controller
 
     public function redirectDecition(Request $request, String $type, String $message)
     {
-        $url = 'device.ping.historie';
+        $url = Auth::user()->admin === 3 ? 'technical.device.ping.historie' : 'device.ping.historie';
+
         if ($request->router) {
-            $url = 'router.device.ping.historie';
+            $url = Auth::user()->admin === 3 ? 'technical.router.device.ping.historie' : 'router.device.ping.historie';
             return redirect()->route($url, [
                 "router" => $request->router ?? null,
                 "q" => $request->q ?? null,

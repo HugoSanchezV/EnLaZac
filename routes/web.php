@@ -113,25 +113,44 @@ Route::middleware([
 
     Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
     //MIDLEWARE ADMINISTRADOR
-    Route::middleware(['rol:1'])->group(function () {
-        // Usuarios
-        //Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
 
+    Route::middleware(['rol:1,2'])->group(function () {
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
         Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
         Route::post('/usuarios/store',          [UserController::class, 'store'])->name('usuarios.store');
         Route::get('/usuarios/edit/{id}',       [UserController::class, 'edit'])->name('usuarios.edit');
         Route::put('/usuarios/update/{id}',     [UserController::class, 'update'])->name('usuarios.update');
-        Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
-        Route::get('/usuarios/to/excel',        [UserController::class, 'exportExcel'])->name('usuarios.excel');
-        Route::post('/usuarios/import/excel',   [UserController::class, 'importExcel'])->name('usuarios.import.excel');
 
         Route::get('/usuarios/pre/register/',                     [PreRegisterUserController::class, 'index'])->name('usuarios.pre.register');
         Route::get('/usuarios/pre/register/create',               [PreRegisterUserController::class, 'create'])->name('usuarios.pre.register.create');
         Route::post('/usuarios/pre/register/store',                [PreRegisterUserController::class, 'store'])->name('usuarios.pre.register.store');
         Route::get('/usuarios/pre/register/edit/{PreRegisterUser}',            [PreRegisterUserController::class, 'edit'])->name('usuarios.pre.register.edit');
         Route::put('/usuarios/pre/register/update/{id}',          [PreRegisterUserController::class, 'update'])->name('usuarios.pre.register.update');
+
+        Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
+        Route::get('/contracts/create',          [ContractController::class, 'create2'])->name('contracts.create');
+        Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
+        Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
+        Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
+        Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
+
+        Route::get('/pagos/local/index',                     [LocalPayController::class, 'search'])->name('local.pay.search');
+        Route::get('/pagos/local/cobro/show/{id}',                     [LocalPayController::class, 'showAdmin'])->name('local.pay.cobro.show');
+        Route::post('/pagos/local/confirm/{token}',                     [LocalPayController::class, 'confirmLocalPay'])->name('local.pay.confirm');
+
+        Route::get('/payment/histories',                     [PaymentHistorieController::class, 'index'])->name('payment');
+        Route::get('/payment/histories/show/{id}',      [PaymentHistorieController::class, 'show'])->name('payment.show');
+    });
+    Route::middleware(['rol:1'])->group(function () {
+        // Usuarios
+        //Route::get('/dashboard', [StatisticsController::class, 'show'])->name('dashboard');
+
+        Route::delete('/usuarios/delete/{id}',  [UserController::class, 'destroy'])->name('usuarios.destroy');
+        Route::get('/usuarios/to/excel',        [UserController::class, 'exportExcel'])->name('usuarios.excel');
+        Route::post('/usuarios/import/excel',   [UserController::class, 'importExcel'])->name('usuarios.import.excel');
+
+        
         Route::delete('/usuarios/pre/register/delete/{id}',          [PreRegisterUserController::class, 'destroy'])->name('usuarios.pre.register.destroy');
         Route::post('/usuarios/telegram/create/contact/{id}',          [UserController::class, 'createContactTelegram'])->name('usuarios.telegram.create.contact');
         Route::get('/usuarios/telegram/message/{id}',          [UserController::class, 'messageTelegram'])->name('usuarios.telegram.message');
@@ -222,12 +241,7 @@ Route::middleware([
         //Leer y marcado como leída las notificaciones
 
         //Contracts Coordi
-        Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
-        Route::get('/contracts/create',          [ContractController::class, 'create2'])->name('contracts.create');
-        Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
-        Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
-        Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
-        Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
+        
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
         Route::get('/contracts/to/excel',        [ContractController::class, 'exportExcel'])->name('contracts.excel');
 
@@ -269,10 +283,8 @@ Route::middleware([
         Route::delete('/rural-community/delete/{id}',      [RuralCommunityController::class, 'destroy'])->name('rural-community.destroy');
         Route::post('/rural-community/updateContract/{id}', [RuralCommunityController::class, 'updateContract'])->name('rural-community.update.contract');
 
-        Route::get('/payment/histories',                     [PaymentHistorieController::class, 'index'])->name('payment');
         Route::delete('/payment/histories/delete/{id}',      [PaymentHistorieController::class, 'destroy'])->name('payment.destroy');
         Route::delete('/payment/histories/cut/{date}',      [PaymentHistorieController::class, 'cutMonth'])->name('payment.cut.month');
-        Route::get('/payment/histories/show/{id}',      [PaymentHistorieController::class, 'show'])->name('payment.show');
         Route::get('/payment/histories/to/excel',            [PaymentHistorieController::class, 'exportExcel'])->name('payment.excel');
 
 
@@ -297,9 +309,6 @@ Route::middleware([
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
         Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
 
-        Route::get('/pagos/local/index',                     [LocalPayController::class, 'search'])->name('local.pay.search');
-        Route::get('/pagos/local/cobro/show/{id}',                     [LocalPayController::class, 'showAdmin'])->name('local.pay.cobro.show');
-        Route::post('/pagos/local/confirm/{token}',                     [LocalPayController::class, 'confirmLocalPay'])->name('local.pay.confirm');
         Route::get('/sistema/configuracion/servicio/variables',                        [ServiceVariablesController::class, 'edit'])->name('settings.service.variable');
         Route::put('/sistema/configuracion/servicio/variables/update/cutoffday',       [ServiceVariablesController::class, 'updateCutOffDay'])->name('settings.service.variable.update.cuttoffday');
         Route::put('/sistema/configuracion/servicio/variables/update/exemptionperiod', [ServiceVariablesController::class, 'updateExemptionPeriod'])->name('settings.service.variable.exemptionperiod');
@@ -331,11 +340,6 @@ Route::middleware([
     //   });
     Route::middleware(['rol:3'])->group(function () {
         //Dashboard
-
-        //  Route::get('/dashboard', function () {
-        //      return Inertia::render('DashboardBase');
-        //  })->name('dashboard');
-
         //Router
         Route::get('/tecnico/routers',                  [TechnicalRouterController::class, 'index'])->name('technical.routers');
         Route::get('/tecnico/routers/show/{id}',        [TechnicalRouterController::class, 'show'])->name('technical.routers.show');
@@ -362,11 +366,10 @@ Route::middleware([
 
         // Invetorie
         Route::get('/tecnico/inventorie/devices',                 [TechnicalInventorieDevicesController::class, 'index'])->name('technical.inventorie.devices.index');
-        Route::get('/tecnico/inventorie/devices/show/{id}', [TechnicalInventorieDevicesController::class, 'show'])->name('technical.inventorie.devices.show');
+        // Route::get('/tecnico/inventorie/devices/show/{id}', [TechnicalInventorieDevicesController::class, 'show'])->name('technical.inventorie.devices.show');
         // Inventorie histories 
         Route::get('/tecnico/inventorie/devices/histories',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.index');
-        Route::get('/tecnico/inventorie/devices/histories/show/{DeviceHistorie}',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.show');
-
+        Route::get('/tecnico/inventorie/devices/histories/show/{mac_address}',          [TechnicalDeviceHistoriesController::class, 'index'])->name('technical.historieDevices.show');
         // Tickets
         Route::get('/tecnico/tickets',                    [TechnicalTicketController::class, 'index'])->name('technical.tickets');
         Route::post('/tecnico/tickets/statusUpdate/{id}', [TechnicalTicketController::class, 'statusUpdate'])->name('technical.tickets.statusUpdate');
@@ -377,6 +380,14 @@ Route::middleware([
         Route::get('/tecnico/tickets/edit/{id}',          [TechnicalTicketController::class, 'edit'])->name('technical.tickets.edit');
         Route::put('/tecnico/tickets/update/{id}',        [TechnicalTicketController::class, 'update'])->name('technical.tickets.update');
         // Route::delete('/tecnico/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
+
+        Route::get('/tecnico/pings',                  [PingController::class, 'index'])->name('technical.pings');
+        Route::delete('/tecnico/pings/delete/{device}',          [PingController::class, 'destroy'])->name('technical.pings.destroy');
+
+        // Route::get('/tecnico/devices/ping/historie',     [PingDeviceHistorieController::class, 'index'])->name('device.ping.historie');
+        Route::get('/tecnico/devices/ping/historie',     [PingDeviceHistorieController::class, 'index'])->name('technical.device.ping.historie');
+        Route::get('/tecnico/routers/{router}/devices/ping/historie',     [PingDeviceHistorieController::class, 'index_technical'])->name('technical.router.device.ping.historie');
+        Route::delete('/tecnico/devices/ping/historie/delete/{id}',     [PingDeviceHistorieController::class, 'destroy'])->name('technical.device.ping.historie.destroy');
     });
     //Vista generales
     /*  Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
