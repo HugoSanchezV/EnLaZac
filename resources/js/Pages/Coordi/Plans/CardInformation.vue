@@ -12,7 +12,7 @@ const props = defineProps({
 
 <template>
   <!-- Contenedor principal centrado con fondo degradado profesional -->
-  <div class="min-h-screen flex items-center justify-center p-6">
+  <div class="mb-81 flex items-center justify-center p-6">
     <!-- Tarjeta de información del plan -->
     <div v-if="plan" class="bg-white shadow-2xl rounded-3xl border border-gray-200 w-full max-w-3xl">
       <!-- Encabezado de la tarjeta con degradado -->

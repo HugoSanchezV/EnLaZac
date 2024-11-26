@@ -22,7 +22,7 @@ const props = defineProps({
     <!-- Contenido del contrato del usuario -->
     <div class="border-t border-gray-100 px-6 py-4">
       <!-- Lista de detalles sobre el usuario en un diseño de rejilla -->
-      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <dl class="grid grid-cols-2 gap-4 sm:grid-cols-2">
         
         <!-- Muestra el nombre del usuario -->
         <div class="sm:col-span-1">

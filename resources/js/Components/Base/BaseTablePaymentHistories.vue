@@ -375,10 +375,12 @@ const deleteRegisterMonth = (info) => {
                   >{{ getTag(cellIndex) }} :</span
                 >
                 <Link
+                v-if="cell !== 'Paypal' && cell !== 'Mercadopago'"
                   :href="route('usuarios.show', separateWorker(cell).number)"
                 >
                   <span>{{ separateWorker(cell).name }}</span>
                 </Link>
+                <span v-else>{{ cell }}</span>
               </div>
               <div class="flex gap-1" v-else>
                 <span class="lg:hidden md:hidden block font-bold lowercase"

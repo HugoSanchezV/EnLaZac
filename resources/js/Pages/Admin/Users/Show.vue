@@ -9,7 +9,7 @@
 
     <template v-slot:content>
       <div class="flex justify-center items-center w-full h-full">
-        <div class="p-8 rounded-lg w-2/3">
+        <div class="rounded-lg w-full md:w-2/3">
           <CardInformationUser :user="user"/>
           <!-- Iterar sobre el arreglo de contratos y enviar cada dispositivo, contrato y plan al componente -->
           <pre>
@@ -19,7 +19,7 @@
             <CardInformation 
               :device="item.device" 
               :contract="item.contract" 
-              :plan="item.contract.plan" 
+              :plan="item.contract.plan"  
             />
           </div>
         </div>
@@ -44,10 +44,10 @@ export default {
       type: Object,
       required: true,
     },
-    ticket: {
-      type: Number,
-      required: true,
-    },
+    // ticket: {
+    //   type: Number,
+    //   required: true,
+    // },
     contracts: {
       type: Array,
       required: true,

@@ -1,11 +1,10 @@
+
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import GoogleMaps from "@/Components/GoogleMaps.vue";
-
 const props = defineProps({
   ticket: {
     type: Array,
-    required: true, // Los tickets son obligatorios
+    required: false, // Los tickets son obligatorios
   },
   plan: {
     type: [Object, null],
@@ -16,148 +15,181 @@ const props = defineProps({
     required: true,
   },
   contract: {
-    type: Object, // Ajustado para manejar un contrato único
+    type: Array,
     required: true,
   },
 });
 </script>
 
 <template>
-  <!-- Contenedor principal centrado con fondo degradado profesional -->
-  <div class="min-h-screen flex items-center justify-center p-6">
-    <!-- Tarjeta de información del contrato del usuario -->
-    <div class="bg-white shadow-2xl rounded-3xl border border-gray-200 w-full max-w-4xl">
-      <!-- Encabezado de la tarjeta con degradado -->
-      <div class="px-8 py-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-3xl">
-        <h3 class="text-2xl font-bold text-white">Información del Contrato</h3>
-        <p class="mt-2 text-sm text-indigo-200">Detalles del contrato y dispositivo asignado</p>
+  <!-- Contenedor principal con estilo para mostrar la información del usuario -->
+  <div class="bg-white shadow-md rounded-lg border border-gray-200 mt2">
+    <!-- Encabezado de la tarjeta de información del usuario -->
+    <div class="px-6 py-4 bg-gray-50">
+      <div
+        class="text-lg flex justify-between leading-6 font-semibold text-gray-800"
+      >
+        <h3>Contrato ID: {{ contract[0].id }}</h3>
+        <Link
+          :href="route('contracts.show', contract[0].id)"
+          class="font-light bg-blue-500 text-white px-2 py-1 rounded-md"
+          >Ver más...</Link
+        >
       </div>
-      <!-- Contenido de la tarjeta -->
-      <div class="px-8 py-6">
-        <!-- Lista de detalles en un diseño de rejilla responsivo -->
-        <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <!-- ID del contrato -->
-          <div v-if="contract.id">
-            <dt class="text-sm font-medium text-indigo-600">ID del Contrato</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ contract.id }}</dd>
-          </div>
+      <p class="mt-1 text-sm text-gray-500">
+        Detalles sobre el contrato y el dispositivo asignado
+      </p>
+    </div>
+    <!-- Contenido del contrato del usuario -->
+    <div class="border-t border-gray-100 px-6 py-4">
+      <!-- Lista de detalles sobre el usuario en un diseño de rejilla -->
+      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <!-- Muestra el nombre del usuario -->
+        <!-- Muestra la dirección del usuario -->
+        <div class="sm:col-span-2">
+          <dt class="text-sm font-medium text-gray-600">Dirección</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ contract === null ? "Sin asignar" : contract[0].address }}
+          </dd>
+        </div>
 
-          <!-- Dirección -->
+        
+        <!-- Muestra el teléfono del usuario -->
+        <div v-if="contract != null" class="sm:col-span-2">
           <div>
-            <dt class="text-sm font-medium text-indigo-600">Dirección</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ contract.address || "Sin asignar" }}
+            <dt class="text-sm font-medium text-gray-600">Geolocalización</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <GoogleMaps
+                :lat="parseFloat(contract[0].geolocation.latitude)"
+                :lng="parseFloat(contract[0].geolocation.longitude)"
+                :clic="false"
+              />
             </dd>
           </div>
-
-          <!-- Geolocalización -->
+        </div>
+        <div v-else class="sm:col-span-1">
           <div>
-            <dt class="text-sm font-medium text-indigo-600">Geolocalización</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              <div v-if="contract.geolocation">
-                <GoogleMaps
-                  :lat="parseFloat(contract.geolocation.latitude)"
-                  :lng="parseFloat(contract.geolocation.longitude)"
-                  :clic="false"
-                />
-              </div>
-              <div v-else>Sin asignar</div>
+            <dt class="text-sm font-medium text-gray-600">Geolocalización</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <p>Sin asignar</p>
             </dd>
           </div>
+        </div>
 
-          <!-- Contrato asignado -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">Contrato Asignado</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              <Link
-                v-if="contract.id"
-                :href="route('contracts.show', contract.id)"
-                class="text-indigo-500 underline hover:text-indigo-700"
-              >
-                Ver Contrato
-              </Link>
-              <span v-else>Sin asignar</span>
-            </dd>
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Contrato asignado</dt>
+          <div v-if="contract !== null">
+            <Link
+              :href="route('contracts.show', contract[0].id)"
+              class="cursor-pointer text-blue-500 underline"
+            >
+              <dd class="mt-1 text-sm text-gray-900">{{ contract[0].id }}</dd>
+            </Link>
           </div>
+          <div v-else>
+            <dd class="mt-1 text-sm text-gray-900"><p>Sin asignar</p></dd>
+          </div>
+        </div>
 
-          <!-- Plan afiliado -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">Plan Afiliado</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              <Link
-                v-if="plan"
-                :href="route('plans.show', plan.id)"
-                class="text-indigo-500 underline hover:text-indigo-700"
-              >
-                {{ plan.name || "Sin asignar" }}
-              </Link>
-              <span v-else>Sin asignar</span>
-            </dd>
+        <!-- Muestra el costo del plan -->
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Plan afiliado</dt>
+          <div v-if="plan !== null">
+            <Link
+              :href="route('plans.show', contract[0].plan.id)"
+              class="cursor-pointer text-blue-500 underline"
+            >
+              <dd class="mt-1 text-sm text-gray-900">
+                {{
+                  contract[0].plan === null
+                    ? "Sin asignar"
+                    : contract[0].plan.name
+                }}
+              </dd>
+            </Link>
           </div>
+          <div v-else>
+            <dd class="mt-1 text-sm text-gray-900"><p>Sin asignar</p></dd>
+          </div>
+        </div>
 
-          <!-- Tickets enviados -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">Tickets Enviados</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ticket.length }}</dd>
-          </div>
+        <!-- Muestra el número de tickets enviados por el usuario -->
+        <!-- <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Tickets Enviados</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ ticket.length }}</dd>
+        </div> -->
 
-          <!-- Dispositivo asignado -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">Dispositivo Asignado</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ device ? device.device_internal_id : "Sin asignar" }}
-            </dd>
-          </div>
-        </dl>
-      </div>
+        <!-- Muestra el dispositivo asignado al usuario -->
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">
+            IP Asignado
+          </dt>
+          <Link :href="route('devices.show', device.id)" class="mt-1 text-sm text-gray-900">
+            {{ device === null ? "Sin asignar" : device.address }}
+          </Link>
+        </div>
+      </dl>
     </div>
   </div>
 </template>
 
+<script>
+import GoogleMaps from "@/Components/GoogleMaps.vue";
+export default {
+  components: {
+    GoogleMaps,
+  },
+  computed: {
+    formattedDate() {
+      // Convertimos la fecha ISO a un objeto Date
+      const date = new Date(this.user.created_at);
+
+      // Formateamos como "DD/MM/YYYY HH:mm"
+      const formattedDate =
+        date.toLocaleDateString("en-GB") +
+        " " +
+        date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      return formattedDate;
+    },
+  },
+
+  methods: {
+    createContact(user) {
+      const url = route("usuarios.telegram.create.contact", user.id);
+      this.$inertia.post(
+        url,
+        { user: user },
+        { preserveState: true, replace: true }
+      );
+    },
+  },
+};
+</script>
 <style scoped>
-/* Fondo degradado para el contenedor principal */
-.bg-gradient-to-r {
-  background-image: linear-gradient(to right, #6366f1, #a855f7);
-}
-
-/* Colores de texto personalizados */
-.text-indigo-600 {
-  color: #4f46e5;
-}
-
-.text-indigo-200 {
-  color: #a5b4fc;
-}
-
-.text-indigo-500 {
-  color: #6366f1;
-}
-
-.text-indigo-700 {
-  color: #4338ca;
+/* Estilos personalizados para el componente */
+.bg-gray-50 {
+  background-color: #f9fafb; /* Fondo gris claro */
 }
 
 .text-gray-900 {
-  color: #111827;
+  color: #1f2937; /* Texto gris oscuro */
 }
 
-.font-semibold {
-  font-weight: 600;
+.text-gray-600 {
+  color: #4b5563; /* Texto gris medio */
 }
 
-.text-lg {
-  font-size: 1.125rem; /* 18px */
+.border-gray-100 {
+  border-color: #f3f4f6; /* Borde gris claro */
 }
 
-.rounded-3xl {
-  border-radius: 1.5rem;
+.border-gray-200 {
+  border-color: #e5e7eb; /* Borde gris */
 }
 
-.shadow-2xl {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-a:hover {
-  text-decoration: underline;
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1); /* Sombra para la tarjeta */
 }
 </style>
