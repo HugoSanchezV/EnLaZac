@@ -5,6 +5,7 @@
         <h2 v-if="title === 'device-stats'">Configurar la obtención de estadísiticas de los dispositivos</h2>
         <h2 v-if="title === 'ping-routers'">Configurar el envio de pings a los routers</h2>
         <h2 v-if="title === 'check-contracts'">Configurar la verificación de los contratos</h2>
+        <h2 v-if="title === 'backups'">Configurar backups automaticos</h2>
       </div>
     </template>
 

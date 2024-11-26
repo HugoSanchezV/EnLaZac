@@ -70,11 +70,13 @@ const submit = () => {
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
               <option disabled value="">Selecciona una opción</option>
-              <option value="everyFiveMinutes">Cada 5 minutos</option>
-              <option value="everyFifteenMinutes">Cada 15 minutos</option>
-              <option value="everyThirtyMinutes">Cada 30 minutos</option>
-              <option value="hourly">Cada hora</option>
-              <option value="daily">Diariamente</option>
+              <option v-if="props.title !== 'backups'" value="everyFiveMinutes">Cada 5 minutos</option>
+              <option v-if="props.title !== 'backups'" value="everyFifteenMinutes">Cada 15 minutos</option>
+              <option v-if="props.title !== 'backups'" value="everyThirtyMinutes">Cada 30 minutos</option>
+              <option v-if="props.title !== 'backups'" value="hourly">Cada hora</option>
+              <option v-if="props.title === 'backups'" value="daily">Diariamente</option>
+              <option v-if="props.title === 'backups'" value="weekly">Semanalmente</option>
+              <option v-if="props.title === 'backups'" value="monthly">Mensualmente</option>
             </select>
           <InputError class="mt-2" :message="form.errors.period" />
           <InputError class="mt-2" :message="form.errors.name" />

@@ -22,8 +22,8 @@ class UpdateScheduledTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|in: "ping-routers","device-stats","check-contracts"',
-            'period' => 'required|in: "everyFiveMinutes","everyFifteenMinutes","everyThirtyMinutes","hourly", "daily"' ,
+            'name' => 'required|in: "ping-routers","device-stats","check-contracts", "backups"',
+            'period' => 'required|in: "everyFiveMinutes","everyFifteenMinutes","everyThirtyMinutes","hourly", "daily", "weekly", "monthly"' ,
             'status' => 'required|boolean',
         ];
     }

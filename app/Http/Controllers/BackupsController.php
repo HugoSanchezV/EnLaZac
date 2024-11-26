@@ -127,6 +127,16 @@ class BackupsController extends Controller
     public function createBackup(Request $request)
     {
         try {
+            $gzip_file_name = self::backup();
+            return Redirect::route('backups', RequestService::getArrayIndexRequest($request))->with('success', 'Copia de seguridad creada exitosamente en ' . $gzip_file_name);
+        } catch (\Exception $e) {
+            return Redirect::route('backups')->with('error', 'No se pudo crear la copia de seguridad: ' . $e->getMessage());
+        }
+    }
+
+    public function backup()
+    {
+        try {
             $databaseName = env('DB_DATABASE');
             $username = env('DB_USERNAME');
             $password = env('DB_PASSWORD');
@@ -164,9 +174,9 @@ class BackupsController extends Controller
                 Log::info('Copia de seguridad guardada en: ' . $gzip_file_path);
             }
 
-            return Redirect::route('backups', RequestService::getArrayIndexRequest($request))->with('success', 'Copia de seguridad creada exitosamente en ' . $gzip_file_name);
-        } catch (\Exception $e) {
-            return Redirect::route('backups')->with('error', 'No se pudo crear la copia de seguridad: ' . $e->getMessage());
+            return $gzip_file_name;
+        } catch (Exception $e) {
+            throw new Exception($e);
         }
     }
 

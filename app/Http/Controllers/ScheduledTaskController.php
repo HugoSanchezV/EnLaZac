@@ -11,15 +11,15 @@ use Inertia\Inertia;
 
 class ScheduledTaskController extends Controller
 {
-    public function index (){
-        return Inertia::render('Admin/Settings/Background/Background' );
-
+    public function index()
+    {
+        return Inertia::render('Admin/Settings/Background/Background');
     }
     public function edit(Request $request)
     {
-        switch($request->task){
+        switch ($request->task) {
             case 'device-stats':
-                $task= ScheduledTask::where('task_name', 'device-stats')->first();
+                $task = ScheduledTask::where('task_name', 'device-stats')->first();
                 break;
             case 'ping-routers':
                 $task = ScheduledTask::where('task_name', 'ping-routers')->first();
@@ -27,17 +27,19 @@ class ScheduledTaskController extends Controller
             case 'check-contracts':
                 $task = ScheduledTask::where('task_name', 'check-contracts')->first();
                 break;
-            default: 
-            
+            case 'backups':
+                $task = ScheduledTask::where('task_name', 'backups')->first();
+                break;
+            default:
         };
-        return Inertia::render('Admin/Settings/Background/Edit',[
+        return Inertia::render('Admin/Settings/Background/Edit', [
             'task' => $task,
             'title' => $request->task,
         ]);
     }
     public function store(StoreScheduledTaskRequest $request)
-    {   
-       // dd($request);
+    {
+        // dd($request);
         $validatedData = $request->validated();
         ScheduledTask::create([
             'task_name' => $validatedData['name'],
@@ -45,23 +47,23 @@ class ScheduledTaskController extends Controller
             'status' => $validatedData['status'],
         ]);
         return redirect()->route('settings.background')->with('success', 'La Tarea se ha sido Actualizado Con Éxito');
-
     }
-    public function update(UpdateScheduledTaskRequest $request, $id){
+    public function update(UpdateScheduledTaskRequest $request, $id)
+    {
         $task = ScheduledTask::findOrFail($id);
         $validatedData = $request->validated();
 
         $task->period = $validatedData['period'];
         $task->status = $validatedData['status'];
         $task->save();
-        
+
         return redirect()->route('settings.background')->with('success', 'La Tarea se ha sido Actualizado Con Éxito');
     }
     public function toggleTask(Request $request)
     {
 
         //Agregar nombre de las tareas
-        $validatedData = $request->validate(['task_name' => 'in: "ping-routers","device-stats","check-contracts"' ]);
+        $validatedData = $request->validate(['task_name' => 'in: "ping-routers","device-stats","check-contracts", "backups']);
         $task = ScheduledTask::where('task_name', $validatedData['name'])->first();
 
         if ($task) {
@@ -69,7 +71,7 @@ class ScheduledTaskController extends Controller
             $task->save();
 
             return redirect()->back()->with('status', 'Tarea actualizada correctamente.');
-        }else{
+        } else {
 
             ScheduledTask::create([
                 'task_name' => $validatedData['name'],
@@ -82,24 +84,21 @@ class ScheduledTaskController extends Controller
     }
     public function updatePeriod(Request $request, $id)
     {
-        $validatedData = $request->validate(['period' => 'requiered|in: "everyFiveMinutes","everyFifteenMinutes","everyThirtyMinutes","hourly", "daily"' ]);
-        
+        $validatedData = $request->validate(['period' => 'requiered|in: "everyFiveMinutes","everyFifteenMinutes","everyThirtyMinutes","hourly", "daily", "weekly", "monthly"']);
+
         $schedule = ScheduledTask::findOrFail($id);
 
         $schedule->period = $validatedData['period'];
 
         $schedule->save();
-
-
     }
     public function status($name)
     {
-        $task = ScheduledTask::where('task_name',$name)->first();
+        $task = ScheduledTask::where('task_name', $name)->first();
         if ($task) {
             return $task->status;
         }
 
         return redirect()->back()->with('error', 'Error al mostrar el estado de la automatización del ping');
     }
-    
 }
