@@ -80,6 +80,17 @@ class InstallationController extends Controller
             'totalInstallationCount' => $totalInstallationCount
         ]);
     }
+
+
+    public function show($id)
+    {
+        $installation = Installation::with('contract.inventorieDevice.device.user')->findOrFail($id);
+
+        return Inertia::render('Admin/Installation/Show', [
+            'installation' => $installation,
+        ]);
+    }
+
     public function edit($id)
     {
         $installation = Installation::findOrFail($id);

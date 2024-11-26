@@ -75,6 +75,15 @@ class ChargeController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $charge = Charge::with('contract.inventorieDevice.device.user')->findOrFail($id);
+
+        return Inertia::render('Admin/Charges/Show', [
+            'charge' => $charge,
+        ]);
+    }
+
     public function edit($id)
     {
         try {

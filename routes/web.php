@@ -39,7 +39,9 @@ use App\Http\Controllers\PaymentSanctionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\SMSSettingController;
 use App\Http\Controllers\ServiceVariablesController;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\TelegramSettingController;
 
 Route::get('/', function () {
@@ -114,6 +116,7 @@ Route::middleware([
     });
 
     Route::get('/dashboard', [StatisticsController::class, 'index'])->name('dashboard');
+
     //MIDLEWARE ADMINISTRADOR
 
     Route::middleware(['rol:1,2'])->group(function () {
@@ -309,8 +312,6 @@ Route::middleware([
         Route::delete('/payment/histories/cut/{date}',      [PaymentHistorieController::class, 'cutMonth'])->name('payment.cut.month');
         Route::get('/payment/histories/to/excel',            [PaymentHistorieController::class, 'exportExcel'])->name('payment.excel');
 
-
-
         Route::get('/sistema/backups',                    [BackupsController::class, 'index'])->name('backups');
         Route::post('/sistema/backups/create',            [BackupsController::class, 'createBackup'])->name('backups.create');
         Route::delete('/sistema/backups/delete/{backup}', [BackupsController::class, 'destroy'])->name('backups.destroy');
@@ -332,6 +333,13 @@ Route::middleware([
         Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
         
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
+        Route::get('/sistema/configuracion/mercadopago',      [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
+        Route::post('/sistema/configuracion/mercadopago/update',      [  MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
+        Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
+        Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
+        Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
+        Route::get('/sistema/configuracion/SMS',      [SMSSettingController::class, 'edit'])->name('settings.sms.edit');
+        Route::post('/sistema/configuracion/SMS/update',      [SMSSettingController::class, 'update'])->name('settings.sms.update');
 
         Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
@@ -443,4 +451,9 @@ Route::middleware([
         Route::delete('/pagos/local/delete/{id}',                     [LocalPayController::class, 'destroy'])->name('local.pay.delete');
         // Route::post('/pagos/local/store',                     [LocalPayController::class, 'store'])->name('local.pay.store');
     });
+    //SMS
+    Route::get('/settings/sms/edit', [SMSSettingController::class, 'edit'])->name('settings.sms.edit');
+    Route::post('/settings/sms/store', [SMSSettingController::class, 'store'])->name('settings.sms.store');
+    Route::put('/settings/sms/update', [SMSSettingController::class, 'update'])->name('settings.sms.update');
+    Route::delete('/settings/sms/{id}', [SMSSettingController::class, 'destroy'])->name('settings.sms.destroy');
 });

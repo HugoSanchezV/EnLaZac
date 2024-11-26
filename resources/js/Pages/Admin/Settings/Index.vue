@@ -45,7 +45,7 @@ import { Link } from "@inertiajs/vue3";
               </div>
             </Link>
 
-            <Link :href="route('usuarios')">
+            <Link :href="route('settings.mercadopago.edit')">
               <div
                 class="m-2 flex justify-center items-center p-2 md:p-6 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
               >
@@ -87,7 +87,7 @@ import { Link } from "@inertiajs/vue3";
         <div>
           <h2 class="m-2">Notificaciones</h2>
           <div class="block md:flex">
-            <Link :href="route('usuarios')">
+            <Link :href="route('settings.sms.edit')">
               <div
                 class="m-2 flex justify-center items-center p-4 md:p-8 bg-gray-200 hover:bg-gray-300 text-2xl rounded-md gap-2"
               >

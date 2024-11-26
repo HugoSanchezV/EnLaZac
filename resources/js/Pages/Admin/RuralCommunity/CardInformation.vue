@@ -1,151 +1,118 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { defineProps } from 'vue';
+import { defineProps } from "vue";
 
+// Definición de las props
 const props = defineProps({
-    ruralcommunity: {
-        type: Object,
-        required: true,  
-    },
+  ruralcommunity: {
+    type: Object,
+    required: true, // Se espera un objeto definido
+  },
 });
 </script>
 
 <template>
-  <!-- Contenedor principal con estilo mejorado -->
-  <div class="bg-white shadow-lg rounded-xl border border-gray-200 transition-transform transform hover:scale-105">
-    <!-- Encabezado de la tarjeta con color suave -->
-    <div class="px-6 py-5 bg-green-500 rounded-t-xl">
-      <h3 class="text-xl font-semibold text-white">Información de la Comunidad Rural</h3>
-      <p class="mt-1 text-sm text-green-200">Detalles completos sobre la comunidad rural seleccionada</p>
-    </div>
-    <!-- Contenido de la comunidad rural -->
-    <div class="border-t border-gray-200 px-6 py-6">
-      <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        
-        <!-- ID de la comunidad -->
-        <div>
-          <dt class="text-sm font-medium text-gray-600">ID de la Comunidad</dt>
-          <dd class="mt-1 text-lg text-gray-800">{{ ruralcommunity.id }}</dd>
-        </div>
-
-        <!-- Nombre de la comunidad -->
-        <div>
-          <dt class="text-sm font-medium text-gray-600">Nombre de la Comunidad</dt>
-          <dd class="mt-1 text-lg text-gray-800">{{ ruralcommunity.name }}</dd>
-        </div>
-
-        <!-- Costo de instalación -->
-        <div>
-          <dt class="text-sm font-medium text-gray-600">Costo de Instalación</dt>
-          <dd class="mt-1 text-lg text-gray-800">{{ ruralcommunity.installation_cost }}</dd>
-        </div>
-
-      </dl>
-      <!-- Botón de acción -->
-      <div class="mt-6 text-right">
-        <Link href="/comunidades-rurales/{{ ruralcommunity.id }}" class="inline-block bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors">
-          Ver Detalles
-        </Link>
+  <!-- Contenedor principal centrado con fondo degradado profesional -->
+  <div class="min-h-screen flex items-center justify-center p-6">
+    <!-- Tarjeta de información de la comunidad rural -->
+    <div v-if="ruralcommunity" class="bg-white shadow-2xl rounded-3xl border border-gray-200 w-full max-w-3xl">
+      <!-- Encabezado de la tarjeta con degradado -->
+      <div class="px-8 py-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-3xl">
+        <h3 class="text-2xl font-bold text-white">Información de la Comunidad Rural</h3>
+        <p class="mt-2 text-sm text-indigo-200">Detalles sobre la comunidad rural seleccionada</p>
       </div>
+      <!-- Contenido de la tarjeta -->
+      <div class="px-8 py-6">
+        <!-- Lista de detalles en un diseño de rejilla responsivo -->
+        <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <!-- ID de la comunidad -->
+          <div v-if="ruralcommunity.id">
+            <dt class="text-sm font-medium text-indigo-600">ID de la Comunidad</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ruralcommunity.id }}</dd>
+          </div>
+
+          <!-- Nombre de la comunidad -->
+          <div v-if="ruralcommunity.name">
+            <dt class="text-sm font-medium text-indigo-600">Nombre de la Comunidad</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ruralcommunity.name }}</dd>
+          </div>
+
+          <!-- Costo de instalación -->
+          <div v-if="ruralcommunity.installation_cost">
+            <dt class="text-sm font-medium text-indigo-600">Costo de Instalación</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ruralcommunity.installation_cost }}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Mensaje si no hay datos de la comunidad -->
+    <div v-else>
+      <p class="text-red-500 text-center">No se encontró información de la comunidad rural.</p>
     </div>
   </div>
 </template>
 
-    <style scoped>
-    /* Estilos personalizados adicionales */
+<style scoped>
+/* Fondo degradado para el contenedor principal */
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, #6366f1, #a855f7);
+}
 
-    .bg-green-500 {
-      background-color: #10B981; /* Verde suave */
-    }
+/* Colores de texto personalizados */
+.text-indigo-600 {
+  color: #4f46e5;
+}
 
-    .text-green-500 {
-      color: #10B981; /* Verde suave */
-    }
+.text-indigo-200 {
+  color: #a5b4fc;
+}
 
-    .text-green-200 {
-      color: #6EE7B7; /* Verde claro */
-    }
+.text-indigo-800:hover {
+  color: #3730a3;
+}
 
-    .transition-transform {
-      transition: transform 0.3s ease;
-    }
+/* Degradados personalizados para el encabezado */
+.bg-gradient-to-r.from-indigo-500.to-purple-600 {
+  background-image: linear-gradient(to right, #6366f1, #a855f7);
+}
 
-    .hover\:scale-105:hover {
-      transform: scale(1.05);
-    }
+/* Bordes redondeados personalizados */
+.rounded-3xl {
+  border-radius: 1.5rem;
+}
 
-    .hover\:bg-green-600:hover {
-      background-color: #059669; /* Verde más oscuro */
-    }
+/* Sombras personalizadas */
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
 
-    /* Mejoras de Tipografía */
-    .text-lg {
-      font-size: 1.125rem; /* 18px */
-    }
+/* Tipografía mejorada */
+.font-semibold {
+  font-weight: 600;
+}
 
-    .text-xl {
-      font-size: 1.25rem; /* 20px */
-    }
+.text-lg {
+  font-size: 1.125rem; /* 18px */
+}
 
-    .font-semibold {
-      font-weight: 600;
-    }
+.text-gray-900 {
+  color: #111827;
+}
 
-    .font-medium {
-      font-weight: 500;
-    }
+.text-gray-700 {
+  color: #4b5563;
+}
 
-    .text-sm {
-      font-size: 0.875rem; /* 14px */
-    }
+/* Efecto de transición para enlaces */
+a:hover {
+  text-decoration: underline;
+}
 
-    /* Mejoras de Espaciado */
-    .px-6 {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-
-    .py-5 {
-      padding-top: 1.25rem;
-      padding-bottom: 1.25rem;
-    }
-
-    .py-6 {
-      padding-top: 1.5rem;
-      padding-bottom: 1.5rem;
-    }
-
-    .mt-1 {
-      margin-top: 0.25rem;
-    }
-
-    .mt-6 {
-      margin-top: 1.5rem;
-    }
-
-    .mr-3 {
-      margin-right: 0.75rem;
-    }
-
-    /* Bordes y Sombras */
-    .rounded-xl {
-      border-radius: 0.75rem;
-    }
-
-    .border-gray-200 {
-      border-color: #e5e7eb;
-    }
-
-    .border-gray-100 {
-      border-color: #f3f4f6;
-    }
-
-    .shadow-lg {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-                  0 4px 6px -4px rgba(0, 0, 0, 0.1);
-    }
-
-    .bg-white {
-      background-color: #ffffff;
-    }
-    </style>
+/* Ajustes para mejorar la responsividad y apariencia */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+</style>
