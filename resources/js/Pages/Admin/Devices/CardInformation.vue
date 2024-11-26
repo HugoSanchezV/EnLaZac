@@ -131,7 +131,7 @@ export default {
 
 /* Degradados personalizados para el encabezado */
 .bg-gradient-to-r.from-indigo-500.to-purple-600 {
-  background-image: linear-gradient(to right, #6366f1, #a855f7);
+  background-image: linear-gradient(to right, #6366f1, #55b9f7);
 }
 
 /* Bordes redondeados personalizados */

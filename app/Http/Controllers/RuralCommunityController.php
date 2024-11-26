@@ -118,7 +118,6 @@ class RuralCommunityController extends Controller
     public function show(string $id)
     {
         $ruralcommunity = RuralCommunity::findOrFail($id);
-
         return Inertia::render('Admin/RuralCommunity/Show', [
             'ruralcommunity' => $ruralcommunity,
         ]);

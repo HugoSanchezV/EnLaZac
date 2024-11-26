@@ -229,7 +229,7 @@ const getTag = (cellIndex) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                href="#"
+                :href="route('installation.show',row.id)"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -315,6 +315,7 @@ const getTag = (cellIndex) => {
   <script>
 import { Link, router } from "@inertiajs/vue3";
 import RouterTable from "@/Pages/Admin/Routers/RouterTable.vue";
+
 export default {
   components: {
     Link,

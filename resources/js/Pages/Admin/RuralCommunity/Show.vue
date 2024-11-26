@@ -11,7 +11,8 @@
     </template>
     <template v-slot:content>
       <div class="flex justify-center items-center w-full h-full">
-        <div class="p-8 rounded-lg w-1/2">
+        <div class="p-8 rounded-lg w'full md:w-1/2">
+          
           <CardInformation :ruralcommunity="ruralcommunity"/>
         </div>
       </div>
@@ -34,7 +35,7 @@ components: {
   DashboardBase,
 },
 props: {
-  RuralCommunity: {
+  ruralcommunity: {
     type: Object,
     required: true,
   },

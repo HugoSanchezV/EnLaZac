@@ -7,175 +7,160 @@ const props = defineProps({
 });
 
 onMounted(() => {
-  var bg = document.getElementById('status-background');
-  var txt = document.getElementById('text-info');
-  var title = document.getElementById('title-info');
-  
-  switch(props.ticket.status) {
-    
-    case '0':
-      bg.classList.add('bg-red-600');
-      txt.classList.add('text-white');
-      title.classList.add('text-white');
+  var bg = document.getElementById("status-background");
+  var txt = document.getElementById("text-info");
+  var title = document.getElementById("title-info");
 
+  switch (props.ticket.status) {
+    case "0":
+      bg.classList.add("bg-red-600");
+      txt.classList.add("text-white");
+      title.classList.add("text-white");
       break;
-    case '1':
-      bg.classList.add('bg-yellow-500');
+    case "1":
+      bg.classList.add("bg-yellow-500");
       break;
-    case '2':
-      bg.classList.add('bg-blue-500');
-      txt.classList.add('text-white');
-      title.classList.add('text-black');
+    case "2":
+      bg.classList.add("bg-blue-500");
+      txt.classList.add("text-white");
+      title.classList.add("text-black");
       break;
-    case '3':
-      bg.classList.add('bg-green-600');
-      txt.classList.add('text-white');
-      title.classList.add('text-white');
+    case "3":
+      bg.classList.add("bg-green-600");
+      txt.classList.add("text-white");
+      title.classList.add("text-white");
       break;
     default:
-      alert("220000413513201");
+      alert("Estado desconocido");
       break;
   }
 });
 </script>
 
 <template>
-  <div class="bg-white overflow-hidden shadow-md rounded-lg border border-gray-200">
-      <!--bg-gray-50 -->
-      <div class="px-6 py-4" id="status-background">
-        <h3 class="text-lg leading-6 font-semibold" id="title-info">
-          Información del Ticket
-        </h3>
-        <p class="mt-1 text-sm" id="text-info">
-          Detalles sobre el ticket y el usuario asociado
-        </p>
+  <!-- Contenedor principal centrado con fondo degradado profesional -->
+  <div class="min-h-screen flex items-center justify-center p-6">
+    <!-- Tarjeta de información del ticket -->
+    <div class="bg-white shadow-2xl rounded-3xl border border-gray-200 w-full max-w-4xl">
+      <!-- Encabezado de la tarjeta con degradado dinámico -->
+      <div class="px-8 py-6 rounded-t-3xl" id="status-background">
+        <h3 class="text-2xl font-bold" id="title-info">Información del Ticket</h3>
+        <p class="mt-2 text-sm" id="text-info">Detalles sobre el ticket y el usuario asociado</p>
       </div>
-    
-    <div class="border-t border-gray-100 px-6 py-4">
-      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">ID</dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            <div class="data-container w-full bg-gray-50 text-sm font-medium text-gray-800 border-0" >
-              {{ ticket.id }}
+      <!-- Contenido de la tarjeta -->
+      <div class="px-8 py-6">
+        <!-- Lista de detalles en un diseño de rejilla responsivo -->
+        <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <!-- ID del ticket -->
+          <div>
+            <dt class="text-sm font-medium text-indigo-600">ID</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ticket.id }}</dd>
+          </div>
+
+          <!-- Asunto -->
+          <div>
+            <dt class="text-sm font-medium text-indigo-600">Asunto</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ticket.subject }}</dd>
+          </div>
+
+          <!-- Descripción -->
+          <div class="sm:col-span-2">
+            <dt class="text-sm font-medium text-indigo-600">Descripción</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ticket.description }}</dd>
+          </div>
+
+          <!-- Estado -->
+          <div class="sm:col-span-2 flex justify-center">
+            <div class="text-center">
+              <dt class="text-sm font-medium text-indigo-600">Estado</dt>
+              <dd class="mt-1 text-lg font-semibold text-gray-900">
+                <span
+                  v-if="ticket.status === '0'"
+                  class="inline-block px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-full"
+                >
+                  Pendiente
+                </span>
+                <span
+                  v-else-if="ticket.status === '1'"
+                  class="inline-block px-4 py-2 text-sm font-semibold text-white bg-yellow-500 rounded-full"
+                >
+                  En espera
+                </span>
+                <span
+                  v-else-if="ticket.status === '2'"
+                  class="inline-block px-4 py-2 text-sm font-semibold text-white bg-blue-500 rounded-full"
+                >
+                  Trabajando
+                </span>
+                <span
+                  v-else-if="ticket.status === '3'"
+                  class="inline-block px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-full"
+                >
+                  Solucionado
+                </span>
+              </dd>
             </div>
-          </dd>
-        </div>
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Asunto</dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            <div class="data-container w-full bg-gray-50 text-sm font-medium text-gray-800 border-0">
-              {{ ticket.subject }}
-            </div>
-          </dd>
-        </div>
-        <div class="sm:col-span-2">
-          <dt class="text-sm font-medium text-gray-600">Descripción</dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            <div class="data-container w-full bg-gray-50 text-sm font-medium text-gray-800 border-0">
-              {{ ticket.description }}
-            </div>
-          </dd>
-        </div>
-        <div class="sm:col-span-2 flex justify-center">
-          <div class="flex align-center flex-col">
-            <dt class="text-sm font-medium text-gray-600 flex justify-center">Estado</dt>
-            <dd class="mt-1 text-sm text-gray-900">
-              <span
-                v-if="ticket.status === '0'"
-                class="items-center   inline-block px-3 py-1 text-sm font-semibold text-white bg-red-600 rounded-full"
-              >Pendiente</span>
-              <span
-                v-else-if="ticket.status === '1'"
-                class="items-center inline-block px-3 py-1 text-sm font-semibold text-white bg-yellow-500 rounded-full"
-              >En espera</span>
-              <span
-                v-else-if="ticket.status === '2'"
-                class="items-center inline-block px-3 py-1 text-sm font-semibold text-white bg-blue-500 rounded-full"
-              >Trabajando</span>
-              <span
-                v-else-if="ticket.status === '3'"
-                class="items-center inline-block px-3 py-1 text-sm font-semibold text-white bg-green-600 rounded-full"
-              >Solucionado</span>
-              <span v-else>{{ ticket.status }}</span>
+          </div>
+
+          <!-- ID del usuario -->
+          <div>
+            <dt class="text-sm font-medium text-indigo-600">ID del Usuario</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">
+              <Link
+                :href="route('usuarios.show', ticket.user_id)"
+                class="text-indigo-500 underline hover:text-indigo-700"
+              >
+                {{ ticket.user_id }}
+              </Link>
             </dd>
           </div>
-        </div>
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">ID del Usuario</dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            <div class="data-container w-full bg-gray-50 text-sm font-medium text-gray-800 border-0">
-              <Link
-              :href="route('usuarios.show', ticket.user_id)"
-                class="cursor-pointer text-blue-500 underline">
-                {{ ticket.user_id }}
-              
-              </Link>
-            </div>
-          </dd>
-        </div>
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Nombre del Usuario</dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            <div class="data-container w-full bg-gray-50 text-sm font-medium text-gray-800 border-0">
-              {{ ticket.user.name }}
-            </div>
-          </dd>
-        </div>
-        <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Email</dt>
-          <dd class="mt-1 text-sm text-gray-900">
-            <div class="data-container w-full bg-gray-50 text-sm font-medium text-gray-800 border-0">
-            {{ ticket.user.email }}
-            </div>
-          </dd>
-        </div>
-      </dl>
+
+          <!-- Nombre del usuario -->
+          <div>
+            <dt class="text-sm font-medium text-indigo-600">Nombre del Usuario</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ticket.user.name }}</dd>
+          </div>
+
+          <!-- Email del usuario -->
+          <div>
+            <dt class="text-sm font-medium text-indigo-600">Email</dt>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ticket.user.email }}</dd>
+          </div>
+        </dl>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.bg-pendiente{
+/* Fondo degradado para los estados */
+.bg-pendiente {
   background-color: #dc2626;
 }
-.bg-espera{
+.bg-espera {
   background-color: #f59e0b;
 }
-.bg-trabajando{
+.bg-trabajando {
   background-color: #3b82f6;
 }
-.bg-solucionado{
+.bg-solucionado {
   background-color: #16a34a;
 }
-.data-container{
-  border-radius: 0px;
-    padding-top: 0.5rem;
-    padding-right: 0.75rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0.75rem;
-}
-.bg-gray-50 {
-  background-color: #f9fafb;
-}
 
-.text-gray-900 {
-  color: #1f2937;
+/* Diseño de la tarjeta */
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
-
-.text-gray-600 {
-  color: #4b5563;
+.rounded-3xl {
+  border-radius: 1.5rem;
 }
-
-.border-gray-100 {
-  border-color: #f3f4f6;
+.text-indigo-600 {
+  color: #4f46e5;
 }
-
-.border-gray-200 {
-  border-color: #e5e7eb;
+.text-indigo-500 {
+  color: #6366f1;
 }
-
-.shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+.text-indigo-700 {
+  color: #4338ca;
 }
 </style>

@@ -163,7 +163,7 @@ class ContractController extends Controller
     //Muestra la información del contrato y del usuario en específico
     public function show($id)
     {
-        $contract = Contract::with('user', 'router')->findOrFail($id);
+        $contract = Contract::with('user', 'router', 'device', 'inventorieDevice')->findOrFail($id);
 
         return Inertia::render('Coordi/Contracts/Show', [
             'contract' => $contract,

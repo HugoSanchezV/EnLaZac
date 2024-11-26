@@ -14,13 +14,31 @@ class SMSSettingController extends Controller
     /**
      * Mostrar el formulario de edición de configuraciones de SMS.
      */
-    public function edit()
+    //dd("hiska");
+    /**public function edit()
     {
         $settings = SMSSetting::first(); // Recupera la primera configuración
+       
         return Inertia::render('Admin/Settings/SMS/Edit', [
             'settings' => $settings,
         ]);
     }
+    */
+    public function edit()
+{
+    try {
+       
+        $settings = SMSSetting::first();
+
+        return Inertia::render('Admin/Settings/SMS/Edit', [
+            'settings' => $settings,
+        ]);
+    } catch (\Exception $e) {
+        
+        dd($e->getMessage());
+    }
+}
+
 
     /**
      * Guardar una nueva configuración de SMS.

@@ -127,12 +127,12 @@ const props = defineProps({
 
 // Inicializar el formulario con los datos existentes
 const form = useForm({
-  mode: "sandbox",               // Valores por defecto
-  sandbox_client_id: "",         // Inicializar como vacío
-  sandbox_client_secret: "",     // Inicializar como vacío
+  modelo: "sandbox",               // Valores por defecto
+  Id_cliente: "",         // Inicializar como vacío
+  Clave_cliente: "",     // Inicializar como vacío
   live_client_id: "",            // Inicializar como vacío
   live_client_secret: "",        // Inicializar como vacío
-  currency: "MXN",               // Valores por defecto
+  Moneda: "MXN",               // Valores por defecto
 });
 
 // Asignar los valores existentes al formulario cuando el componente se monta
