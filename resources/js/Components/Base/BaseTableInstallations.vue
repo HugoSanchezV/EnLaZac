@@ -1,14 +1,26 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-
+import {ref, onMounted, toRefs} from 'vue';
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
 
+const getOriginal = (data) => {
+  if (data === "contrato") {
+    return "contract_id";
+  }
+  if (data === "descripción") {
+    return "description";
+  }
+
+  if (data === "fecha asignada") {
+    return "assigned_date";
+  }
+};
 // ACCION DE ELIMINAR
-const destroy = (id) => {
+const destroy = (id, data) => {
   const toast = useToast();
 
   toast(
@@ -25,11 +37,23 @@ const destroy = (id) => {
         accept: () => {
           const url = route("installation.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          const attributeUrl = getOriginal(data.attribute);
+
+          router.delete(
+            url,
+            {
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -60,6 +84,12 @@ const getTag = (cellIndex) => {
       break;
   }
 };
+
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
+
+
 </script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -178,8 +208,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              order: currentFilter,
-              type: currentInstallation,
+              order: currentOrder,
+              attribute: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -210,21 +240,20 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-              <div v-if="cellIndex === 'description'">
-                <div v-if="cell === '1'">
-                  <h2>Instalación en el domicilio</h2>
-                </div>
-                <div v-if="cell === '2'">
-                  <h2>Cambio de domicilio</h2>
-                </div>
+            <div v-if="cellIndex === 'description'">
+              <div v-if="cell === '1'">
+                <h2>Instalación en el domicilio</h2>
               </div>
-              <div v-else class="flex gap-1">
-                <span class="lg:hidden md:hidden block font-bold lowercase"
-                  >{{ getTag(cellIndex) }} :</span
-                >
-                {{ cell }}
+              <div v-if="cell === '2'">
+                <h2>Cambio de domicilio</h2>
               </div>
-            
+            </div>
+            <div v-else class="flex gap-1">
+              <span class="lg:hidden md:hidden block font-bold lowercase"
+                >{{ getTag(cellIndex) }} :</span
+              >
+              {{ cell }}
+            </div>
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
@@ -255,36 +284,45 @@ const getTag = (cellIndex) => {
                 v-if="show"
                 class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
-              <span class="material-symbols-outlined" style="font-size: 16px;"> edit_calendar </span>
+                <span class="material-symbols-outlined" style="font-size: 16px">
+                  edit_calendar
+                </span>
 
                 Primer pago
               </Link>
-              <Link
-                v-if="edit"
-                :href="route('installation.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
+         
+                <Link
+                  v-if="edit"
+                  :href="route('installation.edit', row.id)"
+                  class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                  />
-                </svg>
-
-                Editar
-              </Link>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                    />
+                  </svg>
+  
+                  Editar
+                </Link>
 
               <div v-if="del">
                 <button
-                  @click="destroy(row.id)"
+                  @click="
+                    destroy(row.id, {
+                      searchQuery: searchQuery,
+                      order: currentOrder,
+                      attribute: currentFilter,
+                    })
+                  "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
                 >
                   <svg

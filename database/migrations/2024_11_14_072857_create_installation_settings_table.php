@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('installation_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('installation_id')->nullable()->constrained('installations')->onDelete('set null'); // Relación con cliente
+            $table->foreignId('installation_id')->nullable()->constrained('installations')->onDelete('cascade'); // Relación con cliente
             $table->integer('exemption_months')->nullable();
             $table->timestamps();
         });

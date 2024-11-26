@@ -1,24 +1,8 @@
 <script setup>
-import { toRefs, watch } from "vue";
-import { useToast, POSITION } from "vue-toastification";
-
 const props = defineProps({
   pings: Object,
   pagination: Object,
-  success: String,
   totalPingsCount: Number,
-});
-
-const { pings, success } = toRefs(props);
-const toast = useToast();
-
-watch(success, (newValue) => {
-  if (newValue) {
-    toast.success(newValue, {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-  }
 });
 
 const headers = ["id", "Router", "Contenido", "Fecha", "Acciones"];
@@ -126,13 +110,18 @@ export default {
         this.attribute = "content";
       }
 
-      if (this.attribute === "Fecha") {
+      if (this.attribute === "fecha") {
         this.attribute = "created_at";
       }
 
       this.$inertia.get(
         link,
-        { q: this.q, attribute: this.attribute, type: this.type, order:this.order },
+        {
+          q: this.q,
+          attribute: this.attribute,
+          type: this.type,
+          order: this.order,
+        },
         { preserveState: true, replace: true }
       );
     },
@@ -140,25 +129,25 @@ export default {
 
   watch: {
     pings() {
-      const toast = useToast();
+      // const toast = useToast();
       this.rows = this.pings.data;
-      if (this.success) {
-        toast.success(this.success, {
-          position: POSITION.TOP_CENTER,
-          draggable: true,
-        });
-      }
+      // if (this.success) {
+      //   toast.success(this.success, {
+      //     position: POSITION.TOP_CENTER,
+      //     draggable: true,
+      //   });
+      // }
     },
   },
 
-  beforeMount() {
-    const toast = useToast();
-    if (this.success) {
-      toast.success(this.success, {
-        position: POSITION.TOP_CENTER,
-        draggable: true,
-      });
-    }
-  },
+  // beforeMount() {
+  //   const toast = useToast();
+  //   if (this.success) {
+  //     toast.success(this.success, {
+  //       position: POSITION.TOP_CENTER,
+  //       draggable: true,
+  //     });
+  //   }
+  // },
 };
 </script>

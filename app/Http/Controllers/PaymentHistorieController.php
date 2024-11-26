@@ -6,8 +6,9 @@ use App\Exports\GenericExport;
 use App\Models\PaymentHistorie;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -15,18 +16,65 @@ use function PHPUnit\Framework\isNull;
 
 class PaymentHistorieController extends Controller
 {
+
+    protected $path = 'Admin/PaymentHistories/PaymentHistories';
+    public function __construct()
+    {
+        if (Auth::user()->admin === 0) {
+            $this->path = 'User/PaymentHistories/PaymentHistories';
+        }
+
+        if (Auth::user()->admin === 2) {
+            $this->path = 'Coordi/PaymentHistories/PaymentHistories';
+        }
+    }
     public function index(Request $request)
     {
         $query = PaymentHistorie::query();
+
+        $user = Auth::user();
+
+        $total = 0;
+        $total_month = 0;
+        
+        if ($user->admin === 0) {
+            $query->where('user_id', $user->id);
+
+            $total = DB::table('payment_histories')->where('user_id', $user->id)->sum('amount');
+            $total_month = $total;
+        } 
+
+        if ($user->admin === 2) {
+            $query->where('worker', $user->id . ' ' . $user->name);
+
+            $total = DB::table('payment_histories')->where('worker', $user->id . ' ' . $user->name)->sum('amount');
+            $total_month = $total;
+        } else {
+            $total = DB::table('payment_histories')->sum('amount');
+            $total_month = $total;
+        }
+
+        if (isNull($request->date)) {
+            $query->where('created_at', 'like', $request->date . '%');
+            if ($user->admin === 2) {
+                $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->where('worker', $user->id . ' ' . $user->name)->sum('amount');
+
+            } else {
+                $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->sum('amount');
+
+            }
+        }
+
 
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('user_id', 'like', "%$search%")
+                    ->orWhere('worker', 'like', "%$search%")
                     // ->orWhere('contract_id', 'like', "%$search%")
                     ->orWhere('amount', 'like', "%$search%")
-                    ->orWhere('content', 'like', "%$search%")
+                    // ->orWhere('content', 'like', "%$search%")
                     ->orWhere('payment_method', 'like', "%$search%")
                     ->orWhere('transaction_id', 'like', "%$search%")
                     ->orWhere('receipt_url', 'like', "%$search%");
@@ -47,9 +95,9 @@ class PaymentHistorieController extends Controller
             return [
                 'id' => $item->id,
                 'user_id' => $item->user->name ?? 'None',
-                // 'contract_id' => $item->contract_id,
+                'worker' => $item->worker,
                 'amount' => $item->amount,
-                'content' => $item->content,
+                // 'content' => $item->content,
                 'payment_method' => $item->payment_method,
                 'transaction_id' => $item->transaction_id,
                 'created_at' => $item->created_at->format('Y-m-d H:i'),
@@ -59,7 +107,7 @@ class PaymentHistorieController extends Controller
 
         $totalPaymentsCount = PaymentHistorie::count();
 
-        return Inertia::render('Admin/PaymentHistories/PaymentHistories', [
+        return Inertia::render($this->path, [
             'payments' => $payment,
             'pagination' => [
                 'links' => $payment->links()->elements[0],
@@ -69,7 +117,9 @@ class PaymentHistorieController extends Controller
                 'total' => $payment->total(),
             ],
             'success' => session('success') ?? null,
-            'totalPaymentsCount' => $totalPaymentsCount
+            'totalPaymentsCount' => $totalPaymentsCount,
+            'totalAmount' => $total,
+            'totalAmountMonth' => $total_month
         ]);
     }
     public function store(PaymentHistorie $request)
@@ -91,13 +141,43 @@ class PaymentHistorieController extends Controller
             "q" => $request->q ?? null,
             "attribute" => $request->attribute ?? null,
             "order" => $request->order ?? null,
+            "data" => $request->data ?? null,
         ];
+
         try {
             $payment = PaymentHistorie::findOrFail($id);
             $payment->delete();
 
             return Redirect::route('payment', $data)->with('success', 'Registro eliminado en éxito');
         } catch (Exception $e) {
+            return Redirect::route('payment', $data)->with('error', 'Error al cargar el registro');
+        }
+    }
+
+    public function cutMonth($date, Request $request)
+    {
+        // dd($request->all());
+        $data = [
+            "q" => $request->q ?? null,
+            "attribute" => $request->attribute ?? null,
+            "order" => $request->order ?? null,
+            "data" => $date ?? null,
+        ];
+
+        DB::beginTransaction();
+        try {
+            $payments = PaymentHistorie::where('created_at', 'like', $date . '%')->get();
+
+            if ($payments->isEmpty()) {
+                return Redirect::route('payment', $data)->with('info', 'No hay registros para eliminar en este mes');
+            }
+
+            PaymentHistorie::destroy($payments->pluck('id'));
+
+            DB::commit();
+            return Redirect::route('payment', $data)->with('success', 'Se ha realizado el corte');
+        } catch (Exception $e) {
+            DB::rollBack();
             return Redirect::route('payment', $data)->with('error', 'Error al cargar el registro');
         }
     }
@@ -135,10 +215,9 @@ class PaymentHistorieController extends Controller
     }
     public function show(string $id)
     {
+        $paymentHistorie = PaymentHistorie::with('user')->findOrFail($id);
 
-        $paymentHistorie = PaymentHistorie::with('user', 'transaction')->findOrFail($id);
-
-        return Inertia::render('Admin/PaymentHistorie/Show', [
+        return Inertia::render('Admin/PaymentHistories/Show', [
             'paymentHistorie' => $paymentHistorie,
         ]);
     }

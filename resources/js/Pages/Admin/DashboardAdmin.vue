@@ -14,7 +14,7 @@ const props = defineProps({
       default: true,
     },
     morrosos: {
-      type: Object,
+      type: Array,
     },
     activeDevice: {
       type: Object,
@@ -184,7 +184,7 @@ useGeneralNotifications();
                         </div>
 
                         <div>
-                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
+                            <p class="mt-2  text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
                         </div>
                     </div>
                   </button>
@@ -299,7 +299,7 @@ useGeneralNotifications();
             </div>
             <div  v-if="props.routers.length > 0" class="mt-5" v-for="(targetItem, index) in target" :key="index" >
               <div class="flex gap-1 mb-3">
-                <h2 class="text-blue-500 text-2xl">Router</h2><span class="text-blue-500 text-2xl">{{ routers[index] }}</span>
+                <h2 class="text-2xl">Router</h2><span class="text-blue-500 text-2xl">{{ routers[index] }}</span>
               </div>
               <div class="graphic-container">
                   <Graphics

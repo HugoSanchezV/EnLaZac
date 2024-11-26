@@ -70,14 +70,22 @@
                 class="text-sm text-gray-400 hover:text-gray-200 rounded-md m-1 flex items-center pl-2"
                 :class="{
                   'bg-gradient-to-r from-teal-500 via-blue-500 to-indigo-500 text-gray-50':
-                    route().current().split('.')[1] ===
-                    subItem.route.split('.')[1],
+                    route().current() === subItem.route,
                 }"
               >
                 <span class="material-symbols-outlined">
                   fiber_manual_record
                 </span>
-                <Link :href="route(subItem.route)" class="block p-2">
+                <Link
+                  :href="
+                    route(
+                      subItem.route === 'default.dashboard'
+                        ? 'dashboard'
+                        : subItem.route
+                    )
+                  "
+                  class="block p-2"
+                >
                   {{ subItem.name }}
                 </Link>
               </li>
@@ -93,54 +101,37 @@
 import { ref, onMounted, defineEmits } from "vue";
 import { Link } from "@inertiajs/vue3";
 
-// Definición del menú con subitems y SVGs
+// Definición del menú con subitems y sus iconos
 const menuItems = ref([
   {
     name: "Dashboard",
     route: "dashboard",
     isOpen: false,
-    icon: "earthquake", // ejemplo de path de SVG
-    subItems: [
-      { name: "Principal", route: "dashboard" },
-    ],
+    icon: "earthquake",
+    subItems: [{ name: "Principal", route: "dashboard" }],
   },
-  // {
-  //   name: "Usuarios",
-  //   route: "usuarios",
-  //   isOpen: false,
-  //   icon: "supervisor_account", // ejemplo de path de SVG
-  //   subItems: [
-  //     { name: "Usuarios", route: "usuarios" },
-  //     { name: "Contratos", route: "contracts" },
-  //   ],
-  // },
   {
     name: "Reportes",
-    route: "tickets",
+    route: "technical.tickets",
     isOpen: false,
-    icon: "flag_2", // ejemplo de path de SVG
-    subItems: [
-      { name: "Reportes", route: "technical.tickets" },
-      // { name: "Planes", route: "plans" },
-    ],
+    icon: "flag_2",
+    subItems: [{ name: "Reportes", route: "technical.tickets" }],
   },
-
   {
     name: "Gestión de red",
-    route: "routers",
+    route: "technical.routers",
     isOpen: false,
-    icon: "cloud", // ejemplo de path de SVG
+    icon: "cloud",
     subItems: [
       { name: "Routers", route: "technical.routers" },
       { name: "Dispositivos", route: "technical.devices" },
-      // { name: "Planes", route: "plans" },
     ],
   },
   {
     name: "Inventario",
-    route: "inventorie.devices.index",
+    route: "technical.inventorie.devices.index",
     isOpen: false,
-    icon: "store", // ejemplo de path de SVG
+    icon: "store",
     subItems: [
       {
         name: "Dispositivos Inv.",
@@ -149,13 +140,6 @@ const menuItems = ref([
       { name: "Historial de Inv.", route: "technical.historieDevices.index" },
     ],
   },
-  // {
-  //   name: "Sistema",
-  //   route: "inventorie.devices.index",
-  //   isOpen: false,
-  //   icon: "settings", // ejemplo de path de SVG
-  //   subItems: [{ name: "Configuración", route: "settings" }],
-  // },
 ]);
 
 const emit = defineEmits(["closeMenuEmit"]);
@@ -165,7 +149,7 @@ const toggleMenu = (index) => {
     item.isOpen = idx === index ? !item.isOpen : false; // Cierra los demás elementos
   });
 
-  // Esto forza la reactividad en Vue 3 al modificar un array de objetos
+  // Forzar la reactividad en Vue 3 al modificar un array de objetos
   menuItems.value = [...menuItems.value];
 };
 
@@ -174,27 +158,44 @@ const closeMenuEmit = () => {
 };
 
 onMounted(() => {
-  // Obtener la ruta actual y extraer el primer segmento antes del punto o barra
-  const currentRoute = route().current().split(".")[0]; // Obtiene la ruta actual
-  const firstSegment = currentRoute.split(".")[0]; // Divide por punto o barra y obtiene el primer segmento
+  const currentRoute = route().current();
+
+  // Divide la ruta actual por el punto si existe, de lo contrario usa la ruta completa
+  const routeSegments = currentRoute.includes(".")
+    ? currentRoute.split(".")
+    : [currentRoute];
+
+  // Obtén el primer segmento relevante de la ruta
+  const firstSegment = routeSegments[1] || routeSegments[0];
 
   // Recorrer los items del menú
   menuItems.value.forEach((item) => {
-    // Verificar si la primera parte del route de los subItems coincide con el primer segmento de la ruta actual
+    // Recorrer los subItems del menú
     const subItemMatch = item.subItems.some((subItem) => {
-      return subItem.route.split(".")[0] === firstSegment;
+      // Divide la ruta del subItem por el punto si existe
+      const subItemRouteSegments = subItem.route.includes(".")
+        ? subItem.route.split(".")
+        : [subItem.route];
+
+      // Obtén el primer segmento relevante de la ruta del subItem
+      const subItemFirstSegment =
+        subItemRouteSegments[1] || subItemRouteSegments[0];
+
+      // Compara los segmentos
+      return subItemFirstSegment === firstSegment;
     });
 
-    // Si alguno de los subItems coincide con el primer segmento de la ruta actual, abrimos el menú
+    // Si alguno de los subItems coincide, abrimos el menú
     if (subItemMatch) {
       item.isOpen = true;
     }
   });
 
-  // Esto es necesario para forzar la reactividad en Vue
+  // Forzar la reactividad en Vue
   menuItems.value = [...menuItems.value];
 });
 </script>
 
 <style scoped>
+/* Puedes agregar tus estilos personalizados aquí */
 </style>

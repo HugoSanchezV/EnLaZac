@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\ExtendContractController;
 use App\Http\Controllers\PaymentHistorieController;
+use App\Models\ExtendContract;
 use App\Models\PaymentHistorie;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +24,7 @@ class PaymentService
             $pay->user_id = Auth::id();
             $pay->worker = $worker;
             $pay->amount = $amount;
-            $pay->content = json_encode($cart);
+            $pay->content = $cart;
             $pay->payment_method = $method;
 
             $pay->transaction_id = $transaction;
@@ -39,6 +41,8 @@ class PaymentService
     {
         try {
             $controller = new ContractController();
+            $controllerExtend = new ExtendContractController();
+            $controllerExtend->shutDownExtend($id);
             $controller->updateMonths($months, $id);
         } catch (Exception $e) {
             Log::info("Entro a excepcion en Contract");

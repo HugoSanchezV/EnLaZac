@@ -6,6 +6,7 @@ const props = defineProps({
   contracts: Object,
   pagination: Object,
   totalContractsCount: Number,
+  paymentSanction: Array,
 });
 
 const { contracts } = toRefs(props);
@@ -18,23 +19,22 @@ const filters = [
   "usuario",
   "plan internet",
   "comunidad",
-  "fecha de inicio",
+  // "fecha de inicio",
   "fecha de terminación",
   "¿activo?",
-  "dirección",
-  
+  // "dirección",
 ];
 
 const headers = [
   "Id",
-  'Dispositivo',
+  "Dispositivo",
   "Usuarios",
   "Plan Internet",
   "Comunidad",
-  "Fecha de Inicio",
+  // "Fecha de Inicio",
   "Fecha de Terminación",
   "¿Activo?",
-  "Dirección",
+  // "Dirección",
   "Acciones",
 ];
 </script>
@@ -52,9 +52,11 @@ const headers = [
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
-            <span class="material-symbols-outlined" style="font-size: 16px;"> contract </span>
+            <span class="material-symbols-outlined" style="font-size: 16px">
+              contract
+            </span>
 
-            Crear contrato
+            Crear contrato 
           </Link>
         </div>
       </div>
@@ -65,6 +67,7 @@ const headers = [
           <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <!-- Esta es el inicio de la tabla -->
           <base-table-contracts
+            :paymentSanction = "paymentSanction"
             :headers="headers"
             :rows="rows"
             :filters="filters"
@@ -105,7 +108,7 @@ const headers = [
 import { Link } from "@inertiajs/vue3";
 import { useToast, POSITION } from "vue-toastification";
 import DashboardBase from "@/Pages/DashboardBase.vue";
-import BaseTableContracts from "@/Components/Base/BaseTableContracts.vue";
+import BaseTableContracts from "@/Pages/Coordi/Contracts/BaseTableContracts.vue";
 import BasePagination from "@/Components/Base/BasePagination.vue";
 
 export default {

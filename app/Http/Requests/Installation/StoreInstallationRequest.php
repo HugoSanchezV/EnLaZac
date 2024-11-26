@@ -24,7 +24,7 @@ class StoreInstallationRequest extends FormRequest
         return [
             'contract_id' => ['required','exists:contracts,id'],
             'description' => ['required', 'in:"1","2"'],
-            'assigned_date' => 'required',
+            'assigned_date' => ['required', 'date', 'after_or_equal:today'],
         ];
     }
 
@@ -36,6 +36,8 @@ class StoreInstallationRequest extends FormRequest
             'description.required' => 'La descripción es un campo obligatorio.',
             'description.in' => 'La descripción ingresada no es admitida',
             'assigned_date.required' => 'La fecha es un campo obligatorio.',
+            'assigned_date.date' => 'La fecha debe ser tipo date.',
+            'assigned_date.after_or_equal' => 'La fecha asignada debe ser igual o mayor a la fecha actual.', // Mensaje para after_or_equal'assigned_date.required' => 'La fecha es un campo obligatorio.',
         ];
     }
 }

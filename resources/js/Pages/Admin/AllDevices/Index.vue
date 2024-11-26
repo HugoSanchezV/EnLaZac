@@ -46,12 +46,12 @@ const columns = ["id", "name"];
   <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
-      <div class="flex justify-between">
+      <div class="flex justify-between flex-col md:flex-row">
         <div>
-          <h2>Dispositivos</h2>
+          <h2>Todas las Conexiones</h2>
         </div>
-        <div class="flex gap-2 flex-col md:flex-row">
-          <div>
+        <div class="flex flex-col columns-1 md:columns-2 md:gap-1 md:flex-row">
+          <div class="mb-1 mt-1 md:mb-0 md:mt-0">
             <Link
               :href="route('device.ping.historie')"
               class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
@@ -66,7 +66,7 @@ const columns = ["id", "name"];
             <Link
               :href="route('routers')"
               method="get"
-              class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
+              class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

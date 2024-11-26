@@ -86,33 +86,30 @@ class ChargeController extends Controller
 
     public function edit($id)
     {
-        try{
+        try {
 
             $charge = Charge::findOrFail($id);
-            $contracts = Contract::with('device', 'plan')->get();
-    
+            $contracts = Contract::with('inventorieDevice', 'plan')->get();
+
             return Inertia::render('Admin/Charges/Edit', [
                 'charge' => $charge,
                 'contracts' => $contracts,
             ]);
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             return redirect()->route('charges')->with('error', 'Hubo un error al obtener la información del registro');
         }
     }
     public function update(UpdateChargeRequest $request, $id)
     {
-        try{
+        try {
 
             $charge = Charge::findOrFail($id);
-    
+
             $validatedData = $request->validated();
             $charge->update($validatedData);
             return redirect()->route('charges')->with('success', 'Cargo Actualizado Con Éxito');
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             return redirect()->route('charges')->with('error', 'Error Al Actualizar El Cargo');
-
         }
     }
     public function updatePaid($id)
@@ -138,8 +135,9 @@ class ChargeController extends Controller
 
     public function create()
     {
-        $contracts = Contract::with('device', 'plan')->get();
-        
+        $contracts = Contract::with('inventorieDevice.device.user', 'plan')->get();
+
+        // dd($contracts);
         return Inertia::render(
             'Admin/Charges/Create',
             [
@@ -148,23 +146,21 @@ class ChargeController extends Controller
         );
     }
     public function store(StoreChargeRequest $request)
-    {  
-        try{
+    {
+        try {
 
             $validatedData = $request->validated();
             Charge::create([
                 'contract_id' => $validatedData['contract_id'],
-                'description' =>$validatedData['description'],
-                'amount' =>$validatedData['amount'],
+                'description' => $validatedData['description'],
+                'amount' => $validatedData['amount'],
                 'paid' => $validatedData['paid'],
                 'date_paid' => $validatedData['date_paid'],
             ]);
-    
-            return redirect()->route('charges')->with('success', 'El cargo ha sido creado con éxito');
-        }catch(Exception $e)
-        {
-            return redirect()->route('charges')->with('error', 'Hubo un error al crear el cargo');
 
+            return redirect()->route('charges')->with('success', 'El cargo ha sido creado con éxito');
+        } catch (Exception $e) {
+            return redirect()->route('charges')->with('error', 'Hubo un error al crear el cargo');
         }
     }
 

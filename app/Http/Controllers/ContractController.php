@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\GenericExport;
 use App\Models\Contract;
-use App\Models\User;
 use App\Models\Plan;
 use Illuminate\Http\Request;
 use App\Http\Requests\Contract\StoreContractRequest;
@@ -12,27 +11,38 @@ use App\Http\Requests\Contract\UpdateContractRequest;
 use App\Models\Charge;
 use App\Models\CutOffDay;
 use App\Models\Device;
+use App\Models\ExemptionPeriod;
+use App\Models\ExtendContract;
+use App\Models\Installation;
 use App\Models\InventorieDevice;
+use App\Models\PaymentSanction;
 use App\Models\RuralCommunity;
-use App\Services\RuralCommunityService;
 use Carbon\Carbon;
-
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Twilio\Rest\Microvisor\V1\DeviceContext;
 use function PHPUnit\Framework\isNull;
+use function PHPUnit\Framework\throwException;
 
 class ContractController extends Controller
 {
+    public $path = 'Coordi/Contracts';
     //
+    public function __construct()
+    {
+        if (Auth::user()->admin === 2) {
+            $this->path = 'Coordi/Contracts_Coordi';
+        }
+    }
+
     public function index(Request $request)
     {
         $query = Contract::query();
-
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -49,33 +59,50 @@ class ContractController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // Ordenación
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'asc');
+        // }
 
-        $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
+        $contract = [];
+
+        $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity', 'paymentSanction')->latest()->paginate(8)->through(function ($item)  use ($request) {
+
+            // if ((Auth::user()->admin === 2) && (isset($request->q) || $request->q === '' || isNull($request->q))) {
+            //     return;
+            // }
+
             return [
                 'id' => $item->id,
                 'inv_device_id' => $item->inventorieDevice->mac_address ?? 'Sin asignar',
                 'user_id' => $item->inventorieDevice->device->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',
-                'start_date' => $item->start_date,
+                // 'start_date' => $item->start_date,
                 'end_date' => $item->end_date,
                 'active' => $item->active,
-                'address' => $item->address,
+                // 'address' => $item->address,
 
             ];
         });
 
-
+        $paymentSanction = Contract::with('paymentSanction')->get();
 
         $totalContractsCount = Contract::count();
 
-        return Inertia::render('Coordi/Contracts/Contracts', [
+        return Inertia::render($this->path . '/Contracts', [
             'contracts' => $contract,
+            'paymentSanction' => $paymentSanction,
             'pagination' => [
                 'links' => $contract->links()->elements[0],
                 'next_page_url' => $contract->nextPageUrl(),
@@ -108,9 +135,9 @@ class ContractController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
-                    ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'like', "%$search%");
-                    })
+                    // ->orWhereHas('user', function ($userQuery) use ($search) {
+                    //     $userQuery->where('name', 'like', "%$search%");
+                    // })
                     ->orWhereHas('plan', function ($planQuery) use ($search) {
                         $planQuery->where('name', 'like', "%$search%");
                     })
@@ -131,10 +158,10 @@ class ContractController extends Controller
             $order
         );
 
-        $contract = $query->with('device.device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
+        $contract = $query->with('inventorieDevice.device.user', 'ruralCommunity')->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'user_id' => $item->device->device->user->name ?? 'Sin asignar',
+                'user_id' => $item->inventorieDevice->device->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',
                 'start_date' => $item->start_date,
@@ -163,9 +190,46 @@ class ContractController extends Controller
     //Muestra la información del contrato y del usuario en específico
     public function show($id)
     {
-        $contract = Contract::with('user', 'router', 'device', 'inventorieDevice')->findOrFail($id);
+        // $contract = Contract::with('plan', 'ruralCommunity', 'inventorieDevice')->findOrFail($id);
+        // $contract = Contract::select(
+        //     'contracts.*',
+        //     'plans.*',
+        //     'rural_communities.*',
+        //     'inventorie_devices.*',
+        //     'devices.*',
+        //     'users.*'
+        // )
+        //     ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+        //     ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
+        //     ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
+        //     ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device
+        //     ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
+        //     ->where('contracts.id', $id)
+        //     ->first();
 
-        return Inertia::render('Coordi/Contracts/Show', [
+        $contract = Contract::select(
+            'contracts.*',
+            'plans.*',
+            'rural_communities.*',
+            'inventorie_devices.*',
+            'devices.*',
+            'contracts.id as contract_id',
+            'contracts.address as contract_address',
+            'plans.name as plan_name',
+            'devices.address as device_address',
+            'users.id as user_id',
+            'users.name as user_name',
+            'users.email as user_email'
+        )
+            ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+            ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
+            ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
+            ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device (corrección del campo)
+            ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
+            ->where('contracts.id', $id)
+            ->first();
+
+        return Inertia::render($this->path . '/Show', [
             'contract' => $contract,
         ]);
     }
@@ -174,7 +238,7 @@ class ContractController extends Controller
     {
         $community = RuralCommunity::all();
         $devices = Device::select('id', 'address')->whereNotNull('user_id')->get();
-    
+
         $plans = Plan::select('id', 'name')->get();
         return Inertia::render(
             'Coordi/Contracts/Create',
@@ -188,7 +252,7 @@ class ContractController extends Controller
 
     public function create2()
     {
-        try{
+        try {
             $community = RuralCommunity::all();
 
             $devices_used = Device::with('inventorieDevice')->whereNotNull('device_id')->whereNotNull('user_id')->get();
@@ -199,22 +263,22 @@ class ContractController extends Controller
 
             $available_devices = [];
 
-            if($device_no_contract->count() !== 0){
+            if ($device_no_contract->count() !== 0) {
 
                 foreach ($inv_devices as $device) {
                     // Verificar si el dispositivo no está en la lista de device_no_contract
                     $exists = $device_no_contract->contains('inv_device_id', $device->id);
-                    
+
                     if (!$exists) {
                         $available_devices[] = $device;
                     }
                 }
-            }else{
-            // dd("QQui");
+            } else {
+                // dd("QQui");
                 foreach ($inv_devices as $device) {
                     // Filtrar la colección de contratos para ver si el inv_device_id coincide con el id del dispositivo
-                
-                    $available_devices [] = $device;
+
+                    $available_devices[] = $device;
                 }
             }
             $plans = Plan::select('id', 'name')->get();
@@ -226,41 +290,53 @@ class ContractController extends Controller
                     'community' => $community,
                 ]
             );
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             return redirect()->route('contracts')->with('error', 'Hubo un error al obtener los registros');
-
         }
-
-        
     }
 
     public function store(StoreContractRequest $request)
     {
-        try{
+        try {
+            DB::beginTransaction();
             $cutOffDay = CutOffDay::first()->day;
-            
-            //dd('LLega aqui');
-            $validatedData = $request->validated();
 
-            $contract = Contract::create([
-                'inv_device_id' => $validatedData['inv_device_id'],
-                'plan_id' => $validatedData['plan_id'],
-                'start_date' => $validatedData['start_date']."-".$cutOffDay,
-                'end_date' => $validatedData['end_date']."-".$cutOffDay,
-                'active' => $validatedData['active'],
-                'address' => $validatedData['address'],
-                'rural_community_id' => $validatedData['rural_community_id'],
-                'geolocation' => $validatedData['geolocation'],
-            ]);
-    
+                //dd('LLega aqui');
+                $validatedData = $request->validated();
+
+                $contract = Contract::create([
+                    'inv_device_id' => $validatedData['inv_device_id'],
+                    'plan_id' => $validatedData['plan_id'],
+                    'start_date' => $validatedData['start_date'] . "-" . $cutOffDay,
+                    'end_date' => $validatedData['end_date'] . "-" . $cutOffDay,
+                    'active' => $validatedData['active'],
+                    'address' => $validatedData['address'],
+                    'rural_community_id' => $validatedData['rural_community_id'],
+                    'geolocation' => $validatedData['geolocation'],
+                ]);
+
             self::createCharge($contract);
+            self::sanction($contract);
+            self::extend($contract);
+
+            DB::commit();
             //     RuralCommunityService::update($id, $request->community);
-    
             return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
         }catch(Exception $e){
+            DB::rollBack();
             return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato');
         }
+    }
+    private function sanction(Contract $contract)
+    {
+        $controller = new PaymentSanctionController();
+
+        $controller->store($contract->id);
+    }
+    private function extend(Contract $contract){
+        $controller = new ExtendContractController();
+
+        $controller->store($contract->id);
     }
     private function createCharge($contract)
     {
@@ -280,8 +356,8 @@ class ContractController extends Controller
 
     public function edit($id)
     {
-        try{
-            $contract = Contract::with('inventorieDevice','ruralCommunity')->findOrFail($id);
+        try {
+            $contract = Contract::with('inventorieDevice', 'ruralCommunity')->findOrFail($id);
             $contract->start_date = substr($contract->start_date, 0, -3);
             $contract->end_date = substr($contract->end_date, 0, -3);
 
@@ -295,29 +371,29 @@ class ContractController extends Controller
 
             $available_devices = [];
 
-            if($device_no_contract->count() !== 0){
+            if ($device_no_contract->count() !== 0) {
 
                 foreach ($inv_devices as $device) {
                     // Verificar si el dispositivo no está en la lista de device_no_contract
                     $exists = $device_no_contract->contains('inv_device_id', $device->id);
-                    
+
                     if (!$exists) {
                         $available_devices[] = $device;
                     }
                 }
-               // dd();
-               //dd($contract->inventorieDevice);
+                // dd();
+                //dd($contract->inventorieDevice);
                 $current_device = $contract->inventorieDevice;
                 //dd("ds");
                 if ($current_device && !collect($available_devices)->contains('id', $current_device->id)) {
                     $available_devices[] = $current_device;
                 }
-            }else{
-            // dd("QQui");
+            } else {
+                // dd("QQui");
                 foreach ($inv_devices as $device) {
                     // Filtrar la colección de contratos para ver si el inv_device_id coincide con el id del dispositivo
-                
-                    $available_devices [] = $device;
+
+                    $available_devices[] = $device;
                 }
                 $current_device = $contract->pluck('inventorieDevice');
                 if ($current_device && !collect($available_devices)->contains('id', $current_device->id)) {
@@ -326,40 +402,55 @@ class ContractController extends Controller
             }
             $plans = Plan::select('id', 'name')->get();
             return Inertia::render(
-                'Coordi/Contracts/Edit',
+                $this->path . '/Edit',
                 [
-                    'contract'=> $contract,
+                    'contract' => $contract,
                     'devices' => $available_devices,
                     'plans' => $plans,
                     'community' => $community,
                 ]
             );
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             dd($e);
             return redirect()->route('contracts')->with('error', 'Hubo un error al obtener los registros');
-
         }
     }
 
 
     public function update(UpdateContractRequest $request, $id)
     {
-        $cutOffDay = CutOffDay::first()->day;
-        $contract = Contract::findOrFail($id);
+        try {
+            DB::transaction(function () use ($request, $id) {
+                $cutOffDay = CutOffDay::first()->day;
+                $contract = Contract::findOrFail($id);
 
-        $validatedData = $request->validated();
-        $contract->update([
-            'inv_device_id' => $validatedData['inv_device_id'],
-                'plan_id' => $validatedData['plan_id'],
-                'start_date' => $validatedData['start_date']."-".$cutOffDay,
-                'end_date' => $validatedData['end_date']."-".$cutOffDay,
-                'active' => $validatedData['active'],
-                'address' => $validatedData['address'],
-                'rural_community_id' => $validatedData['rural_community_id'],
-                'geolocation' => $validatedData['geolocation'],]
-        );
-        return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
+                $validatedData = $request->validated();
+
+                if ($contract->plan_id !== $validatedData['plan_id']) {
+                    $plan = Plan::findOrFail($validatedData['plan_id'])->first();
+                    $device = Device::where('device_id', $validatedData['inv_device_id'])->first();
+
+                    $deviceController = new DevicesController();
+                    $deviceController->setConsumePlanToDevice($device, $plan);
+                }
+
+                $contract->update(
+                    [
+                        'inv_device_id' => $validatedData['inv_device_id'],
+                        'plan_id' => $validatedData['plan_id'],
+                        'start_date' => $validatedData['start_date'] . "-" . $cutOffDay,
+                        'end_date' => $validatedData['end_date'] . "-" . $cutOffDay,
+                        'active' => $validatedData['active'],
+                        'address' => $validatedData['address'],
+                        'rural_community_id' => $validatedData['rural_community_id'],
+                        'geolocation' => $validatedData['geolocation'],
+                    ]
+                );
+            });
+            return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
+        } catch (Exception $e) {
+            return redirect()->route('contracts')->with('error', 'Error al cargar el registro');
+        }
     }
 
     public function updateMonths($months, $id)
@@ -395,17 +486,17 @@ class ContractController extends Controller
             $contract->delete();
             return Redirect::route('contracts', $data)->with('success', 'Contrato Eliminado Con Éxito');
         } catch (Exception $e) {
-            return Redirect::route('contracts', $data)->with('error', 'Error al cargar el registro'.$e);
+            return Redirect::route('contracts', $data)->with('error', 'Error al cargar el registro' . $e);
         }
     }
 
-    public function getContracts($today)
+    public function getContracts()
     {
-        return Contract::with('installations')->where('end_date', '<=', $today)->get();
+        return Contract::with('installations.installationSettings')->where('active', 1)->get();
     }
     public function exportExcel()
     {
-        $query = Contract::with(['user', 'plan']);
+        $query = Contract::with(['inventorieDevice.device.user', 'plan']);
 
         $headings = [
             'ID',
@@ -421,8 +512,8 @@ class ContractController extends Controller
         $mappingCallback = function ($contract) {
             return [
                 'id' => $contract->id,
-                'cliente id' => $contract->user->id ?? 'None',
-                'cliente' => $contract->user->name ?? 'None',
+                'cliente id' => $contract->inventorieDevice->device->user->id ?? 'None',
+                'cliente' => $contract->inventorieDevice->device->user->name ?? 'None',
                 'plan' => $contract->plan->name ?? 'None',
                 'fecha incio' => $contract->start_date,
                 'fecha Fin' => $contract->end_date,
@@ -441,31 +532,103 @@ class ContractController extends Controller
             'days' => 'required|integer|min:1',
         ]);
 
-        // Buscar el contrato por su ID
-        $contract = Contract::find($id);
+        try{
+            // Buscar el contrato por su ID
+            $contract = Contract::find($id);
 
-        // Verificar que el contrato exista
-        if (!$contract) {
-            return Redirect::route('reaming.contracts')->with('error', 'Error a cargar el registro');
-            // return response()->json(['error' => 'Contrato no encontrado'], 404);
+            // Verificar que el contrato exista
+            if (!$contract) {
+                return Redirect::route('reaming.contracts')->with('error', 'Error a cargar el registro');
+                // return response()->json(['error' => 'Contrato no encontrado'], 404);
+            }
+
+            // Sumar los días a la fecha de finalización actual
+            $newEndDate = Carbon::parse($contract->end_date)->addDays($request->input('days'));
+
+            //Ingresar registro de la extensión
+            $this->addExtendContract($contract, $request->input('days'));
+
+            // Actualizar la fecha en el contrato
+            $contract->end_date = $newEndDate;
+            $contract->save();
+
+            // return response()->json([
+            //     'message' => 'Fecha de finalización extendida exitosamente',
+            //     'new_end_date' => $newEndDate->toDateString(),
+            // ]);
+            return Redirect::route('reaming.contracts', [
+                'days' => $request->daysFilter,
+                'q' => $request->q,
+                'order' => $request->order,
+                'attribute' => $request->attribute,
+            ])->with('success', 'Fecha de finalización extendida exitosamente');
+        }catch(Exception $e){
+            return Redirect::route('reaming.contracts', [
+                'days' => $request->daysFilter,
+                'q' => $request->q,
+                'order' => $request->order,
+                'attribute' => $request->attribute,
+            ])->with('success', 'Hubo un error al extender la fecha de finalización');
+        }
+    }
+    private function addExtendContract(Contract $contract, $day){
+        $controller = new ExtendContractController();
+        $controller->extend($contract->id, $day);
+        
+    }
+
+    public function updateContractDate(Installation $installation)
+    {
+        try{
+           // dd("DSDSD");
+            $contract = Contract::findOrFail($installation->contract_id);
+            $exemptionPeriod = ExemptionPeriod::first();
+    
+            $dateInst =Carbon::parse($installation->assigned_date);
+            if (!empty($installation->installationSettings) && !empty($installation->installationSettings->exemption_months)) {
+                $end = $dateInst->addMonths($installation->installationSettings->exemption_months);
+
+                if(Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay())
+                {
+                    $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end->month);
+                    //->addMonths($installation->installationSettings->exemption_months); ;    
+                }
+            }
+            else {
+                //dd($dateInst->day." | " .$exemptionPeriod->end_date);
+    
+                if(($dateInst->day >= $exemptionPeriod->start_day)&&($dateInst->day <= $exemptionPeriod->end_day))
+                {
+                   // dd('entro aca');
+                    $end = $dateInst->addMonths($exemptionPeriod->month_next);
+
+                    if(Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay()){
+
+                        $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end->month);
+                    }
+                }else if($dateInst->day > $exemptionPeriod->end_day){
+
+                    $end = $dateInst->addMonths($exemptionPeriod->month_after_next);
+                    if(Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay()){
+                        $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end);
+                    }
+                }
+    
+            }
+            $contract->save();
+
+
+        }catch(Exception $e){
+            Log::error($e);
+            throwException($e);
         }
 
-        // Sumar los días a la fecha de finalización actual
-        $newEndDate = Carbon::parse($contract->end_date)->addDays($request->input('days'));
 
-        // Actualizar la fecha en el contrato
-        $contract->end_date = $newEndDate;
-        $contract->save();
-
-        // return response()->json([
-        //     'message' => 'Fecha de finalización extendida exitosamente',
-        //     'new_end_date' => $newEndDate->toDateString(),
-        // ]);
-        return Redirect::route('reaming.contracts', [
-            'days' => $request->daysFilter,
-            'q' => $request->q,
-            'order' => $request->order,
-            'attribute' => $request->attribute,
-        ])->with('success', 'Fecha de finalización extendida exitosamente');
     }
+
+    public function getOriginalDate(Installation $installation){
+        
+    }
+
+
 }

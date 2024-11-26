@@ -372,6 +372,11 @@ class TechnicalDevicesController extends Controller
         $fail = 0;
         $status = new DeviceStatus();
         $devicesStatus = [];
+
+        $path = 'routers.devices';
+        if (Auth::user()->admin === 3) {
+            $path = 'technical.routers.devices';
+        }
         try {
             $API = RouterOSService::getInstance();
             $API->connect($router->id);
@@ -421,14 +426,14 @@ class TechnicalDevicesController extends Controller
             $API->disconnect();
 
             if ($fail != 0) {
-                return Redirect::route('routers.devices', ['router' => $router->id])
+                return Redirect::route($path, ['router' => $router->id])
                     ->with('success', 'Se encontraron fallas en alguno de los dispositivos');
             } else {
-                return Redirect::route('routers.devices', ['router' => $router->id])
+                return Redirect::route($path, ['router' => $router->id])
                     ->with('success', 'Todos los dispositivos operan correctamente');
             }
         } catch (Exception $e) {
-            return Redirect::route('routers.devices', ['router' => $router->id])->with('error', 'Se produjo un error: ' . $e);
+            return Redirect::route($path, ['router' => $router->id])->with('error', 'Se produjo un error: ' . $e);
         }
     }
     public function sendPing(Device $device, $url = 'technical.routers.devices')

@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Maatwebsite\Excel\Facades\Excel;
 
+use function PHPUnit\Framework\isNull;
+
 class TechnicalInventorieDevicesController extends Controller
 {
     /**
@@ -37,11 +39,19 @@ class TechnicalInventorieDevicesController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'asc');
+        // }
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         $devices = $query->latest()->paginate(8)->through(function ($item) {
             return [

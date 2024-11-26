@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contract;
 use App\Models\Device;
+use App\Models\PingDeviceHistorie;
 use App\Models\Router;
 use App\Models\Ticket;
 use App\Models\User;
@@ -21,26 +22,107 @@ class StatisticsController extends Controller
 
     public function index()
     {
-        if(Auth::user()->admin == 1){
+        $user = Auth::user();
+
+        if ($user->admin == 0) {
+            return self::showUser();
+        }
+
+        if ($user->admin == 1) {
             return self::showAdmin();
-        }else{
-            return Inertia::render('DashboardBase');
+        }
+
+        if ($user->admin == 2) {
+            return self::showCoordi();
+        }
+
+        if ($user->admin == 3) {
+            return self::showTechnical();
+        }
+        return Inertia::render('DashboardBase');
+    }
+
+    public function showUser()
+    {
+        try {
+            $user = User::with('device.inventorieDevice')->findOrFail(Auth::id());
+
+            $devices = $user->device;
+
+            $contracts = [];
+
+            foreach ($devices as $device) {
+                // Verifica si el dispositivo tiene un contrato
+                $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
+                // $plan = $contract ? Plan::find($contract->plan_id) : null;
+
+                // Añadir los datos del dispositivo, contrato y plan al arreglo
+                $contracts[] = [
+                    'device' => $device,
+                    'contract' => $contract,
+                    // 'plan' => $plan,
+                ];
+            }
+
+            // dd($contracts);
+            return Inertia::render('User/DashboardUser', [
+                'user' => $user,
+                // 'ticket' => Ticket::where('user_id', $id)->count(),
+                'contracts' => $contracts
+            ]);
+        } catch (Exception $e) {
+            dd($e->getMessage());
+            return Redirect::route('usuarios')->with('error', 'Error al mostrar el usuario');
         }
     }
+
+    public function showTechnical()
+    {
+        $user = Auth::user();
+        $pings = PingDeviceHistorie::where('user_id', $user->id)->get();
+        $routers = Router::count();
+        $active_devices = Router::sum('enable_devices');
+
+        return Inertia::render('Tecnico/DashboardTechnical', [
+            'tickets' => sizeof($user->ticket),
+            'pings' => sizeof($pings),
+            'routers' => $routers,
+            'active_devices' => $active_devices,
+            'user' => $user,
+        ]);
+    }
+
+
+    public function showCoordi()
+    {
+        $user = Auth::user();
+        $users = User::where('admin', 0)->count();
+        $contracts = Contract::count();
+        $active_devices = Router::sum('enable_devices');
+
+        return Inertia::render('Coordi/DashboardCoordi', [
+            'tickets' => sizeof($user->ticket),
+            'users' => $users,
+            'contracts' => $contracts,
+            'active_devices' => $active_devices,
+            'user' => $user,
+        ]);
+    }
+
     public function showAdmin()
     {
-      //  dd(Carbon::now());
+        //  dd(Carbon::now());
         //Varias consultas para mandar aca
         $morrosos = self::morrososCount();
-     //  dd($morrosos);
+        //  dd($morrosos);
         $activeDevice = self::activeDevices();
         $activeContract = self::activeContract();
         $newTickets = self::currentTickets();
         $userCount = self::userCount();
 
         $trafficData = self::conectar();
-     //   dd($trafficData);
-        if(empty($trafficData)){
+
+        if (empty($trafficData)) {
             $target = [];
             $upload_rate = [];
             $download_rate = [];
@@ -48,14 +130,12 @@ class StatisticsController extends Controller
             $download_byte = [];
 
             $this->route = [];
-
-        }else{
-            foreach($trafficData as $data)
-            {
-                if(!is_null($data)){
-                    foreach($data as $dt){
+        } else {
+            foreach ($trafficData as $data) {
+                if (!is_null($data)) {
+                    foreach ($data as $dt) {
                         $targetTemp[] = $dt['target'];
-                    
+
                         $rateArray = explode("/", $dt['rate']);
                         $byteArray = explode("/", $dt['bytes']);
                         // Asegurarse de que 'rate' contenga tanto subida como bajada
@@ -73,88 +153,98 @@ class StatisticsController extends Controller
                     $download_rate[] = $download_rateTemp;
                     $upload_byte[] = $upload_byteTemp;
                     $download_byte[] = $download_byteTemp;
-                    
+
                     $targetTemp = [];
                     $upload_rateTemp = [];
                     $download_rateTemp = [];
                     $upload_byteTemp = [];
                     $download_byteTemp = [];
                 }
-            }  
+            }
         }
-  //     dd(Carbon::now()->toString());
+        //     dd(Carbon::now()->toString());
 
-      //  dd($userCount->count());
-     // dd('Terminó');
-        return Inertia::render('DashboardBase',[
+        //  dd($userCount->count());
+        // dd('Terminó');
+        return Inertia::render('DashboardBase', [
             'morrosos' => $morrosos,
             'activeDevice' => $activeDevice,
-            'new_tickets' =>$newTickets,
+            'new_tickets' => $newTickets,
             'currentUsers' => $userCount,
             'activeContract' => $activeContract,
             'target' => $target,
-            'upload_rate' =>$upload_rate,
-            'download_rate' =>$download_rate,
-            'upload_byte' =>$upload_byte,
-            'download_byte' =>$download_byte,
+            'upload_rate' => $upload_rate,
+            'download_rate' => $download_rate,
+            'upload_byte' => $upload_byte,
+            'download_byte' => $download_byte,
             'routers' => $this->route,
-            
+
         ]);
     }
-    function convertToGb($bytes) {
+    function convertToGb($bytes)
+    {
         return round($bytes / 1024 / 1024 / 1024, 3);
     }
-    function convertToMb($bytes) {
+    function convertToMb($bytes)
+    {
         return round($bytes / 1024 / 1024, 5); // Convertir a MB
     }
 
-    function convertToMbps($bps) {
+    function convertToMbps($bps)
+    {
         return round($bps / 1000000, 5); // Convertir a Mbps
     }
-    public function conectar(){
+    public function conectar()
+    {
         $trafficData = [];
         $routers = Router::all();
-       //dd(($routers->count()));
-        if(($routers->count()) != 0)
-        {
-            foreach($routers as $r)
-            {
-               // dd($trafficData);
-                try{   
+        //dd(($routers->count()));
+        if (($routers->count()) != 0) {
+            foreach ($routers as $r) {
+                // dd($trafficData);
+                try {
 
                     $routerOSService = RouterOSService::getInstance();
                     $trafficDat = $routerOSService->getQueueTraffic($r->id);
-                    if(!is_null($trafficDat)){
+                    if (!is_null($trafficDat)) {
                         $trafficData[] = $trafficDat;
-                        $this->route [] = $r->id;
+                        $this->route[] = $r->id;
                     }
-                    
                 } catch (Exception $e) {
                     return Redirect::route('dashboard')->with('error', $e->getMessage());
                 }
-                
             }
-           // dd("holas");
-        }else{
-           // dd("no router");
+            //dd($trafficData);
+        } else {
+            //dd("no router");
         }
-        
+
         return $trafficData;
     }
-    public function store(){}
+    public function store() {}
     public function activeContract()
-    {return Contract::where('active','1')->get();}
-    
+    {
+        return Contract::where('active', '1')->get();
+    }
+
     public function userCount()
-    {return User::all();}
+    {
+        return User::all();
+    }
 
     public function morrososCount()
-    {return (Contract::with('device.device.user')->where('end_date','<', Carbon::today())->where('active',false)->get());}
+    {
+        return (Contract::with('inventorieDevice.device.user')->where('end_date', '<', Carbon::today())->where('active', false)->get());
+    }
 
     public function activeDevices()
-    {return (Device::where('disabled','0')->get());}
+    {
+        return (Device::where('disabled', '0')->get());
+    }
 
     public function currentTickets()
-    {$currentDate = Carbon::now()->format('Y-m-d');  // Obtener solo la fecha actual
-     return Ticket::with('user')->whereDate('created_at', $currentDate)->get();}
+    {
+        $currentDate = Carbon::now()->format('Y-m-d');  // Obtener solo la fecha actual
+        return Ticket::with('user')->whereDate('created_at', $currentDate)->get();
+    }
 }

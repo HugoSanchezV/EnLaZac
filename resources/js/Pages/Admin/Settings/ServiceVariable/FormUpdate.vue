@@ -14,6 +14,7 @@ import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 const props = defineProps({
   cutoffday: Number,
   exemptionPeriod: Object,
+  equipmentDay: Number,
 });
 
 const formCutOff = useForm({
@@ -26,6 +27,10 @@ const formExemptionPeriod = useForm({
   month_next: "",
   month_after_next: "",
 });
+
+const formEquipmentDay = useForm({
+  day: "0",
+});
 onMounted(() => {
   if (props.cutoffday) {
     formCutOff.day = props.cutoffday || "";
@@ -36,6 +41,9 @@ onMounted(() => {
     formExemptionPeriod.end_day = props.exemptionPeriod.end_day || "",
     formExemptionPeriod.month_next = props.exemptionPeriod.month_next || "",
     formExemptionPeriod.month_after_next = props.exemptionPeriod.month_after_next || "";
+  }
+  if(props.exemptionPeriod){
+    formEquipmentDay.day = props.equipmentDay || "";
   }
 
         flatpickr("#end_day", {
@@ -59,18 +67,38 @@ onMounted(() => {
     },
 });
 });
+const checkDays = ()=>{
+  if(formEquipmentDay.day >= formCutOff.day)
+  {
+    return true;
+  }else{
+    warning("El dia del cargo por renta debe ser superior al día de corte");
+    return false;
+  }
+}
 const submitCutOffDay = () => {
-  formCutOff.put(route("settings.service.variable.update.cuttoffday"));
+  if(checkDays()){
+    formCutOff.put(route("settings.service.variable.update.cuttoffday"));
+
+  }
   
 };
-const warningStartDay = () => {
+const submitEquipmentDay = () => {
+  if(checkDays()){
+    formEquipmentDay.put(route("settings.service.variable.equipmentchargeday"));
+
+  }
+  
+  
+};
+const warning = (message) => {
   const toast = useToast();
 
   toast(
     {
       component: BaseQuestion,
       props: {
-        message: "Los dias deben ser en fechas intermedias",
+        message: message,
         textConfirm: "",
       },
     },
@@ -87,7 +115,7 @@ const submitExemptionPeriod = () => {
   if(formExemptionPeriod.start_day == 1 
   || formExemptionPeriod.start_day > 28
   || formExemptionPeriod > 28){
-    warningStartDay();
+    warning("Los dias deben ser en fechas intermedias");
   }else{
     formExemptionPeriod.put(route("settings.service.variable.exemptionperiod"));
   }
@@ -106,6 +134,7 @@ const submitExemptionPeriod = () => {
           <InputLabel for="period" value="Selecciona del dia de corte" />
           <TextInput 
           type="number" 
+          min="1" max="31"
           class="mt-1 block w-full"
           v-model="formCutOff.day" 
           required
@@ -118,6 +147,34 @@ const submitExemptionPeriod = () => {
           class="ms-4"
           :class="{ 'opacity-25': formCutOff.processing }"
           :disabled="formCutOff.processing"
+        >
+          Guardar Cambios
+        </PrimaryButton>
+      </div>
+    </form>
+  </div>
+  
+  <div class="mt-5">
+    <form @submit.prevent="submitEquipmentDay " class="border p-14 m-5 bg-white">
+      <div>
+        <h2>Día del cargo por renta: </h2>
+        <div class="mt-2">
+          <InputLabel for="period" value="Selecciona el día para el cargo del equipo" />
+          <TextInput 
+          type="number" 
+          min="1" max="31"
+          class="mt-1 block w-full"
+          v-model="formEquipmentDay.day" 
+          required
+          placeholder="Selecciona un día" />
+          <InputError class="mt-2" :message="formEquipmentDay.errors.day" />
+        </div>
+      </div>
+      <div class="flex items-center justify-end mt-4">
+        <PrimaryButton
+          class="ms-4"
+          :class="{ 'opacity-25': formEquipmentDay.processing }"
+          :disabled="formEquipmentDay.processing"
         >
           Guardar Cambios
         </PrimaryButton>
@@ -147,6 +204,7 @@ const submitExemptionPeriod = () => {
           id="subject"
           v-model="formExemptionPeriod.month_next"
           type="number"
+          min="1" max="12"
           class="mt-1 block w-full"
           required
           autofocus
@@ -160,6 +218,8 @@ const submitExemptionPeriod = () => {
           id="subject"
           v-model="formExemptionPeriod.month_after_next"
           type="number"
+          min="1" max="12"
+
           class="mt-1 block w-full"
           required
           autofocus

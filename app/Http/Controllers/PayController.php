@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Charge;
 use App\Models\Contract;
 use App\Models\Device;
+use App\Models\PaypalAccount;
 use App\Models\Plan;
 use Carbon\Carbon;
 use Exception;
@@ -21,34 +22,44 @@ class PayController extends Controller
     {
 
         $userId = Auth::id();
-
+        $charges = null;
+        $contracts = null;
         // Obtener todos los contratos del cliente
         try {
             $device = Device::where('user_id', $userId)->get();
-            //dd($device);
-            $deviceIds = $device->pluck('id');
             //  dd($deviceIds);
-            $contracts = Contract::with('plan', 'inventorieDevice')->where('device_id', $deviceIds)->get();
-            // dd($contracts);
-            if ($contracts->isEmpty()) {
-                // Si no hay contratos, inicializar valores
-                $charges = [];
+
+            if ($device) {
+                $deviceIds = $device->pluck('device_id');
+                $contracts = Contract::with('plan', 'inventorieDevice')->where('inv_device_id', $deviceIds)->get();
+
+                if ($contracts->isEmpty()) {
+                    // Si no hay contratos, inicializar valores
+                    $charges = [];
+                } else {
+
+                    // Obtener todos los cargos pendientes para los contratos
+                    $contractIds = $contracts->pluck('id');
+                    $charges = Charge::whereIn('contract_id', $contractIds)
+                        ->where('paid', false)
+                        ->get();
+                }
             } else {
 
-                // Obtener todos los cargos pendientes para los contratos
-                $contractIds = $contracts->pluck('id');
-                $charges = Charge::whereIn('contract_id', $contractIds)
-                    ->where('paid', false)
-                    ->get();
+                $charges = null;
+                $contracts = null;
             }
+            // dd($contracts);
+
+            $paypal = PaypalAccount::first();
             // Retornar la vista con los datos necesarios
             return Inertia::render('User/Pays/Pays', [
                 'charges' => $charges,
                 'contracts' => $contracts,
+                'paypal' => $paypal,
             ]);
         } catch (Exception $e) {
-            dd($e->getMessage());
-            return Redirect::route('dashboard')->with('error', 'No fue posible cargar los pagos');
+            return Redirect::route('dashboard')->with('error', 'No ha dispositivo asiganado');
         }
     }
 }

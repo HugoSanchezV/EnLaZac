@@ -1,45 +1,23 @@
 <script setup>
 import { router } from "@inertiajs/vue3";
-
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
-import BaseQuestion from "./BaseQuestion.vue";
+import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 
-import FilterOrderBase from "./FilterOrderBase.vue";
+import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 const getOriginal = (data) => {
-  if (data.attribute === "id") {
-    return "id";
+  if (data === "contrato") {
+    return "contract_id";
+  }
+  if (data === "descripción") {
+    return "description";
   }
 
-  if (data.attribute === "usuario") {
-    return "user_id";
-  }
-
-  if (data.attribute === "plan internet") {
-    return "plan_id";
-  }
-
-  if (data.attribute === "fecha de inicio") {
-    return "start_date";
-  }
-
-  if (data.attribute === "fecha de terminación") {
-    return "end_date";
-  }
-
-  if (data.attribute === "¿activo?") {
-    return "active";
-  }
-
-  if (data.attribute === "dirección") {
-    return "address";
-  }
-  if (data.attribute === "comunidad") {
-    return "community";
+  if (data === "fecha asignada") {
+    return "assigned_date";
   }
 };
-
 // ACCION DE ELIMINAR
 const destroy = (id, data) => {
   const toast = useToast();
@@ -56,20 +34,25 @@ const destroy = (id, data) => {
 
       listeners: {
         accept: () => {
-          const original = getOriginal(data.attribute);
-          
-          const url = route("contracts.destroy", {
-            id: id,
-            q: data.searchQuery,
-            attribute: original,
-            order: data.order,
-          });
+          const url = route("installation.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          const attributeUrl = getOriginal(data.attribute);
+
+          router.delete(
+            url,
+            {
+              data: {
+                q: data.searchQuery,
+                attribute: attributeUrl,
+                order: data.order,
+              },
+            },
+            () => {
+              onError: (error) => {
+                toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+              };
+            }
+          );
         },
       },
     },
@@ -84,27 +67,15 @@ const destroy = (id, data) => {
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
-    case "device_id":
-      return "Dispositivo";
+    case "contract_id":
+      return "Contrato";
       break;
-    case "user_id":
-      return "Usuario";
-      break;
-    case "plan_id":
-      return "Plan";
-      break;
-    case "rural_community_id":
-      return "Comunidad";
-      break;
-    case "start_date":
-      return "Inicio";
-      break;
-    case "end_date":
-      return "Fin";
+    case "description":
+      return "Descripción";
       break;
 
-    case "address":
-      return "Dirección";
+    case "assigned_date":
+      return "Fecha Asignada";
       break;
 
     default:
@@ -112,8 +83,13 @@ const getTag = (cellIndex) => {
       break;
   }
 };
-</script>
 
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
+
+
+</script>
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
@@ -231,8 +207,8 @@ const getTag = (cellIndex) => {
           @input="
             $emit('search', {
               searchQuery: searchQuery,
-              attribute: currentFilter,
               order: currentOrder,
+              attribute: currentFilter,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -263,62 +239,25 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'geolocation'">
-              {{
-                typeof cell === "object"
-                  ? JSON.stringify(cell)
-                      .replace(/[{}""]/g, "")
-                      .replace(/[:]/g, ": ")
-                      .replace(/[,]/g, " | ")
-                      .replace("latitude", "Latitud")
-                      .replace("longitude", "Longitud")
-                      .replace("null", "Sin locación")
-                  : String(cell).replace(/[{}]/g, "")
-              }}
-            </div>
-            <div v-else-if="cellIndex === 'active'">
-              <div v-if="cell === 0">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="red"
-                  class="size-8"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm6-2.438c0-.724.588-1.312 1.313-1.312h4.874c.725 0 1.313.588 1.313 1.313v4.874c0 .725-.588 1.313-1.313 1.313H9.564a1.312 1.312 0 0 1-1.313-1.313V9.564Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+            <div v-if="cellIndex === 'description'">
+              <div v-if="cell === '1'">
+                <h2>Instalación en el domicilio</h2>
               </div>
-              <div v-else-if="cell == 1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="#00CF00"
-                  class="size-8"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm14.024-.983a1.125 1.125 0 0 1 0 1.966l-5.603 3.113A1.125 1.125 0 0 1 9 15.113V8.887c0-.857.921-1.4 1.671-.983l5.603 3.113Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+              <div v-if="cell === '2'">
+                <h2>Cambio de domicilio</h2>
               </div>
             </div>
-            <div v-else>
-              <div class="flex gap-1">
-                <span class="lg:hidden md:hidden block font-bold lowercase"
-                  >{{ getTag(cellIndex) }} :</span
-                >
-                {{ cell }}
-              </div>
+            <div v-else class="flex gap-1">
+              <span class="lg:hidden md:hidden block font-bold lowercase"
+                >{{ getTag(cellIndex) }} :</span
+              >
+              {{ cell }}
             </div>
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                :href="route('contracts.show',row.id)"
+                href="#"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -340,35 +279,47 @@ const getTag = (cellIndex) => {
                 Mostrar
               </Link>
               <Link
-                v-if="edit"
-                :href="route('contracts.edit', row.id)"
-                class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                :href="route('settings.installation.edit.installation', row.id)"
+                v-if="show"
+                class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                  />
-                </svg>
+                <span class="material-symbols-outlined" style="font-size: 16px">
+                  edit_calendar
+                </span>
 
-                Editar
+                Primer pago
               </Link>
+         
+                <Link
+                  v-if="edit"
+                  :href="route('installation.edit', row.id)"
+                  class="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                    />
+                  </svg>
+  
+                  Editar
+                </Link>
 
               <div v-if="del">
-                <button
+                <!-- <button
                   @click="
                     destroy(row.id, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      order: currentOrder,
+                      attribute: currentFilter,
                     })
                   "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -388,7 +339,7 @@ const getTag = (cellIndex) => {
                     />
                   </svg>
                   Eliminar
-                </button>
+                </button> -->
               </div>
             </div>
           </td>
@@ -400,6 +351,7 @@ const getTag = (cellIndex) => {
   
   <script>
 import { Link, router } from "@inertiajs/vue3";
+import RouterTable from "@/Pages/Admin/Routers/RouterTable.vue";
 export default {
   components: {
     Link,
@@ -440,7 +392,7 @@ export default {
       dropdownOpen: false,
       dropdownOpen2: false,
       currentFilter: "id",
-      currentContract: "todos",
+      currentInstallation: "todos",
       currentOrder: "ASC",
     };
   },
@@ -471,18 +423,18 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        type: this.currentInstallation,
         order: this.currentOrder,
       });
     },
 
-    selectContract(contract) {
-      this.currentContract = contract;
+    selectInstallation(installation) {
+      this.currentInstallation = installation;
       this.toggleDropdown2();
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        type: this.currentInstallation,
         order: this.currentOrder,
       });
     },
@@ -492,7 +444,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentUser,
+        type: this.currentInstallation,
         order: this.currentOrder,
       });
     },

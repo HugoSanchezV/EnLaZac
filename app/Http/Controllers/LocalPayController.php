@@ -49,7 +49,6 @@ class LocalPayController extends Controller
     public function search(Request $request)
     {
         try {
-
             if (!isset($request["token"])) {
                 return Inertia::render('Admin/Pays/Index', [
                     'success' => $request->success,

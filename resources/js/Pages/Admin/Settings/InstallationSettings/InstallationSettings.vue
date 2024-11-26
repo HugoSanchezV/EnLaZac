@@ -12,18 +12,9 @@ const { installationSt } = toRefs(props);
 // const toRouteExport = "contracts.excel";
 
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
-const filters = [
-  "id",
-  "usuario",
-  "mes extendido",
-];
+const filters = ["id", "usuario", "mes extendido"];
 
-const headers = [
-  "Id",
-  "Usuario",
-  "Mes Extendido",
-  "Acciones",
-];
+const headers = ["Id", "Usuario", "Mes Extendido", "Acciones"];
 </script>
 
 <template>
@@ -39,7 +30,9 @@ const headers = [
             method="get"
             class="flex justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
           >
-            <span class="material-symbols-outlined" style="font-size: 16px;"> settings_input_antenna </span>
+            <span class="material-symbols-outlined" style="font-size: 16px">
+              settings_input_antenna
+            </span>
 
             Crear Instalación Personalizada
           </Link>
@@ -126,10 +119,6 @@ export default {
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
-
-      if (this.attribute === "id") {
-        this.attribute = "id";
-      }
 
       if (this.attribute === "usuario") {
         this.attribute = "installation_id";

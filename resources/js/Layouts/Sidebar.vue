@@ -117,6 +117,7 @@ const menuItems = ref([
       { name: "Usuarios", route: "usuarios" },
       { name: "Contratos", route: "contracts" },
       { name: "Cargos", route: "charges" },
+      { name: "Instalaciones", route: "installation" },
     ],
   },
 
@@ -127,7 +128,7 @@ const menuItems = ref([
     icon: "cloud", // ejemplo de path de SVG
     subItems: [
       { name: "Routers", route: "routers" },
-      { name: "Dispositivos", route: "devices" },
+      { name: "Conexiones", route: "devices" },
       { name: "Planes", route: "plans" },
       { name: "Comunidades", route: "rural-community" },
     ],

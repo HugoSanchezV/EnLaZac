@@ -2,17 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Commands\UpdateContractDate;
 use App\Http\Requests\Installation\StoreInstallationRequest;
 use App\Http\Requests\Installation\UpdateInstallationRequest;
 use App\Models\Contract;
 use App\Models\Installation;
 use App\Models\InstallationSetting;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
+use function PHPUnit\Framework\isNull;
+
 class InstallationController extends Controller
 {
+    protected $path = 'Admin';
+
+    public function __construct()
+    {
+        if (Auth::user()->admin === 2) {
+            $this->path = 'Coordi';
+        }
+    }
     public function index(Request $request)
     {
         $query = Installation::query();
@@ -28,13 +43,16 @@ class InstallationController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        // Ordenación
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
-        
 
         $installation = $query->with('contract.inventorieDevice.device.user')->latest()->paginate(8)->through(function ($item) {
             return [
@@ -45,10 +63,10 @@ class InstallationController extends Controller
             ];
         });
 
-        
+
         $totalInstallationCount = Installation::count();
 
-        return Inertia::render('Admin/Installation/Installation', [
+        return Inertia::render( $this->path . '/Installation/Installation', [
             'installation' => $installation,
             'pagination' => [
                 'links' => $installation->links()->elements[0],
@@ -58,7 +76,8 @@ class InstallationController extends Controller
                 'total' => $installation->total(),
             ],
             'success' => session('success') ?? null,
-            'totalInstallationCount' => $totalInstallationCount 
+            'error' => session('error') ?? null,
+            'totalInstallationCount' => $totalInstallationCount
         ]);
     }
 
@@ -82,9 +101,9 @@ class InstallationController extends Controller
         // ->whereNotIn('id', $contractIds)
         // ->orWhere('id', $installation->contract_id)
         // ->get();
-        $contracts = Contract::with('device.inventorieDevice.user')->get();
-        
-        
+        $contracts = Contract::with('inventorieDevice.device.user')->get();
+
+
         return Inertia::render('Admin/Installation/Edit', [
             'installation' => $installation,
             'contracts' => $contracts
@@ -92,47 +111,93 @@ class InstallationController extends Controller
     }
     public function update(UpdateInstallationRequest $request, $id)
     {
-        
-        $installation = Installation::findOrFail($id);
+        try {
+            $today = Carbon::now();
+            $installation = Installation::with('installationSettings', 'contract')->findOrFail($id);
 
-        $validatedData = $request->validated();
-        $installation->update($validatedData);
-        return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
+            $validatedData = $request->validated();
+
+            $installation->update($validatedData);
+
+            $this->getOriginalDate($installation);
+            if (Carbon::parse($installation->assigned_date) < $today->startOfDay()) {
+                $this->updateContractDate($installation);
+            } else {
+                Artisan::call('app:update-contract-date');
+            }
+
+            //$this->udpateContractDate($installation->id);
+            return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
+        } catch (Exception $e) {
+            return redirect()->route('installation')->with('error', 'Hubo un error al actualizar el registro');
+        }
     }
     public function create()
     {
-        
+
         // $contractIds = Installation::select('contract_id')->get();
         // $contracts = Contract::with('user')->whereNotIn('id', $contractIds)->get();
         $contracts = Contract::with('inventorieDevice.device.user')->get();
-       // dd($contracts);
-        return Inertia::render('Admin/Installation/Create',[
+
+        // dd($contracts);
+        return Inertia::render('Admin/Installation/Create', [
             'contracts' => $contracts
         ]);
     }
     public function store(StoreInstallationRequest $request)
-    {   
-        $validatedData = $request->validated();
-        $installation =  Installation::create([
-            'contract_id' => $validatedData['contract_id'],
-            'description' => $validatedData['description'],
-            'assigned_date' => $validatedData['assigned_date'],
-        ]);
-
-        InstallationSetting::create([
-            'installation_id' => $installation->id,
-        ]);
-        
-      //  $this->setFirstMonthPayment($installation);
-        return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
-    }
-    
-    public function destroy($id)
     {
-        $community = Installation::findOrFail($id);
-        $community->delete();
-        return Redirect::route('installation')->with('success', 'La Instalación fue Eliminado Con Éxito');
+        try {
+
+            $validatedData = $request->validated();
+            $installation =  Installation::create([
+                'contract_id' => $validatedData['contract_id'],
+                'description' => $validatedData['description'],
+                'assigned_date' => $validatedData['assigned_date'],
+            ]);
+
+
+            //Artisan::call('app:update-contract-date');
+
+            //$this->udpateContractDate($installation->id);
+            InstallationSetting::create([
+                'installation_id' => $installation->id,
+            ]);
+
+            //  $this->setFirstMonthPayment($installation);
+            return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
+        } catch (Exception $e) {
+            return redirect()->route('installation')->with('error', 'Erro al crear la instalación');
+        }
+    }
+
+    public function destroy($id, Request $request)
+    {
+        $data = [
+            "q" => $request->q,
+            "attribute" => $request->attribute,
+            "order" => $request->order,
+        ];
+        try {
+            $community = Installation::findOrFail($id);
+            $community->delete();
+            return Redirect::route('installation', $data)->with('success', 'La Instalación fue Eliminado Con Éxito');
+        } catch (Exception  $e) {
+            return Redirect::route('installation', $data)->with('error', 'Error al cargar el registro');
+        }
     }
 
 
+    public function updateContractDate(Installation $installation)
+    {
+        $controller = new ContractController();
+
+        // dd("Va a entrar al controlador");
+        $controller->updateContractDate($installation);
+    }
+
+    private function getOriginalDate(Installation $installation)
+    {
+        $controller = new ContractController();
+        $controller->getOriginalDate($installation);
+    }
 }

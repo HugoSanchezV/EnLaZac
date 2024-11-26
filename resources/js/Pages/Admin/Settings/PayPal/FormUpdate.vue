@@ -13,17 +13,18 @@ const props = defineProps({
 const form = useForm({
   live_client_id: "",
   live_client_secret: "",
+  active: 0,
 });
 
 onMounted(() => {
   if (props.settings) {
     form.live_client_id = props.settings.live_client_id || "";
     form.live_client_secret = props.settings.live_client_secret || "";
+    form.active = props.settings.active || 0;
   }
 });
 
 const submit = () => {
-  console.log(form);
   form.post(route("settings.paypal.update"), {
     onFinish: () => form.reset("password", "password_confirmation"),
   });
@@ -40,7 +41,15 @@ const submit = () => {
 
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
-      <div>
+      <div class="mt-5 flex gap-2">
+        <InputLabel for="active" value="Activar libreria" />
+        <label class="switch">
+          <input type="checkbox" v-model="form.active" true-value="1" false-value="0" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="mt-5">
         <InputLabel for="live_client_id" value="ID Cliente" />
         <TextInput
           id="live_client_id"
@@ -54,7 +63,7 @@ const submit = () => {
         <InputError class="mt-2" :message="form.errors.live_client_id" />
       </div>
 
-      <div>
+      <div class="mt-5">
         <InputLabel for="live_client_secret" value="Clave de cliente" />
         <TextInput
           id="live_client_secret"

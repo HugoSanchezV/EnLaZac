@@ -6,6 +6,7 @@ use App\Exports\GenericExport;
 use App\Http\Requests\Device\StoreDeviceRequest;
 use App\Http\Requests\Device\UpdateDeviceRequest;
 use App\Imports\AllDeviceImport;
+use App\Models\Contract;
 use App\Models\Device;
 use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
@@ -13,27 +14,31 @@ use App\Models\Router;
 use App\Models\User;
 use App\Models\DeviceStatus;
 use App\Models\PingDeviceHistorie;
+use App\Models\Plan;
 use App\Services\DeviceService;
 use App\Services\RouterOSService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
 
 use function PHPUnit\Framework\isNull;
 
 class DevicesController extends Controller
 {
     protected DeviceService $deviceService;
+    protected $path = 'Admin';
     public function __construct()
     {
         $this->deviceService = new DeviceService();
+        if (Auth::user()->admin == 2) {
+            $this->path = 'Coordi';
+        }
     }
 
     public function index(Request $request)
@@ -88,7 +93,7 @@ class DevicesController extends Controller
         $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
-        return Inertia::render('Admin/AllDevices/Index', [
+        return Inertia::render( $this->path . '/AllDevices/Index', [
             'devices' => $devices,
             'pagination' => [
                 'links' => $devices->links()->elements[0],
@@ -192,7 +197,7 @@ class DevicesController extends Controller
     public function show(string $id)
     {
 
-        $devices = Device::with('user', 'router')->findOrFail($id);
+        $devices = Device::with('user', 'router', 'inventorieDevice')->findOrFail($id);
 
         return Inertia::render('Admin/Devices/Show', [
             'devices' => $devices,
@@ -616,6 +621,29 @@ class DevicesController extends Controller
         return $this->setDeviceStatus($device, $url);
     }
 
+    public function disconectUser(Contract $contract)
+    {
+
+        try {
+            $inv_device = InventorieDevice::with('device')->where('inv_device_id', $contract->inv_device_id)->first();
+
+            $devices = $inv_device->device->id;
+
+            if ($devices) {
+                // foreach($devices  as $device)
+                // {
+                if ($devices->disabled == 0) {
+                    $devices->disabled = 1;
+
+                    $this->setDeviceStatusContrato($devices);
+                }
+                // }
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+        }
+    }
+
     public function setDeviceStatusContrato(Device $device)
     {
         $device = Device::findOrFail($device->id);
@@ -731,6 +759,47 @@ class DevicesController extends Controller
             return Redirect::route('devices')->with('success', 'Archivo Importado Con Éxito ');
         } catch (\Exception $e) {
             return Redirect::route('devices')->with('error', 'Error al Importar, ' . $e->getMessage());
+        }
+    }
+
+
+    public function setConsumePlanToDevice(Device $device, Plan $plan)
+    {
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect($device->router_id);
+
+            $burst_limit = $plan->burst_limit['upload_limits'] . 'M/' . $plan->burst_limit['download_limits'] . 'M';
+            $burst_threshold = $plan->burst_threshold['upload_limits'] . '/' . $plan->burst_threshold['download_limits'] . 'M';
+            $burst_time = $plan->burst_time['upload_limits'] . 's/' . $plan->burst_time['download_limits'] . 's';
+            $limite_at = $plan->limite_at['upload_limits'] . 'K/' . $plan->limite_at['download_limits'] . 'K';
+            $max_limit = $plan->max_limit['upload_limits'] . 'M/' . $plan->max_limit['download_limits'] . 'M';
+
+            $response = $routerOSService->executeCommand('/queue/simple/add', [
+                'burst-limit' => $burst_limit,
+                'burst-threshold' => $burst_threshold,
+                'burst-time' => $burst_time,
+                'limit-at' => $limite_at,
+                'max-limit' => $max_limit,
+                'target' => $device->address, // IP del dispositivo al que estás aplicando la regla
+            ]);
+
+            $routerOSService->disconnect();
+        } catch (Exception $e) {
+            throw new Exception('Error en setConsumePlantoDevice ' . $e->getmessage());
+        }
+    }
+
+    public function conectarTest()
+    {
+        try {
+            $routerOSService = RouterOSService::getInstance();
+            $routerOSService->connect(1);
+
+            $routerOSService->disconnect();
+            dd('Se conecto y se desconecto');
+        } catch (Exception $e) {
+            throw new Exception('Error en setConsumePlantoDevice ' . $e->getmessage());
         }
     }
 }

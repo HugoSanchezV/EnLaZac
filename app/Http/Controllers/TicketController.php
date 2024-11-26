@@ -21,9 +21,26 @@ use Inertia\Inertia;
 class TicketController extends Controller
 {
     //
+    protected $path = 'Coordi/Tickets';
+
+    public function __construct()
+    {
+        if (Auth::user()->admin == 2) {
+            $this->path = 'Coordi/Tickets_Coordi';
+        }
+    }
+
     public function index(Request $request)
     {
         $query = Ticket::query();
+
+        $totalTicketsCount = 0;
+        if (Auth::user()->admin == 2) {
+            $query->where('user_id', Auth::id());
+            $totalTicketsCount = Ticket::where('user_id', Auth::id())->count();
+        } else {
+            $totalTicketsCount = Ticket::count();
+        }
 
         if ($request->has('q')) {
             $search = $request->input('q');
@@ -57,9 +74,9 @@ class TicketController extends Controller
         });
 
 
-        $totalTicketsCount = Ticket::count();
+     
 
-        return Inertia::render('Coordi/Tickets/Tickets', [
+        return Inertia::render( $this->path . '/Tickets', [
             'tickets' => $tickets,
             'pagination' => [
                 'links' => $tickets->links()->elements[0],
@@ -295,7 +312,8 @@ class TicketController extends Controller
         return Inertia::render('User/Tickets/Create');
     }
 
-    static function user_id(){
+    static function user_id()
+    {
         return Auth::id();
     }
 }

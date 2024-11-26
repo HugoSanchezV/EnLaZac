@@ -46,7 +46,7 @@ const columns = ["id", "name"];
         <div class="block md:flex gap-1">
           <div class="mb-1 md:mb-0">
             <Link
-              :href="route('devices.all.ping', route().params.router)"
+              :href="route('technical.devices.all.ping', route().params.router)"
               class="flex justify-center items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
             >
               <span class="material-symbols-outlined" style="font-size: 16px">
@@ -58,7 +58,7 @@ const columns = ["id", "name"];
           <div>
             <Link
               :href="
-                route('router.device.ping.historie', route().params.router)
+                route('technical.router.device.ping.historie', route().params.router)
               "
               class="flex justify-center md:justify-between items-center mb-1 md:mb-0 gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
             >

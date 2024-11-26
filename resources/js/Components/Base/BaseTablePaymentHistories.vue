@@ -7,6 +7,13 @@ import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
 
+import monthSelect from "flatpickr/dist/plugins/monthSelect";
+
+import { usePage } from "@inertiajs/vue3";
+
+const user = usePage().props.auth.user; 
+
+
 const getOriginal = (data) => {
   if (data === "usuario") {
     return "user_id";
@@ -40,6 +47,16 @@ const getOriginal = (data) => {
     return "created_at";
   }
 };
+
+const separateWorker = (data) => {
+  const espacioIndex = data.indexOf(" ");
+
+  // Extrae la parte antes y después del primer espacio
+  const number = data.slice(0, espacioIndex);
+  const name = data.slice(espacioIndex + 1);
+
+  return { number: number, name: name };
+};
 // ACCION DE ELIMINAR
 const destroy = (id, data) => {
   const toast = useToast();
@@ -56,17 +73,19 @@ const destroy = (id, data) => {
 
       listeners: {
         accept: () => {
-          const url = route("payment.destroy", id);
-
           const attributeUrl = getOriginal(data.attribute);
+          const url = route("payment.destroy", {
+            id: id,
+          });
+
           router.delete(
             url,
             {
-              preserveState: true,
               data: {
                 q: data.searchQuery,
                 attribute: attributeUrl,
                 order: data.order,
+                date: data.monthFilterRef.value,
               },
             },
             () => {
@@ -124,6 +143,45 @@ const getTag = (cellIndex) => {
       return cellIndex;
       break;
   }
+};
+
+const deleteRegisterMonth = (info) => {
+  const toast = useToast();
+
+  toast(
+    {
+      component: BaseQuestion,
+      props: {
+        message: "¿Estas Seguro del Corte?",
+        accept: true,
+        cancel: true,
+        textConfirm: "Confirmar",
+      },
+
+      listeners: {
+        accept: () => {
+          const attributeUrl = getOriginal(info.attribute);
+          const url = route("payment.cut.month", {
+            date: info.date.value,
+            q: info.searchQuery,
+            attribute: attributeUrl,
+            order: info.order,
+          });
+          router.delete(url, {
+            q: info.searchQuery,
+            attribute: attributeUrl,
+            order: info.order,
+          });
+        },
+      },
+    },
+
+    {
+      type: TYPE.WARNING,
+      position: POSITION.TOP_CENTER,
+      timeout: 10000,
+    }
+  );
 };
 </script>
 <template>
@@ -215,6 +273,41 @@ const getTag = (cellIndex) => {
           </div>
         </div>
 
+        <div class="flex gap-1">
+          <input
+            type="text"
+            id="monthFilter"
+            ref="monthFilterRef"
+            class="p-2 border rounded-lg"
+            placeholder="Seleccione un mes"
+          />
+
+          <button
+            @click="deleteDate"
+            class="bg-gray-600 text-white font-semibold text-center m-1.5 px-2.5 rounded-full"
+            v-if="monthFilterRef && monthFilterRef.value"
+          >
+            x
+          </button>
+
+          <button
+            @click="
+              deleteRegisterMonth({
+                searchQuery: this.searchQuery,
+                attribute: this.currentFilter,
+                order: this.currentOrder,
+                date: this.monthFilterRef.value,
+              })
+            "
+            class="bg-yellow-500 hover:bg-yellow-600 flex gap-2 py-1 text-white font-semibold text-center m-1.5 px-2.5 rounded-full"
+            v-if="monthFilterRef && monthFilterRef.value && rows.length > 0"
+          >
+            <span class="material-symbols-outlined"> paid </span>
+
+            <span>Realizar corte del mes</span>
+          </button>
+        </div>
+
         <!-- Final dfrop nbuton  -->
       </div>
       <!-- final de filtros -->
@@ -245,6 +338,7 @@ const getTag = (cellIndex) => {
               searchQuery: searchQuery,
               order: currentOrder,
               attribute: currentFilter,
+              date: monthFilterRef.value,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -276,7 +370,17 @@ const getTag = (cellIndex) => {
             class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div>
-              <div class="flex gap-1">
+              <div class="flex gap-1" v-if="cellIndex === 'worker'">
+                <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+                <Link
+                  :href="route('usuarios.show', separateWorker(cell).number)"
+                >
+                  <span>{{ separateWorker(cell).name }}</span>
+                </Link>
+              </div>
+              <div class="flex gap-1" v-else>
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span
                 >
@@ -287,7 +391,11 @@ const getTag = (cellIndex) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                href="#"
+                :href="
+                  route('payment.show', {
+                    id: row.id,
+                  })
+                "
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -330,13 +438,14 @@ const getTag = (cellIndex) => {
                 Editar
               </Link> -->
 
-              <div v-if="del">
+              <div v-if="del && (user.admin == 1)">
                 <button
                   @click="
                     destroy(row.id, {
                       searchQuery: this.searchQuery,
                       attribute: this.currentFilter,
                       order: this.currentOrder,
+                      monthFilterRef: this.monthFilterRef,
                     })
                   "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -368,6 +477,9 @@ const getTag = (cellIndex) => {
   
   <script>
 import { Link, router } from "@inertiajs/vue3";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/plugins/monthSelect/style.css";
+
 export default {
   components: {
     Link,
@@ -410,6 +522,7 @@ export default {
       currentFilter: "id",
       currentPayment: "todos",
       currentOrder: "ASC",
+      monthFilterRef: null,
     };
   },
   computed: {
@@ -441,6 +554,7 @@ export default {
         attribute: this.currentFilter,
         type: this.currentPayment,
         order: this.currentOrder,
+        date: this.monthFilterRef.value,
       });
     },
 
@@ -452,6 +566,7 @@ export default {
         attribute: this.currentFilter,
         type: this.currentPayment,
         order: this.currentOrder,
+        date: this.monthFilterRef.value,
       });
     },
 
@@ -462,12 +577,54 @@ export default {
         attribute: this.currentFilter,
         type: this.currentPayment,
         order: this.currentOrder,
+        date: this.monthFilterRef.value,
+      });
+    },
+
+    filterByMonth(selectedMonth) {
+      // Aquí podrías agregar lógica para filtrar los pagos según el mes seleccionado
+      console.log("Mes seleccionado:", selectedMonth);
+      // Puedes emitir un evento para que el padre escuche y ejecute el filtro
+    },
+
+    deleteDate() {
+      this.monthFilterRef.value = null;
+
+      this.$emit("search", {
+        searchQuery: this.searchQuery,
+        attribute: this.currentFilter,
+        type: this.currentPayment,
+        order: this.currentOrder,
+        date: null,
       });
     },
 
     // filterData() {
     //   console.log(this.searchQuery);
     // },
+  },
+
+  mounted() {
+    this.monthFilterRef = this.$refs.monthFilterRef;
+    flatpickr(this.monthFilterRef, {
+      plugins: [
+        monthSelect({
+          shorthand: true,
+          dateFormat: "Y-m",
+          altFormat: "F Y",
+          theme: "white",
+        }),
+      ],
+      onChange: (selectedDates, dateStr) => {
+        this.$emit("search", {
+          searchQuery: this.searchQuery,
+          attribute: this.currentFilter,
+          type: this.currentPayment,
+          order: this.currentOrder,
+          date: dateStr,
+        });
+      },
+    });
   },
 };
 </script>

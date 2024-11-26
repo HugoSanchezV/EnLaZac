@@ -23,7 +23,7 @@ Route::delete('/telegram/delete/contact', [TelegramMadelineController::class, 'd
 // Route::post('/paypal/create-order', [PayPalController::class, 'createOrder']);
 // Route::post('/paypal/capture-order', [PayPalController::class, 'captureOrder']);
 
-Route::post('/web/hook/mercado/pago/pago', [WeebHookMercadoPagoController::class, 'webhookMercadoPagoPago'])->name('mercadopago.webhook');
+// Route::post('/web/hook/mercado/pago/pago', [WeebHookMercadoPagoController::class, 'webhookMercadoPagoPago'])->name('mercadopago.webhook');
 
 //SMS
 Route::post('/send-sms', [TwilioController::class, 'send'])->name('sms');

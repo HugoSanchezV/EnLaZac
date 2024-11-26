@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class RouterosApi extends Model
 {
@@ -42,7 +43,8 @@ class RouterosApi extends Model
     public function debug($text)
     {
         if ($this->debug) {
-            echo $text . "\n";
+            // echo $text . "\n";
+            Log::debug($text  . "\n");
         }
     }
 
@@ -123,6 +125,9 @@ class RouterosApi extends Model
                     }
                 }
                 fclose($this->socket);
+            } else {
+                // Mostrar información detallada del error
+                $this->debug("Error: {$this->error_str} (Error no: {$this->error_no})");
             }
             sleep($this->delay);
         }

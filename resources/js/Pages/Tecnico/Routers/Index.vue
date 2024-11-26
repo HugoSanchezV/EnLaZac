@@ -113,7 +113,7 @@ const headingsImport = "usuario, direccion, password";
           </div> -->
           <div>
             <Link
-              :href="route('pings')"
+              :href="route('technical.pings')"
               method="get"
               class="flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
             >

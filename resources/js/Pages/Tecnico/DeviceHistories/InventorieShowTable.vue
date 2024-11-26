@@ -8,39 +8,39 @@ import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 const defaultOrder = "DESC";
 // ACCION DE ELIMINAR1
-const destroy = (id) => {
-  const toast = useToast();
+// const destroy = (id) => {
+//   const toast = useToast();
 
-  toast(
-    {
-      component: BaseQuestion,
-      props: {
-        message: "¿Estas seguro de Eliminar el Router?",
-        accept: true,
-        cancel: true,
-        textConfirm: "Eliminar",
-      },
+//   toast(
+//     {
+//       component: BaseQuestion,
+//       props: {
+//         message: "¿Estas seguro de Eliminar el Router?",
+//         accept: true,
+//         cancel: true,
+//         textConfirm: "Eliminar",
+//       },
 
-      listeners: {
-        accept: () => {
-          const url = route("historieDevices.destroy", id);
+//       listeners: {
+//         accept: () => {
+//           const url = route("historieDevices.destroy", id);
 
-          router.delete(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
-        },
-      },
-    },
+//           router.delete(url, () => {
+//             onError: (error) => {
+//               toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
+//             };
+//           });
+//         },
+//       },
+//     },
 
-    {
-      type: TYPE.WARNING,
-      position: POSITION.TOP_CENTER,
-      timeout: 10000,
-    }
-  );
-};
+//     {
+//       type: TYPE.WARNING,
+//       position: POSITION.TOP_CENTER,
+//       timeout: 10000,
+//     }
+//   );
+// };
 
 const getTag = (cellIndex) => {
   switch (cellIndex) {
@@ -177,6 +177,7 @@ const getTag = (cellIndex) => {
               searchQuery: searchQuery,
               order: currentFilter,
               type: currentUser,
+              mac_address: data.device,
             })
           "
           class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
@@ -342,6 +343,11 @@ export default {
       required: true,
     },
 
+    device: {
+      type: String,
+      required: true,
+    },
+
     show: {
       type: Boolean,
       required: true,
@@ -397,6 +403,7 @@ export default {
         attribute: this.currentFilter,
         type: this.currentUser,
         order: this.currentOrder,
+        mac_address: this.device,
       });
     },
 
@@ -407,6 +414,7 @@ export default {
         attribute: this.currentFilter,
         type: this.currentUser,
         order: this.currentOrder,
+        mac_address: this.device,
       });
     },
 

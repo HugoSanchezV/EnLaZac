@@ -7,29 +7,49 @@ use App\Models\DeviceHistorie;
 use App\Models\InventorieDevice;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+
+use function PHPUnit\Framework\isNull;
 
 class TechnicalDeviceHistoriesController extends Controller
 {
     private $pathDefault = "Tecnico/DeviceHistories/Index";
     private $pathShow = "Tecnico/DeviceHistories/Show";
 
-    public function index(Request $request, $id = null)
+    public function index(Request $request, $mac_address = null)
     {
-        $query = null;
-        if (!isset($id)) {
+
+        $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
+        $mac_address = $request->mac_address ?? null;
+
+        if ($mac_address) {
+            $historiesCount = DeviceHistorie::whereHas('inventorieDevice', function ($query) use ($mac_address) {
+                $query->where('mac_address', $mac_address);
+            })->count();
+
+            // dd(!($historiesCount > 0));
+            if ($historiesCount > 0) {
+                $query->whereHas('inventorieDevice', function ($q) use ($mac_address) {
+                    $q->where('mac_address', $mac_address);
+                });
+                $path = $this->pathShow;
+            } else {
+                return Redirect::route('technical.inventorie.devices.index', [
+                    "q" => $request->q,
+                    "attribute" => $request->attribute,
+                    "order" => $request->order,
+                ])->with('success', 'Este dispositivo no tiene histoias');
+            }
+        } else {
             $path = $this->pathDefault;
-            $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
-            return self::indexHelper($request, $query, $path);
         }
 
-        $path = $this->pathShow;
-        $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name'])->where('id', $id);
-        return self::indexHelper($request, $query, $path);
+        return $this->indexHelper($request, $query, $path, $mac_address);
     }
 
-    public function indexHelper(Request $request, $query, $path)
+    public function indexHelper(Request $request, $query, $path, $mac_address = null)
     {
         // $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
 
@@ -52,11 +72,20 @@ class TechnicalDeviceHistoriesController extends Controller
         }
 
         // Ordenación
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'desc');
+        // if ($request->attribute) {
+        //     $query->orderBy($request->attribute, $request->order);
+        // } else {
+        //     $query->orderBy('id', 'desc');
+        // }
+        $order = 'asc';
+        if ($request->order && isNull($request->order)) {
+            $order = $request->order;
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+
 
         // Paginación
         $histories = $query->paginate(8)->through(function ($item) {
@@ -80,6 +109,7 @@ class TechnicalDeviceHistoriesController extends Controller
 
         return Inertia::render($path, [
             'histories' => $histories,
+            'device' => $mac_address,
             'pagination' => [
                 'links' => $histories->links()->elements[0],
                 'next_page_url' => $histories->nextPageUrl(),

@@ -70,6 +70,13 @@ const logout = () => {
                 >
                   Soporte Técnico
                 </NavLink>
+
+                <NavLink
+                  :href="route('payment')"
+                  :active="route().current('payment')"
+                >
+                  Historial de pagos
+                </NavLink>
               </div>
             </div>
 
