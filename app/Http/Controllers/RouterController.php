@@ -30,11 +30,15 @@ class RouterController extends Controller
      * Display a listing of the resource.
      */
     protected $routerService;
+    protected $path = 'Admin';
 
 
     public function __construct(RouterService $routerService)
     {
         $this->routerService = $routerService;
+        if (Auth::user()->admin === 2) {
+            $this->path = 'Coordi';
+        }
     }
 
     public function index(Request $request)
@@ -80,7 +84,7 @@ class RouterController extends Controller
         // dd($schedule);
         $totalRoutersCount = Router::count();
         //Admin/Routers/Index
-        return Inertia::render('Admin/Routers/Index', [
+        return Inertia::render( $this->path . '/Routers/Index', [
             'routers' => $routers,
             'pagination' => [
                 'links' => $routers->links()->elements[0],
@@ -375,7 +379,7 @@ class RouterController extends Controller
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
 
-        return Inertia::render('Admin/Routers/Devices', [
+        return Inertia::render( $this->path . '/Routers/Devices', [
             'devices' => $devices,
             'pagination' => [
                 'links' => $devices->links()->elements[0],

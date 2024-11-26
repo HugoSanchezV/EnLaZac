@@ -116,6 +116,10 @@ Route::middleware([
     //MIDLEWARE ADMINISTRADOR
 
     Route::middleware(['rol:1,2'])->group(function () {
+        Route::get('/pagos/local/index',                     [LocalPayController::class, 'search'])->name('local.pay.search');
+        Route::get('/pagos/local/cobro/show/{id}',                     [LocalPayController::class, 'showAdmin'])->name('local.pay.cobro.show');
+        Route::post('/pagos/local/confirm/{token}',                     [LocalPayController::class, 'confirmLocalPay'])->name('local.pay.confirm');
+
         Route::get('/usuarios',                 [UserController::class, 'index'])->name('usuarios');
         Route::get('/usuarios/show/{user}',     [UserController::class, 'show'])->name('usuarios.show');
         Route::get('/usuarios/create',          [UserController::class, 'create'])->name('usuarios.create');
@@ -131,17 +135,54 @@ Route::middleware([
 
         Route::get('/contracts',                 [ContractController::class, 'index'])->name('contracts');
         Route::get('/contracts/create',          [ContractController::class, 'create2'])->name('contracts.create');
-        Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
+
         Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
         Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
 
-        Route::get('/pagos/local/index',                     [LocalPayController::class, 'search'])->name('local.pay.search');
-        Route::get('/pagos/local/cobro/show/{id}',                     [LocalPayController::class, 'showAdmin'])->name('local.pay.cobro.show');
-        Route::post('/pagos/local/confirm/{token}',                     [LocalPayController::class, 'confirmLocalPay'])->name('local.pay.confirm');
+        Route::get('/installation',                     [InstallationController::class, 'index'])->name('installation');
+        Route::get('/installation/create',              [InstallationController::class, 'create'])->name('installation.create');
+        Route::get('/installation/show/{id}',           [InstallationController::class, 'show'])->name('installation.show');
+        Route::post('/installation/store',              [InstallationController::class, 'store'])->name('installation.store');
+        Route::get('/installation/edit/{id}',           [InstallationController::class, 'edit'])->name('installation.edit');
+        Route::put('/installation/update/{id}',         [InstallationController::class, 'update'])->name('installation.update');
 
+        Route::get('/sistema/configuracion/instalacion',                     [InstallationSettingsController::class, 'index'])->name('settings.installation');
+        Route::get('/sistema/configuracion/instalacion/create',              [InstallationSettingsController::class, 'create'])->name('settings.installation.create');
+        Route::post('/sistema/configuracion/instalacion/store',              [InstallationSettingsController::class, 'store'])->name('settings.installation.store');
+        Route::get('/sistema/configuracion/instalacion/show/{id}',           [InstallationSettingsController::class, 'show'])->name('settings.installation.show');
+        Route::get('/sistema/configuracion/instalacion/edit/{id}',           [InstallationSettingsController::class, 'edit'])->name('settings.installation.edit');
+        Route::put('/sistema/configuracion/instalacion/update/{id}',         [InstallationSettingsController::class, 'update'])->name('settings.installation.update');
+        Route::get('/sistema/configuracion/instalacion/edit/from/installation{id}',           [InstallationSettingsController::class, 'editFromInstallation'])->name('settings.installation.edit.installation');
+
+
+        Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
+        Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
+
+        Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
+        Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
+        Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
+        Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');
+        Route::get('/devices/{router}/all/edit/{device}',          [DevicesController::class, 'device_all_edit'])->name('devices.all.edit');
+        Route::put('/devices/update/{device}',          [DevicesController::class, 'update'])->name('devices.update');
+        Route::put('/devices/all/update/{device}',          [DevicesController::class, 'device_all_update'])->name('devices.all.update');
+
+        Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
+        Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
+        Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
+        Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
+        Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
+        Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
+        Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
+        Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
+    });
+
+    Route::middleware(['rol:0,1,2'])->group(function () {
         Route::get('/payment/histories',                     [PaymentHistorieController::class, 'index'])->name('payment');
         Route::get('/payment/histories/show/{id}',      [PaymentHistorieController::class, 'show'])->name('payment.show');
+
+        Route::get('/contracts/show/{id}',       [ContractController::class, 'show'])->name('contracts.show');
+        Route::get('/plans/show/{id}',           [PlanController::class, 'show'])->name('plans.show');
     });
     Route::middleware(['rol:1'])->group(function () {
         // Usuarios
@@ -151,7 +192,7 @@ Route::middleware([
         Route::get('/usuarios/to/excel',        [UserController::class, 'exportExcel'])->name('usuarios.excel');
         Route::post('/usuarios/import/excel',   [UserController::class, 'importExcel'])->name('usuarios.import.excel');
 
-        
+
         Route::delete('/usuarios/pre/register/delete/{id}',          [PreRegisterUserController::class, 'destroy'])->name('usuarios.pre.register.destroy');
         Route::post('/usuarios/telegram/create/contact/{id}',          [UserController::class, 'createContactTelegram'])->name('usuarios.telegram.create.contact');
         Route::get('/usuarios/telegram/message/{id}',          [UserController::class, 'messageTelegram'])->name('usuarios.telegram.message');
@@ -162,7 +203,7 @@ Route::middleware([
         Route::get('/performance/device/{id}',                 [PerformanceDeviceController::class, 'indexByDevice'])->name('performance.device');
         //Routers
         // -- Resource 
-        Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');
+
         Route::get('/routers/show/{id}',        [RouterController::class, 'show'])->name('routers.show');
         Route::get('/routers/create',           [RouterController::class, 'create'])->name('routers.create');
         Route::post('/routers/store',           [RouterController::class, 'store'])->name('routers.store');
@@ -175,7 +216,6 @@ Route::middleware([
         // -- sync
         Route::get('/routers/{id}/sync',        [RouterController::class, 'sync'])->name('routers.sync');
         // -- devices
-        Route::get('/routers/{router}/devices',     [RouterController::class, 'devices'])->name('routers.devices');
         Route::get('/routers/{router}/devices/to/excel',     [RouterController::class, 'devicesExportExcel'])->name('routers.devices.excel');
         //
         Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
@@ -186,14 +226,8 @@ Route::middleware([
         Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');
 
         // Devices
-        Route::get('/devices',                  [DevicesController::class, 'index'])->name('devices');
+
         Route::get('/devices/show/{id}',                  [DevicesController::class, 'show'])->name('devices.show');
-        Route::get('/devices/{router}/create',                  [DevicesController::class, 'create'])->name('devices.create');
-        Route::post('/devices/store',                           [DevicesController::class, 'store'])->name('devices.store');
-        Route::get('/devices/{router}/edit/{device}',          [DevicesController::class, 'edit'])->name('devices.edit');
-        Route::get('/devices/{router}/all/edit/{device}',          [DevicesController::class, 'device_all_edit'])->name('devices.all.edit');
-        Route::put('/devices/update/{device}',          [DevicesController::class, 'update'])->name('devices.update');
-        Route::put('/devices/all/update/{device}',          [DevicesController::class, 'device_all_update'])->name('devices.all.update');
         Route::delete('/devices/delete/{device}',          [DevicesController::class, 'destroy'])->name('devices.destroy');
         Route::delete('/devices/all/delete/{device}',          [DevicesController::class, 'device_all_destroy'])->name('devices.all.destroy');
         // -- device red
@@ -230,19 +264,10 @@ Route::middleware([
 
         Route::delete('/inventorie/devices/histories/{device}/delete',   [DeviceHistoriesController::class, 'destroy'])->name('historieDevices.destroy');
         Route::get('/inventorie/devices/histories/to/excel',             [DeviceHistoriesController::class, 'exportExcel'])->name('historieDevices.excel');
-        //Tickets coordi
-        Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
-        Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
-        Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
-        Route::get('/tickets/show/{id}',         [TicketController::class, 'show'])->name('tickets.show');
-        Route::post('/tickets/store',            [TicketController::class, 'store'])->name('tickets.store');
-        Route::get('/tickets/edit/{id}',         [TicketController::class, 'edit'])->name('tickets.edit');
-        Route::put('/tickets/update/{id}',       [TicketController::class, 'update'])->name('tickets.update');
-        Route::delete('/tickets/delete/{id}',    [TicketController::class, 'destroy'])->name('tickets.destroy');
         //Leer y marcado como leída las notificaciones
 
         //Contracts Coordi
-        
+
         Route::delete('/contracts/delete/{id}',  [ContractController::class, 'destroy'])->name('contracts.destroy');
         Route::get('/contracts/to/excel',        [ContractController::class, 'exportExcel'])->name('contracts.excel');
 
@@ -252,7 +277,7 @@ Route::middleware([
         //Planes de internet
         Route::get('/plans',                     [PlanController::class, 'index'])->name('plans');
         Route::get('/plans/create',              [PlanController::class, 'create'])->name('plans.create');
-        Route::get('/plans/show/{id}',           [PlanController::class, 'show'])->name('plans.show');
+
         Route::post('/plans/store',              [PlanController::class, 'store'])->name('plans.store');
         Route::get('/plans/edit/{id}',           [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/update/{id}',         [PlanController::class, 'update'])->name('plans.update');
@@ -267,12 +292,7 @@ Route::middleware([
         Route::delete('/charges/delete/{id}',      [ChargeController::class, 'destroy'])->name('charges.destroy');
         Route::get('/charges/to/excel',            [ChargeController::class, 'exportExcel'])->name('charges.excel');
 
-        Route::get('/installation',                     [InstallationController::class, 'index'])->name('installation');
-        Route::get('/installation/create',              [InstallationController::class, 'create'])->name('installation.create');
-        Route::get('/installation/show/{id}',           [InstallationController::class, 'show'])->name('installation.show');
-        Route::post('/installation/store',              [InstallationController::class, 'store'])->name('installation.store');
-        Route::get('/installation/edit/{id}',           [InstallationController::class, 'edit'])->name('installation.edit');
-        Route::put('/installation/update/{id}',         [InstallationController::class, 'update'])->name('installation.update');
+
         Route::delete('/installation/delete/{id}',      [InstallationController::class, 'destroy'])->name('installation.destroy');
 
         Route::get('/rural-community',                     [RuralCommunityController::class, 'index'])->name('rural-community');
@@ -315,14 +335,7 @@ Route::middleware([
         Route::put('/sistema/configuracion/servicio/variables/update/exemptionperiod', [ServiceVariablesController::class, 'updateExemptionPeriod'])->name('settings.service.variable.exemptionperiod');
         Route::put('/sistema/configuracion/servicio/variables/update/equipmentcharge', [ServiceVariablesController::class, 'updateEquipmentChargeDay'])->name('settings.service.variable.equipmentchargeday');
 
-        Route::get('/sistema/configuracion/instalacion',                     [InstallationSettingsController::class, 'index'])->name('settings.installation');
-        Route::get('/sistema/configuracion/instalacion/create',              [InstallationSettingsController::class, 'create'])->name('settings.installation.create');
-        Route::get('/sistema/configuracion/instalacion/show/{id}',           [InstallationSettingsController::class, 'show'])->name('settings.installation.show');
-        Route::post('/sistema/configuracion/instalacion/store',              [InstallationSettingsController::class, 'store'])->name('settings.installation.store');
-        Route::get('/sistema/configuracion/instalacion/edit/{id}',           [InstallationSettingsController::class, 'edit'])->name('settings.installation.edit');
-        Route::put('/sistema/configuracion/instalacion/update/{id}',         [InstallationSettingsController::class, 'update'])->name('settings.installation.update');
         Route::delete('/sistema/configuracion/instalacion/delete/{id}',      [InstallationSettingsController::class, 'destroy'])->name('settings.installation.destroy');
-        Route::get('/sistema/configuracion/instalacion/edit/from/installation{id}',           [InstallationSettingsController::class, 'editFromInstallation'])->name('settings.installation.edit.installation');
     });
     Route::post('/notifications/read/{id}',  [NotificationController::class, 'markAsRead']);
     Route::get('/notifications/unread',      [NotificationController::class, 'unread']);

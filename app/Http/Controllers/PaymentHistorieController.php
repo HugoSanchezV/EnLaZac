@@ -20,6 +20,10 @@ class PaymentHistorieController extends Controller
     protected $path = 'Admin/PaymentHistories/PaymentHistories';
     public function __construct()
     {
+        if (Auth::user()->admin === 0) {
+            $this->path = 'User/PaymentHistories/PaymentHistories';
+        }
+
         if (Auth::user()->admin === 2) {
             $this->path = 'Coordi/PaymentHistories/PaymentHistories';
         }
@@ -31,11 +35,14 @@ class PaymentHistorieController extends Controller
         $user = Auth::user();
 
         $total = 0;
-        $total_month = $total;
-        if (isNull($request->date)) {
-            $query->where('created_at', 'like', $request->date . '%');
-            $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->sum('amount');
-        }
+        $total_month = 0;
+        
+        if ($user->admin === 0) {
+            $query->where('user_id', $user->id);
+
+            $total = DB::table('payment_histories')->where('user_id', $user->id)->sum('amount');
+            $total_month = $total;
+        } 
 
         if ($user->admin === 2) {
             $query->where('worker', $user->id . ' ' . $user->name);
@@ -46,6 +53,18 @@ class PaymentHistorieController extends Controller
             $total = DB::table('payment_histories')->sum('amount');
             $total_month = $total;
         }
+
+        if (isNull($request->date)) {
+            $query->where('created_at', 'like', $request->date . '%');
+            if ($user->admin === 2) {
+                $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->where('worker', $user->id . ' ' . $user->name)->sum('amount');
+
+            } else {
+                $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->sum('amount');
+
+            }
+        }
+
 
         if ($request->has('q')) {
             $search = $request->input('q');

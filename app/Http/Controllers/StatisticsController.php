@@ -23,8 +23,17 @@ class StatisticsController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        if ($user->admin == 0) {
+            return self::showUser();
+        }
+
         if ($user->admin == 1) {
             return self::showAdmin();
+        }
+
+        if ($user->admin == 2) {
+            return self::showCoordi();
         }
 
         if ($user->admin == 3) {
@@ -33,17 +42,68 @@ class StatisticsController extends Controller
         return Inertia::render('DashboardBase');
     }
 
+    public function showUser()
+    {
+        try {
+            $user = User::with('device.inventorieDevice')->findOrFail(Auth::id());
+
+            $devices = $user->device;
+
+            $contracts = [];
+
+            foreach ($devices as $device) {
+                // Verifica si el dispositivo tiene un contrato
+                $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
+                // $plan = $contract ? Plan::find($contract->plan_id) : null;
+
+                // Añadir los datos del dispositivo, contrato y plan al arreglo
+                $contracts[] = [
+                    'device' => $device,
+                    'contract' => $contract,
+                    // 'plan' => $plan,
+                ];
+            }
+
+            // dd($contracts);
+            return Inertia::render('User/DashboardUser', [
+                'user' => $user,
+                // 'ticket' => Ticket::where('user_id', $id)->count(),
+                'contracts' => $contracts
+            ]);
+        } catch (Exception $e) {
+            dd($e->getMessage());
+            return Redirect::route('usuarios')->with('error', 'Error al mostrar el usuario');
+        }
+    }
+
     public function showTechnical()
     {
         $user = Auth::user();
         $pings = PingDeviceHistorie::where('user_id', $user->id)->get();
         $routers = Router::count();
         $active_devices = Router::sum('enable_devices');
-        
+
         return Inertia::render('Tecnico/DashboardTechnical', [
             'tickets' => sizeof($user->ticket),
             'pings' => sizeof($pings),
             'routers' => $routers,
+            'active_devices' => $active_devices,
+            'user' => $user,
+        ]);
+    }
+
+
+    public function showCoordi()
+    {
+        $user = Auth::user();
+        $users = User::where('admin', 0)->count();
+        $contracts = Contract::count();
+        $active_devices = Router::sum('enable_devices');
+
+        return Inertia::render('Coordi/DashboardCoordi', [
+            'tickets' => sizeof($user->ticket),
+            'users' => $users,
+            'contracts' => $contracts,
             'active_devices' => $active_devices,
             'user' => $user,
         ]);
@@ -155,7 +215,7 @@ class StatisticsController extends Controller
                 }
             }
             //dd($trafficData);
-        }else{
+        } else {
             //dd("no router");
         }
 

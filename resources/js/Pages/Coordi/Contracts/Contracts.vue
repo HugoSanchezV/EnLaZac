@@ -19,10 +19,10 @@ const filters = [
   "usuario",
   "plan internet",
   "comunidad",
-  "fecha de inicio",
+  // "fecha de inicio",
   "fecha de terminación",
   "¿activo?",
-  "dirección",
+  // "dirección",
 ];
 
 const headers = [
@@ -31,10 +31,10 @@ const headers = [
   "Usuarios",
   "Plan Internet",
   "Comunidad",
-  "Fecha de Inicio",
+  // "Fecha de Inicio",
   "Fecha de Terminación",
   "¿Activo?",
-  "Dirección",
+  // "Dirección",
   "Acciones",
 ];
 </script>

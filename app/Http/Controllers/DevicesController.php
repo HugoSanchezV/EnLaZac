@@ -18,7 +18,6 @@ use App\Models\Plan;
 use App\Services\DeviceService;
 use App\Services\RouterOSService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,16 +26,19 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
 
 use function PHPUnit\Framework\isNull;
 
 class DevicesController extends Controller
 {
     protected DeviceService $deviceService;
+    protected $path = 'Admin';
     public function __construct()
     {
         $this->deviceService = new DeviceService();
+        if (Auth::user()->admin == 2) {
+            $this->path = 'Coordi';
+        }
     }
 
     public function index(Request $request)
@@ -91,7 +93,7 @@ class DevicesController extends Controller
         $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
-        return Inertia::render('Admin/AllDevices/Index', [
+        return Inertia::render( $this->path . '/AllDevices/Index', [
             'devices' => $devices,
             'pagination' => [
                 'links' => $devices->links()->elements[0],

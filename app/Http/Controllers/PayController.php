@@ -57,7 +57,6 @@ class PayController extends Controller
                 'contracts' => $contracts,
             ]);
         } catch (Exception $e) {
-            dd($e);
             return Redirect::route('dashboard')->with('error', 'No ha dispositivo asiganado');
         }
     }

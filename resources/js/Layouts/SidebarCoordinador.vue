@@ -70,7 +70,8 @@
                 class="text-sm text-gray-100 hover:text-gray-200 rounded-md m-1 flex items-center pl-2"
                 :class="{
                   'bg-gradient-to-r from-cyan-500 to-teal-400':
-                    route().current() === subItem.route,
+                    route().current().split('.')[0] ===
+                    subItem.route.split('.')[0],
                 }"
               >
                 <span class="material-symbols-outlined">
@@ -155,7 +156,7 @@ const toggleMenu = (index) => {
     item.isOpen = idx === index ? !item.isOpen : false; // Cierra los demás elementos
   });
 
-  // Forzar la reactividad en Vue 3 al modificar un array de objetos
+  // Esto forza la reactividad en Vue 3 al modificar un array de objetos
   menuItems.value = [...menuItems.value];
 };
 
@@ -164,42 +165,30 @@ const closeMenuEmit = () => {
 };
 
 onMounted(() => {
-  const currentRoute = route().current();
-
-  // Divide la ruta actual por el punto si existe, de lo contrario usa la ruta completa
-  const routeSegments = currentRoute.includes(".")
-    ? currentRoute.split(".")
-    : [currentRoute];
-
-  // Obtén el primer segmento relevante de la ruta
-  const firstSegment = routeSegments[1] || routeSegments[0];
+  // Obtener la ruta actual y extraer el primer segmento antes del punto o barra
+  const currentRoute = route().current().split(".")[0]; // Obtiene la ruta actual
+  const firstSegment = currentRoute.split(".")[0]; // Divide por punto o barra y obtiene el primer segmento
 
   // Recorrer los items del menú
   menuItems.value.forEach((item) => {
-    // Recorrer los subItems del menú
+    // Verificar si la ruta principal del item coincide con la ruta actual
+    const isMainRouteMatch = item.route.split(".")[0] === firstSegment;
+
+    // Verificar si la primera parte del route de los subItems coincide con el primer segmento de la ruta actual
     const subItemMatch = item.subItems.some((subItem) => {
-      // Divide la ruta del subItem por el punto si existe
-      const subItemRouteSegments = subItem.route.includes(".")
-        ? subItem.route.split(".")
-        : [subItem.route];
-
-      // Obtén el primer segmento relevante de la ruta del subItem
-      const subItemFirstSegment =
-        subItemRouteSegments[1] || subItemRouteSegments[0];
-
-      // Compara los segmentos
-      return subItemFirstSegment === firstSegment;
+      return subItem.route.split(".")[0] === firstSegment;
     });
 
-    // Si alguno de los subItems coincide, abrimos el menú
-    if (subItemMatch) {
+    // Si alguno de los subItems coincide o la ruta principal coincide con el primer segmento de la ruta actual, abrimos el menú
+    if (isMainRouteMatch || subItemMatch) {
       item.isOpen = true;
     }
   });
 
-  // Forzar la reactividad en Vue
+  // Esto es necesario para forzar la reactividad en Vue
   menuItems.value = [...menuItems.value];
 });
+
 </script>
   
   <style scoped>

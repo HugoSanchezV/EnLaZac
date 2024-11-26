@@ -19,35 +19,33 @@ class ContractWarningListener
     /**
      * Create the event listener.
      */
-    public function __construct()
-    {
-        
-    }
+    public function __construct() {}
 
     /**
      * Handle the event.
      */
     public function handle(ContractWarningEvent  $event): void
     {
-        try{
+        try {
             $mail = MailSetting::first();
-            
+
             $user = User::findOrFail($event->contract->inventorieDevice->user->user_id);
-            
-            if($mail){
+
+            if ($mail) {
 
                 Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML($event->days));
             }
             Notification::send($user, new ContractWarningNotification($event->contract, $event->days));
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             throw new Exception('Error' . $e->getMessage());
         }
-        
     }
-    public function createSubject($event){
+    public function createSubject($event)
+    {
         return "Pago de servicio de internet";
     }
-    public function createHTML($days){
+    public function createHTML($days)
+    {
         return '
     <!DOCTYPE html>
     <html>
@@ -55,7 +53,7 @@ class ContractWarningListener
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 24px;">
             <h1 style="font-size: 24px; font-weight: 700; color: #3b82f6;">¡Hola, estimado empleado!</h1>
             <p style="color: #4a5568; margin-top: 16px;">
-                Se informa que solo faltan '.$days.'días para el día de corte, por lo que se le recomienda realizar su
+                Se informa que solo faltan ' . $days . 'días para el día de corte, por lo que se le recomienda realizar su
                 pago lo más pronto posible
             </p>
             <a href="#" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">

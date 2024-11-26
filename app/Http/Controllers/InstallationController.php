@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -19,6 +20,14 @@ use function PHPUnit\Framework\isNull;
 
 class InstallationController extends Controller
 {
+    protected $path = 'Admin';
+
+    public function __construct()
+    {
+        if (Auth::user()->admin === 2) {
+            $this->path = 'Coordi';
+        }
+    }
     public function index(Request $request)
     {
         $query = Installation::query();
@@ -57,7 +66,7 @@ class InstallationController extends Controller
 
         $totalInstallationCount = Installation::count();
 
-        return Inertia::render('Admin/Installation/Installation', [
+        return Inertia::render( $this->path . '/Installation/Installation', [
             'installation' => $installation,
             'pagination' => [
                 'links' => $installation->links()->elements[0],
@@ -91,26 +100,25 @@ class InstallationController extends Controller
     }
     public function update(UpdateInstallationRequest $request, $id)
     {
-        try{
+        try {
             $today = Carbon::now();
             $installation = Installation::with('installationSettings', 'contract')->findOrFail($id);
 
             $validatedData = $request->validated();
-    
+
             $installation->update($validatedData);
-            
+
             $this->getOriginalDate($installation);
-            if(Carbon::parse($installation->assigned_date) < $today->startOfDay()){
+            if (Carbon::parse($installation->assigned_date) < $today->startOfDay()) {
                 $this->updateContractDate($installation);
-            }else{
+            } else {
                 Artisan::call('app:update-contract-date');
             }
-    
+
             //$this->udpateContractDate($installation->id);
             return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return redirect()->route('installation')->with('error', 'Hubo un error al actualizar el registro');
-
         }
     }
     public function create()
@@ -127,7 +135,7 @@ class InstallationController extends Controller
     }
     public function store(StoreInstallationRequest $request)
     {
-        try{
+        try {
 
             $validatedData = $request->validated();
             $installation =  Installation::create([
@@ -135,20 +143,19 @@ class InstallationController extends Controller
                 'description' => $validatedData['description'],
                 'assigned_date' => $validatedData['assigned_date'],
             ]);
-            
+
 
             //Artisan::call('app:update-contract-date');
-        
+
             //$this->udpateContractDate($installation->id);
             InstallationSetting::create([
                 'installation_id' => $installation->id,
             ]);
-    
+
             //  $this->setFirstMonthPayment($installation);
             return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return redirect()->route('installation')->with('error', 'Erro al crear la instalación');
-
         }
     }
 
@@ -169,14 +176,16 @@ class InstallationController extends Controller
     }
 
 
-    public function updateContractDate(Installation $installation){
+    public function updateContractDate(Installation $installation)
+    {
         $controller = new ContractController();
 
-       // dd("Va a entrar al controlador");
+        // dd("Va a entrar al controlador");
         $controller->updateContractDate($installation);
     }
 
-    private function getOriginalDate(Installation $installation){
+    private function getOriginalDate(Installation $installation)
+    {
         $controller = new ContractController();
         $controller->getOriginalDate($installation);
     }

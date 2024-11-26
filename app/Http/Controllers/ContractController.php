@@ -31,7 +31,7 @@ use function PHPUnit\Framework\throwException;
 
 class ContractController extends Controller
 {
-    protected $path = 'Coordi/Contracts';
+    public $path = 'Coordi/Contracts';
     //
     public function __construct()
     {
@@ -88,10 +88,10 @@ class ContractController extends Controller
                 'user_id' => $item->inventorieDevice->device->user->name ?? 'Sin asignar',
                 'plan_id' => $item->plan->name ?? 'Sin asignar',
                 'rural_community_id' => $item->ruralCommunity->name ?? 'Sin asignar',
-                'start_date' => $item->start_date,
+                // 'start_date' => $item->start_date,
                 'end_date' => $item->end_date,
                 'active' => $item->active,
-                'address' => $item->address,
+                // 'address' => $item->address,
 
             ];
         });
@@ -214,6 +214,7 @@ class ContractController extends Controller
             'inventorie_devices.*',
             'devices.*',
             'contracts.id as contract_id',
+            'contracts.address as contract_address',
             'plans.name as plan_name',
             'devices.address as device_address',
             'users.id as user_id',

@@ -72,24 +72,27 @@ const props = defineProps({
           <!-- <span v-else class="text-gray-500">Sin asignar</span> -->
         </div>
 
-        <!-- Link al contrato asignado -->
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">Mensualidad Contrato</dt>
-          <dd  
-            class="text-green-600 font-bold hover:underline"
+          <dt class="text-sm font-medium text-gray-600">Dirección</dt>
+          <dd 
+            class="text-gray-600 font-bold"
           >
-           $ {{ contract.price }} 
+            {{ contract.contract_address }}
           </dd>
+          <!-- <span v-else class="text-gray-500">Sin asignar</span> -->
         </div>
 
+
+        <!-- Link al contrato asignado -->
+        
         <!-- Geolocalización -->
         <div v-if="contract" class="sm:col-span-2">
           <dt class="text-sm font-medium text-gray-600">Geolocalización</dt>
           <dd class="mt-1 text-sm text-gray-900">
             <GoogleMaps 
-              :lat="parseFloat(contract.geolocation.latitude)" 
-              :lng="parseFloat(contract.geolocation.longitude)" 
-              :clic="false" 
+            :lat="parseFloat(contract.geolocation.latitude)" 
+            :lng="parseFloat(contract.geolocation.longitude)" 
+            :clic="false" 
             />
           </dd>
         </div>
@@ -98,6 +101,34 @@ const props = defineProps({
           <dd class="mt-1 text-sm text-gray-900">Sin asignar</dd>
         </div>
 
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Incio del contrato</dt>
+          <dd 
+            class="text-gray-600 font-bold"
+          >
+            {{ contract.start_date }}
+          </dd>
+          <!-- <span v-else class="text-gray-500">Sin asignar</span> -->
+        </div>
+
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Fin del contrato</dt>
+          <dd 
+            class="text-gray-600 font-bold"
+          >
+            {{ contract.end_date }}
+          </dd>
+          <!-- <span v-else class="text-gray-500">Sin asignar</span> -->
+        </div>
+        
+        <div class="sm:col-span-1">
+          <dt class="text-sm font-medium text-gray-600">Mensualidad Contrato</dt>
+          <dd  
+            class="text-green-600 font-bold hover:underline"
+          >
+           $ {{ contract.price }} 
+          </dd>
+        </div>
         <!-- Plan afiliado con link -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Plan Afiliado</dt>
