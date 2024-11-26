@@ -40,6 +40,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ServiceVariablesController;
+use App\Http\Controllers\TelegramSettingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -320,6 +321,11 @@ Route::middleware([
         Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
         Route::get('/sistema/configuracion/paypal',      [PayPalSettingController::class, 'edit'])->name('settings.paypal.edit');
         Route::post('/sistema/configuracion/paypal/update',      [PayPalSettingController::class, 'update'])->name('settings.paypal.update');
+
+        Route::get('/sistema/configuracion',      [SettingsController::class, 'index'])->name('settings');
+        Route::get('/sistema/configuracion/telegram',      [TelegramSettingController::class, 'edit'])->name('settings.telegram.edit');
+        Route::post('/sistema/configuracion/telegram/update',      [TelegramSettingController::class, 'update'])->name('settings.telegram.update');
+
         Route::get('/sistema/configuracion/intereses', [InterestsController::class, 'edit'])->name('settings.interest');
         Route::put('/sistema/configuracion/intereses/update/', [InterestsController::class, 'update'])->name('settings.interest.update');
         Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');

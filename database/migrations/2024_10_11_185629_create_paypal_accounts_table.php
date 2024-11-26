@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('paypal_accounts', function (Blueprint $table) {
-            $table->id(); 
+            $table->id();
+            $table->tinyInteger('active')->default(0);
             $table->string('mode')->default('sandbox'); // 'sandbox' o 'live'
             // $table->string('sandbox_client_id'); // Client ID para el entorno de pruebas
             // $table->string('sandbox_client_secret'); // Client Secret para el entorno de pruebas

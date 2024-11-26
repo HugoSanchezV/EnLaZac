@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Charge;
 use App\Models\Contract;
 use App\Models\Device;
+use App\Models\PaypalAccount;
 use App\Models\Plan;
 use Carbon\Carbon;
 use Exception;
@@ -27,8 +28,8 @@ class PayController extends Controller
         try {
             $device = Device::where('user_id', $userId)->get();
             //  dd($deviceIds);
-            
-            if($device){
+
+            if ($device) {
                 $deviceIds = $device->pluck('device_id');
                 $contracts = Contract::with('plan', 'inventorieDevice')->where('inv_device_id', $deviceIds)->get();
 
@@ -36,25 +37,26 @@ class PayController extends Controller
                     // Si no hay contratos, inicializar valores
                     $charges = [];
                 } else {
-    
+
                     // Obtener todos los cargos pendientes para los contratos
                     $contractIds = $contracts->pluck('id');
                     $charges = Charge::whereIn('contract_id', $contractIds)
                         ->where('paid', false)
                         ->get();
                 }
-            }else{
+            } else {
 
                 $charges = null;
                 $contracts = null;
-
             }
             // dd($contracts);
-           
+
+            $paypal = PaypalAccount::first();
             // Retornar la vista con los datos necesarios
             return Inertia::render('User/Pays/Pays', [
                 'charges' => $charges,
                 'contracts' => $contracts,
+                'paypal' => $paypal,
             ]);
         } catch (Exception $e) {
             return Redirect::route('dashboard')->with('error', 'No ha dispositivo asiganado');

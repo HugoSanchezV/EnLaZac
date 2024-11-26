@@ -35,7 +35,7 @@ class PayPalSettingController extends Controller
         ]);
 
         // Crea y guarda la configuración
-        $setting = PayPalSetting::create($request->all());
+        $setting = PaypalAccount::create($request->all());
 
         // Retorna la nueva configuración creada
         return response()->json($setting, 201);
@@ -46,7 +46,7 @@ class PayPalSettingController extends Controller
      */
     public function show($id)
     {
-        $setting = PayPalSetting::findOrFail($id); // Busca por ID
+        $setting = PaypalAccount::findOrFail($id); // Busca por ID
         return response()->json($setting); // Devuelve en formato JSON
     }
 
@@ -55,23 +55,25 @@ class PayPalSettingController extends Controller
      */
     public function update(Request $request)
     {
+
         $request->validate([
+            'active' => 'required|between:0,1',
             'live_client_id' => 'nullable|string',
             'live_client_secret' => 'nullable|string'
         ]);
-
 
         try {
             $setting = PaypalAccount::first();
             if (!$setting) {
                 PaypalAccount::create([
                     'mode' => 'live',
+                    'active' => $request->active,
                     'live_client_id' => $request->live_client_id,
                     'live_client_secret' => $request->live_client_secret,
                     'currency' => 'USD'
                 ]);
             } else {
-                $setting->update($request->only(['live_client_id', 'live_client_secret']));
+                $setting->update($request->only(['active', 'live_client_id', 'live_client_secret']));
             }
 
             return Redirect::route('settings.paypal.edit')->with('success', 'Usuario Actualizado Con Éxito');
@@ -86,7 +88,7 @@ class PayPalSettingController extends Controller
      */
     public function destroy($id)
     {
-        $setting = PayPalSetting::findOrFail($id); // Encuentra la configuración
+        $setting = PaypalAccount::findOrFail($id); // Encuentra la configuración
         $setting->delete(); // Elimina la configuración
 
         // Respuesta con código 204 (No Content)

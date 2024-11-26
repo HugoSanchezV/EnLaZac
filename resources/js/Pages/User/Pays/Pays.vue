@@ -4,6 +4,7 @@ import DashboardBase from "@/Pages/DashboardBase.vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import GetData from "./GetData.vue";
+import { Head } from "@inertiajs/vue3";
 
 const props = defineProps({
   charges: {
@@ -12,11 +13,18 @@ const props = defineProps({
   contracts: {
     type: Object,
   },
+  paypal: {
+    type: Array,
+    default: null,
+  }
 });
+
 </script>
+
 
 <template>
   <dashboard-base :applyStyles="false">
+    
     <template v-slot:content>
       <div class="m-5 flex flex-wrap lg:flex-nowrap gap-5">
         <!-- Sección de las tablas -->
@@ -166,7 +174,7 @@ const props = defineProps({
           </button>
 
           <div v-if="showPayment">
-            <GetData :totalAmount="totalAmount" :cart="cart"> </GetData>
+            <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal"> </GetData>
           </div>
         </div>
       </div>

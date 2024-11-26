@@ -11,36 +11,36 @@ const props = defineProps({
 });
 
 const form = useForm({
-  live_client_id: "",
-  live_client_secret: "",
   active: 0,
+  api_id: "",
+  hash: "",
 });
 
 onMounted(() => {
   if (props.settings) {
-    form.live_client_id = props.settings.live_client_id || "";
-    form.live_client_secret = props.settings.live_client_secret || "";
+    form.api_id = props.settings.api_id || "";
+    form.hash = props.settings.hash || "";
     form.active = props.settings.active || 0;
   }
 });
 
 const submit = () => {
-  form.post(route("settings.paypal.update"), {
+  form.post(route("settings.telegram.update"), {
     onFinish: () => form.reset("password", "password_confirmation"),
   });
 };
 </script>
 
-
 <template>
   <div class="flex justify-center border flex-col m-5 p-10 bg-white">
     <h2 class="flex justify-center">
-      Edita las credenciales de acceso a Paypal
+      Edita las credenciales de acceso a Telegram
     </h2>
   </div>
 
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
+      
       <div class="mt-5 flex gap-2">
         <InputLabel for="active" value="Activar libreria" />
         <label class="switch">
@@ -50,31 +50,31 @@ const submit = () => {
       </div>
 
       <div class="mt-5">
-        <InputLabel for="live_client_id" value="ID Cliente" />
+        <InputLabel for="api_id" value="API ID" />
         <TextInput
-          id="live_client_id"
-          v-model="form.live_client_id"
+          id="api_id"
+          v-model="form.api_id"
           type="text"
           class="mt-1 block w-full"
           required
           autofocus
-          autocomplete="live_client_id"
+          autocomplete="api_id"
         />
-        <InputError class="mt-2" :message="form.errors.live_client_id" />
+        <InputError class="mt-2" :message="form.errors.api_id" />
       </div>
 
       <div class="mt-5">
-        <InputLabel for="live_client_secret" value="Clave de cliente" />
+        <InputLabel for="hash" value="HASH" />
         <TextInput
-          id="live_client_secret"
-          v-model="form.live_client_secret"
+          id="hash"
+          v-model="form.hash"
           type="text"
           class="mt-1 block w-full"
           required
           autofocus
-          autocomplete="live_client_secret"
+          autocomplete="hash"
         />
-        <InputError class="mt-2" :message="form.errors.live_client_secret" />
+        <InputError class="mt-2" :message="form.errors.hash" />
       </div>
 
       <div class="flex items-center justify-end mt-4">
@@ -89,7 +89,6 @@ const submit = () => {
     </form>
   </div>
 </template>
-
 
 <script>
 export default {

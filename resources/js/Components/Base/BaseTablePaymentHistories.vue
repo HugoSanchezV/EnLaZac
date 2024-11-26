@@ -9,6 +9,11 @@ import FilterOrderBase from "./FilterOrderBase.vue";
 
 import monthSelect from "flatpickr/dist/plugins/monthSelect";
 
+import { usePage } from "@inertiajs/vue3";
+
+const user = usePage().props.auth.user; 
+
+
 const getOriginal = (data) => {
   if (data === "usuario") {
     return "user_id";
@@ -433,7 +438,7 @@ const deleteRegisterMonth = (info) => {
                 Editar
               </Link> -->
 
-              <div v-if="del">
+              <div v-if="del && (user.admin == 1)">
                 <button
                   @click="
                     destroy(row.id, {

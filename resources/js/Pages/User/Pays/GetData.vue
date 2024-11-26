@@ -13,6 +13,9 @@ const props = defineProps({
   cart: {
     type: Object,
   },
+  paypal: {
+    type: Array,
+  }
 });
 const carrito = ref([]);
 onMounted(() => {
@@ -33,16 +36,17 @@ onMounted(() => {
       >
       </resources_vue_components_MercadoPagoButton>
     </div>
-
+    
     <div class="mt-5 w-full">
       <resources_js_components_PaypalButton
         :totalAmount="totalAmount"
         :cartCharge="carrito"
         :allCart="cart"
+        :paypal_data="paypal"
       >
       </resources_js_components_PaypalButton>
     </div>
-
+    
     <div class="">
       <resources_js_component_paymentlocal
         :totalAmount="totalAmount"

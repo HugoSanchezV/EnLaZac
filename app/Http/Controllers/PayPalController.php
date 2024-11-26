@@ -91,7 +91,9 @@ class PayPalController extends Controller
                 );
 
                 // return redirect()->route('pays')->with('success', 'Se ha realizado la operación con éxito');
-                return response()->json(['status' => 'success'], 200);
+                // return response()->json(['status' => 'success'], 200);
+                return response()->json(['status' => 'success', 'redirect' => route('pays')], 200);
+                // return redirect()->route('pays')->with('success', 'Se ha realizado la operación con éxito');
                 //return Redirect::route('pays')->with('success', 'Se ha realizado la operación con exito');
             }
         } catch (Exception $e) {
