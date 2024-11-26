@@ -31,16 +31,55 @@ const form = useForm({
   },
 });
 
+const addUnits = () => {
+  form.burst_limit.upload_limits += 'M';
+  form.burst_limit.download_limits += 'M';
+  
+  form.burst_threshold.upload_limits += 'M';
+  form.burst_threshold.download_limits += 'M';
 
-const submit = () => {
-  form.post(route("plans.store"));
+  form.burst_time.upload_limits += 's';
+  form.burst_time.download_limits += 's';
+
+  form.limite_at.upload_limits += 'K';
+  form.limite_at.download_limits += 'K';
+
+  form.max_limit.upload_limits += 'M';
+  form.max_limit.download_limits += 'M';
 };
 
+const removeUnits = () => {
+  form.burst_limit.upload_limits = form.burst_limit.upload_limits.replace('M', '');
+  form.burst_limit.download_limits = form.burst_limit.download_limits.replace('M', '');
+
+  form.burst_threshold.upload_limits = form.burst_threshold.upload_limits.replace('M', '');
+  form.burst_threshold.download_limits = form.burst_threshold.download_limits.replace('M', '');
+
+  form.burst_time.upload_limits = form.burst_time.upload_limits.replace('s', '');
+  form.burst_time.download_limits = form.burst_time.download_limits.replace('s', '');
+
+  form.limite_at.upload_limits = form.limite_at.upload_limits.replace('K', '');
+  form.limite_at.download_limits = form.limite_at.download_limits.replace('K', '');
+
+  form.max_limit.upload_limits = form.max_limit.upload_limits.replace('M', '');
+  form.max_limit.download_limits = form.max_limit.download_limits.replace('M', '');
+};
+
+const submit = () => {
+  addUnits(); // Agrega las unidades antes de enviar el formulario
+  form.post(route("plans.store"), {
+    onError: () => {
+      // Si hay errores, elimina las unidades para mantener los valores originales
+      removeUnits();
+    },
+  });
+};
 </script>
 
 <template>
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
+      <!-- Name -->
       <div>
         <InputLabel for="name" value="Nombre" />
         <TextInput
@@ -54,7 +93,8 @@ const submit = () => {
         />
         <InputError class="mt-2" :message="form.errors.name" />
       </div>
-      
+
+      <!-- Description -->
       <div>
         <InputLabel for="description" value="Descripción" />
         <TextInput
@@ -69,6 +109,7 @@ const submit = () => {
         <InputError class="mt-2" :message="form.errors.description" />
       </div>
 
+      <!-- Price -->
       <div>
         <InputLabel for="price" value="Precio" />
         <TextInput
@@ -82,210 +123,154 @@ const submit = () => {
         />
         <InputError class="mt-2" :message="form.errors.price" />
       </div>
-      <!-- BURST LIMIT-->
-       <div>
-        <div class="mt-4">
-          <InputLabel for="burst_limit" value="Burst Limit (Mbps)" />
-        </div>
+
+      <!-- Burst Limit -->
+      <div class="mt-4">
+        <InputLabel value="Burst Limit (Mbps)" />
         <div class="mt-1 flex gap-2">
           <div>
-            <InputLabel for="burst_limit" value="Subida" class="opacity-80" />
+            <InputLabel for="burst_limit.upload_limits" value="Subida" />
             <TextInput
               id="burst_limit.upload_limits"
               v-model="form.burst_limit.upload_limits"
               type="number"
               class="mt-1 block w-full"
-              placeholder = "Mbps"
-              required
-              autocomplete="burst_limit.upload_limits"
-
+              placeholder="Mbps"
             />
-            <InputError class="mt-2" :message="form.errors.upload_limits" />
+            <InputError class="mt-2" :message="form.errors['burst_limit.upload_limits']" />
           </div>
           <div>
-            <InputLabel for="burst_limit" value="Bajada" class="opacity-80" />
+            <InputLabel for="burst_limit.download_limits" value="Bajada" />
             <TextInput
               id="burst_limit.download_limits"
               v-model="form.burst_limit.download_limits"
               type="number"
               class="mt-1 block w-full"
-              placeholder = "Mbps"
-              required
-              autocomplete="burst_limit.download_limits"
-    
+              placeholder="Mbps"
             />
-            <InputError class="mt-2" :message="form.errors.burst_limit" />
+            <InputError class="mt-2" :message="form.errors['burst_limit.download_limits']" />
           </div>
-         
         </div>
       </div>
-      <div>
-        <div class="mt-4">
-          <InputLabel for="burst_threshold" value="Burst Threshold (Mbps)" />
-        </div>
+
+      <!-- Burst Threshold -->
+      <div class="mt-4">
+        <InputLabel value="Burst Threshold (Mbps)" />
         <div class="mt-1 flex gap-2">
           <div>
-            <InputLabel for="burst_threshold" value="Subida" class="opacity-80" />
+            <InputLabel for="burst_threshold.upload_limits" value="Subida" />
             <TextInput
               id="burst_threshold.upload_limits"
               v-model="form.burst_threshold.upload_limits"
               type="number"
               class="mt-1 block w-full"
-              required
-              placeholder = "Mbps"
-              autocomplete="burst_threshold.upload_limits"
-
+              placeholder="Mbps"
             />
-            <InputError class="mt-2" :message="form.errors.burst_threshold" />
+            <InputError class="mt-2" :message="form.errors['burst_threshold.upload_limits']" />
           </div>
           <div>
-            <InputLabel for="burst_threshold" value="Bajada" class="opacity-80"/>
+            <InputLabel for="burst_threshold.download_limits" value="Bajada" />
             <TextInput
               id="burst_threshold.download_limits"
               v-model="form.burst_threshold.download_limits"
               type="number"
               class="mt-1 block w-full"
-              placeholder = "Mbps"
-              required
-              autocomplete="burst_threshold.download_limits"
-    
+              placeholder="Mbps"
             />
-            <InputError class="mt-2" :message="form.errors.burst_threshold" />
+            <InputError class="mt-2" :message="form.errors['burst_threshold.download_limits']" />
           </div>
-         
         </div>
       </div>
-      <div>
-        <div class="mt-4">
-          <InputLabel for="burst_time" value="Burst Time (S)" />
-        </div>
+
+      <!-- Burst Time -->
+      <div class="mt-4">
+        <InputLabel value="Burst Time (S)" />
         <div class="mt-1 flex gap-2">
           <div>
-            <InputLabel for="burst_time" value="Subida" class="opacity-80" />
+            <InputLabel for="burst_time.upload_limits" value="Subida" />
             <TextInput
               id="burst_time.upload_limits"
               v-model="form.burst_time.upload_limits"
               type="number"
               class="mt-1 block w-full"
-              required
-              placeholder = "S"
-              autocomplete="burst_time.upload_limits"
-
+              placeholder="S"
             />
-            <InputError class="mt-2" :message="form.errors.burst_time" />
+            <InputError class="mt-2" :message="form.errors['burst_time.upload_limits']" />
           </div>
           <div>
-            <InputLabel for="burst_time" value="Bajada" class="opacity-80"/>
+            <InputLabel for="burst_time.download_limits" value="Bajada" />
             <TextInput
               id="burst_time.download_limits"
               v-model="form.burst_time.download_limits"
               type="number"
               class="mt-1 block w-full"
-              placeholder = "S"
-              required
-              autocomplete="burst_time.download_limits"
-    
+              placeholder="S"
             />
-            <InputError class="mt-2" :message="form.errors.burst_time" />
+            <InputError class="mt-2" :message="form.errors['burst_time.download_limits']" />
           </div>
-         
         </div>
       </div>
-      <div>
-        <div class="mt-4">
-          <InputLabel for="limite_at" value="Limite At (Kbps)" />
-        </div>
+
+      <!-- Limite At -->
+      <div class="mt-4">
+        <InputLabel value="Limite At (Kbps)" />
         <div class="mt-1 flex gap-2">
           <div>
-            <InputLabel for="limite_at" value="Subida" class="opacity-80" />
+            <InputLabel for="limite_at.upload_limits" value="Subida" />
             <TextInput
               id="limite_at.upload_limits"
               v-model="form.limite_at.upload_limits"
               type="number"
               class="mt-1 block w-full"
-              required
-              placeholder = "Kbps"
-              autocomplete="limite_at.upload_limits"
-
+              placeholder="Kbps"
             />
-            <InputError class="mt-2" :message="form.errors.limite_at" />
+            <InputError class="mt-2" :message="form.errors['limite_at.upload_limits']" />
           </div>
           <div>
-            <InputLabel for="limite_at" value="Bajada" class="opacity-80"/>
+            <InputLabel for="limite_at.download_limits" value="Bajada" />
             <TextInput
               id="limite_at.download_limits"
               v-model="form.limite_at.download_limits"
               type="number"
               class="mt-1 block w-full"
-              placeholder = "Kbps"
-              required
-              autocomplete="limite_at.download_limits"
-    
+              placeholder="Kbps"
             />
-            <InputError class="mt-2" :message="form.errors.limite_at" />
+            <InputError class="mt-2" :message="form.errors['limite_at.download_limits']" />
           </div>
-         
         </div>
       </div>
 
-      <div>
-        <div class="mt-4">
-          <InputLabel for="max_limit" value="Max Limit (Mbps)" />
-        </div>
+      <!-- Max Limit -->
+      <div class="mt-4">
+        <InputLabel value="Max Limit (Mbps)" />
         <div class="mt-1 flex gap-2">
           <div>
-            <InputLabel for="max_limit" value="Subida" class="opacity-80" />
+            <InputLabel for="max_limit.upload_limits" value="Subida" />
             <TextInput
               id="max_limit.upload_limits"
               v-model="form.max_limit.upload_limits"
               type="number"
               class="mt-1 block w-full"
-              required
-              placeholder = "Mbps"
-              autocomplete="max_limit.upload_limits"
-
+              placeholder="Mbps"
             />
-            <InputError class="mt-2" :message="form.errors.max_limit" />
+            <InputError class="mt-2" :message="form.errors['max_limit.upload_limits']" />
           </div>
           <div>
-            <InputLabel for="max_limit" value="Bajada" class="opacity-80"/>
+            <InputLabel for="max_limit.download_limits" value="Bajada" />
             <TextInput
               id="max_limit.download_limits"
               v-model="form.max_limit.download_limits"
               type="number"
               class="mt-1 block w-full"
-              placeholder = "Mbps"
-              required
-              autocomplete="max_limit.download_limits"
-    
+              placeholder="Mbps"
             />
-            <InputError class="mt-2" :message="form.errors.max_limit" />
+            <InputError class="mt-2" :message="form.errors['max_limit.download_limits']" />
           </div>
-         
         </div>
       </div>
 
       <div class="flex items-center justify-end mt-4">
-        <PrimaryButton
-          class="ms-4 flex items-center gap-2"
-          :class="{ 'opacity-25': form.processing }"
-          :disabled="form.processing"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="size-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-
+        <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
           Crear Plan
         </PrimaryButton>
       </div>

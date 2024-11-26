@@ -33,7 +33,6 @@ export default {
   },
   mounted() {
     // Verificar si el script de PayPal ya está cargado
-    console.log(this.paypal_data.live_client_id);
     if (this.paypal_data.active) {
       if (!document.getElementById("paypal-script")) {
         const script = document.createElement("script");

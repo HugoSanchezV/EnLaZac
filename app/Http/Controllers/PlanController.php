@@ -95,7 +95,6 @@ class PlanController extends Controller
         return Inertia::render('Coordi/Plans/Show', [
             'plan' => $plan,
         ]);
-        
     }
 
     public function create()
@@ -105,6 +104,32 @@ class PlanController extends Controller
 
     public function store(StorePlanRequest $request)
     {
+        $burstLimit = $request->burst_limit;
+        $burstLimit['upload_limits'] .= 'M';
+        $burstLimit['download_limits'] .= 'M';
+        $request['burst_limit'] = $burstLimit;
+
+        $burstThreshold = $request->burst_threshold;
+        $burstThreshold['upload_limits'] .= 'M';
+        $burstThreshold['download_limits'] .= 'M';
+        $request['burst_threshold'] = $burstThreshold;
+
+        $burstTime = $request->burst_time;
+        $burstTime['upload_limits'] .= 's';
+        $burstTime['download_limits'] .= 's';
+        $request['burst_time'] = $burstTime;
+
+        $limiteAt = $request->limite_at;
+        $limiteAt['upload_limits'] .= 'K';
+        $limiteAt['download_limits'] .= 'K';
+        $request['limite_at'] = $limiteAt;
+
+        $max_limit = $request->limite_at;
+        $max_limit['upload_limits'] .= 'M';
+        $max_limit['download_limits'] .= 'M';
+        $request['max_limit'] = $max_limit;
+
+       
         $validatedData = $request->validated();
         Plan::create($validatedData);
 
@@ -124,6 +149,7 @@ class PlanController extends Controller
 
     public function update(UpdatePlanRequest $request, $id)
     {
+        dd('hoal');
         $plan = Plan::findOrFail($id);
 
         $validatedData = $request->validated();

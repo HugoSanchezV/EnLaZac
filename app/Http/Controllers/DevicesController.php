@@ -93,7 +93,7 @@ class DevicesController extends Controller
         $users = User::where('admin', '0')->select('id', 'name')->get()->makeHidden('profile_photo_url');
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
-        return Inertia::render( $this->path . '/AllDevices/Index', [
+        return Inertia::render($this->path . '/AllDevices/Index', [
             'devices' => $devices,
             'pagination' => [
                 'links' => $devices->links()->elements[0],
@@ -769,12 +769,26 @@ class DevicesController extends Controller
             $routerOSService = RouterOSService::getInstance();
             $routerOSService->connect($device->router_id);
 
-            $burst_limit = $plan->burst_limit['upload_limits'] . 'M/' . $plan->burst_limit['download_limits'] . 'M';
-            $burst_threshold = $plan->burst_threshold['upload_limits'] . '/' . $plan->burst_threshold['download_limits'] . 'M';
-            $burst_time = $plan->burst_time['upload_limits'] . 's/' . $plan->burst_time['download_limits'] . 's';
-            $limite_at = $plan->limite_at['upload_limits'] . 'K/' . $plan->limite_at['download_limits'] . 'K';
-            $max_limit = $plan->max_limit['upload_limits'] . 'M/' . $plan->max_limit['download_limits'] . 'M';
+            $burst_limit = $plan->burst_limit['upload_limits'] . '/' . $plan->burst_limit['download_limits'];
+            $burst_threshold = $plan->burst_threshold['upload_limits'] . '/' . $plan->burst_threshold['download_limits'];
+            $burst_time = $plan->burst_time['upload_limits'] . '/' . $plan->burst_time['download_limits'];
+            $limite_at = ($plan->limite_at['upload_limits']) . '/' . ($plan->limite_at['download_limits']);
+            $max_limit = $plan->max_limit['upload_limits'] . '/' . $plan->max_limit['download_limits'];
 
+            // dd([
+            //     'burst-limit' => $burst_limit,
+            //     'burst-threshold' => $burst_threshold,
+            //     'burst-time' => $burst_time,
+            //     'limit-at' => $limite_at,
+            //     'max-limit' => $max_limit,
+            //     'target' => $device->address, // IP del dispositivo al que estás aplicando la regla
+            //     // 'burst-limit' => '30M/30M',
+            //     // 'burst-threshold' => '22M/22M',
+            //     // 'burst-time' => '45s/45s',
+            //     // 'limit-at' => '512k/512k',
+            //     // 'max-limit' => '15M/15M',
+            //     // 'target' => $device->address,
+            // ]);
             $response = $routerOSService->executeCommand('/queue/simple/add', [
                 'burst-limit' => $burst_limit,
                 'burst-threshold' => $burst_threshold,
@@ -782,7 +796,17 @@ class DevicesController extends Controller
                 'limit-at' => $limite_at,
                 'max-limit' => $max_limit,
                 'target' => $device->address, // IP del dispositivo al que estás aplicando la regla
+                // 'burst-limit' => '30M/30M',
+                // 'burst-threshold' => '22M/22M',
+                // 'burst-time' => '45s/45s',
+                // 'limit-at' => '512k/512k',
+                // 'max-limit' => '15M/15M',
+                // 'target' => $device->address,
             ]);
+
+            if (!isset($response) || isset($response['!trap'])) {
+                throw new Exception('Error al asiganar comsumo en red');
+            }
 
             $routerOSService->disconnect();
         } catch (Exception $e) {
