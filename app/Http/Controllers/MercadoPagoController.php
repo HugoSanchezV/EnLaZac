@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MercadoPagoSetting;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Exception;
@@ -19,8 +20,10 @@ class MercadoPagoController extends Controller
     {
         Log::info('Creando preferencia de pago');
 
+        $mercadoPagoSettings = MercadoPagoSetting::all()->first();
         // Token de acceso a Mercado Pago
-        $accessToken = "APP_USR-1185876763191395-110614-ff589a305022fcfd67c464b58d746b18-2080399408";
+        // $accessToken = "APP_USR-1185876763191395-110614-ff589a305022fcfd67c464b58d746b18-2080399408";
+        $accessToken = $mercadoPagoSettings->live_client_secret;
 
         // Detalles del producto como un array de items
         $items = [];
@@ -116,7 +119,12 @@ class MercadoPagoController extends Controller
     // Función auxiliar para obtener el estado del pago a partir del ID
     private function getPaymentStatus($paymentId)
     {
-        $accessToken = "TEST-3796733327633492-102515-7f4d7f0ab89b5f70facc784ce720fb04-1345692363";
+
+        $mercadoPagoSettings = MercadoPagoSetting::all()->first();
+        // Token de acceso a Mercado Pago
+        // $accessToken = "APP_USR-1185876763191395-110614-ff589a305022fcfd67c464b58d746b18-2080399408";
+        $accessToken = $mercadoPagoSettings->live_client_secret;
+        // $accessToken = "TEST-3796733327633492-102515-7f4d7f0ab89b5f70facc784ce720fb04-1345692363";
         $client = new Client();
 
         try {
@@ -180,7 +188,11 @@ class MercadoPagoController extends Controller
         $paymentId = $request->input('collection_id');
 
         // Access token de Mercado Pago (asegúrate de protegerlo)
-        $accessToken = env('MERCADO_PAGO_ACCESS_TOKEN'); // Usa una variable de entorno para mayor seguridad
+        $mercadoPagoSettings = MercadoPagoSetting::all()->first();
+        // Token de acceso a Mercado Pago
+        // $accessToken = "APP_USR-1185876763191395-110614-ff589a305022fcfd67c464b58d746b18-2080399408";
+        $accessToken = $mercadoPagoSettings->live_client_secret;
+        // $accessToken = env('MERCADO_PAGO_ACCESS_TOKEN'); // Usa una variable de entorno para mayor seguridad
 
         // URL para consultar el pago
         $url = "https://api.mercadopago.com/v1/payments/{$paymentId}";

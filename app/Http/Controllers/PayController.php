@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Charge;
 use App\Models\Contract;
 use App\Models\Device;
+use App\Models\MercadoPagoSetting;
 use App\Models\PaypalAccount;
 use App\Models\Plan;
 use Carbon\Carbon;
@@ -85,11 +86,13 @@ class PayController extends Controller
             // dd($contracts);
 
             $paypal = PaypalAccount::first();
+            $mercadopago = MercadoPagoSetting::select('active')->first();
             // Retornar la vista con los datos necesarios
             return Inertia::render('User/Pays/Pays', [
                 'charges' => $charges,
                 'contracts' => $contracts,
                 'paypal' => $paypal,
+                'mercadopago' => $mercadopago,
             ]);
         } catch (Exception $e) {
             dd($e);

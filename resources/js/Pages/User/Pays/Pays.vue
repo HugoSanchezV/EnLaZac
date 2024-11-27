@@ -14,6 +14,10 @@ const props = defineProps({
     type: Array,
     default: null,
   },
+  mercadopago: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const cart = ref([]);
@@ -189,7 +193,7 @@ const removeFromCart = (index) => {
             Realizar Pago
           </button>
           <div v-if="showPayment" class="mt-5">
-            <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" />
+            <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" />
           </div>
         </div>
       </div>
