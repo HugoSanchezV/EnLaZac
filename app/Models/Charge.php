@@ -11,6 +11,7 @@ class Charge extends Model
     public $fillable = [
         'id',
         'contract_id',
+        'interest_id',
         'description',
         'amount',
         'paid',
@@ -20,5 +21,9 @@ class Charge extends Model
     public function contract()
     {
         return $this->belongsTo(Contract::class, 'contract_id', 'id');
+    }
+
+    public function interest(){
+        return $this->belongsTo(interest::class, 'id','interest_id' );
     }
 }

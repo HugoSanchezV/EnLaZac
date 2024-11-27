@@ -16,7 +16,7 @@ const filters = [
   "id",
   "contrato",
   "descripción",
-"monto",
+  "monto",
   "¿pagado?",
   "fecha del pago",
   "fecha de creación",

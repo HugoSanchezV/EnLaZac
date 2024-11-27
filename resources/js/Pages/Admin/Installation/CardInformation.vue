@@ -18,6 +18,15 @@ const formattedDate = (dateCreation) => {
      // alert("");
       return formattedDate;
     }
+const formatDescription = (description) =>{
+  if(description == 1)
+  {
+    return "Instalación en el domicilio";
+  }else{
+    return "Cambio de domicilio";
+  }
+
+}
 </script>
 
 <template>
@@ -62,7 +71,7 @@ const formattedDate = (dateCreation) => {
           <!-- Descripcion -->
           <div>
             <dt class="text-sm font-medium text-indigo-600">Descripcion</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ installation.description}}</dd>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ formatDescription(installation.description) }}</dd>
           </div>
 
           <!-- fecha asignada -->

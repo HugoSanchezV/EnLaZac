@@ -22,6 +22,7 @@ class Device extends Model
         "creation_time",
         "disabled"
     ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }

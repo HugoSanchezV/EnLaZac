@@ -8,5 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class PaypalAccount extends Model
 {
     use HasFactory;
-    protected $fillable = ["mode", "active","live_client_id", "live_client_secret", "currency"];
+    protected $fillable = [
+        "mode",
+        "active",
+        "live_client_id", 
+        "live_client_secret", 
+        "currency"];
 }

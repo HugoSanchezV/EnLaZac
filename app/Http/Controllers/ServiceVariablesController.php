@@ -74,8 +74,7 @@ class ServiceVariablesController extends Controller
             with('error', 'Hubo un error al actualizar el dia del cargo de equipo');
         }
     }
-    public function changeAllContractEndDate($day)
-    {
+    public function changeAllContractEndDate($day){
         try {
             // Validar el día
             if (!is_numeric($day) || $day < 1 || $day > 31) {
@@ -122,7 +121,9 @@ class ServiceVariablesController extends Controller
     }
     public function newDate(Contract $contract, $dayFormatted)
     {
-        $contract->start_date = Carbon::parse($contract->start_date)->setDay((int)$dayFormatted);
+                //Start_Date Comentado jijijijiji espero que no haya problemas 
+
+       // $contract->start_date = Carbon::parse($contract->start_date)->setDay((int)$dayFormatted);
         $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$dayFormatted);
 
         // Guardar cambios
@@ -133,7 +134,8 @@ class ServiceVariablesController extends Controller
         $endDate = Carbon::parse($contract->end_date);
         $contract->end_date = $endDate->subDays($day)->toDateString();
 
-        $contract->start_date = Carbon::parse($contract->start_date)->setDay((int)$dayFormatted);
+        //Start_Date Comentado jijijijiji espero que no haya problemas 
+        //$contract->start_date = Carbon::parse($contract->start_date)->setDay((int)$dayFormatted);
         $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$dayFormatted);
 
         $contract->end_date = Carbon::parse($contract->end_date)->addDays($day);
@@ -187,8 +189,9 @@ class ServiceVariablesController extends Controller
 
     public function getExemptionPeriods()
     { 
-        try{return ExemptionPeriod::first();}
-        catch(Exception $e){
+        try{
+            return ExemptionPeriod::first();
+        }catch(Exception $e){
             Log::info($e);
             return null;
         }     

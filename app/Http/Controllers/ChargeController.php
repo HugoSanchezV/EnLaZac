@@ -136,8 +136,7 @@ class ChargeController extends Controller
     public function create()
     {
         $contracts = Contract::with('inventorieDevice.device.user', 'plan')->get();
-
-        // dd($contracts);
+        
         return Inertia::render(
             'Admin/Charges/Create',
             [

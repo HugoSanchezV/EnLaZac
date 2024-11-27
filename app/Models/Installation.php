@@ -14,8 +14,7 @@ class Installation extends Model
         'assigned_date',
     ];
 
-    public function contract()
-    {
+    public function contract(){
         return $this->belongsTo(Contract::class);
     }
     public function installationSettings(){

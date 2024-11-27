@@ -20,7 +20,7 @@ onMounted(() => {
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
   flatpickr("#assigned_date", { 
-    minDate: formattedDate
+   // minDate: formattedDate
   });
 
 });
@@ -30,13 +30,47 @@ const form = useForm({
   assigned_date: "",
 });
 
-const submit = () => {form.post(route("installation.store"));};
+const warningMessage = () => {
+  const toast = useToast();
+  toast({
+      component: BaseQuestion,
+      props: {
+        message: "La fecha asignada es menor a la fecha de inicio del contrato",
+      },},{
+      type: TYPE.WARNING,
+      position: POSITION.TOP_CENTER,
+      timeout: 10000,
+    }
+  );
+};
+
+const submit = () => {
+  // if(new Date(form.assigned_date) > new Date(getAssignedDateForDescriptionOne())){
+    form.post(route("installation.store"));
+  // }else{ warningMessage();}};
+}
+// function getAssignedDateForDescriptionOne() {
+//   // Buscar el contrato en el array de contratos
+//   if()
+//   {
+    
+//   }
+//   const contract = props.contracts.find(c => c.id === form.contract_id);
+//   props.contracts.forEach(contract => {
+//   //console.log("Contract ID:", contract.id);
+//   });
+//   //alert(installation.assigned_date);
+//   // Devolver la fecha de instalación si existe
+
+//   return contract.start_date;
+// }
 </script>
 
 <template>
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-7 m-5 bg-white">
       <div>
+        
         <InputLabel for="contract_id" value="Contrato" />
         <div class="mt-2">
             <select

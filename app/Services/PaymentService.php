@@ -42,10 +42,12 @@ class PaymentService
         try {
             $controller = new ContractController();
             $controllerExtend = new ExtendContractController();
+
+
             $controllerExtend->shutDownExtend($id);
             $controller->updateMonths($months, $id);
         } catch (Exception $e) {
-            Log::info("Entro a excepcion en Contract");
+            Log::info("Entro a excepcion en Contract PAYMENTSERVICE");
             return throw new Exception($e->getMessage());
         }
     }
@@ -81,8 +83,7 @@ class PaymentService
             foreach ($cart as $item) {
                 if ($item["type"] === "contract") {
                     self::updateContract($item["contractId"], $item["months"]);
-                }
-                if ($item["type"] === "charge") {
+                }else if ($item["type"] === "charge") {
                     self::updateCharge($item);
                 }
             }

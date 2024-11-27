@@ -12,11 +12,16 @@ class PayPalController extends Controller
 {
     public function createOrder(Request $request)
     {
-        // Log::info('Este es el log');
+        // Log::info('Este es el log[ '.$request->amount);
+        $paypalAccount = PaypalAccount::first();
+
+        // Log::info("Live Client ID: " . $paypalAccount->live_client_id);
+        // Log::info("Live Client Secret: " . $paypalAccount->live_client_secret);
         // $token = "";
         try {
             $paypalModule = new PayPalClient;
-
+            $paypalAccount = PaypalAccount::first();
+            
             $paypalAccount = PaypalAccount::first();
 
             $paypalModule->setApiCredentials([
@@ -38,7 +43,11 @@ class PayPalController extends Controller
                 'validate_ssl'   => $paypalAccount->validate_ssl ?? true,
             ]);
 
+            
             $token = $paypalModule->getAccessToken();
+
+           // Log::error($paypalModule->getAccessToken());
+           //Log::info(json_encode($token));
 
             $paypalModule->setAccessToken($token);
 
@@ -55,7 +64,7 @@ class PayPalController extends Controller
             ]);
             //strval($request->amount)
         } catch (Exception $e) {
-            Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
+            // Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
 
             $errorData = [
                 'message' => $e->getMessage(),
@@ -71,34 +80,14 @@ class PayPalController extends Controller
 
     public function captureOrder(Request $request)
     {
-        Log::info("Entre al metodo");
-        Log::info(json_encode($request->all()));
-        Log::info("estas en el final de todo ");
+        // Log::info("Entre al metodo");
+        //Log::info(json_encode($request->all()));
+        //Log::info("estas en el final de todo ");
 
         try {
 
             $paypalModule = new PayPalClient;
 
-            // Log::info('Se obtuvo el cliente');
-            // $paypalModule->setApiCredentials([
-            //     'mode'    => env('PAYPAL_MODE', 'sandbox'), // Can only be 'sandbox' Or 'live'. If empty or invalid, 'live' will be used.
-            //     'sandbox' => [
-            //         'client_id'         => env('PAYPAL_SANDBOX_CLIENT_ID', ''),
-            //         'client_secret'     => env('PAYPAL_SANDBOX_CLIENT_SECRET', ''),
-            //         'app_id'            => 'APP-80W284485P519543T',
-            //     ],
-            //     'live' => [
-            //         'client_id'         => env('PAYPAL_LIVE_CLIENT_ID', ''),
-            //         'client_secret'     => env('PAYPAL_LIVE_CLIENT_SECRET', ''),
-            //         'app_id'            => env('PAYPAL_LIVE_APP_ID', ''),
-            //     ],
-
-            //     'payment_action' => env('PAYPAL_PAYMENT_ACTION', 'Sale'), // Can only be 'Sale', 'Authorization' or 'Order'
-            //     'currency'       => env('PAYPAL_CURRENCY', 'USD'),
-            //     'notify_url'     => env('PAYPAL_NOTIFY_URL', ''), // Change this accordingly for your application.
-            //     'locale'         => env('PAYPAL_LOCALE', 'en_US'), // force gateway language  i.e. it_IT, es_ES, en_US ... (for express checkout only)
-            //     'validate_ssl'   => env('PAYPAL_VALIDATE_SSL', true), // Validate SSL when creating api client.
-            // ]);
             $paypalAccount = PaypalAccount::first();
 
             $paypalModule->setApiCredentials([
@@ -151,8 +140,8 @@ class PayPalController extends Controller
                 //return Redirect::route('pays')->with('success', 'Se ha realizado la operación con exito');
             }
         } catch (Exception $e) {
-            Log::info("Error al hacer el pago " . $e->getMessage());
-            Log::info("");
+            //Log::info("Error al hacer el pago " . $e->getMessage());
+            //Log::info("");
             // return response()->json(['status' => 'error'], 500);
             return redirect()->route('pays')->with('error', 'Hubo un problema al procesar el pago. Inténtalo de nuevo.');
         }
