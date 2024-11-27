@@ -25,12 +25,13 @@ class MercadoPagoSettingController extends Controller
     /**
      * Guardar o actualizar la configuración de MercadoPago.
      */
-    public function storeOrUpdate(Request $request)
+    public function update(Request $request)
     {
         $request->validate([
+            'active' => 'required|between:0,1',
             'mode' => 'required|in:sandbox,live',
-            'sandbox_client_id' => 'required|string',
-            'sandbox_client_secret' => 'required|string',
+            'sandbox_client_id' => 'nullable|string',
+            'sandbox_client_secret' => 'nullable|string',
             'live_client_id' => 'nullable|string',
             'live_client_secret' => 'nullable|string',
             'currency' => 'required|string',
@@ -38,6 +39,7 @@ class MercadoPagoSettingController extends Controller
 
         try {
             $fields = $request->only([
+                'active',
                 'mode',
                 'sandbox_client_id',
                 'sandbox_client_secret',

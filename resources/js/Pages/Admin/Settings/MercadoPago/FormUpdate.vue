@@ -1,6 +1,5 @@
-<!-- resources/js/Pages/Admin/Settings/MercadoPago/FormUpdate.vue -->
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-5">
+  <div class="flex flex-col items-center justify-center">
     <!-- Tarjeta Principal -->
     <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
       <!-- Encabezado -->
@@ -13,6 +12,16 @@
       
       <!-- Formulario -->
       <form @submit.prevent="submit" class="space-y-6">
+        <!-- Activar Servicio -->
+        <div class="flex items-center gap-2">
+          <InputLabel for="active" value="Activar Servicio " />
+          <label class="switch">
+            <input type="checkbox" v-model="form.active" true-value="1" false-value="0" />
+            <span class="slider round"></span>
+          </label>
+          <!-- <span>{{ form.active === "1" ? "Activo" : "Inactivo" }}</span> -->
+        </div>
+
         <!-- Modo -->
         <div>
           <InputLabel for="mode" value="Modo" />
@@ -89,7 +98,6 @@
           >
             <option value="MXN">MXN</option>
             <option value="USD">USD</option>
-            <!-- Agrega más opciones de moneda según sea necesario -->
           </select>
           <InputError class="mt-2 text-sm text-red-600" :message="form.errors.currency" />
         </div>
@@ -127,17 +135,19 @@ const props = defineProps({
 
 // Inicializar el formulario con los datos existentes
 const form = useForm({
-  modelo: "sandbox",               // Valores por defecto
-  Id_cliente: "",         // Inicializar como vacío
-  Clave_cliente: "",     // Inicializar como vacío
-  live_client_id: "",            // Inicializar como vacío
-  live_client_secret: "",        // Inicializar como vacío
-  Moneda: "MXN",               // Valores por defecto
+  active: 0, // Nuevo campo 'active' para el toggle
+  mode: "sandbox",
+  sandbox_client_id: "",
+  sandbox_client_secret: "",
+  live_client_id: "",
+  live_client_secret: "",
+  currency: "MXN",
 });
 
 // Asignar los valores existentes al formulario cuando el componente se monta
 onMounted(() => {
   if (props.settings) {
+    form.active = props.settings.active || 0; // Asignar valor de 'active'
     form.mode = props.settings.mode || "sandbox";
     form.sandbox_client_id = props.settings.sandbox_client_id || "";
     form.sandbox_client_secret = props.settings.sandbox_client_secret || "";
@@ -149,117 +159,71 @@ onMounted(() => {
 
 // Método para enviar el formulario
 const submit = () => {
-  form.put(route("settings.mercadopago.update", props.settings.id), {
+  form.put(route("settings.mercadopago.update"), {
     onSuccess: () => {
-      // Opcional: Puedes agregar lógica para mostrar una notificación de éxito
-      // Por ejemplo, usar un sistema de notificaciones o redirigir al usuario
-      // Ejemplo: window.alert('Configuración actualizada con éxito');
+      // Opcional: lógica adicional al tener éxito
     },
     onError: () => {
-      // Opcional: Manejar errores de validación
-      // Ejemplo: window.alert('Hubo errores en el formulario');
+      // Opcional: Manejo de errores
     },
   });
 };
 </script>
 
 <style scoped>
-/* Estilos adicionales para mejorar la apariencia */
-input::placeholder {
-  color: #a0aec0; /* Color del placeholder */
+/* Estilos adicionales para el toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 20px;
 }
 
-input:focus::placeholder {
-  color: transparent;
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
 }
 
-/* Transiciones suaves para los inputs */
-input,
-select {
-  transition: border-color 0.3s, box-shadow 0.3s;
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
 }
 
-/* Mejora de la apariencia de los errores */
-.text-red-600 {
-  color: #e53e3e;
+input:checked + .slider {
+  background-color: #2196f3;
 }
 
-/* Ajustes para el contenedor principal */
-.min-h-screen {
-  min-height: 100vh;
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
 }
 
-.bg-gray-50 {
-  background-color: #f9fafb;
+input:checked + .slider:before {
+  transform: translateX(26px);
 }
 
-.bg-white {
-  background-color: #ffffff;
+.slider.round {
+  border-radius: 17px;
 }
 
-.shadow-lg {
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
-
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
-.p-8 {
-  padding: 2rem;
-}
-
-.mb-6 {
-  margin-bottom: 1.5rem;
-}
-
-.text-2xl {
-  font-size: 1.5rem;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-gray-800 {
-  color: #2d3748;
-}
-
-.text-gray-500 {
-  color: #a0aec0;
-}
-
-.space-y-6 > :not(template) ~ :not(template) {
-  margin-top: 1.5rem;
-}
-
-.focus\:ring-2:focus {
-  ring-width: 2px;
-}
-
-.focus\:ring-indigo-500:focus {
-  ring-color: #667eea;
-}
-
-.transition {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-}
-
-.duration-150 {
-  transition-duration: 150ms;
-}
-
-.ease-in-out {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+.slider.round:before {
+  border-radius: 50%;
 }
 </style>
-

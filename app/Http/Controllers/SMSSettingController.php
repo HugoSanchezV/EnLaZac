@@ -11,33 +11,20 @@ use Illuminate\Support\Facades\Log;
 
 class SMSSettingController extends Controller
 {
-    /**
-     * Mostrar el formulario de edición de configuraciones de SMS.
-     */
-    //dd("hiska");
-    /**public function edit()
-    {
-        $settings = SMSSetting::first(); // Recupera la primera configuración
-       
-        return Inertia::render('Admin/Settings/SMS/Edit', [
-            'settings' => $settings,
-        ]);
-    }
-    */
-    public function edit()
-{
-    try {
-       
-        $settings = SMSSetting::first();
 
-        return Inertia::render('Admin/Settings/SMS/Edit', [
-            'settings' => $settings,
-        ]);
-    } catch (\Exception $e) {
-        
-        dd($e->getMessage());
+    public function edit()
+    {
+        try {
+            $settings = SMSSetting::first();
+
+            return Inertia::render('Admin/Settings/SMS/Edit', [
+                'settings' => $settings,
+            ]);
+        } catch (\Exception $e) {
+
+            dd($e->getMessage());
+        }
     }
-}
 
 
     /**
@@ -47,7 +34,7 @@ class SMSSettingController extends Controller
     {
         // Validar los datos de la solicitud
         $request->validate([
-            'provider' => 'required|string', // Ejemplo: twilio, nexmo, etc.
+            'active' => 'required|string', // Ejemplo: twilio, nexmo, etc.
             'account_sid' => 'required|string',
             'auth_token' => 'required|string',
             'phone_number' => 'required|string',
@@ -77,7 +64,7 @@ class SMSSettingController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'provider' => 'required|string',
+            'active' => 'integer|between:0,1',
             'account_sid' => 'nullable|string',
             'auth_token' => 'nullable|string',
             'phone_number' => 'nullable|string',
@@ -87,14 +74,14 @@ class SMSSettingController extends Controller
             $setting = SMSSetting::first();
             if (!$setting) {
                 SMSSetting::create($request->only([
-                    'provider',
+                    'active',
                     'account_sid',
                     'auth_token',
                     'phone_number',
                 ]));
             } else {
                 $setting->update($request->only([
-                    'provider',
+                    'active',
                     'account_sid',
                     'auth_token',
                     'phone_number',

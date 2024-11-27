@@ -13,7 +13,8 @@ class CreateMercadoPagoSettingsTable extends Migration
     {
         Schema::create('mercado_pago_settings', function (Blueprint $table) {
             $table->id();
-            $table->enum('mode', ['sandbox', 'live'])->default('sandbox');
+            $table->tinyInteger('active')->default(0);
+            $table->string('mode')->default('sandbox');
             $table->string('sandbox_client_id');
             $table->string('sandbox_client_secret');
             $table->string('live_client_id')->nullable();

@@ -10,6 +10,7 @@ class MercadoPagoSetting extends Model
     use HasFactory;
 
     protected $fillable = [
+        'active',
         'mode',
         'sandbox_client_id',
         'sandbox_client_secret',

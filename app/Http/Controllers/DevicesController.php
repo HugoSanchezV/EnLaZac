@@ -774,43 +774,25 @@ class DevicesController extends Controller
             $burst_time = $plan->burst_time['upload_limits'] . '/' . $plan->burst_time['download_limits'];
             $limite_at = ($plan->limite_at['upload_limits']) . '/' . ($plan->limite_at['download_limits']);
             $max_limit = $plan->max_limit['upload_limits'] . '/' . $plan->max_limit['download_limits'];
-
-            // dd([
-            //     'burst-limit' => $burst_limit,
-            //     'burst-threshold' => $burst_threshold,
-            //     'burst-time' => $burst_time,
-            //     'limit-at' => $limite_at,
-            //     'max-limit' => $max_limit,
-            //     'target' => $device->address, // IP del dispositivo al que estás aplicando la regla
-            //     // 'burst-limit' => '30M/30M',
-            //     // 'burst-threshold' => '22M/22M',
-            //     // 'burst-time' => '45s/45s',
-            //     // 'limit-at' => '512k/512k',
-            //     // 'max-limit' => '15M/15M',
-            //     // 'target' => $device->address,
-            // ]);
+            
             $response = $routerOSService->executeCommand('/queue/simple/add', [
                 'burst-limit' => $burst_limit,
                 'burst-threshold' => $burst_threshold,
                 'burst-time' => $burst_time,
                 'limit-at' => $limite_at,
                 'max-limit' => $max_limit,
-                'target' => $device->address, // IP del dispositivo al que estás aplicando la regla
-                // 'burst-limit' => '30M/30M',
-                // 'burst-threshold' => '22M/22M',
-                // 'burst-time' => '45s/45s',
-                // 'limit-at' => '512k/512k',
-                // 'max-limit' => '15M/15M',
-                // 'target' => $device->address,
+                'target' => $device->address, 
             ]);
 
             if (!isset($response) || isset($response['!trap'])) {
                 throw new Exception('Error al asiganar comsumo en red');
             }
 
-            $routerOSService->disconnect();
         } catch (Exception $e) {
-            throw new Exception('Error en setConsumePlantoDevice ' . $e->getmessage());
+            throw new Exception('Error en setConsumePlanToDevice: ' . $e->getMessage(), $e->getCode(), $e);
+        }finally {
+            // Desconexión garantizada
+            $routerOSService->disconnect();
         }
     }
 

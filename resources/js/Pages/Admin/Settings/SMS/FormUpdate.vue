@@ -12,26 +12,26 @@ const props = defineProps({
 
 // Configuración inicial del formulario
 const form = useForm({
-  provider: "",
   account_sid: "",
   auth_token: "",
   phone_number: "",
+  active: 0, // Nuevo campo para el toggle
 });
 
 // Cargar configuraciones existentes al montar el componente
 onMounted(() => {
   if (props.settings) {
-    form.provider = props.settings.provider || "";
     form.account_sid = props.settings.account_sid || "";
     form.auth_token = props.settings.auth_token || "";
     form.phone_number = props.settings.phone_number || "";
+    form.active = props.settings.active || 0; // Asignar valor de 'active'
   }
 });
 
 // Función para enviar el formulario
 const submit = () => {
   console.log(form);
-  form.post(route("settings.sms.update"), {
+  form.put(route("settings.sms.update"), {
     onFinish: () => form.reset(),
   });
 };
@@ -40,27 +40,21 @@ const submit = () => {
 <template>
   <div class="flex justify-center border flex-col m-5 p-10 bg-white">
     <h2 class="flex justify-center">
-      Edita las credenciales de acceso a SMS
+      Edita las credenciales de TWILIO
     </h2>
   </div>
 
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
-      <div>
-        <InputLabel for="provider" value="Proveedor de SMS" />
-        <TextInput
-          id="provider"
-          v-model="form.provider"
-          type="text"
-          class="mt-1 block w-full"
-          required
-          autofocus
-          autocomplete="provider"
-        />
-        <InputError class="mt-2" :message="form.errors.provider" />
+      <div class="mt-5 flex gap-2 items-center">
+        <InputLabel for="active" value="Activar Servicio Twilio" />
+        <label class="switch">
+          <input type="checkbox" v-model="form.active" true-value="1" false-value="0" />
+          <span class="slider round"></span>
+        </label>
       </div>
 
-      <div>
+      <div class="mt-5">
         <InputLabel for="account_sid" value="SID de la Cuenta" />
         <TextInput
           id="account_sid"
@@ -73,7 +67,7 @@ const submit = () => {
         <InputError class="mt-2" :message="form.errors.account_sid" />
       </div>
 
-      <div>
+      <div class="mt-5">
         <InputLabel for="auth_token" value="Token de Autenticación" />
         <TextInput
           id="auth_token"
@@ -86,7 +80,7 @@ const submit = () => {
         <InputError class="mt-2" :message="form.errors.auth_token" />
       </div>
 
-      <div>
+      <div class="mt-5">
         <InputLabel for="phone_number" value="Número de Teléfono" />
         <TextInput
           id="phone_number"
@@ -111,17 +105,6 @@ const submit = () => {
     </form>
   </div>
 </template>
-
-<script>
-export default {
-  props: ["router"],
-  data() {
-    return {
-      modificarPassword: false,
-    };
-  },
-};
-</script>
 
 <style scoped>
 /* Opcional: Estilo para un diseño consistente */

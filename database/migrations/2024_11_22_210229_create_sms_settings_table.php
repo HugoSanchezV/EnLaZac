@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('s_m_s_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('provider'); // Ejemplo: Twilio, Nexmo
+            $table->tinyInteger('active')->default(0); // Ejemplo: Twilio, Nexmo
             $table->string('account_sid');
             $table->string('auth_token');
             $table->string('phone_number');

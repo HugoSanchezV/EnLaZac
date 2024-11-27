@@ -78,24 +78,22 @@ Route::middleware([
     Route::post('/mercadopago/webhook', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
 
     // Rutas para MercadoPagoSettingController
-    Route::prefix('settings')->name('settings.')->middleware('auth')->group(function () {
-        Route::prefix('mercadopago')->name('mercadopago.')->group(function () {
-            // Mostrar el formulario de edición de configuraciones
-            Route::get('/edit', [MercadoPagoSettingController::class, 'edit'])->name('edit');
 
-            // Guardar una nueva configuración
-            Route::post('/store', [MercadoPagoSettingController::class, 'store'])->name('store');
+    // Mostrar el formulario de edición de configuraciones
+    // Route::get('/edit', [MercadoPagoSettingController::class, 'edit'])->name('edit');
 
-            // Mostrar una configuración específica
-            Route::get('/{id}', [MercadoPagoSettingController::class, 'show'])->name('show');
+    // // Guardar una nueva configuración
+    // Route::post('/store', [MercadoPagoSettingController::class, 'store'])->name('store');
 
-            // Actualizar una configuración existente
-            Route::put('/update', [MercadoPagoSettingController::class, 'update'])->name('update');
+    // // Mostrar una configuración específica
+    // Route::get('/{id}', [MercadoPagoSettingController::class, 'show'])->name('show');
 
-            // Eliminar una configuración
-            Route::delete('/destroy/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('destroy');
-        });
-    });
+    // Actualizar una configuración existente
+    // Route::put('settings/mercadopago/update', [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
+
+    // // Eliminar una configuración
+    // Route::delete('/destroy/{id}', [MercadoPagoSettingController::class, 'destroy'])->name('destroy');
+
 
     // Rutas para MercadoPagoDataController
     Route::prefix('admin/mercadopago/data')->name('mercadopago.data.')->middleware('auth')->group(function () {
@@ -331,15 +329,15 @@ Route::middleware([
         Route::put('/sistema/configuracion/intereses/update/', [InterestsController::class, 'update'])->name('settings.interest.update');
         Route::get('/sistema/configuracion/email',      [MailSettingController::class, 'edit'])->name('settings.email.edit');
         Route::post('/sistema/configuracion/email/update',      [MailSettingController::class, 'update'])->name('settings.email.update');
-        
+
         Route::get('/sistema/configuracion/background',      [ScheduledTaskController::class, 'index'])->name('settings.background');
         Route::get('/sistema/configuracion/mercadopago',      [MercadoPagoSettingController::class, 'edit'])->name('settings.mercadopago.edit');
-        Route::post('/sistema/configuracion/mercadopago/update',      [  MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
+        Route::put('/sistema/configuracion/mercadopago/update',      [MercadoPagoSettingController::class, 'update'])->name('settings.mercadopago.update');
         Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');
         Route::put('/sistema/configuracion/background/{id}',      [ScheduledTaskController::class, 'update'])->name('settings.background.update');
         Route::get('/sistema/configuracion/SMS',      [SMSSettingController::class, 'edit'])->name('settings.sms.edit');
-        Route::post('/sistema/configuracion/SMS/update',      [SMSSettingController::class, 'update'])->name('settings.sms.update');
+        Route::put('/sistema/configuracion/SMS/update',      [SMSSettingController::class, 'update'])->name('settings.sms.update');
 
         Route::get('/sistema/configuracion/background/edit/{task}',      [ScheduledTaskController::class, 'edit'])->name('settings.background.edit');
         Route::post('/sistema/configuracion/background/store',      [ScheduledTaskController::class, 'store'])->name('settings.background.store');

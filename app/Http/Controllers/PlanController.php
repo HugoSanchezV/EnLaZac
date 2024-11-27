@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Plan\StorePlanRequest;
-use App\Http\Requests\Plan\UpdatePLanRequest;
+use App\Http\Requests\Plan\UpdatePlanRequest;
+use App\Jobs\UpdatePlanDevicesJob;
+use App\Models\Contract;
+use App\Models\Device;
 use App\Models\Plan;
 use Exception;
 use Illuminate\Http\Request;
@@ -129,7 +132,7 @@ class PlanController extends Controller
         $max_limit['download_limits'] .= 'M';
         $request['max_limit'] = $max_limit;
 
-       
+
         $validatedData = $request->validated();
         Plan::create($validatedData);
 
@@ -149,12 +152,33 @@ class PlanController extends Controller
 
     public function update(UpdatePlanRequest $request, $id)
     {
-        dd('hoal');
-        $plan = Plan::findOrFail($id);
+        try {
+            $plan = Plan::findOrFail($id);
 
-        $validatedData = $request->validated();
-        $plan->update($validatedData);
-        return redirect()->route('plans')->with('success', 'Plan de internet Actualizado Con Éxito');
+            $validatedData = $request->validated();
+            $plan->update($validatedData);
+
+            $devices = Device::query()
+                ->join('inventorie_devices', 'devices.device_id', '=', 'inventorie_devices.id')
+                ->join('contracts', 'inventorie_devices.id', '=', 'contracts.inv_device_id')
+                ->join('plans', 'contracts.plan_id', '=', 'plans.id')
+                ->where('plans.id', $plan->id)
+                ->select([
+                    'devices.id AS device_id',
+                    'devices.address',
+                    'devices.router_id',
+                    'contracts.plan_id',
+                ])
+                ->get();
+
+            if (!$devices->isEmpty()) {
+                UpdatePlanDevicesJob::dispatch($plan, $devices);
+            }
+
+            return redirect()->route('plans')->with('success', 'Plan de internet Actualizado Con Éxito');
+        } catch (Exception $e) {
+            return redirect()->route('plans')->with('error', 'Error al cargar el registro');
+        }
     }
 
     public function destroy(Request $request, $id)
