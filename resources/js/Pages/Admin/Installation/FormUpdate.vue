@@ -29,7 +29,7 @@ onMounted(() => {
   const formattedDate = today.toISOString().split('T')[0];
   flatpickr("#assigned_date", {
     defaultDate: form.assigned_date || null, 
-    minDate: props.installation.assigned_date
+   // minDate: props.installation.assigned_date
   });
 
 });

@@ -26,26 +26,59 @@ class PayController extends Controller
         $contracts = null;
         // Obtener todos los contratos del cliente
         try {
-            $device = Device::where('user_id', $userId)->get();
-            //  dd($deviceIds);
+            $devices = Device::with(['inventorieDevice.contract'])->where('user_id', $userId)->get();
+            
+           //dd($devices);
+           //dd($deviceIds);
+            if ($devices->count() > 0) {
 
-            if ($device) {
-                $deviceIds = $device->pluck('device_id');
-                $contracts = Contract::with('plan', 'inventorieDevice')->where('inv_device_id', $deviceIds)->get();
+                $contracts = [] ; 
+                $charges = [];
 
-                if ($contracts->isEmpty()) {
-                    // Si no hay contratos, inicializar valores
-                    $charges = [];
-                } else {
+                
+                foreach($devices as $device){
+                    if($device->inventorieDevice)
+                    {
+                        if($device->inventorieDevice->contract)
+                        {
+                            $contractIds = $device->inventorieDevice->contract->pluck('id');
+                        }
+                    }
+                }  
+                $contractIds = $device->inventorieDevice->contract->pluck('id')->toArray();
 
-                    // Obtener todos los cargos pendientes para los contratos
-                    $contractIds = $contracts->pluck('id');
-                    $charges = Charge::whereIn('contract_id', $contractIds)
-                        ->where('paid', false)
-                        ->get();
-                }
-            } else {
+                //dd($contractIds);
+                $contracts = Contract::with('plan', 'charges')->findOrFail($contractIds);
 
+                $charges = Charge::whereIn('contract_id', $contractIds)->get();
+
+               // dd($charges);
+              ///  dd($contracts->count());
+
+               // dd($contracts->count());
+
+                // foreach($contracts as $contract){
+                //     $charges [] = $contract->charges; 
+                // }
+                //dd($charges);
+                
+                
+                // $deviceIds = $device->pluck('device_id');
+                // $contracts = Contract::with('plan', 'inventorieDevice')->where('inv_device_id', $deviceIds)->get();
+
+                // if ($contracts->isEmpty()) {
+                //     // Si no hay contratos, inicializar valores
+                //     $charges = [];
+                // } else {
+
+                //     // Obtener todos los cargos pendientes para los contratos
+                //     $contractIds = $contracts->pluck('id');
+                //     $charges = Charge::whereIn('contract_id', $contractIds)
+                //         ->where('paid', false)
+                //         ->get();
+                // }
+            } else 
+            {
                 $charges = null;
                 $contracts = null;
             }
@@ -59,6 +92,7 @@ class PayController extends Controller
                 'paypal' => $paypal,
             ]);
         } catch (Exception $e) {
+            dd($e);
             return Redirect::route('dashboard')->with('error', 'No ha dispositivo asiganado');
         }
     }

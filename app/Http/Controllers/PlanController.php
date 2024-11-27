@@ -149,7 +149,7 @@ class PlanController extends Controller
 
     public function update(UpdatePlanRequest $request, $id)
     {
-        dd('hoal');
+       // dd('hoal');
         $plan = Plan::findOrFail($id);
 
         $validatedData = $request->validated();

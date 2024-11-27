@@ -17,6 +17,7 @@ use App\Models\Installation;
 use App\Models\InventorieDevice;
 use App\Models\PaymentSanction;
 use App\Models\RuralCommunity;
+use App\Services\ChargeService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -347,18 +348,22 @@ class ContractController extends Controller
 
         $controller->store($contract->id);
     }
-    private function createCharge($contract)
+    private function createCharge(Contract $contract)
     {
-        $controller = new ChargeController();
-        $cargo = new Charge();
-        $community = RuralCommunity::findOrFail($contract->rural_community_id);
+        $service = new ChargeService();
 
-        $cargo->contract_id = $contract->id;
-        $cargo->description = "Cargo de instalación";
-        $cargo->amount = $community->installation_cost;
-        $cargo->paid = false;
+        $service->createChargeInstallation($contract);
 
-        $controller->store_schedule($cargo);
+        // $controller = new ChargeController();
+        // $cargo = new Charge();
+        // $community = RuralCommunity::findOrFail($contract->rural_community_id);
+
+        // $cargo->contract_id = $contract->id;
+        // $cargo->description = "Cargo de instalación";
+        // $cargo->amount = $community->installation_cost;
+        // $cargo->paid = false;
+
+        // $controller->store_schedule($cargo);
     }
 
 
@@ -601,11 +606,12 @@ class ContractController extends Controller
                     $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end->month);
                     //->addMonths($installation->installationSettings->exemption_months); ;    
                 }
-            } else {
-                //dd($dateInst->day." | " .$exemptionPeriod->end_date);
-
-                if (($dateInst->day >= $exemptionPeriod->start_day) && ($dateInst->day <= $exemptionPeriod->end_day)) {
-                    // dd('entro aca');
+            }
+            else {
+                //dd($dateInst->day." | ".$exemptionPeriod->end_date);
+                if(($dateInst->day >= $exemptionPeriod->start_day)&&($dateInst->day <= $exemptionPeriod->end_day))
+                {
+                   // dd('entro aca');
                     $end = $dateInst->addMonths($exemptionPeriod->month_next);
 
                     if (Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay()) {
@@ -625,7 +631,132 @@ class ContractController extends Controller
             Log::error($e);
             throwException($e);
         }
+
     }
 
-    public function getOriginalDate(Installation $installation) {}
+    public function updateEndDateContract(Installation $installation, $newInstallation)
+    {
+        try{
+            $controller = new ServiceVariablesController();
+            $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
+            $date = Carbon::parse($newInstallation)->startOfDay();
+
+            // dd();
+            $contract = Contract::findOrFail($installation->contract_id);
+            $endDate = Carbon::parse($contract->end_date)->startOfDay();
+            $exemption = $controller->getExemptionPeriods();
+            $cutoffday = $controller->getCutOffDay(); 
+
+            $currentAssigned = $this->checkRange($currentInstallation, $exemption);
+
+            
+            //dd($endDate->isoFormat('YYYY-MM')."  -   ". $currentAssigned->isoFormat('YYYY-MM'));
+           
+            if(!($endDate->isoFormat('YYYY-MM') > $currentAssigned->isoFormat('YYYY-MM')))
+            {
+
+                //dd("entro");
+
+                if($date->day > $exemption->end_day){
+                 //   dd();
+                    $date = $date->addMonths((int)$exemption->month_after_next);
+                    if ($contract->end_date < $date){
+                        
+                        $contract->end_date = $date;
+                    }
+                }elseif($date->day >= $exemption->start_day && $date->day <= $exemption->end_day ){
+                    
+                   // dd();
+                    $date = $date->addMonths((int)$exemption->month_next);
+                    if ($contract->end_date < $date){
+                        
+                        $contract->end_date = $date;
+                    }
+                   
+                }else{
+                    $contract->end_date = $date; 
+                }
+    
+                $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
+                
+                //dd($contract->end_date);
+                $contract->save();
+            }else{
+               //dd("NOOOOOOOOOOOO");
+                return false;
+            }
+
+            return true;
+
+        }catch(Exception $e)
+        {
+            dd($e->getMessage());
+            return false;
+        }
+    }
+    private function checkRange(Carbon $date, ExemptionPeriod $exemption)
+    {
+        if($date->day > $exemption->end_day){
+            return $date->addMonths((int)$exemption->month_after_next);
+        }else if($date->day >= $exemption->start_day && $date->day <= $exemption->end_day){
+            return $date->addMonths((int)$exemption->month_next);
+        }
+        return $date;
+    }
+    public function storeEndDateContract($id, $assigned_date, $setting_month)
+    {
+        try{
+            $controller = new ServiceVariablesController();
+            $date = Carbon::parse($assigned_date)->startOfDay();
+
+           // dd();
+            $contract = Contract::findOrFail($id);
+            $exemption = $controller->getExemptionPeriods();
+            $cutoffday = $controller->getCutOffDay(); 
+            //dd();
+
+            if(is_null($setting_month)){
+
+                if($date->day > $exemption->end_day){
+                //   dd();
+                    $date = $date->addMonths((int)$exemption->month_after_next);
+                    if ($contract->end_date < $date){
+                        
+                        $contract->end_date = $date;
+                    }
+                }elseif($date->day >= $exemption->start_day && $date->day <= $exemption->end_day ){
+                    
+                // dd();
+                    $date = $date->addMonths((int)$exemption->month_next);
+                    if ($contract->end_date < $date){
+                        
+                        $contract->end_date = $date;
+                    }
+                
+                }else{
+                    $contract->end_date = $date; 
+                }
+
+                $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
+            }else{
+                $date = $date->addMonths((int)$setting_month);
+
+                if ($contract->end_date < $date){
+                        
+                    $contract->end_date = $date;
+                }
+
+                $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
+
+            }
+            //dd($contract->end_date);
+            $contract->save();
+
+        }catch(Exception $e)
+        {
+            dd($e->getMessage());
+        }
+    }
+
+
 }

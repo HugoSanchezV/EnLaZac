@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Installation;
 
+use App\Models\Contract;
+use App\Models\Installation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreInstallationRequest extends FormRequest
@@ -22,22 +24,50 @@ class StoreInstallationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'contract_id' => ['required','exists:contracts,id'],
-            'description' => ['required', 'in:"1","2"'],
-            'assigned_date' => ['required', 'date', 'after_or_equal:today'],
+            'contract_id' => ['required', 'exists:contracts,id'],
+            'description' => ['required', 'in:1,2'],
+            'assigned_date' => ['required', 'date'],
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'contract_id.required' => 'El id del contrato es un campo obligatorio.',
             'contract_id.exists' => 'El contrato no existe.',
             'description.required' => 'La descripción es un campo obligatorio.',
-            'description.in' => 'La descripción ingresada no es admitida',
+            'description.in' => 'La descripción ingresada no es admitida.',
             'assigned_date.required' => 'La fecha es un campo obligatorio.',
             'assigned_date.date' => 'La fecha debe ser tipo date.',
-            'assigned_date.after_or_equal' => 'La fecha asignada debe ser igual o mayor a la fecha actual.', // Mensaje para after_or_equal'assigned_date.required' => 'La fecha es un campo obligatorio.',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // Verificar si el contrato asociado existe
+            $contract = Contract::find($this->contract_id);
+
+            if ($contract) {
+                // Validar que assigned_date no sea inferior a start_date
+                $assignedDate = \Carbon\Carbon::parse($this->assigned_date);
+                $startDate = \Carbon\Carbon::parse($contract->start_date);
+
+                if ($assignedDate->lt($startDate)) {
+                    $validator->errors()->add('assigned_date', 'La fecha asignada no puede ser inferior a la fecha de inicio del contrato.');
+                }
+            }
+
+            // Validación adicional para descripción "1"
+            if ($this->description == '1') {
+                $installationExists = Installation::where('contract_id', $this->contract_id)
+                    ->where('description', '1')
+                    ->exists();
+
+                if ($installationExists) {
+                    $validator->errors()->add('description', 'El contrato ya tiene una instalación inicial');
+                }
+            }
+        });
     }
 }

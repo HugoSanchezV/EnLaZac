@@ -24,6 +24,7 @@ class Contract extends Model
     protected $casts = [
         'geolocation'  => 'array',
     ];
+
     public function extendContract(){
         return $this->hasOne(ExtendContract::class, 'contract_id','id');
     }
@@ -34,21 +35,24 @@ class Contract extends Model
         
         return $this->belongsTo(PaymentSanction::class, 'contract_id', 'id');
     }
+    
     public function plan()
     {
         return $this->belongsTo(Plan::class);
     }
+
     public function ruralCommunity()
     {
         return $this->belongsTo(RuralCommunity::class);
     }
+
     public function installations()
     {
-        return $this->hasMany(Installation::class, 'contract_id');
+        return $this->hasMany(Installation::class);
     }
 
     public function charges()
     {
-        return $this->hasMany(Charge::class);
+        return $this->hasMany(Charge::class , 'contract_id', 'id');
     }
 }

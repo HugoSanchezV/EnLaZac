@@ -84,6 +84,35 @@ const destroy = (id, data) => {
   );
 };
 
+const formatDescription = (tipo) => {
+  // Convertimos la fecha ISO a un objeto Date
+
+  switch (tipo){
+    case 'fuera-corte': 
+    return "No pagó antes del día de corte"
+    break;
+    
+    case 'recargo-mes': 
+    return "Recargo del mes"
+    break;
+    
+    case 'renta-dispositivo': 
+    return "Renta del dispositivo"
+    break;
+    
+    case 'instalacion-inicial': 
+    return "Instalación inicial"
+    break;
+    
+    case 'cambio-domicilio': 
+    return "Cambio de domicilio"
+    break;
+    
+    default:
+      return tipo;
+  }
+};
+
 const getTag = (cellIndex) => {
   switch (cellIndex) {
     case "description":
@@ -264,6 +293,9 @@ const getTag = (cellIndex) => {
           >
             <div v-if="cellIndex === 'paid'">
               {{ cell === 0 ? "No" : "Sí" }}
+            </div>
+            <div v-else-if="cellIndex === 'description'">
+              {{ formatDescription(cell) }}
             </div>
             <div v-else>
               <div class="flex gap-1">

@@ -6,6 +6,7 @@ use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\InterestsController;
 use App\Models\Charge;
 use App\Models\Contract;
+use App\Models\RuralCommunity;
 
 class ChargeService
 {
@@ -25,7 +26,7 @@ class ChargeService
         }
 
         $cargo->contract_id = $contract->id;
-        $cargo->description = "No pago el servicio durante el mes";
+        $cargo->description = "fuera-corte";
         $cargo->amount = $interest->amount;
         $cargo->paid = false;
         
@@ -47,11 +48,27 @@ class ChargeService
         }
         //Set data
         $cargo->contract_id = $contract->id;
-        $cargo->description = "No pagó antes del día de corte";
+        $cargo->description = "recargo-mes";
         $cargo->amount = $interest->amount;
         $cargo->paid = false;
         
         //$this->info($cargo);
         $controller->store_schedule($cargo);
+    }
+
+    public function createChargeInstallation(Contract $contract){
+
+
+        $controller = new ChargeController();
+        $cargo = new Charge();
+        $community = RuralCommunity::findOrFail($contract->rural_community_id);
+
+        $cargo->contract_id = $contract->id;
+        $cargo->description = "instalacion-inicial";
+        $cargo->amount = $community->installation_cost;
+        $cargo->paid = false;
+
+        $controller->store_schedule($cargo);
+
     }
 }

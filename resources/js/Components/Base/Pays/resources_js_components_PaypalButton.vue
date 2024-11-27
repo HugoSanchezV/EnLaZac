@@ -61,7 +61,7 @@ export default {
               });
 
               // Log para depuración
-              console.log("Carrito:", this.allCart);
+             // console.log("Carrito:", this.allCart);
 
               // Devolver el ID de la orden para PayPal
               return response.data.id;

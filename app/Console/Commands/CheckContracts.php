@@ -85,13 +85,7 @@ class CheckContracts extends Command
         foreach ($contractTerms as $contract) {
             $endDate = Carbon::parse($contract->end_date);
 
-            if ($equipmentDay && $today->day == $equipmentDay) {
-                $this->conditional($endDate, $contract, $today, $service, $equipmentDay);
-            } else {
-                $this->info("Entra instalación");
-
-                $this->checkInstallation($contract, $today, $endDate, $service, $exemption);
-            }
+            $this->conditional($endDate, $contract, $today, $service, $equipmentDay);
         }
     }
 
@@ -111,13 +105,16 @@ class CheckContracts extends Command
             } elseif ($endDate->day == $today->day + 7) {
                 $this->info("Envio de email en 7 días");
                 self::sendEmail($contract, "7");
+
             } elseif ($endDate->day == ($today->day)) {
+                self::cargoPorPago($service, $contract); // Cargo adicional
+
                 $this->info("Fin del contrato y cargo con todos el end day actual");
                 //self::disconectUser($contract); // Cortar internet
-                self::Extra_charge($service, $contract); // Generar cargo
+                ///self::Extra_charge($service, $contract); // Generar cargo
             } elseif ($today->day === $equipmentDay)  {
                 $this->info("Segundo cargo con todos el end day actual");
-                self::cargoPorPago($service, $contract); // Cargo adicional
+                self::Extra_charge($service, $contract); // Generar cargo
             }
         }
         // Verificar si el contrato está en el pasado o en un mes anterior
@@ -126,95 +123,96 @@ class CheckContracts extends Command
            // $this->info($equipmentDay);
             if ($endDate->day == ($today->day)) {
                 //$this->info("Cargo first");
+                self::cargoPorPago($service, $contract); // Cargo adicional
 
-                self::Extra_charge($service, $contract);
+              //  self::Extra_charge($service, $contract);
             } elseif ($today->day === $equipmentDay) {
                 //$this->info("Cargo");
-                self::cargoPorPago($service, $contract);
+                self::Extra_charge($service, $contract); // Generar cargo
             }
         }
     }
 
-    private function isEquipmentDaySet($equipmentDay): bool
-    {
-        // Verificar si $equipmentDay tiene propiedades configuradas
-        return !is_null($equipmentDay);
-    }
+    // private function isEquipmentDaySet($equipmentDay): bool
+    // {
+    //     // Verificar si $equipmentDay tiene propiedades configuradas
+    //     return !is_null($equipmentDay);
+    // }
 
-    private function checkInstallation(
-        Contract $contract,
-        Carbon $today,
-        Carbon $endDate,
-        ChargeService $service,
-        ExemptionPeriod $exemption
-    ) {
-        $equi = new EquipmentChargeDay();
+    // private function checkInstallation(
+    //     Contract $contract,
+    //     Carbon $today,
+    //     Carbon $endDate,
+    //     ChargeService $service,
+    //     ExemptionPeriod $exemption
+    // ) {
+    //     $equi = new EquipmentChargeDay();
     
-        // Verificar si el contrato tiene instalaciones asignadas
-        if ($contract->installations->isEmpty()) {
-            $this->info("Directo");
-            self::conditional($endDate, $contract, $today, $service, $equi);
-            return;
-        }
+    //     // Verificar si el contrato tiene instalaciones asignadas
+    //     if ($contract->installations->isEmpty()) {
+    //         $this->info("Directo");
+    //         self::conditional($endDate, $contract, $today, $service, $equi);
+    //         return;
+    //     }
     
-        foreach ($contract->installations as $installation) {
-            $assigned = Carbon::parse($installation->assigned_date);
+    //     foreach ($contract->installations as $installation) {
+    //         $assigned = Carbon::parse($installation->assigned_date);
     
-            // Determinar mes de exención según configuración
-            $exemptionMonth = $this->getExemptionMonth($assigned, $installation, $exemption);
-            $this->info("ExemptionMonth: ".$exemptionMonth);
-            // Verificar si está dentro del mes configurado para aplicar lógica
-            if($exemptionMonth != 0)
-            {
-                if (self::incomingMonth($assigned, $today, $exemptionMonth)) {
-                    $this->info("Ya no coincide");
-                    self::conditional($endDate, $contract, $today, $service, $equi);
-                }else{
-                    $this->info("No paga por la excepcion de inslatación, niega la opción de aca");
-                }
-            }else{
-                $this->info("No entra en los rango por lo que debe pagars en fa");
+    //         // Determinar mes de exención según configuración
+    //         $exemptionMonth = $this->getExemptionMonth($assigned, $installation, $exemption);
+    //         $this->info("ExemptionMonth: ".$exemptionMonth);
+    //         // Verificar si está dentro del mes configurado para aplicar lógica
+    //         if($exemptionMonth != 0)
+    //         {
+    //             if (self::incomingMonth($assigned, $today, $exemptionMonth)) {
+    //                 $this->info("Ya no coincide");
+    //                 self::conditional($endDate, $contract, $today, $service, $equi);
+    //             }else{
+    //                 $this->info("No paga por la excepcion de inslatación, niega la opción de aca");
+    //             }
+    //         }else{
+    //             $this->info("No entra en los rango por lo que debe pagars en fa");
 
-                self::conditional($endDate, $contract, $today, $service, $equi);
-            }
+    //             self::conditional($endDate, $contract, $today, $service, $equi);
+    //         }
 
-        }
-    }
+    //     }
+    // }
     
-    /**
-     * Determinar el mes de exención basado en la instalación y el periodo de exención
-     */
-    private function getExemptionMonth(
-        Carbon $assigned,
-        $installation,
-        ExemptionPeriod $exemption,
-    ) {
-        // Si el día asignado es mayor o igual al día de fin de exención
-        if ($assigned->day > $exemption->end_day) {
-            return $installation->installationSettings->exemption_months 
-                ?? $exemption->month_after_next;
-        }
+    // /**
+    //  * Determinar el mes de exención basado en la instalación y el periodo de exención
+    //  */
+    // private function getExemptionMonth(
+    //     Carbon $assigned,
+    //     $installation,
+    //     ExemptionPeriod $exemption,
+    // ) {
+    //     // Si el día asignado es mayor o igual al día de fin de exención
+    //     if ($assigned->day > $exemption->end_day) {
+    //         return $installation->installationSettings->exemption_months 
+    //             ?? $exemption->month_after_next;
+    //     }
     
-        // Si el día asignado está dentro del rango de exención
-        if ($assigned->day >= $exemption->start_day && $assigned->day <= $exemption->end_day) {
-            return $installation->installationSettings->exemption_months 
-                ?? $exemption->month_next;
-        }
+    //     // Si el día asignado está dentro del rango de exención
+    //     if ($assigned->day >= $exemption->start_day && $assigned->day <= $exemption->end_day) {
+    //         return $installation->installationSettings->exemption_months 
+    //             ?? $exemption->month_next;
+    //     }
     
-        // Caso por defecto
-        return 0;
-    }
+    //     // Caso por defecto
+    //     return 0;
+    // }
     
-    private function incomingMonth($assigned, Carbon $today, $increase){
-        /* 
-            Comparación si después los meses que se excluyo el pago de servicio
-            son iguales al mes actual
-        */ 
-        $dateIncrement = Carbon::parse($assigned)->addMonth($increase);
+    // private function incomingMonth($assigned, Carbon $today, $increase){
+    //     /* 
+    //         Comparación si después los meses que se excluyo el pago de servicio
+    //         son iguales al mes actual
+    //     */ 
+    //     $dateIncrement = Carbon::parse($assigned)->addMonth($increase);
 
-        return ($dateIncrement->isoFormat('YYYY-MM')) > ($today->isoFormat('YYYY-MM')) ? false : true;
+    //     return ($dateIncrement->isoFormat('YYYY-MM')) > ($today->isoFormat('YYYY-MM')) ? false : true;
 
-    }
+    // }
 
     private function cargoPorPago($service , Contract $contract)
     {$service->createChargeCourtDate($contract);}

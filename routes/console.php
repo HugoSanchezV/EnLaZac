@@ -13,7 +13,8 @@ Artisan::command('inspire', function () {
 //Schedule de Ping-devices 
 
 Schedule::call(function () {
-    // Log::info('Tarea ejecutada');
+    
+    Log::info('Tarea ejecutada');
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
     // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
@@ -30,7 +31,7 @@ Schedule::call(function () {
     if ($taskDevice->period == "everyFiveMinutes" && $taskDevice->status) {
         Artisan::call('app:device-stats');
     }
-})->everyFiveMinutes();
+})->everySecond();
 
 Schedule::call(function () {
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();

@@ -16,7 +16,9 @@ class InventorieDevice extends Model
         'description',
         'brand',
     ];
-
+    public function contract(){
+        return $this->hasOne(Contract::class, 'inv_device_id', 'id');
+    }
     public function device()
     {
         return $this->hasOne(Device::class, 'device_id', 'id');

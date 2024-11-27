@@ -8,6 +8,7 @@ use App\Http\Requests\Installation\UpdateInstallationRequest;
 use App\Models\Contract;
 use App\Models\Installation;
 use App\Models\InstallationSetting;
+use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -111,61 +112,55 @@ class InstallationController extends Controller
     }
     public function update(UpdateInstallationRequest $request, $id)
     {
-        try {
-            $today = Carbon::now();
+        try{
+          //  $today = Carbon::now();
             $installation = Installation::with('installationSettings', 'contract')->findOrFail($id);
 
             $validatedData = $request->validated();
+            
+            if($this->updateEndDateContract($installation, $validatedData['assigned_date'], $validatedData['description'])){
 
-            $installation->update($validatedData);
+                $installation->update($validatedData);
 
-            $this->getOriginalDate($installation);
-            if (Carbon::parse($installation->assigned_date) < $today->startOfDay()) {
-                $this->updateContractDate($installation);
-            } else {
-                Artisan::call('app:update-contract-date');
+                return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
+            }else{
+                return redirect()->route('installation')->with('error', 'Este contrato ya no es posible actualizarlo: Primer pago realizado');
             }
-
-            //$this->udpateContractDate($installation->id);
-            return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
-        } catch (Exception $e) {
+            
+        }catch(Exception $e){
             return redirect()->route('installation')->with('error', 'Hubo un error al actualizar el registro');
         }
     }
     public function create()
     {
-
-        // $contractIds = Installation::select('contract_id')->get();
-        // $contracts = Contract::with('user')->whereNotIn('id', $contractIds)->get();
         $contracts = Contract::with('inventorieDevice.device.user')->get();
 
-        // dd($contracts);
         return Inertia::render('Admin/Installation/Create', [
             'contracts' => $contracts
         ]);
     }
     public function store(StoreInstallationRequest $request)
     {
-        try {
-
+        try{
             $validatedData = $request->validated();
+
+
             $installation =  Installation::create([
                 'contract_id' => $validatedData['contract_id'],
                 'description' => $validatedData['description'],
                 'assigned_date' => $validatedData['assigned_date'],
             ]);
-
-
-            //Artisan::call('app:update-contract-date');
-
-            //$this->udpateContractDate($installation->id);
+    
             InstallationSetting::create([
                 'installation_id' => $installation->id,
             ]);
 
-            //  $this->setFirstMonthPayment($installation);
+            $this->storeEndDateContract($installation);
             return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
-        } catch (Exception $e) {
+
+    
+        }catch(Exception $e){
+            dd($e);
             return redirect()->route('installation')->with('error', 'Erro al crear la instalación');
         }
     }
@@ -186,18 +181,39 @@ class InstallationController extends Controller
         }
     }
 
-
-    public function updateContractDate(Installation $installation)
+    private function updateEndDateContract(Installation $installation, $newInstallation, $description)
     {
         $controller = new ContractController();
 
-        // dd("Va a entrar al controlador");
-        $controller->updateContractDate($installation);
+        if($description == "1"){
+            $installation = Installation::findOrFail($installation->id)->with('installationSettings');
+            //dd($installation->description);
+
+            if($installation->installationSettings){
+                return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months);
+            }else{
+                return $controller->updateEndDateContract($installation, $newInstallation, null );
+            }
+        }
+        return true;
     }
-
-    private function getOriginalDate(Installation $installation)
+    private function storeEndDateContract(Installation $installation)
     {
         $controller = new ContractController();
-        $controller->getOriginalDate($installation);
+
+        $installation = Installation::with('installationSettings')->findOrFail($installation->id);
+
+     //   dd($installation->description);
+        if($installation->description == "1"){
+            if($installation->installationSettings){
+               
+                $controller->storeEndDateContract($installation->contract_id, $installation->assigned_date, $installation->installationSettings->exemption_months);
+            }else{
+                $controller->storeEndDateContract($installation->contract_id, $installation->assigned_date, null);
+
+            }
+
+        }
+
     }
 }
