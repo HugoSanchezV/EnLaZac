@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\Device;
 use App\Models\Plan;
 use App\Services\RouterOSService;
 use Exception;
@@ -48,14 +47,35 @@ class UpdatePlanDevicesJob implements ShouldQueue
                 $limite_at = $this->plan->limite_at['upload_limits'] . '/' . $this->plan->limite_at['download_limits'];
                 $max_limit = $this->plan->max_limit['upload_limits'] . '/' . $this->plan->max_limit['download_limits'];
 
-                $response = $routerOSService->executeCommand('/queue/simple/set', [
-                    '.id' => $device->queue_id, // ID de la cola en el router
-                    'burst-limit' => $burst_limit,
-                    'burst-threshold' => $burst_threshold,
-                    'burst-time' => $burst_time,
-                    'limit-at' => $limite_at,
-                    'max-limit' => $max_limit,
+                $existingQueue = $routerOSService->executeCommand('/queue/simple/print', [
+                    '?=target' => $device->address . '/32',
+                    '?=name' => $device->comment 
                 ]);
+
+                if (isset($existingQueue[0])) {
+                    // Si ya existe una cola, la actualizamos
+                    $queueId = $existingQueue[0]['.id'];
+                    $response = $routerOSService->executeCommand('/queue/simple/set', [
+                        '.id' => $queueId,
+                        'burst-limit' => $burst_limit,
+                        'burst-threshold' => $burst_threshold,
+                        'burst-time' => $burst_time,
+                        'limit-at' => $limite_at,
+                        'max-limit' => $max_limit,
+                        'name' => $device->comment,
+                    ]);
+                } else {
+                    // Si no existe, la creamos
+                    $response = $routerOSService->executeCommand('/queue/simple/add', [
+                        'burst-limit' => $burst_limit,
+                        'burst-threshold' => $burst_threshold,
+                        'burst-time' => $burst_time,
+                        'limit-at' => $limite_at,
+                        'max-limit' => $max_limit,
+                        'target' => $device->address,
+                        'name' => $device->comment,
+                    ]);
+                }
 
                 if (!isset($response) || isset($response['!trap'])) {
                     throw new Exception('Error al actualizar el dispositivo: ' . $device->id);
@@ -73,4 +93,3 @@ class UpdatePlanDevicesJob implements ShouldQueue
         }
     }
 }
-

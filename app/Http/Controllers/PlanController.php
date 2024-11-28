@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Plan\StorePlanRequest;
 use App\Http\Requests\Plan\UpdatePlanRequest;
+use App\Jobs\DestroyPlanDevicesJob;
 use App\Jobs\UpdatePlanDevicesJob;
 use App\Models\Contract;
 use App\Models\Device;
@@ -11,6 +12,7 @@ use App\Models\Plan;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -153,11 +155,13 @@ class PlanController extends Controller
     public function update(UpdatePlanRequest $request, $id)
     {
         try {
+            DB::beginTransaction();
             $plan = Plan::findOrFail($id);
 
             $validatedData = $request->validated();
             $plan->update($validatedData);
 
+            DB::commit();
             $devices = Device::query()
                 ->join('inventorie_devices', 'devices.device_id', '=', 'inventorie_devices.id')
                 ->join('contracts', 'inventorie_devices.id', '=', 'contracts.inv_device_id')
@@ -165,6 +169,7 @@ class PlanController extends Controller
                 ->where('plans.id', $plan->id)
                 ->select([
                     'devices.id AS device_id',
+                    'devices.comment',
                     'devices.address',
                     'devices.router_id',
                     'contracts.plan_id',
@@ -177,6 +182,7 @@ class PlanController extends Controller
 
             return redirect()->route('plans')->with('success', 'Plan de internet Actualizado Con Éxito');
         } catch (Exception $e) {
+            DB::rollBack();
             return redirect()->route('plans')->with('error', 'Error al cargar el registro');
         }
     }
@@ -189,8 +195,27 @@ class PlanController extends Controller
             "order" => $request->order ?? null,
         ];
         try {
+
+            $devices = Device::query()
+                ->join('inventorie_devices', 'devices.device_id', '=', 'inventorie_devices.id')
+                ->join('contracts', 'inventorie_devices.id', '=', 'contracts.inv_device_id')
+                ->join('plans', 'contracts.plan_id', '=', 'plans.id')
+                ->where('plans.id', $id)
+                ->select([
+                    'devices.id AS device_id',
+                    'devices.comment',
+                    'devices.address',
+                    'devices.router_id',
+                    'contracts.plan_id',
+                ])
+                ->get();
+
             $plan = Plan::findOrFail($id);
             $plan->delete();
+
+            if (!$devices->isEmpty()) {
+                DestroyPlanDevicesJob::dispatch($devices);
+            }
             return Redirect::route('plans', $data)->with('success', 'Plan de internet Eliminado Con Éxito');
         } catch (Exception $e) {
             return Redirect::route('plans', $data)->with('errror', 'Error al cargar el registro');

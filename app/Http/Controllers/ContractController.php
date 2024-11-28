@@ -323,7 +323,7 @@ class ContractController extends Controller
 
             $plan = Plan::findOrFail($request->plan_id);
             $device = Device::where('device_id', $request->inv_device_id)->first();
-          
+
             $deviceController = new DevicesController();
             $deviceController->setConsumePlanToDevice($device, $plan);
 
@@ -441,11 +441,11 @@ class ContractController extends Controller
                 $validatedData = $request->validated();
 
                 if ($contract->plan_id !== $validatedData['plan_id']) {
-                    $plan = Plan::findOrFail($validatedData['plan_id'])->first();
-                    $device = Device::where('device_id', $validatedData['inv_device_id'])->first();
+                    $plan = Plan::findOrFail($validatedData['plan_id']);
+                    $device = Device::where('device_id', $validatedData['inv_device_id'])->get();
 
                     $deviceController = new DevicesController();
-                    $deviceController->setConsumePlanToDevice($device, $plan);
+                    $deviceController->setConsumePlanToDevice($device[0], $plan);
                 }
 
                 $contract->update(
@@ -463,6 +463,7 @@ class ContractController extends Controller
             });
             return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
         } catch (Exception $e) {
+            dd($e->getMessage());
             return redirect()->route('contracts')->with('error', 'Error al cargar el registro');
         }
     }
@@ -496,10 +497,20 @@ class ContractController extends Controller
             "order" => $request->order ?? null,
         ];
         try {
+
+            DB::beginTransaction();
             $contract = Contract::findOrFail($id);
+
+            $device = Device::where('device_id', $contract->inv_device_id)->get();
+ 
+            $deviceController = new DevicesController();
+            $deviceController->removeConsumePlanFromDevice($device[0]);
+
             $contract->delete();
+            DB::commit();
             return Redirect::route('contracts', $data)->with('success', 'Contrato Eliminado Con Éxito');
         } catch (Exception $e) {
+            DB::rollBack();
             return Redirect::route('contracts', $data)->with('error', 'Error al cargar el registro' . $e);
         }
     }
@@ -606,12 +617,10 @@ class ContractController extends Controller
                     $contract->end_date = Carbon::parse($contract->end_date)->setMonth($end->month);
                     //->addMonths($installation->installationSettings->exemption_months); ;    
                 }
-            }
-            else {
+            } else {
                 //dd($dateInst->day." | ".$exemptionPeriod->end_date);
-                if(($dateInst->day >= $exemptionPeriod->start_day)&&($dateInst->day <= $exemptionPeriod->end_day))
-                {
-                   // dd('entro aca');
+                if (($dateInst->day >= $exemptionPeriod->start_day) && ($dateInst->day <= $exemptionPeriod->end_day)) {
+                    // dd('entro aca');
                     $end = $dateInst->addMonths($exemptionPeriod->month_next);
 
                     if (Carbon::parse($contract->end_date)->startOfDay() < $end->startOfDay()) {
@@ -631,12 +640,11 @@ class ContractController extends Controller
             Log::error($e);
             throwException($e);
         }
-
     }
 
     public function updateEndDateContract(Installation $installation, $newInstallation)
     {
-        try{
+        try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
             $date = Carbon::parse($newInstallation)->startOfDay();
@@ -645,118 +653,108 @@ class ContractController extends Controller
             $contract = Contract::findOrFail($installation->contract_id);
             $endDate = Carbon::parse($contract->end_date)->startOfDay();
             $exemption = $controller->getExemptionPeriods();
-            $cutoffday = $controller->getCutOffDay(); 
+            $cutoffday = $controller->getCutOffDay();
 
             $currentAssigned = $this->checkRange($currentInstallation, $exemption);
 
-            
+
             //dd($endDate->isoFormat('YYYY-MM')."  -   ". $currentAssigned->isoFormat('YYYY-MM'));
-           
-            if(!($endDate->isoFormat('YYYY-MM') > $currentAssigned->isoFormat('YYYY-MM')))
-            {
+
+            if (!($endDate->isoFormat('YYYY-MM') > $currentAssigned->isoFormat('YYYY-MM'))) {
 
                 //dd("entro");
 
-                if($date->day > $exemption->end_day){
-                 //   dd();
+                if ($date->day > $exemption->end_day) {
+                    //   dd();
                     $date = $date->addMonths((int)$exemption->month_after_next);
-                    if ($contract->end_date < $date){
-                        
+                    if ($contract->end_date < $date) {
+
                         $contract->end_date = $date;
                     }
-                }elseif($date->day >= $exemption->start_day && $date->day <= $exemption->end_day ){
-                    
-                   // dd();
+                } elseif ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
+
+                    // dd();
                     $date = $date->addMonths((int)$exemption->month_next);
-                    if ($contract->end_date < $date){
-                        
+                    if ($contract->end_date < $date) {
+
                         $contract->end_date = $date;
                     }
-                   
-                }else{
-                    $contract->end_date = $date; 
+                } else {
+                    $contract->end_date = $date;
                 }
-    
+
                 $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
-                
+
                 //dd($contract->end_date);
                 $contract->save();
-            }else{
-               //dd("NOOOOOOOOOOOO");
+            } else {
+                //dd("NOOOOOOOOOOOO");
                 return false;
             }
 
             return true;
-
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             dd($e->getMessage());
             return false;
         }
     }
     private function checkRange(Carbon $date, ExemptionPeriod $exemption)
     {
-        if($date->day > $exemption->end_day){
+        if ($date->day > $exemption->end_day) {
             return $date->addMonths((int)$exemption->month_after_next);
-        }else if($date->day >= $exemption->start_day && $date->day <= $exemption->end_day){
+        } else if ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
             return $date->addMonths((int)$exemption->month_next);
         }
         return $date;
     }
     public function storeEndDateContract($id, $assigned_date, $setting_month)
     {
-        try{
+        try {
             $controller = new ServiceVariablesController();
             $date = Carbon::parse($assigned_date)->startOfDay();
 
-           // dd();
+            // dd();
             $contract = Contract::findOrFail($id);
             $exemption = $controller->getExemptionPeriods();
-            $cutoffday = $controller->getCutOffDay(); 
+            $cutoffday = $controller->getCutOffDay();
             //dd();
 
-            if(is_null($setting_month)){
+            if (is_null($setting_month)) {
 
-                if($date->day > $exemption->end_day){
-                //   dd();
+                if ($date->day > $exemption->end_day) {
+                    //   dd();
                     $date = $date->addMonths((int)$exemption->month_after_next);
-                    if ($contract->end_date < $date){
-                        
+                    if ($contract->end_date < $date) {
+
                         $contract->end_date = $date;
                     }
-                }elseif($date->day >= $exemption->start_day && $date->day <= $exemption->end_day ){
-                    
-                // dd();
+                } elseif ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
+
+                    // dd();
                     $date = $date->addMonths((int)$exemption->month_next);
-                    if ($contract->end_date < $date){
-                        
+                    if ($contract->end_date < $date) {
+
                         $contract->end_date = $date;
                     }
-                
-                }else{
-                    $contract->end_date = $date; 
-                }
-
-                $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
-            }else{
-                $date = $date->addMonths((int)$setting_month);
-
-                if ($contract->end_date < $date){
-                        
+                } else {
                     $contract->end_date = $date;
                 }
 
                 $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
+            } else {
+                $date = $date->addMonths((int)$setting_month);
 
+                if ($contract->end_date < $date) {
+
+                    $contract->end_date = $date;
+                }
+
+                $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
             }
             //dd($contract->end_date);
             $contract->save();
-
-        }catch(Exception $e)
-        {
+        } catch (Exception $e) {
             dd($e->getMessage());
         }
     }
-
-
 }
