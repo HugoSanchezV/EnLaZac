@@ -298,8 +298,8 @@ useGeneralNotifications();
               
             </div>
             <div  v-if="props.routers.length > 0" class="mt-5" v-for="(targetItem, index) in target" :key="index" >
-              <div class="flex gap-1 mb-3">
-                <h2 class="text-2xl">Router</h2><span class="text-blue-500 text-2xl">{{ routers[index] }}</span>
+              <div class="flex gap-1 mb-3 justify-center rounded-md bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-gray-50">
+                <h2 class="text-2xl">Router</h2><span class="text-2xl">{{ routers[index] }}</span>
               </div>
               <div class="graphic-container">
                   <Graphics

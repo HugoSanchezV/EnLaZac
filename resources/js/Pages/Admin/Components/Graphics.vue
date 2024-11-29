@@ -50,7 +50,7 @@ const avgByteUpload = () => {
   props.upload_byte.forEach(element => {
     sum = element + sum
   });
-  document.getElementById("avgByteUpload"+props.index).textContent = sum / props.upload_byte.length;
+  document.getElementById("avgByteUpload"+props.index).textContent = (sum / props.upload_byte.length).toFixed(6);
  // return sum / props.upload_byte.length;
 }
 
@@ -59,7 +59,7 @@ const avgByteDownload = () => {
   props.download_byte.forEach(element => {
     sum = element + sum
   });
-  document.getElementById("avgByteDownload"+props.index).textContent = sum / props.download_byte.length;
+  document.getElementById("avgByteDownload"+props.index).textContent = (sum / props.download_byte.length).toFixed(6);
  // return sum / props.download_byte.length;
 }
 
@@ -68,7 +68,7 @@ const avgRateUpload = () => {
   props.upload_rate.forEach(element => {
     sum = element + sum
   });
-  document.getElementById("avgRateUpload"+props.index).textContent = sum / props.upload_rate.length;
+  document.getElementById("avgRateUpload"+props.index).textContent = (sum / props.upload_rate.length).toFixed(6);
   //return sum / props.upload_rate.length;
 }
 const avgRateDownload = () => {
@@ -76,7 +76,7 @@ const avgRateDownload = () => {
   props.download_rate.forEach(element => {
     sum = element + sum
   });
-  document.getElementById("avgRateDownload"+props.index).textContent = sum / props.download_rate.length;
+  document.getElementById("avgRateDownload"+props.index).textContent = (sum / props.download_rate.length).toFixed(6);
   //return sum / props.download_rate.length;
 }
 
@@ -147,24 +147,58 @@ onMounted( async () =>{
 </script>
 
 <template>
-    <div class="bg-white pl-2 pt-2 rounded-lg" >
- 
-        <div class="bg-white">
-            <h3 class="font-semibold text-gray-800 text-xl">Promedio de Tasa de Transferencia: </h3>
-            <div>
-                <p class="text-green-500 flex items-center text-xl font-bold mr-1 " :id = "'avgRateUpload'+props.index">
-                    
-                </p><span>MB</span>
-            </div>
-            <p class="text-red-500 flex items-center text-xl font-bold mr-1" :id = "'avgRateDownload'+props.index"></p>
-        </div>
-        <div class="bg-white">
-            <h3 class=" font-semibold text-gray-800 text-xl">Promedio de Trafico: </h3>
-            <p class="text-green-500 flex items-center text-xl font-bold mr-1" :id = "'avgByteUpload'+props.index"></p>
-            <p class="text-red-500 flex items-center text-xl font-bold mr-1" :id = "'avgByteDownload'+props.index"></p>
+    <div class="flex justify-center w-full bg-white rounded mb-2 rounded-lg shadow-lg">
+        
+        <div class="justify-center bg-white pl-2 pt-2 rounded-lg" >
+            <div class="bg-white">
+                <h3 class="font-semibold text-gray-800 text-xl">Promedio de Tasa de Transferencia: </h3>
+                <div class="flex">
+                    <p class="text-green-500 flex items-center text-xl font-bold mr-1 " :id = "'avgRateUpload'+props.index">
+                        
+                    </p> 
+                    <div class="text-green-500 flex items-center text-xl font-bold mr-1 ">
+                        <span  class="font-bold mr-1">MB</span>
+                        <p class="text-gray-500">Subida</p>
 
+                    </div>
+                </div>
+                <div class="flex">
+                    <p class="text-red-500 flex items-center text-xl font-bold mr-1" :id = "'avgRateDownload'+props.index">
+                    </p>
+                    <div class="text-red-500 flex items-center text-xl font-bold mr-1">
+                        <span  class="font-bold mr-1">MB</span>
+                        <p class="text-gray-500">Bajada</p>
+                    </div>
+
+                </div>
+            </div>
+            <div class="bg-white">
+                <h3 class=" font-semibold text-gray-800 text-xl">Promedio de Trafico: </h3>
+                <div class="flex">
+
+                    <p class="text-green-500 flex items-center text-xl font-bold mr-1" :id = "'avgByteUpload'+props.index">
+                    </p>
+                    <div class="text-green-500 flex items-center text-xl font-bold mr-1">
+                        <span  class="font-bold mr-1">MB</span>
+                        <p class="text-gray-500">Subida</p>
+                    </div>
+
+                </div>
+                <div class="flex">
+
+                    <p class="text-red-500 flex items-center text-xl font-bold mr-1" :id = "'avgByteDownload'+props.index">
+                    </p>
+                    <div class="text-red-500 flex items-center text-xl font-bold mr-1">
+                        <span class="font-bold mr-1">MB</span>
+                        <p class="text-gray-500">Bajada</p>
+                    </div>
+
+                </div>
+    
+            </div>
         </div>
     </div>
+
         <div 
         class=" flex justify-between graficas gap-2 rounded-lg">
 

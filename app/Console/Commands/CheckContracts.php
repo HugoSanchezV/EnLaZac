@@ -16,6 +16,7 @@ use App\Models\Charge;
 use App\Models\EquipmentChargeDay;
 use App\Models\ExemptionPeriod;
 use App\Models\InventorieDevice;
+use App\Models\PaymentSanction;
 use Exception;
 
 class CheckContracts extends Command
@@ -54,20 +55,27 @@ class CheckContracts extends Command
         }
 
         // Procesar contratos según el día actual
-        if ($today->day == $cutoffDay) {
-          //  $this->info('Procesando contratos para el día de corte.');
+        if ($today->day == $cutoffDay) 
+        {
             $this->processContracts($today, $exemption, new ChargeService());
-        } elseif ($today->day == $equipmentDay) {
+        } elseif ($today->day == $equipmentDay) 
+        {
          //   $this->info('Procesando contratos para el día de cobro de equipo.');
             $this->processContracts($today, $exemption, new ChargeService(), $equipmentDay);
-        } else {
-            $this->info('Hoy no es un día configurado para procesos de contratos.');
+        }else 
+        {
+            $this->sanctionContracts();
+           // $this->info('Hoy no es un día configurado para procesos de contratos.');
         }
     }
 
     /**
      * Verifica si todas las variables necesarias están configuradas
      */
+    private function sanctionContracts(){
+
+    }
+
     private function areVariablesConfigured($cutoffDay, $exemption, $equipmentDay): bool
     {
         return $cutoffDay && $exemption && $equipmentDay;
@@ -79,10 +87,11 @@ class CheckContracts extends Command
     private function processContracts(Carbon $today, $exemption, ChargeService $service, $equipmentDay = null)
     {
         $controllerContract = new ContractController();
-
+        
         $contractTerms = $controllerContract->getContracts();
 
-        foreach ($contractTerms as $contract) {
+        foreach ($contractTerms as $contract) 
+        {
             $endDate = Carbon::parse($contract->end_date);
 
             $this->conditional($endDate, $contract, $today, $service, $equipmentDay);
@@ -95,15 +104,20 @@ class CheckContracts extends Command
         $endDate = $endDate->startOfDay();
         $today = $today->startOfDay();
         // Verificar si el contrato está en el mismo mes y año
+
+        $payment = new PaymentSanction();
+
+        $payment = PaymentSanction::where('contract_id', $contract->id)->first();
+
         if ($endDate->month ==($today->month) && $endDate->year == ($today->year)) {
             // Acciones según el día
 
           
             if ($endDate->day == $today->day + 2) {
-                $this->info("Envio de email en 2 días");
+               // $this->info("Envio de email en 2 días");
                 self::sendEmail($contract, "2");
             } elseif ($endDate->day == $today->day + 7) {
-                $this->info("Envio de email en 7 días");
+               // $this->info("Envio de email en 7 días");
                 self::sendEmail($contract, "7");
 
             } elseif ($endDate->day == ($today->day)) {

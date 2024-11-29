@@ -11,7 +11,7 @@ const props = defineProps({
     type: Array,
   },
   paypal: {
-    type: Array,
+    type: Object,
     default: null,
   },
   mercadopago: {
@@ -51,25 +51,48 @@ const formatDescription = (tipo) => {
 
 const calculateTotal = () => {
   totalAmount.value = cart.value.reduce((acc, item) => acc + item.amount, 0);
-  showPayment.value = totalAmount.value > 0;
+  if (totalAmount.value < 1){
+    showPayment.value = false ;
+  }else{
+    showPayment.value = true ;
+  }
 };
+
+
 
 const isInCart = (itemId, itemType) => {
   return cart.value.some(
     (item) => item.id === itemId && item.type === itemType
   );
 };
+const alerta = (message) => {
+  const toast = useToast();
 
+  toast(
+    {
+      component: BaseQuestion,
+      props: {
+        message: message,
+        textConfirm: "",
+      },
+    },
+    {
+      type: TYPE.ERROR,
+      position: POSITION.TOP_CENTER,
+      timeout: 10000,
+    }
+  );
+};
 const addContractToCart = (contract) => {
   const months = selectedMonthsPerContract.value[contract.id] || 0;
 
   if (months <= 0) {
-    alert("Por favor selecciona la cantidad de meses a pagar.");
+    alerta("Por favor selecciona la cantidad de meses a pagar.");
     return;
   }
 
   if (isInCart(contract.id, "contract")) {
-    alert("Este contrato ya ha sido agregado.");
+    alerta("Este contrato ya ha sido agregado.");
     return;
   }
 
@@ -87,7 +110,10 @@ const addContractToCart = (contract) => {
       cart.value.push({
         id: charge.id,
         type: "charge",
+        contractId: contract.id, // Asociar cargo al contrato
         description: formatDescription(charge.description),
+       // originDescription: charge.description
+       // date: charge.,
         amount: charge.amount,
       });
     }
@@ -96,8 +122,11 @@ const addContractToCart = (contract) => {
   calculateTotal();
 };
 
-const removeFromCart = (index) => {
-  cart.value.splice(index, 1);
+const removeFromCart = (contractId) => {
+  // Eliminar contrato y sus cargos asociados
+  cart.value = cart.value.filter(
+    (item) => !(item.id === contractId && item.type === "contract") && item.contractId !== contractId
+  );
   calculateTotal();
 };
 </script>
@@ -128,7 +157,7 @@ const removeFromCart = (index) => {
                     v-model="selectedMonthsPerContract[contract.id]"
                     class="border border-gray-400 p-1 rounded"
                   >
-                    <option value="0">--Seleccionar meses--</option>
+                  <option :value=null disabled selected>Selecciona una opción</option>
                     <option v-for="n in 12" :key="n" :value="n">
                       {{ n }} mes(es)
                     </option>
@@ -151,6 +180,7 @@ const removeFromCart = (index) => {
         </div>
 
         <!-- Carrito -->
+        
         <div class="bg-white shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Carrito</h3>
           <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
@@ -165,10 +195,10 @@ const removeFromCart = (index) => {
               <tr v-for="(item, index) in cart" :key="index">
                 <td class="border border-gray-300 p-2">{{ item.description }}</td>
                 <td class="border border-gray-300 p-2">{{ formatCurrency(item.amount) }}</td>
-                <td class="border border-gray-300 p-2">
+                <td class="border border-gray-300 p-2" v-if="item.type === 'contract'">
                   <button
                     class="bg-red-500 text-white px-3 py-1 rounded"
-                    @click="removeFromCart(index)"
+                    @click="removeFromCart(item.id)"
                   >
                     Eliminar
                   </button>
@@ -182,17 +212,12 @@ const removeFromCart = (index) => {
             </h4>
           </div>
         </div>
-
+        <div></div>
         <!-- Sección de Pago -->
         <div class="bg-gray-100 shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
-          <button
-            class="bg-green-500 text-white px-3 py-2 rounded w-full"
-            @click="() => (showPayment = true)"
-          >
-            Realizar Pago
-          </button>
           <div v-if="showPayment" class="mt-5">
+            {{ cart }}
             <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" />
           </div>
         </div>
@@ -200,6 +225,7 @@ const removeFromCart = (index) => {
     </template>
   </dashboard-base>
 </template>
+
 
 <style scoped>
 /* Contenedor principal */

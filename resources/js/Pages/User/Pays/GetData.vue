@@ -34,7 +34,8 @@ onMounted(() => {
   <div class="mt-5 w-full">
     <div class="mb-5 w-full">
     
-      <resources_vue_components_MercadoPagoButton v-if="mercadopago['active']"
+      <!-- <resources_vue_components_MercadoPagoButton v-if="mercadopago['active']" -->
+        <resources_vue_components_MercadoPagoButton
         :totalAmount="totalAmount"
         :allCart="cart"
       >
