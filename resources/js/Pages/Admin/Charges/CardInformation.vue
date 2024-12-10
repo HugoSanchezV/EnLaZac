@@ -10,6 +10,35 @@ const props = defineProps({
     },
 });
 
+const formatDescription = (tipo) => {
+  // Convertimos la fecha ISO a un objeto Date
+
+  switch (tipo){
+    case 'fuera-corte': 
+    return "No pagó antes del día de corte"
+    break;
+    
+    case 'recargo-mes': 
+    return "Recargo del mes"
+    break;
+    
+    case 'renta-dispositivo': 
+    return "Renta del dispositivo"
+    break;
+    
+    case 'instalacion-inicial': 
+    return "Instalación inicial"
+    break;
+    
+    case 'cambio-domicilio': 
+    return "Cambio de domicilio"
+    break;
+    
+    default:
+      return tipo;
+  }
+};
+
 const formattedDate = (dateCreation) => {
       // Convertimos la fecha ISO a un objeto Date
       const date = new Date(dateCreation);
@@ -63,7 +92,7 @@ const formattedDate = (dateCreation) => {
           <!-- Descripcion -->
           <div>
             <dt class="text-sm font-medium text-indigo-600">Descripcion</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ charge.description}}</dd>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{formatDescription( charge.description)}}</dd>
           </div>
 
           <!-- Cantidad -->

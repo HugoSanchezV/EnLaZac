@@ -13,6 +13,9 @@ const props = defineProps({
   contracts: Array,
 });
 
+const customDescription = ref('');
+
+
 const form = useForm({
   contract_id: "",
   description: "",
@@ -78,23 +81,49 @@ const paid = () =>{
 
 const submit = () => {
   if(paid()){
-    form.put(route("charges.update", { id: props.charge.id }));
+    if(form.description == 'custom')
+    { 
+     // alert(customDescription.value);
+      form.description = customDescription.value;
+    }
+
+    //alert(form.description);
+
+     form.put(route("charges.update", { id: props.charge.id }));
   }
 };
 
+
+const allowedDescriptions = [
+  'fuera-corte',
+  'recargo-mes',
+  'renta-dispositivo',
+  'instalacion-inicial',
+  'cambio-domicilio'
+];
+
 onMounted(() => {
   if (props.charge) {
+
+    if(!allowedDescriptions.includes(props.charge.description))
+    {
+      customDescription.value = props.charge.description;
+      form.description = 'custom';
+    }else{
+      form.description = props.charge.description || "";
+      customDescription.value = "";
+    }
     form.contract_id = props.charge.contract_id || "";
-    form.description = props.charge.description || "";
     form.amount = props.charge.amount || "0";
     form.paid = props.charge.paid || "";
     form.date_paid = props.charge.date_paid || "";
-  }
 
-  if(form.paid == true){
+    if(form.paid == true){
     document.getElementById('activated').checked = true;
+    }
   }
 });
+
 </script>
 
 
@@ -127,15 +156,29 @@ onMounted(() => {
 
       <div class="mt-4">
         <InputLabel for="description" value="Descripción" />
-        <textarea
-          id="description"
-          v-model="form.description"
-          type="text"
-          class="mt-1 block w-full"
-          required
-          autocomplete="description"
-          style="resize: none; border-radius: 1.5%;"
-        />
+        <select
+              v-model="form.description"
+              @change="handleDescriptionChange"
+              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          >
+              <option disabled value="">Selecciona la descripción</option>
+              <option value="fuera-corte">No pagó antes del día de corte</option>
+              <option value="recargo-mes">Recargo del mes</option>
+              <option value="renta-dispositivo">Renta del dispositivo</option>
+              <option value="instalacion-inicial">Instalación inicial</option>
+              <option value="cambio-domicilio">Cambio de domicilio</option>
+              <option value="custom">Otra descripción</option>
+          </select>
+
+          <!-- Campo de texto que aparece solo si se elige "Otra descripción" -->
+          <textarea
+              v-if="form.description === 'custom'"
+              id="description"
+              v-model="customDescription"
+              class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              placeholder="Escribe una descripción personalizada"
+              style="resize: none; border-radius: 1.5%;"
+          ></textarea>
         <InputError class="mt-2" :message="form.errors.description" />
       </div>
 
@@ -145,6 +188,7 @@ onMounted(() => {
             id="amount"
             v-model="form.amount"
             type="number"
+            min = "0"
             class="mt-1 block w-full"
             autofocus
             autocomplete="amount"

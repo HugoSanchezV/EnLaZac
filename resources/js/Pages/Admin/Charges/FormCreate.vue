@@ -79,7 +79,7 @@ const paid = () =>{
 
 const submit = () => {
   if(paid()){
-    if(form.description == 'custom'){ form.description == customDescription.value}
+    if(form.description == 'custom'){ form.description = customDescription.value}
 
     form.post(route("charges.store"));
   }
@@ -152,6 +152,7 @@ const submit = () => {
             id="amount"
             v-model="form.amount"
             type="number"
+            min="0"
             class="mt-1 block w-full"
             autofocus
             autocomplete="amount"

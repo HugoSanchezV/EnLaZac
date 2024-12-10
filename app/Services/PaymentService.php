@@ -6,6 +6,7 @@ use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ExtendContractController;
 use App\Http\Controllers\PaymentHistorieController;
+use App\Models\Charge;
 use App\Models\ExtendContract;
 use App\Models\PaymentHistorie;
 use Exception;
@@ -52,44 +53,48 @@ class PaymentService
         }
     }
 
-    public function updateCharge1($charges)
-    {
-        try {
-            $charge = new ChargeController();
-            foreach ($charges as $cha) {
-                $charge->updatePaid($cha['id']);
-                if ($cha[''] == '');
-            }
-        } catch (Exception $e) {
-            Log::info("Entro a excepcion");
-            return throw new Exception($e->getMessage());
-        }
-    }
+    // public function updateCharge1($charges)
+    // {
+    //     try {
+    //         $charge = new ChargeController();
+    //         foreach ($charges as $cha) {
+    //             $charge->updatePaid($cha['id']);
+    //             if ($cha[''] == '');
+    //         }
+    //     } catch (Exception $e) {
+    //         Log::info("Entro a excepcion");
+    //         return throw new Exception($e->getMessage());
+    //     }
+    // }
 
-    public function updateCharge($cha)
-    {
-        try {
-            $charge = new ChargeController();
-            $charge->updatePaid($cha['id']);
-        } catch (Exception $e) {
-            Log::info("Entro a excepcion");
-            return throw new Exception($e->getMessage());
-        }
-    }
+    // public function updateCharge($cha)
+    // {
+    //     try {
+    //         $charge = new ChargeController();
+    //         $charge->updatePaid($cha['id']);
+    //     } catch (Exception $e) {
+    //         Log::info("Entro a excepcion");
+    //         return throw new Exception($e->getMessage());
+    //     }
+    // }
 
     public function updateDataPayments($cart)
     {
         try {
+            $chargeController = new ChargeController();
             foreach ($cart as $item) {
                 if ($item["type"] === "contract") {
+                    // Actualizar el contrato
                     self::updateContract($item["contractId"], $item["months"]);
-                }else if ($item["type"] === "charge") {
-                    self::updateCharge($item);
+    
+                    // Consultar todos los cargos asociados al contrato
+                    $chargeController->paidCharge($item["contractId"]);
                 }
             }
         } catch (Exception $e) {
-            Log::info("ERROR al actualizar lso datos del pago " . $e->getMessage());
-            return throw new Exception("Error en update data payment " . $e->getMessage());
+            Log::info("ERROR al actualizar los datos del pago: " . $e->getMessage());
+            throw new Exception("Error en update data payment: " . $e->getMessage());
         }
     }
+
 }

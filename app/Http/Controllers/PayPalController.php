@@ -12,7 +12,7 @@ class PayPalController extends Controller
 {
     public function createOrder(Request $request)
     {
-        // Log::info('Este es el log[ '.$request->amount);
+        Log::info('Este es el log[ '.$request->amount);
         $paypalAccount = PaypalAccount::first();
 
         // Log::info("Live Client ID: " . $paypalAccount->live_client_id);
@@ -46,7 +46,7 @@ class PayPalController extends Controller
             
             $token = $paypalModule->getAccessToken();
 
-           // Log::error($paypalModule->getAccessToken());
+            Log::error($paypalModule->getAccessToken());
            //Log::info(json_encode($token));
 
             $paypalModule->setAccessToken($token);

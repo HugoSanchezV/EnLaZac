@@ -168,8 +168,7 @@ class ChargeController extends Controller
         $data  = [
             "q" => $request->q ?? null,
             "attribute" => $request->attribute ?? null,
-            "order" => $request->order ?? null,
-        ];
+            "order" => $request->order ?? null,];
         try {
             $charge = Charge::findOrFail($id);
             $charge->delete();
@@ -179,12 +178,35 @@ class ChargeController extends Controller
         }
     }
 
+    public function paidCharge($id)
+    {
+        $charges = Charge::where('contract_id',$id)->get();
+
+        $count = 0;
+        //3 registros
+        foreach($charges as $charge){
+            $count++;
+            if($count >= $charges->count()){
+                //Buscar el tipo de descripcion
+                if($charge->description == 'recargo-mes'){
+                    $controller = new PaymentSanctionController;
+                    $controller->fromPayment($id);
+                }
+            }
+            $charge->update([
+                'paid' => true,
+                'date_paid' => now(),]);
+            
+        }
+    }
+
     public function exportExcel()
     {
         try {
-            $query = Charge::with(['contract.plan']);
 
-            throw new Exception("hola");
+            $query = Charge::with(['contract.plan']);   
+            //dd($query);
+           // throw new Exception("hola");
             $headings = [
                 'ID',
                 'CONTRATO ID',

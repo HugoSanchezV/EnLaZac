@@ -67,4 +67,13 @@ class PaymentSanctionController extends Controller
         }
     }
 
+    public function fromPayment($id){
+        $payment = PaymentSanction::where('contract_id', $id)->first();
+
+        $payment->update([
+            'contract_id' => $id,
+            'status' => true
+        ]);
+    }
+
 }
