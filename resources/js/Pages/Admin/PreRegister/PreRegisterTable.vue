@@ -312,7 +312,7 @@ const getTag = (cellIndex) => {
               </Link>
 
               <div v-if="del">
-                <!-- <button
+                <button
                   @click="
                     destroy(row.id, {
                       searchQuery: this.searchQuery,
@@ -337,7 +337,7 @@ const getTag = (cellIndex) => {
                     />
                   </svg>
                   Eliminar
-                </button> -->
+                </button>
               </div>
             </div>
           </td>
