@@ -50,6 +50,12 @@ class ContractController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('inv_device_id', 'like', "%$search%")
+                    ->orWhereHas('inventorieDevice', function ($q) use ($search) {
+                        $q->where('mac_address', 'like', "%$search%");
+                    })
+                    ->orWhereHas('inventorieDevice.device.user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('plan_id', 'like', "%$search%")
                     ->orWhere('start_date', 'like', "%$search%")
                     ->orWhere('end_date', 'like', "%$search%")
@@ -502,7 +508,7 @@ class ContractController extends Controller
             $contract = Contract::findOrFail($id);
 
             $device = Device::where('device_id', $contract->inv_device_id)->get();
- 
+
             $deviceController = new DevicesController();
             $deviceController->removeConsumePlanFromDevice($device[0]);
 

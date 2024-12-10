@@ -23,16 +23,17 @@ class Device extends Model
         "disabled"
     ];
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
-    public function inventorieDevice() {
+    public function inventorieDevice()
+    {
         return $this->belongsTo(InventorieDevice::class, 'device_id');
     }
 
-    public function router() {
+    public function router()
+    {
         return $this->belongsTo(Router::class);
     }
-
-
 }
