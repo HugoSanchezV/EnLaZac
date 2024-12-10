@@ -75,8 +75,8 @@ class UserController extends Controller
         //     $query->orderBy('id', 'asc');
         // }
         $order = 'asc';
-        if ($request->order && isNull($request->order)) {
-            $order = $request->order;
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
         $query->orderBy(
             $request->attribute ?: 'id',
@@ -114,7 +114,7 @@ class UserController extends Controller
 
     public function create()
     {
-        return Inertia::render( $this->path . '/Users/Create', [
+        return Inertia::render($this->path . '/Users/Create', [
             'user' => Auth::user(),
         ]);
     }
@@ -226,7 +226,7 @@ class UserController extends Controller
         try {
 
             $user = User::findOrFail($id);
-            return Inertia::render( $this->path . '/Users/Edit', [
+            return Inertia::render($this->path . '/Users/Edit', [
                 'user' => $user
             ]);
         } catch (Exception $e) {

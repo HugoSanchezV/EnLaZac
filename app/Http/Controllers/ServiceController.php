@@ -22,12 +22,15 @@ class ServiceController extends Controller
             });
         }
 
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        $order = 'asc';
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
-
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
+        
         $services = $query->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,

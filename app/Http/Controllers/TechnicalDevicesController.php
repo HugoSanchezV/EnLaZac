@@ -54,12 +54,14 @@ class TechnicalDevicesController extends Controller
         }
 
         // Ordenación
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        $order = 'asc';
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
-
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
         // Paginación
         $devices = $query->paginate(8)->through(function ($item) {
             return [

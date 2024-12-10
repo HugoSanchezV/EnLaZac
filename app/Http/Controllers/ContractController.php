@@ -62,8 +62,8 @@ class ContractController extends Controller
 
         // Ordenación
         $order = 'asc';
-        if ($request->order && isNull($request->order)) {
-            $order = $request->order;
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
         $query->orderBy(
             $request->attribute ?: 'id',
