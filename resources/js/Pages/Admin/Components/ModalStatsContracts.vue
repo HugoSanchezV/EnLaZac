@@ -14,15 +14,16 @@
               <h3 class="text-lg leading-6 font-medium text-gray-900 text-wrap">
                 {{ props.title }}
               </h3>
+
               <div>
                 <h1>Lista de Registros</h1>
-
+                <!-- {{ contracts }} -->
                 <!-- Lista de registros -->
                 <ul class="record-list">
                   <!-- Itera sobre los registros -->
                   <li v-for="(contract, index) in contracts" :key="contract.id" class="record-item">
                     <div class="record-info">
-                      <p><strong>{{ contract.id }}:</strong>  {{ contract.user.name }} </p>
+                      <p>ID: <strong>{{ contract.id }}</strong> |  Usuario: {{ contract.inventorie_device.device.user.name }} </p>
                     </div>
                     <!-- Botón Mostrar -->
                     <Link  :href="route('contracts.show', contract.id)"  class="show-button">Mostrar</Link>

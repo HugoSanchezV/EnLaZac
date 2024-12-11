@@ -4,7 +4,7 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import GetData from "./GetData.vue";
 import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = defineProps({
   contracts: {
@@ -18,12 +18,39 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  rent:{
+    type: Number,
+  }
 });
 
 const cart = ref([]);
 const totalAmount = ref(0);
 const showPayment = ref(false);
 const selectedMonthsPerContract = ref({});
+const selectedMonthsPerRent = ref({});
+// Lista de cargos individuales
+const availableCharges = ref([]);
+
+// Al inicializar el componente, extraemos los cargos individuales
+onMounted (()=> {
+
+  props.contracts.forEach((contract) => {
+    contract.charges.forEach((charge) => {
+      if (["instalacion-inicial", "cambio-domicilio"].includes(charge.description)) {
+        availableCharges.value.push({
+          id: charge.id,
+          type: "individual-charge",
+          contractId: contract.id,
+          description: (charge.description),
+          amount: charge.amount,
+        });
+      }
+    });
+  });
+
+
+
+});
 
 const formatCurrency = (value) => {
   return new Intl.NumberFormat("es-MX", {
@@ -34,12 +61,6 @@ const formatCurrency = (value) => {
 
 const formatDescription = (tipo) => {
   switch (tipo) {
-    case "fuera-corte":
-      return "No pagó antes del día de corte";
-    case "recargo-mes":
-      return "Recargo del mes";
-    case "renta-dispositivo":
-      return "Renta del dispositivo";
     case "instalacion-inicial":
       return "Instalación inicial";
     case "cambio-domicilio":
@@ -51,23 +72,18 @@ const formatDescription = (tipo) => {
 
 const calculateTotal = () => {
   totalAmount.value = cart.value.reduce((acc, item) => acc + item.amount, 0);
-  if (totalAmount.value < 1){
-    showPayment.value = false ;
-  }else{
-    showPayment.value = true ;
-  }
+  showPayment.value = totalAmount.value > 0;
 };
-
-
 
 const isInCart = (itemId, itemType) => {
   return cart.value.some(
     (item) => item.id === itemId && item.type === itemType
   );
 };
+
+
 const alerta = (message) => {
   const toast = useToast();
-
   toast(
     {
       component: BaseQuestion,
@@ -83,6 +99,61 @@ const alerta = (message) => {
     }
   );
 };
+
+const addChargeToCart = (charge) => {
+  if (isInCart(charge.id, "individual-charge")) {
+    alerta("Este cargo ya ha sido agregado al carrito.");
+    return;
+  }
+
+  cart.value.push({
+    id: charge.id,
+    type: "individual-charge",
+    description: charge.description,
+    amount: charge.amount,
+  });
+
+  calculateTotal();
+};
+
+const addContractToRent = (contract) => {
+  const months = selectedMonthsPerRent.value[contract.id] || 0;
+
+  if (months <= 0) {
+    alerta("Por favor selecciona la cantidad de meses a pagar.");
+    return;
+  }
+
+  if (isInCart(contract.id, "rent")) {
+    alerta("Este contrato ya ha sido agregado.");
+    return;
+  }
+
+  const amount = props.rent;
+  cart.value.push({
+    id: contract.id,
+    type: "rent",
+    description: `Renta del contrato #${contract.id} por ${months} mes(es))`,
+    months: months,
+    amount,
+  });
+
+  // Agregar cargos no individuales relacionados con el contrato
+  // contract.charges.forEach((charge) => {
+  //   if (!isInCart(charge.id, "charge") && !["instalacion-inicial", "cambio-domicilio"].includes(charge.description)) {
+  //     cart.value.push({
+  //       id: charge.id,
+  //       type: "charge",
+  //       contractId: contract.id,
+  //       description: (charge.description),
+  //       amount: charge.amount,
+  //     });
+  //   }
+  // });
+
+  calculateTotal();
+};
+
 const addContractToCart = (contract) => {
   const months = selectedMonthsPerContract.value[contract.id] || 0;
 
@@ -100,20 +171,19 @@ const addContractToCart = (contract) => {
   cart.value.push({
     id: contract.id,
     type: "contract",
-    description: `Contrato #${contract.id} (${months} mes(es))`,
+    months: months,
+    description: `Contrato #${contract.id} por ${months} mes(es)`,
     amount,
   });
 
-  // Agregar cargos automáticamente
+  // Agregar cargos no individuales relacionados con el contrato
   contract.charges.forEach((charge) => {
-    if (!isInCart(charge.id, "charge")) {
+    if (!isInCart(charge.id, "charge") && !["instalacion-inicial", "cambio-domicilio"].includes(charge.description)) {
       cart.value.push({
         id: charge.id,
         type: "charge",
-        contractId: contract.id, // Asociar cargo al contrato
-        description: formatDescription(charge.description),
-       // originDescription: charge.description
-       // date: charge.,
+        contractId: contract.id,
+        description: (charge.description),
         amount: charge.amount,
       });
     }
@@ -122,19 +192,29 @@ const addContractToCart = (contract) => {
   calculateTotal();
 };
 
-const removeFromCart = (contractId) => {
+const setButton = (type) =>{
+  return (type == 'charge')? false : true;
+}
+
+const removeFromCart = (contractId, type) => {
   // Eliminar contrato y sus cargos asociados
-  cart.value = cart.value.filter(
-    (item) => !(item.id === contractId && item.type === "contract") && item.contractId !== contractId
-  );
+  if(type == 'contract'){
+    cart.value = cart.value.filter(
+      (item) => !(item.id === contractId && item.type === "contract") && item.contractId !== contractId
+    );
+  }else{
+    cart.value = cart.value.filter((item) => item.id !== contractId);
+  }
   calculateTotal();
 };
+
 </script>
+
 
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:content>
-      <div class="m-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div class="m-5 grid grid-cols-1 gap-5">
         <!-- Tabla de contratos -->
         <div class="bg-white shadow rounded-lg p-5 col-span-2">
           <h3 class="text-lg font-bold mb-3">Contratos del Usuario</h3>
@@ -145,6 +225,8 @@ const removeFromCart = (contractId) => {
                 <th class="border border-gray-300 p-2">Fecha de Fin</th>
                 <th class="border border-gray-300 p-2">Precio</th>
                 <th class="border border-gray-300 p-2">Acción</th>
+                <th class="border border-gray-300 p-2">Renta del dispositivo</th>
+            
               </tr>
             </thead>
             <tbody>
@@ -152,12 +234,13 @@ const removeFromCart = (contractId) => {
                 <td class="border border-gray-300 p-2">{{ contract.id }}</td>
                 <td class="border border-gray-300 p-2">{{ contract.end_date }}</td>
                 <td class="border border-gray-300 p-2">{{ formatCurrency(contract.plan.price) }}</td>
+                
                 <td class="border border-gray-300 p-2 flex items-center gap-2">
                   <select
                     v-model="selectedMonthsPerContract[contract.id]"
                     class="border border-gray-400 p-1 rounded"
                   >
-                  <option :value=null disabled selected>Selecciona una opción</option>
+                    <option :value=null disabled selected>Selecciona una opción</option>
                     <option v-for="n in 12" :key="n" :value="n">
                       {{ n }} mes(es)
                     </option>
@@ -173,14 +256,68 @@ const removeFromCart = (contractId) => {
                         : "Agregar al carrito"
                     }}
                   </button>
+                  
                 </td>
+                <td class="border border-gray-300 p-2 items-center">
+                  <div class="flex flex-col gap-2">
+
+                    <select
+                      v-model="selectedMonthsPerRent[contract.id]"
+                      class="border border-gray-400 p-1 rounded"
+                    >
+                      <option :value=null disabled selected>Selecciona una opción</option>
+                      <option v-for="n in 12" :key="n" :value="n">
+                        {{ n }} mes(es)
+                      </option>
+                    </select>
+                    <button
+                      class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+                      :disabled="isInCart(contract.id, 'contract')"
+                      @click="addContractToRent(contract)"
+                    >
+                      {{
+                        isInCart(contract.id, 'contract')
+                          ? "Ya agregado"
+                          : "Agregar al carrito"
+                      }}
+                    </button>
+                  </div>
+                </td>
+            
               </tr>
             </tbody>
           </table>
         </div>
 
+        <!-- Tabla de cargos individuales -->
+        <div class="bg-white shadow rounded-lg p-5">
+          <h3 class="text-lg font-bold mb-3">Cargos Disponibles</h3>
+          <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+            <thead>
+              <tr>
+                <th class="border border-gray-300 p-2">Descripción</th>
+                <th class="border border-gray-300 p-2">Monto</th>
+                <th class="border border-gray-300 p-2">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="charge in availableCharges" :key="charge.id">
+                <td class="border border-gray-300 p-2">{{ formatDescription(charge.description) }}</td>
+                <td class="border border-gray-300 p-2">{{ formatCurrency(charge.amount) }}</td>
+                <td class="border border-gray-300 p-2">
+                  <button
+                    class="bg-green-500 text-white px-3 py-1 rounded"
+                    @click="addChargeToCart(charge)"
+                  >
+                    Agregar al carrito
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div></div>
         <!-- Carrito -->
-        
         <div class="bg-white shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Carrito</h3>
           <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
@@ -193,12 +330,13 @@ const removeFromCart = (contractId) => {
             </thead>
             <tbody>
               <tr v-for="(item, index) in cart" :key="index">
-                <td class="border border-gray-300 p-2">{{ item.description }}</td>
+                <td class="border border-gray-300 p-2">{{ formatDescription(item.description) }}</td>
                 <td class="border border-gray-300 p-2">{{ formatCurrency(item.amount) }}</td>
-                <td class="border border-gray-300 p-2" v-if="item.type === 'contract'">
+                <td class="border border-gray-300 p-2">
                   <button
+                    v-if="setButton(item.type)"
                     class="bg-red-500 text-white px-3 py-1 rounded"
-                    @click="removeFromCart(item.id)"
+                    @click="removeFromCart(item.id, item.type)"
                   >
                     Eliminar
                   </button>
@@ -206,6 +344,7 @@ const removeFromCart = (contractId) => {
               </tr>
             </tbody>
           </table>
+          
           <div class="text-right mt-5">
             <h4 class="text-lg font-bold">
               Total a pagar: {{ formatCurrency(totalAmount) }}
@@ -213,18 +352,19 @@ const removeFromCart = (contractId) => {
           </div>
         </div>
         <div></div>
-        <!-- Sección de Pago -->
-        <div class="bg-gray-100 shadow rounded-lg p-5">
-          <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
-          <div v-if="showPayment" class="mt-5">
-            {{ cart }}
-            <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" />
-          </div>
+         <!-- Sección de Pago -->
+         <div class="bg-gray-100 shadow rounded-lg p-5">
+            <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
+            <div v-if="showPayment" class="mt-5">
+              <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" />
+            </div>
         </div>
       </div>
     </template>
   </dashboard-base>
 </template>
+
+
 
 
 <style scoped>

@@ -6,6 +6,7 @@ use App\Http\Requests\PaymentSanction\UpdatePaymentSanctionRequest;
 use App\Models\PaymentSanction;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PaymentSanctionController extends Controller
 {
@@ -74,6 +75,14 @@ class PaymentSanctionController extends Controller
             'contract_id' => $id,
             'status' => true
         ]);
+    }
+
+    public function getSanction(){
+        try{
+            return PaymentSanction::with('contract')->where('status', true)->get();
+        }catch(Exception $e){
+            Log::error("Error en getSanction -> ".$e);
+        }
     }
 
 }

@@ -33,13 +33,13 @@ class DevicesController extends Controller
 {
     protected DeviceService $deviceService;
     protected $path = 'Admin';
-    public function __construct()
-    {
-        $this->deviceService = new DeviceService();
-        if (Auth::user()->admin == 2) {
-            $this->path = 'Coordi';
-        }
-    }
+    // public function __construct()
+    // {
+    //     $this->deviceService = new DeviceService();
+    //     if (Auth::user()->admin == 2) {
+    //         $this->path = 'Coordi';
+    //     }
+    // }
 
     public function index(Request $request)
     {
@@ -623,11 +623,10 @@ class DevicesController extends Controller
 
     public function disconectUser(Contract $contract)
     {
-
         try {
-            $inv_device = InventorieDevice::with('device')->where('inv_device_id', $contract->inv_device_id)->first();
+            $inv_device = InventorieDevice::with('device')->findOrFail($contract->inv_device_id);
 
-            $devices = $inv_device->device->id;
+            $devices = Device::findOrFail($inv_device->device->id);
 
             if ($devices) {
                 // foreach($devices  as $device)
@@ -643,7 +642,28 @@ class DevicesController extends Controller
             Log::error($e);
         }
     }
+    public function conectUser(Contract $contract)
+    {
+        try {
+            $inv_device = InventorieDevice::with('device')->where('inv_device_id', $contract->inv_device_id)->first();
 
+            $devices = Device::findOrFail($inv_device->device->id);
+
+            if ($devices) {
+                // foreach($devices  as $device)
+                // {
+                if ($devices->disabled == 1) {
+                    $devices->disabled = 0;
+
+                    $this->setDeviceStatusContrato($devices);
+                }
+                // }
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+        }
+    }
+    
     public function setDeviceStatusContrato(Device $device)
     {
         $device = Device::findOrFail($device->id);

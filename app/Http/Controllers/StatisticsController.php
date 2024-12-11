@@ -120,6 +120,8 @@ class StatisticsController extends Controller
         $newTickets = self::currentTickets();
         $userCount = self::userCount();
 
+        //dd($activeContract);
+
         $trafficData = self::conectar();
 
         if (empty($trafficData)) {
@@ -224,7 +226,7 @@ class StatisticsController extends Controller
     public function store() {}
     public function activeContract()
     {
-        return Contract::where('active', '1')->get();
+        return Contract::with('inventorieDevice.device.user')->where('active', '1')->get();
     }
 
     public function userCount()

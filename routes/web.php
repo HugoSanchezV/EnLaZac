@@ -145,7 +145,7 @@ Route::middleware([
         Route::get('/installation',                     [InstallationController::class, 'index'])->name('installation');
         Route::get('/installation/create',              [InstallationController::class, 'create'])->name('installation.create');
         Route::get('/installation/show/{id}',           [InstallationController::class, 'show'])->name('installation.show');
-        Route::post('/installation/store',              [InstallationController::class, 'store'])->name('installation.store');
+        Route::post('/installation/store/{confirmacion}',              [InstallationController::class, 'store'])->name('installation.store');
         Route::get('/installation/edit/{id}',           [InstallationController::class, 'edit'])->name('installation.edit');
         Route::put('/installation/update/{id}',         [InstallationController::class, 'update'])->name('installation.update');
 
@@ -222,7 +222,7 @@ Route::middleware([
         //
         Route::get('/routers/ping/{id}',     [RouterController::class, 'sendPing'])->name('routers.ping');
         //-- Automatización del ping para routers
-        Route::put('/routers/scheduled/ping/{id}',     [ScheduledTaskController::class, 'toggleTask'])->name('routers.scheduled.ping');
+        Route::put('/routers/scheduled/ping/{task}',     [ScheduledTaskController::class, 'toggleTask'])->name('routers.scheduled.ping');
         //-- Historial de los pings
         Route::get('/pings',                  [PingController::class, 'index'])->name('pings');
         Route::delete('/pings/delete/{device}',          [PingController::class, 'destroy'])->name('pings.destroy');

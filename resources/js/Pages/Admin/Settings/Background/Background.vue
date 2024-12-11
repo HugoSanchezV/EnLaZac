@@ -43,7 +43,7 @@ const props = defineProps({
             </div>
           </Link>
         </div>
-        <div class="w-full">
+        <!-- <div class="w-full">
           <Link
             :href="
               route('settings.background.edit', (task = 'check-contracts'))
@@ -59,7 +59,7 @@ const props = defineProps({
               <span>Verificación de contrato</span>
             </div>
           </Link>
-        </div>
+        </div> -->
         <div class="w-full">
           <Link
             :href="route('settings.background.edit', (task = 'device-stats'))"

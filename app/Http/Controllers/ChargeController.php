@@ -120,6 +120,11 @@ class ChargeController extends Controller
 
         $charge->save();
     }
+    public function installationCharge($type, $contract_id){
+        Charge::create([
+            'contract_id'
+        ]);
+    }
     public function store_schedule(Charge $request)
     {
 
@@ -178,9 +183,20 @@ class ChargeController extends Controller
         }
     }
 
+    public function paidInstallation($id)
+    {
+        $charge = Charge::findOrFail($id);
+
+        $charge->update([
+            'paid' => true,
+            'date_paid' => now(),]);
+
+    }
     public function paidCharge($id)
     {
-        $charges = Charge::where('contract_id',$id)->get();
+        $charges = Charge::where('contract_id', $id)
+        ->whereNotIn('description', ['cambio-domicilio', 'instalacion-inicial'])
+        ->get();
 
         $count = 0;
         //3 registros
@@ -200,6 +216,9 @@ class ChargeController extends Controller
         }
     }
 
+    public function paidRent(){
+        
+    }
     public function exportExcel()
     {
         try {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Charge;
 use App\Models\Contract;
 use App\Models\Device;
+use App\Models\Interest;
 use App\Models\MercadoPagoSetting;
 use App\Models\PaypalAccount;
 use App\Models\Plan;
@@ -27,6 +28,8 @@ class PayController extends Controller
         $contracts = null;
         // Obtener todos los contratos del cliente
         try {
+            $rent = Interest::sum('amount');
+
             $devices = Device::with(['inventorieDevice.contract'])->where('user_id', $userId)->get();
 
             if ($devices->count() > 0) {
@@ -67,11 +70,14 @@ class PayController extends Controller
             $paypal = PaypalAccount::first();
             $mercadopago = MercadoPagoSetting::select('active')->first();
             // Retornar la vista con los datos necesarios
+
+         //   dd($rent);
             return Inertia::render('User/Pays/Pays', [
                // 'charges' => $charges,
                 'contracts' => $contracts,
                 'paypal' => $paypal,
                 'mercadopago' => $mercadopago,
+                'rent' => $rent,
             ]);
         } catch (Exception $e) {
            dd($e);

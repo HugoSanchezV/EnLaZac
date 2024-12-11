@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\ExtendContractController;
 use App\Http\Controllers\PaymentHistorieController;
 use App\Models\Charge;
+use App\Models\Contract;
 use App\Models\ExtendContract;
 use App\Models\PaymentHistorie;
 use Exception;
@@ -38,15 +40,26 @@ class PaymentService
         }
     }
 
-    public function updateContract($id, $months)
+    public function updateContract($id, $months, $isRent)
     {
         try {
             $controller = new ContractController();
             $controllerExtend = new ExtendContractController();
-
+            $controllerDevice = new DevicesController();
+            $contract = Contract::findOrFail($id);
 
             $controllerExtend->shutDownExtend($id);
             $controller->updateMonths($months, $id);
+
+
+
+            if(!$isRent){
+                Log::info("SE VA A CONECTAR: ".$isRent);
+                $controllerDevice->conectUser($contract);
+            }else{
+                Log::info("SE VA A DESCONECTAR: ".$isRent);
+                $controllerDevice->disconectUser($contract);
+            }
         } catch (Exception $e) {
             Log::info("Entro a excepcion en Contract PAYMENTSERVICE");
             return throw new Exception($e->getMessage());
@@ -85,10 +98,16 @@ class PaymentService
             foreach ($cart as $item) {
                 if ($item["type"] === "contract") {
                     // Actualizar el contrato
-                    self::updateContract($item["contractId"], $item["months"]);
+                    self::updateContract($item["contractId"], $item["months"], false);
     
                     // Consultar todos los cargos asociados al contrato
                     $chargeController->paidCharge($item["contractId"]);
+                }else if($item["type"] === "individual-charge"){
+
+                    $chargeController->paidInstallation($item["id"]);
+                }else if($item["type"] === "rent"){
+
+                    self::updateContract($item["id"], $item["months"], true);
                 }
             }
         } catch (Exception $e) {

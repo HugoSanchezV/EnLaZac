@@ -142,7 +142,7 @@ export default {
       }
 
       if (this.attribute === "dispositivo") {
-        this.attribute = "device_id";
+        this.attribute = "inv_device_id";
       }
       if (this.attribute === "usuario") {
         this.attribute = "user_id";

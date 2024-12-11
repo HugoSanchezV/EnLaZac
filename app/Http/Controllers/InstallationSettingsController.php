@@ -17,17 +17,57 @@ class InstallationSettingsController extends Controller
 {
     public function index(Request $request)
     {
-        $query = InstallationSetting::query();
+        try{
+            $query = InstallationSetting::query();
+            if ($request->has('q')) {
+                $search = $request->input('q');
+                $query->where(function ($q) use ($search) {
+                    $q->where('id', 'like', "%$search%")
+                        ->orWhere('installation_id', 'like', "%$search%")
+                        ->orWhere('exemption_months', 'like', "%$search%");
+                    // Puedes agregar más campos si es necesario
+                });
+            }
+
+            // Ordenación
+            $order = 'asc';
+            if ($request->order && isNull($request->order)) {
+                $order = $request->order;
+            }
+            $query->orderBy(
+                $request->attribute ?: 'id',
+                $order
+            );
 
 
-        if ($request->has('q')) {
-            $search = $request->input('q');
-            $query->where(function ($q) use ($search) {
-                $q->where('id', 'like', "%$search%")
-                    ->orWhere('installation_id', 'like', "%$search%")
-                    ->orWhere('exemption_months', 'like', "%$search%");
-                // Puedes agregar más campos si es necesario
+            $installationSt = $query->with('installation.contract.inventorieDevice.device.user')->latest()->paginate(8)->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    //'installation_id' => $item->installation_id,
+                    'installation_id' => $item->installation->contract->inventorieDevice->device->user->name,
+                    'exemption_months' => $item->exemption_months,
+
+                ];
             });
+
+            $totalInstallationStCount = InstallationSetting::count();
+
+            return Inertia::render('Admin/Settings/InstallationSettings/InstallationSettings', [
+                'installationSettings' => $installationSt,
+                'pagination' => [
+                    'links' => $installationSt->links()->elements[0],
+                    'next_page_url' => $installationSt->nextPageUrl(),
+                    'prev_page_url' => $installationSt->previousPageUrl(),
+                    'per_page' => $installationSt->perPage(),
+                    'total' => $installationSt->total(),
+                ],
+                'success' => session('success') ?? null,
+                'error' => session('error') ?? null,
+                'totalInstallationSettingsCount' => $totalInstallationStCount
+            ]);
+        }catch(Exception $e){
+            return redirect()->back()->with('error', 'Error al mostrar las instalaciones');
+
         }
 
         // Ordenación
@@ -66,6 +106,7 @@ class InstallationSettingsController extends Controller
             'error' => session('error') ?? null,
             'totalInstallationSettingsCount' => $totalInstallationStCount
         ]);
+        
     }
     public function editFromInstallation($id)
     {

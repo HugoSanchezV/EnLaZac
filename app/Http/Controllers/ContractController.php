@@ -44,7 +44,8 @@ class ContractController extends Controller
     public function index(Request $request)
     {
         $query = Contract::query();
-
+        ;
+        
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
@@ -66,6 +67,14 @@ class ContractController extends Controller
             });
         }
 
+        if ($request->has('active')) {
+            $query->where('active', $request->input('active'));
+        }
+
+        if ($request->has('expired') && $request->input('expired') == 'true') {
+            $query->where('active', '=', '1')
+                  ->where('end_date', '<', Carbon::now());
+        }
         // Ordenación
         $order = 'asc';
         if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
@@ -478,7 +487,7 @@ class ContractController extends Controller
     {
         try {
             $contract = Contract::findOrFail($id);
-            $today = Carbon::today();
+            //  $today = Carbon::today();
 
             //if($today->day >  ) 
             // Convertir `end_date` a una instancia de Carbon para manipular la fecha

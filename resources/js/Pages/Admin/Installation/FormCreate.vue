@@ -30,14 +30,34 @@ const form = useForm({
   assigned_date: "",
 });
 
-const warningMessage = () => {
+const createChargeMessage = () => {
   const toast = useToast();
-  toast({
+
+  toast(
+    {
       component: BaseQuestion,
       props: {
-        message: "La fecha asignada es menor a la fecha de inicio del contrato",
-      },},{
-      type: TYPE.WARNING,
+        message: "¿Generar cargo de cambio de domicilio?",
+        accept: true,
+        cancel: true,
+        textConfirm: "Sí",
+        textCancel: "No",
+      },
+
+      listeners: {
+        accept: () => {
+          const confirmacion = true;
+          form.post(route("installation.store", {confirmacion}));
+        },
+        cancel: () => {
+          const confirmacion = false;
+          form.post(route("installation.store", {confirmacion}));
+        }
+      },
+    },
+
+    {
+      type: TYPE.SUCCESS,
       position: POSITION.TOP_CENTER,
       timeout: 10000,
     }
@@ -45,25 +65,20 @@ const warningMessage = () => {
 };
 
 const submit = () => {
+  const hola = false;
   // if(new Date(form.assigned_date) > new Date(getAssignedDateForDescriptionOne())){
-    form.post(route("installation.store"));
-  // }else{ warningMessage();}};
-}
-// function getAssignedDateForDescriptionOne() {
-//   // Buscar el contrato en el array de contratos
-//   if()
-//   {
+  
+  if(form.description == 2)
+  {
+    createChargeMessage();
+  }else{
+    const confirmacion = false;
+    form.post(route("installation.store", {confirmacion}));
+  }
     
-//   }
-//   const contract = props.contracts.find(c => c.id === form.contract_id);
-//   props.contracts.forEach(contract => {
-//   //console.log("Contract ID:", contract.id);
-//   });
-//   //alert(installation.assigned_date);
-//   // Devolver la fecha de instalación si existe
+}
 
-//   return contract.start_date;
-// }
+
 </script>
 
 <template>

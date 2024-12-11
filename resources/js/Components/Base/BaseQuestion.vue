@@ -4,8 +4,8 @@
       {{ message }}
     </div>
 
-    <div class="flex justify-around" @click="$emit('cancel')">
-      <button v-if="cancel">
+    <div class="flex justify-around">
+      <button v-if="cancel" @click="$emit('cancel')">
         {{ textCancel }}
       </button>
 

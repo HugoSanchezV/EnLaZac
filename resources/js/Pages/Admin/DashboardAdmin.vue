@@ -173,8 +173,10 @@ useGeneralNotifications();
           <slot name="content">
             <div class="frame-stats flex gap-4 w-full">
                <div class="frame">
-                  <button
-                  @click="openMorrososModal()">
+                  <!-- <button
+                  @click="openMorrososModal()"> -->
+                  <Link :href="route('contracts', { expired: 'true' })">
+                  
                     <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
                         <div class="h-12">
                           <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">person</span>
@@ -187,8 +189,9 @@ useGeneralNotifications();
                             <p class="mt-2  text-base font-medium text-gray-700">Usuarios deudores (Morrosos)</p>
                         </div>
                     </div>
-                  </button>
-                  <modal-morrosos
+                  </Link>
+                  <!-- </button> -->
+                  <!-- <modal-morrosos
                     :show="isModalMorrososOpen"
                     @close="closeMorrososModal()"
                     @selectData="confirmSelectionMorrosos($event)"
@@ -198,12 +201,14 @@ useGeneralNotifications();
                     "
                     item-text="mac_address"
                   >
-                </modal-morrosos>
+                </modal-morrosos> -->
                  
                 </div>
                 <div class="frame">
-                  <button
-                  @click="openContractsModal()">
+                  <!-- <button
+                  @click="openContractsModal()"> -->
+                  <Link
+                  :href="route('contracts', { active: 1 })">
                     <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
                         <div class="h-12">
                           <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">contract</span>
@@ -216,8 +221,9 @@ useGeneralNotifications();
                             <p class="mt-2 font-sans text-base font-medium text-gray-700">Contratos activos</p>
                         </div>
                     </div>
-                  </button>
-                  <modal-contracts
+                  </Link>
+                  <!-- </button> -->
+                  <!-- <modal-contracts
                     :show="isModalContractsOpen"
                     @close="closeContractsModal()"
                     @selectData="confirmSelectionContracts($event)"
@@ -227,28 +233,33 @@ useGeneralNotifications();
                     "
                     item-text="mac_address"
                   >
-                </modal-contracts>
+                </modal-contracts> -->
                   
                 </div>
 
                 <div class="frame">
-                  <button
-                  @click="openTicketsModal()">
-                    <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
-                        <div class="h-12">
-                          <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">confirmation_number</span>
-                        </div>
-                        <div class="my-2">
-                            <h2 class="text-4xl font-bold"><span>{{ new_tickets.length }}</span></h2>
-                        </div>
+                  <!-- <button
+                  @click="openTicketsModal()"> -->
+                  <Link
+                    :href="route('tickets', { current: 'true' })"
+                  >
+                  
+                  <div class="frame-content w-fit rounded-[25px] bg-white p-8 aspect">
+                      <div class="h-12">
+                        <span class="material-symbols-outlined text-blue-500" style="font-size: 2rem;">confirmation_number</span>
+                      </div>
+                      <div class="my-2">
+                          <h2 class="text-4xl font-bold"><span>{{ new_tickets.length }}</span></h2>
+                      </div>
 
-                        <div>
-                            <p class="mt-2 font-sans text-base font-medium text-gray-700">Tickets nuevos</p>
-                        </div>
-                    </div>
-                  </button>
+                      <div>
+                          <p class="mt-2 font-sans text-base font-medium text-gray-700">Tickets nuevos</p>
+                      </div>
+                  </div>
+                  </Link>
+                  <!-- </button> -->
 
-                  <modal-tickets
+                  <!-- <modal-tickets
                     :show="isModalTicketsOpen"
                     @close="closeTicketsModal()"
                     @selectData="confirmSelectionTickets($event)"
@@ -259,7 +270,7 @@ useGeneralNotifications();
                     "
                     item-text="mac_address"
                   >
-                </modal-tickets>
+                </modal-tickets> -->
                 </div>
                 <div class="frame">
                   <Link

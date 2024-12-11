@@ -71,4 +71,19 @@ class ChargeService
         $controller->store_schedule($cargo);
 
     }
+
+    public function creataChargeAddressChange(Contract $contract)
+    {
+
+        $controller = new ChargeController();
+        $cargo = new Charge();
+        $community = RuralCommunity::findOrFail($contract->rural_community_id);
+
+        $cargo->contract_id = $contract->id;
+        $cargo->description = "cambio-domicilio";
+        $cargo->amount = $community->installation_cost;
+        $cargo->paid = false;
+
+        $controller->store_schedule($cargo);
+    }
 }
