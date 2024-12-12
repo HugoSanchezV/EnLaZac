@@ -5,19 +5,15 @@ namespace App\Console\Commands;
 use App\Events\ContractWarningEvent;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\ContractController;
-use App\Http\Controllers\InstallationSettingsController;
+use App\Http\Controllers\PaymentSanctionController;
 use App\Http\Controllers\ServiceVariablesController;
 use App\Services\ChargeService;
 use Illuminate\Console\Command;
 use Carbon\Carbon;
 use App\Models\Contract;
-use App\Models\Device;
-use App\Models\Charge;
-use App\Models\EquipmentChargeDay;
-use App\Models\ExemptionPeriod;
-use App\Models\InventorieDevice;
 use App\Models\PaymentSanction;
 use Exception;
+use MercadoPago\Resources\Payment\Card;
 
 class CheckContracts extends Command
 {
@@ -62,10 +58,9 @@ class CheckContracts extends Command
         {
          //   $this->info('Procesando contratos para el día de cobro de equipo.');
             $this->processContracts($today, $exemption, new ChargeService(), $equipmentDay);
-        }else 
+        }else if($today->day == '1') 
         {
             $this->sanctionContracts();
-           // $this->info('Hoy no es un día configurado para procesos de contratos.');
         }
     }
 
@@ -74,6 +69,22 @@ class CheckContracts extends Command
      */
     private function sanctionContracts(){
 
+        $controllerSanction = new PaymentSanctionController();
+        $sanctions = $controllerSanction->getSanction();
+
+        foreach($sanctions as $sanction){
+            self::disconectUser($sanction->contract); // Cortar internet
+        }
+    }
+    private function applySanction($id){
+        
+        $contract = Contract::findOrFail($id);
+        $day = Carbon::parse($contract->end_date);
+        if($day == '1'){
+            
+        }
+
+        
     }
 
     private function areVariablesConfigured($cutoffDay, $exemption, $equipmentDay): bool
@@ -111,7 +122,6 @@ class CheckContracts extends Command
 
         if ($endDate->month ==($today->month) && $endDate->year == ($today->year)) {
             // Acciones según el día
-
           
             if ($endDate->day == $today->day + 2) {
                // $this->info("Envio de email en 2 días");
@@ -129,6 +139,7 @@ class CheckContracts extends Command
             } elseif ($today->day === $equipmentDay)  {
                 $this->info("Segundo cargo con todos el end day actual");
                 self::Extra_charge($service, $contract); // Generar cargo
+                self::setSanction($contract->id);
             }
         }
         // Verificar si el contrato está en el pasado o en un mes anterior
@@ -145,6 +156,11 @@ class CheckContracts extends Command
                 self::Extra_charge($service, $contract); // Generar cargo
             }
         }
+    }
+    private function setSanction($id)
+    {
+        $controller = new PaymentSanctionController();
+        $controller->fromPayment($id);
     }
 
     // private function isEquipmentDaySet($equipmentDay): bool

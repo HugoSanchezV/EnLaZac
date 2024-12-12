@@ -8,6 +8,7 @@ use App\Http\Requests\Installation\UpdateInstallationRequest;
 use App\Models\Contract;
 use App\Models\Installation;
 use App\Models\InstallationSetting;
+use App\Services\ChargeService;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Exception;
@@ -135,12 +136,14 @@ class InstallationController extends Controller
     {
         $contracts = Contract::with('inventorieDevice.device.user')->get();
 
+
         return Inertia::render('Admin/Installation/Create', [
             'contracts' => $contracts
         ]);
     }
-    public function store(StoreInstallationRequest $request)
+    public function store(StoreInstallationRequest $request, $confirmacion)
     {
+      //  dd($confirmacion);
         try{
             $validatedData = $request->validated();
 
@@ -155,16 +158,30 @@ class InstallationController extends Controller
                 'installation_id' => $installation->id,
             ]);
 
+            if(($confirmacion == "true"))
+            {
+                if($installation->description == 2)
+                {self::createCharge($installation);}
+            }
+
             $this->storeEndDateContract($installation);
             return redirect()->route('installation')->with('success', 'La Instalación ha sido creado con éxito');
 
     
         }catch(Exception $e){
             dd($e);
-            return redirect()->route('installation')->with('error', 'Erro al crear la instalación');
+            return redirect()->route('installation')->with('error', 'Error al crear la instalación');
         }
     }
 
+    public function createCharge(Installation $installation)
+    {
+            $contract = Contract::findOrFail($installation->contract_id);
+            $service = new ChargeService();
+            $service->creataChargeAddressChange($contract);
+       // $controller = new ChargeController();
+       // $controller->installationCharge($request->type, $request->contract_id);
+    }
     public function destroy($id, Request $request)
     {
         $data = [

@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\TicketNotification;
 use App\Events\TicketEvent;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -63,6 +64,14 @@ class TicketController extends Controller
             $request->attribute ?: 'id',
             $order
         );
+
+        if ($request->has('current') && $request->input('current') == 'true') {
+            $query->whereBetween('created_at', [
+                Carbon::now()->startOfDay(),
+                Carbon::now()->endOfDay(),
+            ]);
+                // ->where('end_date', '<', Carbon::now());
+        }
 
         $tickets = $query->latest()->paginate(8)->through(function ($item) {
             return [

@@ -40,13 +40,9 @@ const updateStatus = () => {
       listeners: {
         accept: () => {
           // event.stopPropagation();     // Evitar que el evento burbujee a otros elementos
-          const url = route("routers.scheduled.ping", "ping-routers");
+          const url = route("routers.scheduled.ping", {task: 'ping-routers'});
 
-          router.put(url, () => {
-            onError: (error) => {
-              toast.error("Ha Ocurrido un Error, Intentalo más Tarde");
-            };
-          });
+          router.put( url);
           enviado = true;
         },
 
