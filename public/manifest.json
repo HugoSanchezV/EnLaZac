@@ -1,0 +1,15 @@
+{
+    "name": "Plata ISP",
+    "short_name": "App",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1F2937",
+    "icons": [
+      {
+        "src": "icons/icono.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ]
+  }

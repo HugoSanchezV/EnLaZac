@@ -18,6 +18,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -84,7 +85,7 @@ class RouterController extends Controller
         // dd($schedule);
         $totalRoutersCount = Router::count();
         //Admin/Routers/Index
-        return Inertia::render( $this->path . '/Routers/Index', [
+        return Inertia::render($this->path . '/Routers/Index', [
             'routers' => $routers,
             'pagination' => [
                 'links' => $routers->links()->elements[0],
@@ -231,80 +232,83 @@ class RouterController extends Controller
     public function sync($id)
     {
         try {
-            $routerOSService = RouterOSService::getInstance();
-            $routerOSService->connect($id);
+            DB::transaction(function () use ($id) {
+                $routerOSService = RouterOSService::getInstance();
+                $routerOSService->connect($id);
 
-            $router = Router::findOrFail($id);
+                $router = Router::findOrFail($id);
 
-            $address = $routerOSService->executeCommand('/ip/address/print');
+                $address = $routerOSService->executeCommand('/ip/address/print');
 
 
-            $address = $this->routerService->filterNetworksByPrefix($address, '172.17');
+                $address = $this->routerService->filterNetworksByPrefix($address, '172.17');
 
-            $users = $routerOSService->executeCommand(
-                '/ip/firewall/address-list/print',
-                [
-                    '.proplist' => '.id,list,address,creation-time,disabled,comment',
-                    '?list' => 'MOROSOS'
-                ]
-            );
-
-            $db_devices = Device::where('router_id', $id)->get();
-
-            if (!empty($users) && !empty($db_devices)) {
-                $users = $this->routerService->getDevicesNotInDatabase($users, $db_devices);
-
-                if (empty($users)) {
-                    return Redirect::route('routers')->with('success', 'El router se encuntra actualizado, todos los id conciden con la base de datos');
-                }
-            }
-
-            $total_devices = count($users);
-            $enable_devices = 0;
-
-            foreach ($users as $user) {
-
-                $comment = isset($user['comment']) ? $user['comment'] : null;
-
-                $enable_devices += $user["disabled"] === "false" ? 1 : 0;
-
-                Device::create(
+                $users = $routerOSService->executeCommand(
+                    '/ip/firewall/address-list/print',
                     [
-                        "device_internal_id" => $user[".id"],
-                        "router_id" => $id,
-                        //"device_id"=> null,
-                        //"user_id"=>$user[""],
-                        "comment" => $comment,
-                        "list" => $user["list"],
-                        "address" => $user["address"],
-                        "creation_time" => DateTime::createFromFormat('M/d/Y H:i:s', $user["creation-time"]),
-                        "disabled" => $user["disabled"] === "false" ? 0 : 1,
+                        '.proplist' => '.id,list,address,creation-time,disabled,comment',
+                        '?list' => 'MOROSOS'
                     ]
                 );
-            }
 
-            $routerOSService->disconnect();
+                $db_devices = Device::where('router_id', $id)->get();
+
+                if (!empty($users) && !empty($db_devices)) {
+                    $users = $this->routerService->getDevicesNotInDatabase($users, $db_devices);
+
+                    if (empty($users)) {
+                        return Redirect::route('routers')->with('success', 'El router se encuntra actualizado, todos los id conciden con la base de datos');
+                    }
+                }
+
+                $total_devices = count($users);
+                $enable_devices = 0;
+
+                foreach ($users as $user) {
+
+                    $comment = isset($user['comment']) ? $user['comment'] : null;
+
+                    $enable_devices += $user["disabled"] === "false" ? 1 : 0;
+
+                    Device::create(
+                        [
+                            "device_internal_id" => $user[".id"],
+                            "router_id" => $id,
+                            //"device_id"=> null,
+                            //"user_id"=>$user[""],
+                            "comment" => $comment,
+                            "list" => $user["list"],
+                            "address" => $user["address"],
+                            "creation_time" => DateTime::createFromFormat('M/d/Y H:i:s', $user["creation-time"]),
+                            "disabled" => $user["disabled"] === "false" ? 0 : 1,
+                        ]
+                    );
+                }
+
+                $routerOSService->disconnect();
+
+
+                $router->sync = 1;
+                $router->total_devices = $total_devices;
+                $router->enable_devices = $enable_devices;
+                $router->save();
+
+                $db_networks = $router->networks;
+                $networks = $this->routerService->getNetworksNotInDatabase($address, $db_networks->toArray());
+
+                foreach ($networks as $network) {
+                    Network::create([
+                        'router_id' => $router->id,
+                        'address' => $network["address"],
+                        'network' => $network["network"],
+                    ]);
+                }
+            });
+
+            return Redirect::route('routers')->with('success', 'Router Sincronizado con Éxito');
         } catch (Exception $e) {
             return Redirect::route('routers')->with('error', $e->getMessage());
         }
-
-        $router->sync = 1;
-        $router->total_devices = $total_devices;
-        $router->enable_devices = $enable_devices;
-        $router->save();
-
-        $db_networks = $router->networks;
-        $networks = $this->routerService->getNetworksNotInDatabase($address, $db_networks->toArray());
-
-        foreach ($networks as $network) {
-            Network::create([
-                'router_id' => $router->id,
-                'address' => $network["address"],
-                'network' => $network["network"],
-            ]);
-        }
-
-        return Redirect::route('routers')->with('success', 'Router Sincronizado con Éxito');
     }
 
     public function listDevices2(Router $router)
@@ -379,7 +383,7 @@ class RouterController extends Controller
         $inv_devices = InventorieDevice::where('state', '0')->select('id', 'mac_address')->get();
 
 
-        return Inertia::render( $this->path . '/Routers/Devices', [
+        return Inertia::render($this->path . '/Routers/Devices', [
             'devices' => $devices,
             'pagination' => [
                 'links' => $devices->links()->elements[0],

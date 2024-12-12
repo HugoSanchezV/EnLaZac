@@ -2,6 +2,8 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" sizes="192x192" href="/icon-192x192.png">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 

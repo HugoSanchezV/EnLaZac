@@ -16,7 +16,7 @@ const toImportRoute = "usuarios.import.excel";
 
 const headers = ["id", "Nombre", "Alias", "Email", "número", "Rol", "Acciones"];
 const filters = ["id", "nombre", "alias", "email", "número"];
-const headingsImport = "nombre, alias, email, password, role";
+const headingsImport = "nombre, alias, email, numero, password, role";
 </script>
 
 <template>

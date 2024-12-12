@@ -527,12 +527,31 @@ class ContractController extends Controller
     }
     public function exportExcel()
     {
-        $query = Contract::with(['inventorieDevice.device.user', 'plan']);
+        $query = Contract::select(
+            'contracts.id as id',
+            'contracts.inv_device_id',
+            'inventorie_devices.mac_address as address',
+            'users.id as cliente_id',
+            'users.name as cliente',
+            'plans.name as plan',
+            'contracts.start_date as fecha_inicio',
+            'contracts.end_date as fecha_fin',
+            'contracts.active as estado',
+            'contracts.address as dirección'
+        )
+            ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+            ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
+            ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
+            ->join('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Join con Device
+            ->join('users', 'devices.user_id', '=', 'users.id'); // Join con User
 
         $headings = [
             'ID',
-            'cliente id',
+            'Device ID',
+            'MAC',
+            'cliente ID',
             'cliente',
+            'Plan ID',
             'Plan',
             'Fecha incio',
             'Fecha Fin',
@@ -543,13 +562,16 @@ class ContractController extends Controller
         $mappingCallback = function ($contract) {
             return [
                 'id' => $contract->id,
-                'cliente id' => $contract->inventorieDevice->device->user->id ?? 'None',
-                'cliente' => $contract->inventorieDevice->device->user->name ?? 'None',
-                'plan' => $contract->plan->name ?? 'None',
-                'fecha incio' => $contract->start_date,
-                'fecha Fin' => $contract->end_date,
-                'estado' => $contract->active ? 'Activo' : 'Inactivo',
-                'dirección' => $contract->address,
+                'dispositivo id' => $contract->inv_device_id,
+                'mac' => $contract->address,
+                'cliente id' => $contract->cliente_id ?? 'None',
+                'cliente' => $contract->cliente ?? 'None',
+                'plan id' => $contract->plan_id ?? 'None',
+                'plan' => $contract->plan ?? 'None',
+                'fecha incio' => $contract->fecha_inicio,
+                'fecha Fin' => $contract->fecha_fin,
+                'estado' => $contract->estado ? 'Activo' : 'Inactivo',
+                'dirección' => $contract->dirección,
             ];
         };
 

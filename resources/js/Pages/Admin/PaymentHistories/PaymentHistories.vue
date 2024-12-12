@@ -108,7 +108,7 @@ const headers = [
               q: q,
               attribute: attribute,
               order: order,
-              type: type,
+              date: date,
             }"
           ></base-pagination>
           <h2
