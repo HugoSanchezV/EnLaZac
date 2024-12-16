@@ -6,14 +6,16 @@
           <h2>Información del contrato</h2>
           <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">Contrato No. {{
             contract.id
-          }}</span>
+          }} {{ mapKey }}</span>
           
         </div>
       </template>
       <template v-slot:content>
         <div class="flex justify-center items-center w-full h-full">
           <div class="rounded-lg w-full md:w-1/2">
-            <CardInformation :contract="contract"/>
+            <CardInformation 
+            :contract="contract"
+            :mapKey="mapKey"/>
           </div>
         </div>
       </template>
@@ -38,6 +40,10 @@ export default {
       type: Object,
       required: true,
     },
+    mapKey: {
+      type: String,
+      required: true,
+    }
   },
 };
 </script>

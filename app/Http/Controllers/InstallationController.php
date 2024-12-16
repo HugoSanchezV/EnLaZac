@@ -47,8 +47,8 @@ class InstallationController extends Controller
 
         // Ordenación
         $order = 'asc';
-        if ($request->order && isNull($request->order)) {
-            $order = $request->order;
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
         $query->orderBy(
             $request->attribute ?: 'id',
@@ -116,7 +116,7 @@ class InstallationController extends Controller
         try{
           //  $today = Carbon::now();
             $installation = Installation::with('installationSettings', 'contract')->findOrFail($id);
-
+           // dd($installation->installationSettings);
             $validatedData = $request->validated();
             
             if($this->updateEndDateContract($installation, $validatedData['assigned_date'], $validatedData['description'])){
@@ -125,10 +125,11 @@ class InstallationController extends Controller
 
                 return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
             }else{
-                return redirect()->route('installation')->with('error', 'Este contrato ya no es posible actualizarlo: Primer pago realizado');
+                return redirect()->route('installation')->with('error', 'Este contrato ya no es posible actualizarlo: Primer pago del servicio realizado');
             }
             
         }catch(Exception $e){
+            dd($e);
             return redirect()->route('installation')->with('error', 'Hubo un error al actualizar el registro');
         }
     }
@@ -201,10 +202,10 @@ class InstallationController extends Controller
     private function updateEndDateContract(Installation $installation, $newInstallation, $description)
     {
         $controller = new ContractController();
+        //dd("YEAH");
 
         if($description == "1"){
-            $installation = Installation::findOrFail($installation->id)->with('installationSettings');
-            //dd($installation->description);
+            $installation = Installation::with('installationSettings')->findOrFail($installation->id);
 
             if($installation->installationSettings){
                 return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months);

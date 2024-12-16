@@ -4,31 +4,20 @@ import { Link } from "@inertiajs/vue3";
 import GoogleMaps from "@/Components/GoogleMaps.vue";
 
 const props = defineProps({
-  user: {
-    type: Object,
-    required: true, // El usuario es obligatorio
-  },
-  ticket: {
-    tcdype: Array,
-    required: true, // Los tickets son obligatorios
-  },
-  plan: {
-    type: [Object, null],
-    required: true, // El plan puede ser null si no está asignado
-  },
-  device: {
-    type: [Object, null],
-    required: true, // El dispositivo puede ser null si no está asignado
-  },
   contract: {
     type: [Object, null],
     required: true, // El contrato puede ser null si no está asignado
   },
+  mapKey: {
+    type: String,
+    required: true,
+  }
 });
 </script>
 
 <template>
   <!-- Contenedor principal estilizado con sombra y bordes redondeados -->
+   {{ mapKey }}
   <div class="bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden">
     <!-- Encabezado con diseño atractivo -->
     <div class="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
@@ -92,7 +81,8 @@ const props = defineProps({
             <GoogleMaps 
             :lat="parseFloat(contract.geolocation.latitude)" 
             :lng="parseFloat(contract.geolocation.longitude)" 
-            :clic="false" 
+            :clic="false"
+            :mapKey="mapKey" 
             />
           </dd>
         </div>
@@ -189,14 +179,6 @@ export default {
     Link,
   },
   computed: {
-    formattedDate() {
-      const date = new Date(this.user.created_at);
-      const formattedDate =
-        date.toLocaleDateString("en-GB") +
-        " " +
-        date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      return formattedDate;
-    },
   },
 };
 </script>

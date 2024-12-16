@@ -43,6 +43,7 @@ use App\Http\Controllers\SMSSettingController;
 use App\Http\Controllers\ServiceVariablesController;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\TelegramSettingController;
+use App\Models\PaymentSanction;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -141,6 +142,8 @@ Route::middleware([
         Route::post('/contracts/store',          [ContractController::class, 'store'])->name('contracts.store');
         Route::get('/contracts/edit/{id}',       [ContractController::class, 'edit'])->name('contracts.edit');
         Route::put('/contracts/update/{id}',     [ContractController::class, 'update'])->name('contracts.update');
+
+        Route::put('/contracts/payment/sanction/update/{id}', [PaymentSanctionController::class, 'update'])->name('contracts.payment.sanction.update');
 
         Route::get('/installation',                     [InstallationController::class, 'index'])->name('installation');
         Route::get('/installation/create',              [InstallationController::class, 'create'])->name('installation.create');

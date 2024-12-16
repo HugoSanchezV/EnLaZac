@@ -36,8 +36,12 @@ class ContractController extends Controller
     //
     public function __construct()
     {
-        if (Auth::user()->admin === 2) {
-            $this->path = 'Coordi/Contracts_Coordi';
+        if(!is_null(Auth::user()))
+        {
+            if (Auth::user()->admin === 2) {
+                $this->path = 'Coordi/Contracts_Coordi';
+            }
+            
         }
     }
 
@@ -113,6 +117,8 @@ class ContractController extends Controller
         });
 
         $paymentSanction = Contract::with('paymentSanction')->get();
+
+        //dd($paymentSanction);
 
         $totalContractsCount = Contract::count();
 
@@ -245,8 +251,12 @@ class ContractController extends Controller
             ->where('contracts.id', $id)
             ->first();
 
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
+          //  dd($mapKey);
+
         return Inertia::render($this->path . '/Show', [
             'contract' => $contract,
+            'mapKey' => $mapKey,
         ]);
     }
 
@@ -256,12 +266,14 @@ class ContractController extends Controller
         $devices = Device::select('id', 'address')->whereNotNull('user_id')->get();
 
         $plans = Plan::select('id', 'name')->get();
+        $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
         return Inertia::render(
             'Coordi/Contracts/Create',
             [
                 'devices' => $devices,
                 'plans' => $plans,
                 'community' => $community,
+                'mapKey' => $mapKey
             ]
         );
     }
@@ -298,12 +310,14 @@ class ContractController extends Controller
                 }
             }
             $plans = Plan::select('id', 'name')->get();
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
             return Inertia::render(
                 'Coordi/Contracts/Create',
                 [
                     'devices' => $available_devices,
                     'plans' => $plans,
                     'community' => $community,
+                    'mapKey' => $mapKey,
                 ]
             );
         } catch (Exception $e) {
@@ -429,6 +443,7 @@ class ContractController extends Controller
                     $available_devices[] = $current_device;
                 }
             }
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
             $plans = Plan::select('id', 'name')->get();
             return Inertia::render(
                 $this->path . '/Edit',
@@ -437,6 +452,7 @@ class ContractController extends Controller
                     'devices' => $available_devices,
                     'plans' => $plans,
                     'community' => $community,
+                    'mapKey' => $mapKey,
                 ]
             );
         } catch (Exception $e) {
@@ -463,6 +479,7 @@ class ContractController extends Controller
                     $deviceController->setConsumePlanToDevice($device[0], $plan);
                 }
 
+                
                 $contract->update(
                     [
                         'inv_device_id' => $validatedData['inv_device_id'],

@@ -31,8 +31,8 @@ class InstallationSettingsController extends Controller
 
             // Ordenación
             $order = 'asc';
-            if ($request->order && isNull($request->order)) {
-                $order = $request->order;
+            if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+                $order = strtolower($request->order);
             }
             $query->orderBy(
                 $request->attribute ?: 'id',
@@ -152,10 +152,10 @@ class InstallationSettingsController extends Controller
     public function update(UpdateInstallationSettingsRequest $request, $id)
     {
         // dd("aqui");
-        $contract = InstallationSetting::findOrFail($id);
+        $installation = InstallationSetting::findOrFail($id);
 
         $validatedData = $request->validated();
-        $contract->update($validatedData);
+        $installation->update($validatedData);
         return redirect()->route('contracts')->with('success', 'Contrato Actualizado Con Éxito');
     }
     public function create()

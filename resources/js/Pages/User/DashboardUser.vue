@@ -22,6 +22,10 @@ export default {
       type: Array,
       required: true,
     },
+    mapKey:{
+      type: String,
+      required: true,
+    }
   },
 };
 </script>
@@ -143,6 +147,7 @@ export default {
             :device="item.device"
             :contract="item.contract"
             :plan="item.contract.plan"
+            :mapKey="mapKey"
           />
         </div>
       </div>

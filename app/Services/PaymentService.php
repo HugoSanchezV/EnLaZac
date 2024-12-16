@@ -7,10 +7,12 @@ use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DevicesController;
 use App\Http\Controllers\ExtendContractController;
 use App\Http\Controllers\PaymentHistorieController;
+use App\Http\Controllers\PaymentSanctionController;
 use App\Models\Charge;
 use App\Models\Contract;
 use App\Models\ExtendContract;
 use App\Models\PaymentHistorie;
+use App\Models\PaymentSanction;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -46,16 +48,18 @@ class PaymentService
             $controller = new ContractController();
             $controllerExtend = new ExtendContractController();
             $controllerDevice = new DevicesController();
+            $controllerSanction = new PaymentSanctionController();
             $contract = Contract::findOrFail($id);
 
             $controllerExtend->shutDownExtend($id);
             $controller->updateMonths($months, $id);
+            $controllerSanction->shutDownSanction($id);
 
 
 
             if(!$isRent){
                 Log::info("SE VA A CONECTAR: ".$isRent);
-                $controllerDevice->conectUser($contract);
+                $controllerDevice->connectUser($contract);
             }else{
                 Log::info("SE VA A DESCONECTAR: ".$isRent);
                 $controllerDevice->disconectUser($contract);
@@ -66,31 +70,6 @@ class PaymentService
         }
     }
 
-    // public function updateCharge1($charges)
-    // {
-    //     try {
-    //         $charge = new ChargeController();
-    //         foreach ($charges as $cha) {
-    //             $charge->updatePaid($cha['id']);
-    //             if ($cha[''] == '');
-    //         }
-    //     } catch (Exception $e) {
-    //         Log::info("Entro a excepcion");
-    //         return throw new Exception($e->getMessage());
-    //     }
-    // }
-
-    // public function updateCharge($cha)
-    // {
-    //     try {
-    //         $charge = new ChargeController();
-    //         $charge->updatePaid($cha['id']);
-    //     } catch (Exception $e) {
-    //         Log::info("Entro a excepcion");
-    //         return throw new Exception($e->getMessage());
-    //     }
-    // }
-
     public function updateDataPayments($cart)
     {
         try {
@@ -98,13 +77,18 @@ class PaymentService
             foreach ($cart as $item) {
                 if ($item["type"] === "contract") {
                     // Actualizar el contrato
-                    self::updateContract($item["contractId"], $item["months"], false);
+                    Log::info("Contracto".$item["id"].", Meses:".$item["months"]);
+                    self::updateContract($item["id"], $item["months"], false);
     
                     // Consultar todos los cargos asociados al contrato
-                    $chargeController->paidCharge($item["contractId"]);
+                    
                 }else if($item["type"] === "individual-charge"){
-
+                    
                     $chargeController->paidInstallation($item["id"]);
+                    
+                }else if($item["type"] === "charge"){
+
+                    $chargeController->paidCharge($item["id"]);
                 }else if($item["type"] === "rent"){
 
                     self::updateContract($item["id"], $item["months"], true);

@@ -14,6 +14,10 @@ const props = defineProps({
   devices: Array,
   plans: Array,
   community: Array,
+  mapKey:{
+    type: String,
+    required: true,
+  }
 });
 
 const form = useForm({
@@ -261,6 +265,7 @@ const submit = () => {
         :lat="parseInt(lat)"
         :lng="parseInt(lng)"
         :clic=true
+        :mapKey="mapKey"
          @otherPos_clicked="handlePositionClicked" />
       </div>
       

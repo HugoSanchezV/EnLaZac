@@ -64,7 +64,7 @@ class PayPalController extends Controller
             ]);
             //strval($request->amount)
         } catch (Exception $e) {
-            // Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
+            Log::error('Error en la creación de la orden de PayPal: ' . $e->getMessage());
 
             $errorData = [
                 'message' => $e->getMessage(),
@@ -127,6 +127,7 @@ class PayPalController extends Controller
             // Log::info("Arriba log");
 
             if ($response['status'] === 'COMPLETED') {
+                Log::info("Proceso completado");
                 self::update(
                     $request->amount,
                     $request->cart,
