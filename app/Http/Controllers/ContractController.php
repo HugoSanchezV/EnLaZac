@@ -674,7 +674,7 @@ class ContractController extends Controller
         }
     }
 
-    public function updateEndDateContract(Installation $installation, $newInstallation)
+    public function updateEndDateContract(Installation $installation, $newInstallation, $config_exemption)
     {
         try {
             $controller = new ServiceVariablesController();
@@ -687,32 +687,47 @@ class ContractController extends Controller
             $exemption = $controller->getExemptionPeriods();
             $cutoffday = $controller->getCutOffDay();
 
-            $currentAssigned = $this->checkRange($currentInstallation, $exemption);
+
+            if(!is_null($config_exemption)){
+                Log::info("Saca el rango entre: ".$currentInstallation);
+                $currentAssigned = $this->checkRangeConfigExemption($currentInstallation, $config_exemption);
+                Log::info("CurrentAssigned: ".$currentAssigned);
+            }else{
+               // Log::info("NO HAY NADA PAPI: ");
+                $currentAssigned = $this->checkRange($currentInstallation, $exemption);
+                Log::info("NO HAY NADA PAPI: ");
+            }
 
 
-            //dd($endDate->isoFormat('YYYY-MM')."  -   ". $currentAssigned->isoFormat('YYYY-MM'));
+           // dd($endDate->isoFormat('YYYY-MM')."  <=   ". $currentAssigned->isoFormat('YYYY-MM'));
 
             if (!($endDate->isoFormat('YYYY-MM') > $currentAssigned->isoFormat('YYYY-MM'))) {
-
+                Log::info("Pasó ".$currentInstallation);
                 //dd("entro");
-
-                if ($date->day > $exemption->end_day) {
-                    //   dd();
-                    $date = $date->addMonths((int)$exemption->month_after_next);
-                    if ($contract->end_date < $date) {
-
+                if(is_null($config_exemption))
+                {
+                    if ($date->day > $exemption->end_day) {
+                        //   dd();
+                        $date = $date->addMonths((int)$exemption->month_after_next);
+                        if ($contract->end_date < $date) {
+    
+                            $contract->end_date = $date;
+                        }
+                    } elseif ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
+    
+                        // dd();
+                        $date = $date->addMonths((int)$exemption->month_next);
+                        if ($contract->end_date < $date) {
+    
+                            $contract->end_date = $date;
+                        }
+                    } else {
                         $contract->end_date = $date;
                     }
-                } elseif ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
+                }else{
+                    //$date = $currentInstallation->addMonths((int)$config_exemption);
+                    $contract->end_date = $currentAssigned;
 
-                    // dd();
-                    $date = $date->addMonths((int)$exemption->month_next);
-                    if ($contract->end_date < $date) {
-
-                        $contract->end_date = $date;
-                    }
-                } else {
-                    $contract->end_date = $date;
                 }
 
                 $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
@@ -720,6 +735,7 @@ class ContractController extends Controller
                 //dd($contract->end_date);
                 $contract->save();
             } else {
+                Log::info("NO Pasó este pedo de más: ".$currentInstallation);
                 //dd("NOOOOOOOOOOOO");
                 return false;
             }
@@ -730,6 +746,10 @@ class ContractController extends Controller
             return false;
         }
     }
+
+    private function checkRangeConfigExemption(Carbon $date, $config_exemption){
+        return $date->addMonths((int)$config_exemption);
+    }   
     private function checkRange(Carbon $date, ExemptionPeriod $exemption)
     {
         if ($date->day > $exemption->end_day) {
@@ -787,6 +807,17 @@ class ContractController extends Controller
             $contract->save();
         } catch (Exception $e) {
             dd($e->getMessage());
+        }
+    }
+
+    public function removeDateInstallationSettings($contract_id, $exemption_months){
+        try{
+            $contract = Contract::findOrFail($contract_id);
+            $contract->end_date = Carbon::parse($contract->end_date)->subMonths((int)$exemption_months);
+            
+            $contract->save();
+        }catch(Exception $e){
+            Log::error($e->getMessage());
         }
     }
 }

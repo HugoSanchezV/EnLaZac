@@ -17,7 +17,6 @@ const props = defineProps({
 
 <template>
   <!-- Contenedor principal estilizado con sombra y bordes redondeados -->
-   {{ mapKey }}
   <div class="bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden">
     <!-- Encabezado con diseño atractivo -->
     <div class="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white">

@@ -68,7 +68,8 @@ class StatisticsController extends Controller
                 }
             }
             //dd("Termina el for");
-            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
+        $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
+  
             // dd($contracts);
             return Inertia::render('User/DashboardUser', [
                 'user' => $user,

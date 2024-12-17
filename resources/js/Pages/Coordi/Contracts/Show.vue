@@ -6,7 +6,7 @@
           <h2>Información del contrato</h2>
           <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">Contrato No. {{
             contract.id
-          }} {{ mapKey }}</span>
+          }}</span>
           
         </div>
       </template>
