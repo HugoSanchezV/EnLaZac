@@ -679,6 +679,7 @@ class ContractController extends Controller
         try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
+            Log::info("PINSHI CURRENT: ".$currentInstallation);
             $date = Carbon::parse($newInstallation)->startOfDay();
 
             // dd();
@@ -687,22 +688,30 @@ class ContractController extends Controller
             $exemption = $controller->getExemptionPeriods();
             $cutoffday = $controller->getCutOffDay();
 
-
-            if(!is_null($config_exemption)){
-                Log::info("Saca el rango entre: ".$currentInstallation);
-                $currentAssigned = $this->checkRangeConfigExemption($currentInstallation, $config_exemption);
-                Log::info("CurrentAssigned: ".$currentAssigned);
-            }else{
                // Log::info("NO HAY NADA PAPI: ");
+            if(!is_null($installation->installationSettings)){
+
+                if(is_null($installation->installationSettings->exemption_months))
+                {
+                    Log::info("antes NO tenia un config");
+
+                    $currentAssigned = $this->checkRange($currentInstallation, $exemption);
+                }else{
+                    Log::info("antes tenia un config");
+                    $currentAssigned = $this->checkRangeConfigExemption($currentInstallation, $config_exemption);
+                }
+            }else{
+              //  dd("En este rango");
+                Log::info("tiene puro rango");
                 $currentAssigned = $this->checkRange($currentInstallation, $exemption);
-                Log::info("NO HAY NADA PAPI: ");
+
             }
 
 
            // dd($endDate->isoFormat('YYYY-MM')."  <=   ". $currentAssigned->isoFormat('YYYY-MM'));
-
+            Log::info("COMPARAACIÓN: ".$endDate->isoFormat('YYYY-MM')."  <=   ". $currentAssigned->isoFormat('YYYY-MM'));
             if (!($endDate->isoFormat('YYYY-MM') > $currentAssigned->isoFormat('YYYY-MM'))) {
-                Log::info("Pasó ".$currentInstallation);
+               // dd("En este rango");
                 //dd("entro");
                 if(is_null($config_exemption))
                 {
@@ -712,21 +721,28 @@ class ContractController extends Controller
                         if ($contract->end_date < $date) {
     
                             $contract->end_date = $date;
+                        }else{
+                            Log::info("Cosa prohibida");
                         }
                     } elseif ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
     
                         // dd();
                         $date = $date->addMonths((int)$exemption->month_next);
-                        if ($contract->end_date < $date) {
+                        //if ($contract->end_date < $date) {
     
                             $contract->end_date = $date;
-                        }
+                       // }
+                          //  Log::info("AQUI CALLOODSA[o");
+                        
                     } else {
                         $contract->end_date = $date;
                     }
                 }else{
-                    //$date = $currentInstallation->addMonths((int)$config_exemption);
-                    $contract->end_date = $currentAssigned;
+                    //dd($config_exemption);
+                    $date = Carbon::parse($installation->assigned_date)->addMonths((int)$config_exemption);
+                    Log::info("EL DATE: ".$date);
+                    $contract->end_date = $currentInstallation;
+
 
                 }
 
@@ -753,8 +769,10 @@ class ContractController extends Controller
     private function checkRange(Carbon $date, ExemptionPeriod $exemption)
     {
         if ($date->day > $exemption->end_day) {
+           // dd("LE TOCO ACA");
             return $date->addMonths((int)$exemption->month_after_next);
         } else if ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
+          //  dd("LE TOCO ACA");
             return $date->addMonths((int)$exemption->month_next);
         }
         return $date;

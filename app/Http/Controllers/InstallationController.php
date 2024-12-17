@@ -214,7 +214,7 @@ class InstallationController extends Controller
                // Log::info('Si tiene configuración');
                 if(is_null($installation->installationSettings->exemption_months)){
                     
-                    return $controller->updateEndDateContract($installation, $newInstallation, null);
+                    return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months);
                 }else{
                     Log::info("Si tiene la config de exemption months");
                     //Log::info('No es nula entro a la condicion perrona');

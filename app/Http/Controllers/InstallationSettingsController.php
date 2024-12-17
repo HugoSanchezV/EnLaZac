@@ -222,7 +222,7 @@ class InstallationSettingsController extends Controller
     }
     public function setNewInstallation(InstallationSetting $installation_s, $new_exemption){
 
-        $installation = Installation::findOrFail($installation_s->installation_id);
+        $installation = Installation::with('installationSettings')->findOrFail($installation_s->installation_id);
 
         $controller = new InstallationController;
         //$madafaker = Carbon::parse($installation->assigned_date)->addMonths((int)$new_exemption);
@@ -232,12 +232,13 @@ class InstallationSettingsController extends Controller
             //dd("Entro aqui");
             if(!is_null($new_exemption))
             {   
-                Log::info("Entra en set New installation, si hay exemption nueve");
+                Log::info("Entra en set New installation, si hay exemption nueve : ".$installation->assigned_date);
                 $controller->
                 updateEndDateContract(
                     $installation, 
                     $installation->assigned_date,
-                    $installation->description
+                    $installation->description,
+                    installation_s->exemption_
                 );
             }else{
                 Log::info("Es new exemption es nulo");
