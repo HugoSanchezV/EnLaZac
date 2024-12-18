@@ -13,7 +13,13 @@
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :contract="contract" :devices="devices" :plans="plans" :community="community"/>
+          <FormUpdate 
+          :contract="contract" 
+          :devices="devices" 
+          :plans="plans" 
+          :community="community"
+          :mapKey="mapKey"
+          />
         </div>
       </div>
     </template>
@@ -45,6 +51,10 @@ export default {
     community:{
     type: Array,
     required: true
+  },
+  mapKey:{
+    type: String,
+    required: true,
   }
   },
 };

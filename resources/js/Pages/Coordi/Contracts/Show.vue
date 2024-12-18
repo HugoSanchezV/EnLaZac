@@ -13,7 +13,9 @@
       <template v-slot:content>
         <div class="flex justify-center items-center w-full h-full">
           <div class="rounded-lg w-full md:w-1/2">
-            <CardInformation :contract="contract"/>
+            <CardInformation 
+            :contract="contract"
+            :mapKey="mapKey"/>
           </div>
         </div>
       </template>
@@ -38,6 +40,10 @@ export default {
       type: Object,
       required: true,
     },
+    mapKey: {
+      type: String,
+      required: true,
+    }
   },
 };
 </script>

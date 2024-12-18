@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentSanction extends Model
 {
     use HasFactory;
-    public $fillable = ['contract_id','status'];
+    public $fillable = ['contract_id','status', 'applied'];
 
     public function contract(){
-        return $this->belongTo(Contract::class, 'contract_id');
+        return $this->belongsTo(Contract::class);
     }
 }

@@ -61,7 +61,7 @@ export default {
   methods: {
     prevPage() {
       if (this.pagination.prev_page_url) {
-        const url = this.pagination.prev_page_url.replace(/^http:/, 'http:');
+        const url = this.pagination.prev_page_url.replace(/^http:/, 'https:');
         this.$inertia.get(
           url,
           this.data,
@@ -71,7 +71,7 @@ export default {
     },
     nextPage() {
       if (this.pagination.next_page_url) {
-        const url = this.pagination.next_page_url.replace(/^http:/, 'http:');
+        const url = this.pagination.next_page_url.replace(/^http:/, 'https:');
 
         this.$inertia.get(
           url,

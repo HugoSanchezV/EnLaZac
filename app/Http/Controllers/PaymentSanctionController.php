@@ -68,18 +68,43 @@ class PaymentSanctionController extends Controller
         }
     }
 
+    public function applySanction($id){
+
+        $payment = PaymentSanction::where('contract_id', $id)->first();
+        Log::info("Se debe activar la sanción: ".$payment);
+        
+        $payment->update([
+            'status' => false,
+            'applied' => true,
+        ]);
+    }
+    public function shutDownSanction($id){
+        $payment = PaymentSanction::where('contract_id', $id)->first();
+        //Log::info("");
+        if($payment->applied){
+            $payment->update([
+                'contract_id' => $id,
+                'status' => false,
+                'applied' => false,
+            ]);
+            
+        }
+
+    }
+
     public function fromPayment($id){
         $payment = PaymentSanction::where('contract_id', $id)->first();
-
+        Log::info("SE APLICO LA SANCION");
         $payment->update([
             'contract_id' => $id,
-            'status' => true
+            'status' => true,
+            'applied' => false
         ]);
     }
 
     public function getSanction(){
         try{
-            return PaymentSanction::with('contract')->where('status', true)->get();
+            return PaymentSanction::with('contract')->where('status', true)->where('applied', false)->get();
         }catch(Exception $e){
             Log::error("Error en getSanction -> ".$e);
         }

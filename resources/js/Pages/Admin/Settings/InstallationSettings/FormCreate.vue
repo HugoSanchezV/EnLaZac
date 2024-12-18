@@ -55,6 +55,8 @@ const submit = () => {
             v-model="form.exemption_months"
             type="number"
             class="mt-1 block w-full"
+            max="12"
+            min="0"
             autofocus
             autocomplete="exemption_months"
             @input="onDateChange"

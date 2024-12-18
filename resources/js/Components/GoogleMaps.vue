@@ -17,6 +17,10 @@ export default {
     clic: {
       type: Boolean,
       required: true,
+    },
+    mapKey: {
+      type: String,
+      required: true,
     }
   },
   setup(props, { emit }) {
@@ -28,7 +32,7 @@ export default {
     const otherPos = ref(null)
     const marker = ref(null) // Referencia para el marcador
 
-    const loader = new Loader({ apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY })
+    const loader = new Loader({ apiKey : props.mapKey })
     const mapDiv = ref(null)
     let map = ref(null)
     let clickListener = null
@@ -86,5 +90,6 @@ export default {
 </script>
 
 <template>
+
   <div ref="mapDiv" style="width: 100%; height: 40vh" />
 </template>

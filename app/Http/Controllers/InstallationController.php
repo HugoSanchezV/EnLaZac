@@ -6,6 +6,7 @@ use App\Console\Commands\UpdateContractDate;
 use App\Http\Requests\Installation\StoreInstallationRequest;
 use App\Http\Requests\Installation\UpdateInstallationRequest;
 use App\Models\Contract;
+use App\Models\ExemptionPeriod;
 use App\Models\Installation;
 use App\Models\InstallationSetting;
 use App\Services\ChargeService;
@@ -15,6 +16,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
@@ -47,8 +49,8 @@ class InstallationController extends Controller
 
         // Ordenación
         $order = 'asc';
-        if ($request->order && isNull($request->order)) {
-            $order = $request->order;
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
         $query->orderBy(
             $request->attribute ?: 'id',
@@ -116,19 +118,20 @@ class InstallationController extends Controller
         try{
           //  $today = Carbon::now();
             $installation = Installation::with('installationSettings', 'contract')->findOrFail($id);
-
+           // dd($installation->installationSettings);
             $validatedData = $request->validated();
             
-            if($this->updateEndDateContract($installation, $validatedData['assigned_date'], $validatedData['description'])){
+            if($this->updateEndDateContract($installation, $validatedData['assigned_date'], $validatedData['description'], null)){
 
                 $installation->update($validatedData);
 
                 return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
             }else{
-                return redirect()->route('installation')->with('error', 'Este contrato ya no es posible actualizarlo: Primer pago realizado');
+                return redirect()->route('installation')->with('error', 'Este contrato ya no es posible actualizarlo: Primer pago del servicio realizado');
             }
             
         }catch(Exception $e){
+            dd($e);
             return redirect()->route('installation')->with('error', 'Hubo un error al actualizar el registro');
         }
     }
@@ -198,21 +201,46 @@ class InstallationController extends Controller
         }
     }
 
-    private function updateEndDateContract(Installation $installation, $newInstallation, $description)
+    public function updateEndDateContract(Installation $installation, $newInstallation, $description, $config_exemption)
     {
         $controller = new ContractController();
+        //dd("YEAH");
 
+        Log::info("2. Esta dentro de la funcion");
         if($description == "1"){
-            $installation = Installation::findOrFail($installation->id)->with('installationSettings');
-            //dd($installation->description);
-
+            $installation = Installation::with('installationSettings')->findOrFail($installation->id);
+           // Log::info('Dentro de la condición');
             if($installation->installationSettings){
-                return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months);
+               // Log::info('Si tiene configuración');
+                if(is_null($installation->installationSettings->exemption_months)){
+                    
+                    return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months, $config_exemption);
+                }else{
+                    Log::info("3. Si tiene la config de exemption months: ");
+                    //Log::info('No es nula entro a la condicion perrona');
+                    return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months, $config_exemption);
+                }
+                //return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months);
             }else{
-                return $controller->updateEndDateContract($installation, $newInstallation, null );
+                return $controller->updateEndDateContract($installation, $newInstallation, null, $config_exemption);
             }
         }
         return true;
+    }
+    private function getActualInstallation($installation)
+    {
+        $period = ExemptionPeriod::first();
+        $day = Carbon::parse($installation->assigned_date)->day;
+        if(($day >= $period->start_day)&&($day <= $period->end_day)){
+            return Carbon::parse($installation->assigned_date)->subMonths((int)$period->month_next);
+        }else if ($day > $period->day){
+            return Carbon::parse($installation->assigned_date)->subMonths((int)$period->month_after_next);
+        }
+        return Carbon::parse($installation->assigned_date);
+    }
+    private function getActualInstallationWithSettings($installation, $exemption)
+    {
+        return Carbon::parse($installation->assigned_date)->subMonths($exemption);
     }
     private function storeEndDateContract(Installation $installation)
     {

@@ -36,8 +36,12 @@ class ContractController extends Controller
     //
     public function __construct()
     {
-        if (Auth::user()->admin === 2) {
-            $this->path = 'Coordi/Contracts_Coordi';
+        if(!is_null(Auth::user()))
+        {
+            if (Auth::user()->admin === 2) {
+                $this->path = 'Coordi/Contracts_Coordi';
+            }
+            
         }
     }
 
@@ -113,6 +117,8 @@ class ContractController extends Controller
         });
 
         $paymentSanction = Contract::with('paymentSanction')->get();
+
+        //dd($paymentSanction);
 
         $totalContractsCount = Contract::count();
 
@@ -245,8 +251,12 @@ class ContractController extends Controller
             ->where('contracts.id', $id)
             ->first();
 
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
+          //  dd($mapKey);
+
         return Inertia::render($this->path . '/Show', [
             'contract' => $contract,
+            'mapKey' => $mapKey,
         ]);
     }
 
@@ -256,12 +266,14 @@ class ContractController extends Controller
         $devices = Device::select('id', 'address')->whereNotNull('user_id')->get();
 
         $plans = Plan::select('id', 'name')->get();
+        $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
         return Inertia::render(
             'Coordi/Contracts/Create',
             [
                 'devices' => $devices,
                 'plans' => $plans,
                 'community' => $community,
+                'mapKey' => $mapKey
             ]
         );
     }
@@ -298,12 +310,14 @@ class ContractController extends Controller
                 }
             }
             $plans = Plan::select('id', 'name')->get();
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
             return Inertia::render(
                 'Coordi/Contracts/Create',
                 [
                     'devices' => $available_devices,
                     'plans' => $plans,
                     'community' => $community,
+                    'mapKey' => $mapKey,
                 ]
             );
         } catch (Exception $e) {
@@ -429,6 +443,7 @@ class ContractController extends Controller
                     $available_devices[] = $current_device;
                 }
             }
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
             $plans = Plan::select('id', 'name')->get();
             return Inertia::render(
                 $this->path . '/Edit',
@@ -437,6 +452,7 @@ class ContractController extends Controller
                     'devices' => $available_devices,
                     'plans' => $plans,
                     'community' => $community,
+                    'mapKey' => $mapKey,
                 ]
             );
         } catch (Exception $e) {
@@ -463,6 +479,7 @@ class ContractController extends Controller
                     $deviceController->setConsumePlanToDevice($device[0], $plan);
                 }
 
+                
                 $contract->update(
                     [
                         'inv_device_id' => $validatedData['inv_device_id'],
@@ -603,7 +620,7 @@ class ContractController extends Controller
                 return Redirect::route('reaming.contracts')->with('error', 'Error a cargar el registro');
                 // return response()->json(['error' => 'Contrato no encontrado'], 404);
             }
-
+            
             // Sumar los días a la fecha de finalización actual
             $newEndDate = Carbon::parse($contract->end_date)->addDays($request->input('days'));
 
@@ -679,11 +696,12 @@ class ContractController extends Controller
         }
     }
 
-    public function updateEndDateContract(Installation $installation, $newInstallation)
+    public function updateEndDateContract(Installation $installation, $newInstallation, $config_exemption)
     {
         try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
+            Log::info("5. PINSHI CURRENT: ".$currentInstallation);
             $date = Carbon::parse($newInstallation)->startOfDay();
 
             // dd();
@@ -692,39 +710,68 @@ class ContractController extends Controller
             $exemption = $controller->getExemptionPeriods();
             $cutoffday = $controller->getCutOffDay();
 
-            $currentAssigned = $this->checkRange($currentInstallation, $exemption);
+               // Log::info("NO HAY NADA PAPI: ");
+            if(!is_null($installation->installationSettings)){
 
-
-            //dd($endDate->isoFormat('YYYY-MM')."  -   ". $currentAssigned->isoFormat('YYYY-MM'));
-
-            if (!($endDate->isoFormat('YYYY-MM') > $currentAssigned->isoFormat('YYYY-MM'))) {
-
-                //dd("entro");
-
-                if ($date->day > $exemption->end_day) {
-                    //   dd();
-                    $date = $date->addMonths((int)$exemption->month_after_next);
-                    if ($contract->end_date < $date) {
-
-                        $contract->end_date = $date;
-                    }
-                } elseif ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
-
-                    // dd();
-                    $date = $date->addMonths((int)$exemption->month_next);
-                    if ($contract->end_date < $date) {
-
-                        $contract->end_date = $date;
-                    }
-                } else {
-                    $contract->end_date = $date;
+                if(is_null($installation->installationSettings->exemption_months))
+                {
+                    Log::info("antes NO tenia un config");
+                    Log::info("currentInstallation: ".$currentInstallation."  y exemption: ".$exemption);
+                    $currentAssigned = $this->checkRange($currentInstallation, $exemption);
+                }else{
+                    Log::info("antes tenia un config");
+                    $currentAssigned = $this->checkRangeConfigExemption($currentInstallation, $config_exemption);
                 }
+            }else{
+              //  dd("En este rango");
+                Log::info("tiene puro rango");
+                $currentAssigned = $this->checkRange($currentInstallation, $exemption);
 
+            }
+
+
+           // dd($endDate->isoFormat('YYYY-MM')."  <=   ". $currentAssigned->isoFormat('YYYY-MM'));
+            Log::info("COMPARAACIÓN: ".$endDate->isoFormat('YYYY-MM')."  <=   ". $currentAssigned->isoFormat('YYYY-MM'));
+            if (!($endDate->isoFormat('YYYY-MM') > $currentAssigned->isoFormat('YYYY-MM'))) {
+               // dd("En este rango");
+                //dd("entro");
+                if(is_null($config_exemption))
+                {
+                    if ($date->day > $exemption->end_day) {
+                        //   dd();
+                        $date = $date->addMonths((int)$exemption->month_after_next);
+                        if ($contract->end_date < $date) {
+    
+                            $contract->end_date = $date;
+                        }else{
+                            Log::info("Cosa prohibida");
+                        }
+                    } elseif ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
+    
+                        // dd();
+                        $date = $date->addMonths((int)$exemption->month_next);
+                        //if ($contract->end_date < $date) {
+    
+                            $contract->end_date = $date;
+                       // }
+                          //  Log::info("AQUI CALLOODSA[o");
+                        
+                    } else {
+                        $contract->end_date = $date;
+                    }
+                }else{
+                    //dd($config_exemption);
+                    $date = Carbon::parse($installation->assigned_date)->addMonths((int)$config_exemption);
+                    Log::info("EL DATE: ".$date);
+                    $contract->end_date = $currentInstallation;
+                }
+                Log::info("Este es el contract Guardao: ".$contract);
                 $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
 
                 //dd($contract->end_date);
                 $contract->save();
             } else {
+                Log::info("NO Pasó este pedo de más: ".$currentInstallation);
                 //dd("NOOOOOOOOOOOO");
                 return false;
             }
@@ -735,11 +782,17 @@ class ContractController extends Controller
             return false;
         }
     }
+
+    private function checkRangeConfigExemption(Carbon $date, $config_exemption){
+        return $date->addMonths((int)$config_exemption);
+    }   
     private function checkRange(Carbon $date, ExemptionPeriod $exemption)
     {
         if ($date->day > $exemption->end_day) {
+           // dd("LE TOCO ACA");
             return $date->addMonths((int)$exemption->month_after_next);
         } else if ($date->day >= $exemption->start_day && $date->day <= $exemption->end_day) {
+          //  dd("LE TOCO ACA");
             return $date->addMonths((int)$exemption->month_next);
         }
         return $date;
@@ -792,6 +845,17 @@ class ContractController extends Controller
             $contract->save();
         } catch (Exception $e) {
             dd($e->getMessage());
+        }
+    }
+
+    public function removeDateInstallationSettings($contract_id, $exemption_months){
+        try{
+            $contract = Contract::findOrFail($contract_id);
+            $contract->end_date = Carbon::parse($contract->end_date)->subMonths((int)$exemption_months);
+            
+            $contract->save();
+        }catch(Exception $e){
+            Log::error($e->getMessage());
         }
     }
 }

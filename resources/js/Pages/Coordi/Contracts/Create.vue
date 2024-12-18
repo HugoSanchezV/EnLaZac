@@ -8,6 +8,9 @@ const props = defineProps({
   },
   community:{
     type: Array,
+  },
+  mapKey:{
+    type: String,
   }
 });
 </script>
@@ -22,7 +25,11 @@ const props = defineProps({
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <Form :devices="devices" :plans="plans" :community="community"/>
+          <Form 
+          :devices="devices" 
+          :plans="plans" 
+          :community="community"
+          :mapKey="mapKey"/>
         </div>
       </div>
     </template>
