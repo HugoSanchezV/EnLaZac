@@ -598,7 +598,7 @@ class ContractController extends Controller
                 return Redirect::route('reaming.contracts')->with('error', 'Error a cargar el registro');
                 // return response()->json(['error' => 'Contrato no encontrado'], 404);
             }
-
+            
             // Sumar los días a la fecha de finalización actual
             $newEndDate = Carbon::parse($contract->end_date)->addDays($request->input('days'));
 
@@ -679,7 +679,7 @@ class ContractController extends Controller
         try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
-            Log::info("PINSHI CURRENT: ".$currentInstallation);
+            Log::info("5. PINSHI CURRENT: ".$currentInstallation);
             $date = Carbon::parse($newInstallation)->startOfDay();
 
             // dd();
@@ -694,7 +694,7 @@ class ContractController extends Controller
                 if(is_null($installation->installationSettings->exemption_months))
                 {
                     Log::info("antes NO tenia un config");
-
+                    Log::info("currentInstallation: ".$currentInstallation."  y exemption: ".$exemption);
                     $currentAssigned = $this->checkRange($currentInstallation, $exemption);
                 }else{
                     Log::info("antes tenia un config");
@@ -742,10 +742,8 @@ class ContractController extends Controller
                     $date = Carbon::parse($installation->assigned_date)->addMonths((int)$config_exemption);
                     Log::info("EL DATE: ".$date);
                     $contract->end_date = $currentInstallation;
-
-
                 }
-
+                Log::info("Este es el contract Guardao: ".$contract);
                 $contract->end_date = Carbon::parse($contract->end_date)->setDay((int)$cutoffday);
 
                 //dd($contract->end_date);

@@ -232,20 +232,22 @@ class InstallationSettingsController extends Controller
             //dd("Entro aqui");
             if(!is_null($new_exemption))
             {   
-                Log::info("Entra en set New installation, si hay exemption nueve : ".$installation->assigned_date);
+                Log::info("1. Entra en set New installation, si hay exemption nueve : ".$installation->assigned_date);
+                //Log::info("Este es el cambio de instalación: ".$installation->);
                 $controller->
                 updateEndDateContract(
                     $installation, 
-                    $installation->assigned_date,
+                    Carbon::parse($installation->assigned_date),
                     $installation->description,
-                    installation_s->exemption_
+                    $new_exemption,
                 );
             }else{
                 Log::info("Es new exemption es nulo");
                 $controller-> updateEndDateContract(
                     $installation, 
                     ($installation->assigned_date), 
-                    $installation->description
+                    $installation->description,
+                    null
                 );
             }
 
