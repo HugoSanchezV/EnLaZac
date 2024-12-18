@@ -68,12 +68,12 @@ onMounted(() => {
 });
 });
 const checkDays = ()=>{
-  if(formEquipmentDay.day >= formCutOff.day)
+  if(parseInt(formEquipmentDay.day) < parseInt(formCutOff.day))
   {
-    return true;
-  }else{
-    warning("El dia del cargo por renta debe ser superior al día de corte");
+    warning("El dia del cargo por renta debe ser superior al día de corte: "+formEquipmentDay.day+" y "+formCutOff.day);
     return false;
+  }else{
+    return true;
   }
 }
 const submitCutOffDay = () => {

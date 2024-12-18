@@ -18,6 +18,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  mapKey:{
+    type: String,
+    required: true,
+  }
 });
 </script>
 
@@ -63,6 +67,7 @@ const props = defineProps({
                 :lat="parseFloat(contract[0].geolocation.latitude)"
                 :lng="parseFloat(contract[0].geolocation.longitude)"
                 :clic="false"
+                :mapKey="mapKey"
               />
             </dd>
           </div>

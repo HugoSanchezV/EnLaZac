@@ -12,6 +12,7 @@ use App\Models\Contract;
 use Illuminate\Support\Facades\Redirect;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -194,31 +195,46 @@ class ChargeController extends Controller
     }
     public function paidCharge($id)
     {
-        $charges = Charge::where('contract_id', $id)
-        ->whereNotIn('description', ['cambio-domicilio', 'instalacion-inicial'])
-        ->get();
+        $charge = Charge::findOrFail($id);
+        $controller = new PaymentSanctionController;
 
-        $count = 0;
-        //3 registros
-        foreach($charges as $charge){
-            $count++;
-            if($count >= $charges->count()){
-                //Buscar el tipo de descripcion
-                if($charge->description == 'recargo-mes'){
-                    $controller = new PaymentSanctionController;
-                    $controller->fromPayment($id);
-                }
+        if(!is_null($charge)){
+            if($charge->description === "recargo-mes"){
+               // $contract = Contract::findOrFail($charge->contract_id);
+                $controller->fromPayment($charge->contract_id);
             }
+
+
             $charge->update([
                 'paid' => true,
                 'date_paid' => now(),]);
-            
         }
+
+
+
+        // $charges = Charge::where('contract_id', $id)
+        // ->whereNotIn('description', ['cambio-domicilio', 'instalacion-inicial'])
+        // ->whereIn('paid',false)
+        // ->get();
+        // $controller = new PaymentSanctionController;
+        // $count = 0;
+        // //3 registros
+        // foreach($charges as $charge){
+        //     Log::info("Cargos de contrato: ".$charge->description);
+        //     if($charge->description === "recargo-mes"){
+        //         $count++;
+        //     }
+        //     $charge->update([
+        //         'paid' => true,
+        //         'date_paid' => now(),]);
+            
+        // }
+        // if($count > 0){
+        //     Log::info("SANCION A ACTIVARSE");
+        //     $controller->fromPayment($id);
+        // }
     }
 
-    public function paidRent(){
-        
-    }
     public function exportExcel()
     {
         try {

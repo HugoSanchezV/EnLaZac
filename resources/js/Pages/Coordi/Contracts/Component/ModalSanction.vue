@@ -69,7 +69,7 @@ watch(
   () => props.show,
   (newVal) => {
     if (newVal && currentSanction.value) {
-
+      console.log(currentSanction.value);
       selectStatus.value = !!currentSanction.value.payment_sanction?.status;
     } else if (!newVal) {
       

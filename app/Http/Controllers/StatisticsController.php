@@ -45,30 +45,37 @@ class StatisticsController extends Controller
     public function showUser()
     {
         try {
+           // dd(Auth::id());
             $user = User::with('device.inventorieDevice')->findOrFail(Auth::id());
 
             $devices = $user->device;
 
             $contracts = [];
-
+            //dd($devices);
             foreach ($devices as $device) {
                 // Verifica si el dispositivo tiene un contrato
-                $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
-                // $plan = $contract ? Plan::find($contract->plan_id) : null;
+                if(!is_null($device->inventorieDevice)){
 
-                // Añadir los datos del dispositivo, contrato y plan al arreglo
-                $contracts[] = [
-                    'device' => $device,
-                    'contract' => $contract,
-                    // 'plan' => $plan,
-                ];
+                    $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
+                    // $plan = $contract ? Plan::find($contract->plan_id) : null;
+    
+                    // Añadir los datos del dispositivo, contrato y plan al arreglo
+                    $contracts[] = [
+                        'device' => $device,
+                        'contract' => $contract,
+                        // 'plan' => $plan,
+                    ];
+                }
             }
-
+            //dd("Termina el for");
+        $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
+  
             // dd($contracts);
             return Inertia::render('User/DashboardUser', [
                 'user' => $user,
                 // 'ticket' => Ticket::where('user_id', $id)->count(),
-                'contracts' => $contracts
+                'contracts' => $contracts,
+                'mapKey' => $mapKey,
             ]);
         } catch (Exception $e) {
             dd($e->getMessage());

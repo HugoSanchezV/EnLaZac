@@ -65,6 +65,10 @@ const formatDescription = (tipo) => {
       return "Instalación inicial";
     case "cambio-domicilio":
       return "Cambio de domicilio";
+    case "recargo-mes":
+      return "Recargo del mes";
+    case "fuera-corte":
+      return "No pagó antes del día de corte";
     default:
       return tipo;
   }

@@ -30,6 +30,10 @@ const props = defineProps({
   community:{
     type: Array,
     default: () => [],
+  },
+  mapKey:{
+    type: String,
+    required: true,
   }
 });
 
@@ -333,6 +337,7 @@ const submit = () => {
         :lat="parseInt(lat)"
         :lng="parseInt(lng)"
         :clic=true
+        :mapKey="mapKey"
         @otherPos_clicked="handlePositionClicked" />
       </div>
       

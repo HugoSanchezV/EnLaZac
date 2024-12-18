@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('contract_id')->contains('contracts')->onDelete('cascade');
             $table->boolean('status')->default(false);
+            $table->boolean('applied')->default(false);
             $table->timestamps();
         });
     }

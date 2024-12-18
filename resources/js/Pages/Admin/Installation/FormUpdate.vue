@@ -131,7 +131,7 @@ const submit = () => {
             />
           </svg>
 
-          Enviar Contrato
+          Guardar Instalación
         </PrimaryButton>
       </div>
     </form>

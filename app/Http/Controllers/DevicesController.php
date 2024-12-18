@@ -624,10 +624,7 @@ class DevicesController extends Controller
     public function disconectUser(Contract $contract)
     {
         try {
-            $inv_device = InventorieDevice::with('device')->findOrFail($contract->inv_device_id);
-
-            $devices = Device::findOrFail($inv_device->device->id);
-
+            $devices = Device::where('device_id', $contract->inv_device_id)->first();
             if ($devices) {
                 // foreach($devices  as $device)
                 // {
@@ -642,14 +639,14 @@ class DevicesController extends Controller
             Log::error($e);
         }
     }
-    public function conectUser(Contract $contract)
+    public function connectUser(Contract $contract)
     {
         try {
-            $inv_device = InventorieDevice::with('device')->where('inv_device_id', $contract->inv_device_id)->first();
+            $devices = Device::where('device_id', $contract->inv_device_id)->first();
 
-            $devices = Device::findOrFail($inv_device->device->id);
+          // $devices = Device::findOrFail($inv_device->device->id);
 
-            if ($devices) {
+            if (!is_null($devices)) {
                 // foreach($devices  as $device)
                 // {
                 if ($devices->disabled == 1) {
