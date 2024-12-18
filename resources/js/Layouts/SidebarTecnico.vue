@@ -23,12 +23,13 @@
       >
     </div>
     <div class="p-4 mt-3 flex items-center justify-center">
-      <span class="material-symbols-outlined">cell_tower</span>
-      <span class="ml-2 text-lg font-bold">EnLaZac</span>
+      <!-- <span class="material-symbols-outlined">cell_tower</span>
+      <span class="ml-2 text-lg font-bold">EnLaZac</span> -->
+      <NuviraSide></NuviraSide>
     </div>
 
     <!-- Menu Items -->
-    <nav class="mt-10">
+    <nav class="mt-8">
       <ul>
         <li
           v-for="(item, index) in menuItems"
@@ -100,7 +101,7 @@
 <script setup>
 import { ref, onMounted, defineEmits } from "vue";
 import { Link } from "@inertiajs/vue3";
-
+import NuviraSide from "@/Components/Icons/NuviraSide.vue";
 // Definición del menú con subitems y sus iconos
 const menuItems = ref([
   {

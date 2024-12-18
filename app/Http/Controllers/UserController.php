@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Events\RegisterUserEvent;
 use App\Exports\GenericExport;
 use App\Imports\UserImport;
+use App\Jobs\UpdateTelegramUserJob;
 use App\Models\Contract;
 use App\Models\Plan;
 use App\Models\PreRegisterUser;
@@ -237,10 +238,11 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id)
     {
         try {
-            DB::transaction(function () use ($request, $id) {
-                $user = User::findOrFail($id);
+            $user = User::findOrFail($id);
 
-                $validatedData = $request->validated();
+            $validatedData = $request->validated();
+
+            DB::transaction(function () use ($validatedData, $user, $request) {
 
                 if (!empty($validatedData['password'])) {
                     $validatedData['password'] = Hash::make($validatedData['password']);
@@ -256,6 +258,11 @@ class UserController extends Controller
                     $register->delete();
                 }
             });
+
+            if (UserService::needUpdateUser($user, $validatedData)) {
+                UpdateTelegramUserJob::dispatch($user->id);
+            }
+
             return Redirect::route('usuarios')->with('success', 'Usuario Actualizado Con Éxito');
         } catch (Exception $e) {
             return Redirect::route('usuarios')->with('error', 'Error al momento de actualizar registro');

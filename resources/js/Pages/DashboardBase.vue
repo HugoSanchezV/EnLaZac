@@ -11,7 +11,6 @@ import AppLayoutCoordinador from "@/Layouts/AppLayoutCoordinador.vue";
 import useGeneralNotifications from "@/Components/Base/hooks/useGeneralFlashNotifications";
 import DashboardAdmin from "./Admin/DashboardAdmin.vue";
 
-
 const { props } = usePage();
 const authenticatedUser = props.auth.user; // Aquí accedes al usuario autenticado
 
@@ -31,19 +30,34 @@ const layoutComponent = computed(() => {
       return AppLayoutUser;
   }
 });
+
+const titleName = () => {
+  switch (authenticatedUser.admin) {
+    case 0:
+      return "Usuario";
+    case 1:
+      return "Admin";
+    case 2:
+      return "Coordi";
+    // case 4:
+    //   return "t";
+    case 3:
+      return "Tecnico";
+    default:
+      return "usuario";
+  }
+};
 useGeneralNotifications();
 </script>
 
 <template>
-  <component :is="layoutComponent" title="Dashboard">
+  <component :is="layoutComponent" :title="titleName()">
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        <slot name="namePage">
-          
-        </slot>
+        <slot name="namePage"> </slot>
       </h2>
     </template>
-    <div class="py-12 ">
+    <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div
           class="overflow-hidden sm:rounded-lg"
@@ -53,7 +67,8 @@ useGeneralNotifications();
           }"
         >
           <slot name="content">
-              <dashboard-admin v-if="props.auth.user.admin == 1"
+            <dashboard-admin
+              v-if="props.auth.user.admin == 1"
               :morrosos="props.morrosos"
               :new_tickets="props.new_tickets"
               :currentUsers="props.currentUsers"
@@ -64,9 +79,8 @@ useGeneralNotifications();
               :upload_byte="props.upload_byte"
               :download_byte="props.download_byte"
               :routers="props.routers"
-              >
-
-              </dashboard-admin>
+            >
+            </dashboard-admin>
           </slot>
         </div>
       </div>
@@ -86,45 +100,44 @@ export default {
       default: true,
     },
     props: {
-    applyStyles: {
-      type: Boolean,
-      default: true,
+      applyStyles: {
+        type: Boolean,
+        default: true,
+      },
+      morrosos: {
+        type: Object,
+      },
+      activeDevice: {
+        type: Object,
+      },
+      new_tickets: {
+        type: Object,
+      },
+      currentUsers: {
+        type: Object,
+      },
+      activeContract: {
+        type: Object,
+      },
+      target: {
+        type: Array,
+      },
+      upload_rate: {
+        type: Array,
+      },
+      download_rate: {
+        type: Array,
+      },
+      upload_byte: {
+        type: Array,
+      },
+      download_byte: {
+        type: Array,
+      },
+      routers: {
+        type: Array,
+      },
     },
-    morrosos: {
-      type: Object,
-    },
-    activeDevice: {
-      type: Object,
-    },
-    new_tickets: {
-      type: Object,
-    },
-    currentUsers: {
-      type: Object,
-    },
-    activeContract: {
-      type: Object,
-    },
-    target: {
-      type: Array,
-    },
-    upload_rate:{
-      type: Array,
-    },
-    download_rate: {
-      type: Array,
-    },
-    upload_byte: {
-      type: Array,
-    },
-    download_byte: {
-      type: Array,
-    },
-    routers: {
-      type: Array,
-    }
-  },
   },
 };
-
 </script>

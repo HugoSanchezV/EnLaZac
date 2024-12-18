@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Log;
 
 class UserTelegramService
 {
-    static function createContactTelegramSendMessage(array $data, TelegramService $telegramService)
+    static function createContactTelegramSendMessage(array $data, TelegramService $telegramService, $message = "Hola Bienvenido a EnLaZac")
     {
         try {
             $userId = $telegramService->importContact($data['phone'], $data['name'], $data['alias']);
 
             if ($userId && isset($userId["imported"][0]["user_id"])) {
-                $telegramService->sendMessage($userId["imported"][0]["user_id"], "Hola Bienvenido a EnLaZac " . $data['name']);
+                $telegramService->sendMessage($userId["imported"][0]["user_id"], $message . " " . $data['name']);
 
                 return $userId["imported"][0]["user_id"];
             }

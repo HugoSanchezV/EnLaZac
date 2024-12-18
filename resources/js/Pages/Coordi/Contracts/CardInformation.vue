@@ -124,20 +124,29 @@ const props = defineProps({
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Mensualidad Contrato</dt>
           <dd  
+          v-if="contract?.plan_id"
             class="text-green-600 font-bold hover:underline"
           >
            $ {{ contract.price }} 
           </dd>
+          <dd v-else>
+            Sin asignar
+          </dd>
         </div>
         <!-- Plan afiliado con link -->
         <div class="sm:col-span-1">
+          {{ contract.plan_id }}
           <dt class="text-sm font-medium text-gray-600">Plan Afiliado</dt>
           <Link 
-            :href="route('plans.show', contract.plan_id)" 
+          v-if="contract?.plan_id"
+            :href="route('plans.show', contract?.plan_id)" 
             class="text-indigo-600 hover:underline font-bold"
           >
-            {{ contract.plan_name }}
           </Link>
+
+          <span v-else> 
+            Sin asignar
+          </span>
           <!-- <span v-else class="text-gray-500">Sin asignar</span> -->
         </div>
 

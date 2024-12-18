@@ -15,6 +15,7 @@ export default function useFlashNotifications() {
             draggable: true,
         });
 
+        page.props.flash.success = null;
         return
     }
 
@@ -27,6 +28,7 @@ export default function useFlashNotifications() {
             draggable: true,
         });
 
+        page.props.flash.error = null;
         return
     }
 
@@ -38,6 +40,7 @@ export default function useFlashNotifications() {
             position: POSITION.TOP_CENTER,
             draggable: true,
         });
+        page.props.flash.warning = null;
         return
     }
 }

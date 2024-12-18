@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 import ApplicationMark from "@/Components/ApplicationMark.vue";
+import NuviraSideBlack from "@/Components/Icons/NuviraSideBlack.vue";
 import Banner from "@/Components/Banner.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -46,7 +47,8 @@ const logout = () => {
               <!-- Logo -->
               <div class="shrink-0 flex items-center">
                 <Link :href="route('dashboard')">
-                  <ApplicationMark class="block h-9 w-auto" />
+                  <!-- <ApplicationMark class="block h-9 w-auto" /> -->
+                  <NuviraSideBlack></NuviraSideBlack>
                 </Link>
               </div>
 
@@ -321,6 +323,12 @@ const logout = () => {
             >
               Soporte Técnico
             </ResponsiveNavLink>
+            <ResponsiveNavLink
+              :href="route('payment')"
+              :active="route().current('payment')"
+            >
+              Historial de Pagos
+            </ResponsiveNavLink>
           </div>
 
           <!-- Responsive Settings Options -->
@@ -352,7 +360,7 @@ const logout = () => {
                 :href="route('profile.show')"
                 :active="route().current('profile.show')"
               >
-                Profile
+                Perfil
               </ResponsiveNavLink>
 
               <ResponsiveNavLink
@@ -441,6 +449,7 @@ const logout = () => {
       <!-- Page Heading -->
       <header v-if="$slots.header" class="bg-white shadow">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          <BaseButtonBack class="mb-1"></BaseButtonBack>
           <slot name="header" />
         </div>
       </header>

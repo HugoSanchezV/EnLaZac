@@ -9,6 +9,7 @@ import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import Sidebar from "./Sidebar.vue";
 import BaseSearchHeader from "@/Components/Base/BaseSearchHeader.vue";
+import BaseButtonBack from "@/Components/Base/BaseButtonBack.vue";
 defineProps({
   title: String,
 });
@@ -263,7 +264,7 @@ const formattedDate = (dateCreation) => {
                   <Dropdown align="right" width="48">
                     <template #trigger>
                       <span class="bg-yellow-400 rounded-md py-1 px-2"
-                        >admin</span
+                        >Admin</span
                       >
                       <button
                         v-if="$page.props.jetstream.managesProfilePhotos"
@@ -475,6 +476,7 @@ const formattedDate = (dateCreation) => {
         <!-- Page Heading -->
         <header v-if="$slots.header" class="bg-white shadow">
           <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <BaseButtonBack class="mb-1"></BaseButtonBack>
             <slot name="header" />
           </div>
         </header>

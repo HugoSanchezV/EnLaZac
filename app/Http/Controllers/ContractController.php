@@ -43,9 +43,8 @@ class ContractController extends Controller
 
     public function index(Request $request)
     {
-        $query = Contract::query();
-        ;
-        
+        $query = Contract::query();;
+
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
@@ -73,7 +72,7 @@ class ContractController extends Controller
 
         if ($request->has('expired') && $request->input('expired') == 'true') {
             $query->where('active', '=', '1')
-                  ->where('end_date', '<', Carbon::now());
+                ->where('end_date', '<', Carbon::now());
         }
         // Ordenación
         $order = 'asc';
@@ -232,18 +231,20 @@ class ContractController extends Controller
             'contracts.id as contract_id',
             'contracts.address as contract_address',
             'plans.name as plan_name',
+            'plans.id as plan_id',
             'devices.address as device_address',
             'users.id as user_id',
             'users.name as user_name',
             'users.email as user_email'
         )
-            ->join('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+            ->leftJoin('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
             ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
             ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
             ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device (corrección del campo)
             ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
             ->where('contracts.id', $id)
             ->first();
+        // dd($contract);
 
         return Inertia::render($this->path . '/Show', [
             'contract' => $contract,

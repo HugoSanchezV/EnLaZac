@@ -356,7 +356,7 @@ const confirmSelection = (row, select, data) => {
             </div>
           </td>
           <td class="flex items-stretch">
-            <div class="sm:flex gap-4 flex actions">
+            <div class="sm:flex gap-4 flex flex-wrap actions">
               <Link
                 :href="route('contracts.show', row.id)"
                 v-if="show"

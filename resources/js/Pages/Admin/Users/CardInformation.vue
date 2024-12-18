@@ -94,9 +94,9 @@ const props = defineProps({
         <!-- Muestra el costo del plan -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Plan afiliado</dt>
-          <div v-if="plan !== null">
+          <div v-if="plan !== null && contract[0].plan?.id !== undefined">
             <Link
-              :href="route('plans.show', contract[0].plan.id)"
+              :href="route('plans.show', contract[0].plan?.id)"
               class="cursor-pointer text-blue-500 underline"
             >
               <dd class="mt-1 text-sm text-gray-900">

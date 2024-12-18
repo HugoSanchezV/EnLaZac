@@ -159,12 +159,12 @@ const deleteRegisterMonth = (info) => {
             date: info.date.value,
             q: info.searchQuery,
             attribute: attributeUrl,
-            order: info.order,
+            date: info.date,
           });
           router.delete(url, {
             q: info.searchQuery,
             attribute: attributeUrl,
-            order: info.order,
+            date: info.date,
           });
         },
       },

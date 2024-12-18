@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Events\RouterDiagnosisEvent;
 use App\Http\Controllers\PingController;
+use App\Jobs\SendMessageErrorToClientJob;
 use App\Models\Ping;
 use App\Models\Router;
 use App\Services\TelegramService;
@@ -95,7 +96,10 @@ class PingRouters extends Command
                 //return true;
             } else {
                 $message =  "El dispositivo no responde al ping.\n";
-                self::ping_register($message, $id);
+                self::ping_register($message, $id); 
+                
+                SendMessageErrorToClientJob::dispatch($id);
+
                 return $message;
                 //return false;
             }

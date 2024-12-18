@@ -386,7 +386,7 @@ const getTag = (cell) => {
           </td>
 
           <td class="flex items-stretch">
-            <div class="sm:flex gap-2 actions">
+            <div class="sm:flex gap-4 flex flex-wrap actions">
               <Link
                 :href="route('performance.user', row.id)"
                 v-if="show"

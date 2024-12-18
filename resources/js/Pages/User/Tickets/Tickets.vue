@@ -32,7 +32,7 @@ const filters = [
     <template v-slot:namePage>
       <div class="flex justify-between">
         <div>
-          <h2>Reporta las fallas en la red</h2>
+          <h2>Reporta las fallas</h2>
         </div>
         <div>
           <Link

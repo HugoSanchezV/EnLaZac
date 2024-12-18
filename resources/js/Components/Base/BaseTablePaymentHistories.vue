@@ -11,8 +11,7 @@ import monthSelect from "flatpickr/dist/plugins/monthSelect";
 
 import { usePage } from "@inertiajs/vue3";
 
-const user = usePage().props.auth.user; 
-
+const user = usePage().props.auth.user;
 
 const getOriginal = (data) => {
   if (data === "usuario") {
@@ -187,10 +186,10 @@ const deleteRegisterMonth = (info) => {
 <template>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div
-      class="flex flex-col sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4"
+      class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 items-center justify-between pb-4"
     >
       <!-- incio de filtros -->
-      <div class="flex gap-2">
+      <div class="flex flex-wrap justify-center gap-2">
         <filter-order-base
           :list="[
             { id: 0, order: 'ASC' },
@@ -290,7 +289,7 @@ const deleteRegisterMonth = (info) => {
             x
           </button>
 
-          <button
+          <!-- <button
             @click="
               deleteRegisterMonth({
                 searchQuery: this.searchQuery,
@@ -305,7 +304,7 @@ const deleteRegisterMonth = (info) => {
             <span class="material-symbols-outlined"> paid </span>
 
             <span>Realizar corte del mes</span>
-          </button>
+          </button> -->
         </div>
 
         <!-- Final dfrop nbuton  -->
@@ -375,7 +374,7 @@ const deleteRegisterMonth = (info) => {
                   >{{ getTag(cellIndex) }} :</span
                 >
                 <Link
-                v-if="cell !== 'Paypal' && cell !== 'Mercadopago'"
+                  v-if="cell !== 'Paypal' && cell !== 'Mercadopago'"
                   :href="route('usuarios.show', separateWorker(cell).number)"
                 >
                   <span>{{ separateWorker(cell).name }}</span>
@@ -440,7 +439,7 @@ const deleteRegisterMonth = (info) => {
                 Editar
               </Link> -->
 
-              <div v-if="del && (user.admin == 1)">
+              <div v-if="del && user.admin == 1">
                 <button
                   @click="
                     destroy(row.id, {

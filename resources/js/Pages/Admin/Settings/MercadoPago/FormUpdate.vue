@@ -23,7 +23,7 @@
         </div>
 
         <!-- Modo -->
-        <div>
+        <!-- <div>
           <InputLabel for="mode" value="Modo" />
           <select
             id="mode"
@@ -35,10 +35,10 @@
             <option value="live">Live</option>
           </select>
           <InputError class="mt-2 text-sm text-red-600" :message="form.errors.mode" />
-        </div>
+        </div> -->
 
         <!-- Sandbox Client ID -->
-        <div>
+        <!-- <div>
           <InputLabel for="sandbox_client_id" value="Sandbox Client ID" />
           <TextInput
             id="sandbox_client_id"
@@ -48,11 +48,11 @@
             required
           />
           <InputError class="mt-2 text-sm text-red-600" :message="form.errors.sandbox_client_id" />
-        </div>
+        </div> -->
 
         <!-- Sandbox Client Secret -->
         <div>
-          <InputLabel for="sandbox_client_secret" value="Sandbox Client Secret" />
+          <InputLabel for="sandbox_client_secret" value="ID Client" />
           <TextInput
             id="sandbox_client_secret"
             v-model="form.sandbox_client_secret"
@@ -64,7 +64,7 @@
         </div>
 
         <!-- Live Client ID -->
-        <div>
+        <!-- <div>
           <InputLabel for="live_client_id" value="Live Client ID" />
           <TextInput
             id="live_client_id"
@@ -73,11 +73,11 @@
             class="mt-1 block w-full"
           />
           <InputError class="mt-2 text-sm text-red-600" :message="form.errors.live_client_id" />
-        </div>
+        </div> -->
 
         <!-- Live Client Secret -->
         <div>
-          <InputLabel for="live_client_secret" value="Live Client Secret" />
+          <InputLabel for="live_client_secret" value="Client Secret" />
           <TextInput
             id="live_client_secret"
             v-model="form.live_client_secret"
@@ -88,7 +88,7 @@
         </div>
 
         <!-- Moneda -->
-        <div>
+        <!-- <div>
           <InputLabel for="currency" value="Moneda" />
           <select
             id="currency"
@@ -100,7 +100,7 @@
             <option value="USD">USD</option>
           </select>
           <InputError class="mt-2 text-sm text-red-600" :message="form.errors.currency" />
-        </div>
+        </div> -->
 
         <!-- Botón de Envío -->
         <div>

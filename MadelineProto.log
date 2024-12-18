@@ -4847,3 +4847,225 @@ Session, Chessanchez:        	Garbage collected 9 incoming messages in DC 1, 0 l
 Session, Chessanchez:        	Garbage collected 8 outgoing messages in DC 1, 0 left
 PingLoop, Chessanchez:       	Ping DC 1.0
 AbstractServer, Chessanchez: 	Accepted IPC client connection!
+Logger:         	MadelineProto 8.3.5
+Logger:         	Copyright (C) 2016-2024 Daniil Gentili
+Logger:         	Licensed under AGPLv3
+Logger:         	https://github.com/danog/MadelineProto
+Serialization:  	Got exclusive session lock!
+FeedLoop, 715339411:       	Resumed update feed loop generic
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001282127062
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001314674912
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001345965225
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001660295583
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001295137847
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001267844032
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001162141842
+MTProto, 715339411:        	Updated config!
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Getdiff fed me message of type message in update feed loop channel -1001314674912...
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001314674912
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001314674912
+FeedLoop, 715339411:       	Got channel too long update, getting difference...
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001282127062
+UpdateHandler, 715339411:  	Saving update of type updateNewChannelMessage
+FeedLoop, 715339411:       	MSGID duplicate (314753) in update feed loop channel -1001282127062
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001282127062
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 21 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 20 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 11 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 12 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper, 715339411:     	Saved session!
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 12 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper, 715339411:     	Saved session!
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 12 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+AbstractServer, 715339411: 	Accepted IPC client connection!
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 12 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper, 715339411:     	Saved session!
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 12 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+AbstractServer, 715339411: 	Accepted IPC client connection!
+Logger:         	MadelineProto 8.3.5
+Logger:         	Copyright (C) 2016-2024 Daniil Gentili
+Logger:         	Licensed under AGPLv3
+Logger:         	https://github.com/danog/MadelineProto
+Serialization:  	Got exclusive session lock!
+FeedLoop, 715339411:       	Resumed update feed loop generic
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001282127062
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001314674912
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001345965225
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001660295583
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001295137847
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001267844032
+FeedLoop, 715339411:       	Resumed update feed loop channel -1001162141842
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 17 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 15 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+UpdateHandler, 715339411:  	Parsing updates (updateShort) received via the socket...
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updateUserStatus
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 13 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 14 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper, 715339411:     	Saved session!
+PingLoop, 715339411:       	Ping DC 1.0
+AbstractServer, 715339411: 	Accepted IPC client connection!
+MinDatabase, 715339411:    	Found 1 pending contexts
+UpdateHandler, 715339411:  	Parsing updates (updates) received via the socket...
+SeqLoop, 715339411:        	Was fed updates of type updates...
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updatePeerSettings
+PingLoop, 715339411:       	Ping DC 1.0
+MinDatabase, 715339411:    	Found 1 pending contexts
+UpdateHandler, 715339411:  	Parsing updates (updates) received via the socket...
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updateMessageID
+UpdateHandler, 715339411:  	Saving update of type updateNewMessage
+UpdateHandler, 715339411:  	Saving update of type updateReadHistoryInbox
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 15 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 18 outgoing messages in DC 1, 0 left
+MinDatabase, 715339411:    	Found 1 pending contexts
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updatePeerSettings
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+UpdateHandler, 715339411:  	Parsing updates (updates) received via the socket...
+SeqLoop, 715339411:        	Was fed updates of type updates...
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updateUserStatus
+PingLoop, 715339411:       	Ping DC 1.0
+UpdateHandler, 715339411:  	Parsing updates (updateShort) received via the socket...
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updateUserStatus
+PingLoop, 715339411:       	Ping DC 1.0
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper, 715339411:     	Saved session!
+Session, 715339411:        	Garbage collected 14 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper, 715339411:     	Saved session!
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 11 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 14 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 14 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths, 715339411:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths, 715339411:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper, 715339411:     	Saved session!
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 14 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 11 outgoing messages in DC 1, 0 left
+PingLoop, 715339411:       	Ping DC 1.0
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 12 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 11 outgoing messages in DC 1, 0 left
+AbstractServer, 715339411: 	Accepted IPC client connection!
+UpdateHandler, 715339411:  	Parsing updates (updateShortSentMessage) received via the socket...
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updateNewMessage
+MinDatabase, 715339411:    	Found 1 pending contexts
+UpdateHandler, 715339411:  	Parsing updates (updates) received via the socket...
+FeedLoop, 715339411:       	Resumed update feed loop generic
+UpdateHandler, 715339411:  	Saving update of type updateReadHistoryOutbox
+PingLoop, 715339411:       	Ping DC 1.0
+Session, 715339411:        	Garbage collected 15 incoming messages in DC 1, 0 left
+Session, 715339411:        	Garbage collected 16 outgoing messages in DC 1, 0 left
+AbstractServer, 715339411: 	Accepted IPC client connection!

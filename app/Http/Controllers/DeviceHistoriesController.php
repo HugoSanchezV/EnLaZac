@@ -193,10 +193,9 @@ class DeviceHistoriesController extends Controller
     {
         $query = null;
         $query = DeviceHistorie::with(['inventorieDevice:id,mac_address', 'user:id,name', 'creator:id,name']);
-        if (!isset($deviceHistorie)) {
+        if (isset($id)) {
             $query->where('id', $id);
         }
-
 
         $headings = [
             'ID',

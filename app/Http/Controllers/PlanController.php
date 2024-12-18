@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Plan\StorePlanRequest;
 use App\Http\Requests\Plan\UpdatePlanRequest;
 use App\Jobs\DestroyPlanDevicesJob;
+use App\Jobs\DisableContractAfterDestroyPlanJob;
 use App\Jobs\UpdatePlanDevicesJob;
 use App\Models\Contract;
 use App\Models\Device;
@@ -196,26 +197,39 @@ class PlanController extends Controller
         ];
         try {
 
-            $devices = Device::query()
-                ->join('inventorie_devices', 'devices.device_id', '=', 'inventorie_devices.id')
-                ->join('contracts', 'inventorie_devices.id', '=', 'contracts.inv_device_id')
-                ->join('plans', 'contracts.plan_id', '=', 'plans.id')
-                ->where('plans.id', $id)
-                ->select([
-                    'devices.id AS device_id',
-                    'devices.comment',
-                    'devices.address',
-                    'devices.router_id',
-                    'contracts.plan_id',
-                ])
-                ->get();
 
-            $plan = Plan::findOrFail($id);
-            $plan->delete();
+            $devices = DB::transaction(function () use ($id) {
+                $devices = Device::query()
+                    ->join('inventorie_devices', 'devices.device_id', '=', 'inventorie_devices.id')
+                    ->join('contracts', 'inventorie_devices.id', '=', 'contracts.inv_device_id')
+                    ->join('plans', 'contracts.plan_id', '=', 'plans.id')
+                    ->where('plans.id', $id)
+                    ->select([
+                        'devices.id AS device_id',
+                        'devices.comment',
+                        'devices.address',
+                        'devices.router_id',
+                        'contracts.plan_id',
+                        'contracts.id AS contract_id',
+                    ])
+                    ->get();
+
+                $plan = Plan::findOrFail($id);
+
+                $plan->delete();
+
+                return $devices;
+            });
+
 
             if (!$devices->isEmpty()) {
                 DestroyPlanDevicesJob::dispatch($devices);
+
+                $contracts = $devices->pluck('contract_id')->toArray(); 
+                DisableContractAfterDestroyPlanJob::dispatch($contracts);
             }
+
+
             return Redirect::route('plans', $data)->with('success', 'Plan de internet Eliminado Con Éxito');
         } catch (Exception $e) {
             return Redirect::route('plans', $data)->with('errror', 'Error al cargar el registro');

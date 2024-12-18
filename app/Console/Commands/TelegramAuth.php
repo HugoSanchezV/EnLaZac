@@ -28,13 +28,13 @@ class TelegramAuth extends Command
      */
     public function handle(TelegramService $telegramService)
     {
-        // $this->info('Iniciando sesión en Telegram...');
-        // try {
-        //     $telegramService->startSession();
-        //     $this->info('Sesión iniciada exitosamente.');
-        // } catch (\Exception $e) {
-        //     $this->error('Error al iniciar sesión: ' . $e->getMessage());
-        // }
+        $this->info('Iniciando sesión en Telegram...');
+        try {
+            $telegramService->startSession();
+            $this->info('Sesión iniciada exitosamente.');
+        } catch (\Exception $e) {
+            $this->error('Error al iniciar sesión: ' . $e->getMessage());
+        }
 
          return 0;
     }
