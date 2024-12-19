@@ -36,7 +36,7 @@ class RegisterUserListener
             User::whereIn('admin', [1, 2])
             ->each(function(User $user) use ($event, $mail) {
                 if($mail) {
-                    Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML());
+                    Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML($event->user));
                 }
                 Notification::send($user, new RegisterUserNotification($event->user));
             });
@@ -50,7 +50,8 @@ class RegisterUserListener
     public function createSubject($event){
         return "Nuevo usuario registrado no. ".$event->user->id;
     }
-    public function createHTML(){
+    public function createHTML($usuario){
+        $url = route('usuario.show', ['id' => $usuario->id]);
         return '
     <!DOCTYPE html>
     <html>
@@ -60,7 +61,7 @@ class RegisterUserListener
             <p style="color: #4a5568; margin-top: 16px;">
                 Un usuario nuevo se ha registrado en el sistemas.
             </p>
-            <a href="#" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
+            <a href="'.$url.'" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
                 Ver usuario
             </a>
         </div>

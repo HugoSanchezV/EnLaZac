@@ -39,7 +39,7 @@ class TicketListener
             $users->each(function (User $user) use ($event, $settings) {
         
                     if($settings){
-                        Mailing::dispatch($settings, $user, $this->createSubject($event), $this->createHTML());
+                        Mailing::dispatch($settings, $user, $this->createSubject($event), $this->createHTML($event->ticket));
                     }
                     Notification::send($user, new TicketNotification($event->ticket));
         
@@ -54,7 +54,8 @@ class TicketListener
     public function createSubject($event){
         return "Nuevo ticket no. ".$event->ticket->id;
     }
-    public function createHTML(){
+    public function createHTML($ticket){
+        $url = route('ticket.show', ['id' => $ticket->id]);
         return '
         <!DOCTYPE html>
         <html>
@@ -64,7 +65,7 @@ class TicketListener
                 <p style="color: #4a5568; margin-top: 16px;">
                     Se ha generado un nuevo ticket de un usuario.
                 </p>
-                <a href="#" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
+                <a href="'.$url.'" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
                     Ver ticket
                 </a>
             </div>

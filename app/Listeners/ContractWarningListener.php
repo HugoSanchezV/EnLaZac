@@ -29,7 +29,7 @@ class ContractWarningListener
         try {
             $mail = MailSetting::first();
 
-            $user = User::findOrFail($event->contract->inventorieDevice->user->user_id);
+            $user = User::findOrFail($event->contract->inventorieDevice->device->user->user_id);
 
             if ($mail) {
 
@@ -46,6 +46,7 @@ class ContractWarningListener
     }
     public function createHTML($days)
     {
+        $url = route('dashboard');
         return '
     <!DOCTYPE html>
     <html>
@@ -56,7 +57,7 @@ class ContractWarningListener
                 Se informa que solo faltan ' . $days . 'días para el día de corte, por lo que se le recomienda realizar su
                 pago lo más pronto posible
             </p>
-            <a href="#" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
+            <a href="'.$url.'" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
                 Realizar pago
             </a>
         </div>

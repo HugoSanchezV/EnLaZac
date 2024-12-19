@@ -36,7 +36,7 @@ class PingTecnicoListener
             $mail = MailSetting::first();
             $user = User::where('id', $event->ping->user_id)->get()->first();
             if($mail){
-                Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML());
+                Mailing::dispatch($mail,  $user, $this->createSubject($event), $this->createHTML($event->ping));
             }
         
             
@@ -50,7 +50,8 @@ class PingTecnicoListener
     public function createSubject($event){
         return "Revision del dispositivo no. ".$event->ping->device_id;
     }
-    public function createHTML(){
+    public function createHTML($dispositivo){
+        $url = route('devices.show', ['id' => $dispositivo->device_id]);
         return '
     <!DOCTYPE html>
     <html>
@@ -60,7 +61,7 @@ class PingTecnicoListener
             <p style="color: #4a5568; margin-top: 16px;">
                 Se le ha asignado un dispositvo para verificar su correcto funcionamiento <strong></strong>.
             </p>
-            <a href="#" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
+            <a href="'.$url.'" style="display: inline-block; margin-top: 24px; background-color: #3b82f6; color: #ffffff; padding: 8px 16px; border-radius: 8px; text-decoration: none;">
                 Ver dispositivo
             </a>
         </div>
