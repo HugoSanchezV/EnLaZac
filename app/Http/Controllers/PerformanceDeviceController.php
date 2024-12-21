@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Device;
 use App\Models\PerformanceDevice;
 use App\Models\User;
+use App\Services\TrafficService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -322,6 +323,7 @@ class PerformanceDeviceController extends Controller
 
     public function store(array $request){
 
+        $service = new TrafficService(); 
         //Añadir validaciones "manuales"
         Validator::make($request, [
             'device_id' => ['required', 'exists:devices,id'],
@@ -343,5 +345,7 @@ class PerformanceDeviceController extends Controller
                 'download' => $request['byte']['download'],
             ],
         ]);
+
+        $service->createStats();
     }
 }
