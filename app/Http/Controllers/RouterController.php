@@ -186,44 +186,15 @@ class RouterController extends Controller
         // $message = "Hola";
         try {
 
-            if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-                $message = "Dirección IP no válida: " . $ip . "\n";
-                //  return false;
-            }
+            $routerOSService = RouterOSService::getInstance();
+        if($routerOSService->connectMessage($id)){
+            $routerOSService->disconnect();
 
-            // Determinar el comando 'ping' según el sistema operativo
-            if (stripos(PHP_OS, 'WIN') === 0) {
-                // Comando para Windows
-                $pingResult = shell_exec("ping -n 4 " . escapeshellarg($ip));
-            } else {
-                // Comando para Linux/macOS
-                $pingResult = shell_exec("ping -c 4 " . escapeshellarg($ip));
-            }
-
-            // Verificar si el ping fue exitoso (depende del SO)
-            if (stripos(PHP_OS, 'WIN') === 0) {
-                // Para Windows, verificar si se recibió el número completo de respuestas
-
-                //   dd($pingResult);
-                if (strpos($pingResult, 'recibidos = 4') == true) {
-                    $message = "El dispositivo está en línea.\n";
-                    //  return true;
-                } else {
-                    $message = "El dispositivo no responde al ping.\n";
-                    // return false;
-                }
-            } else {
-                // Para Linux/macOS, verificar si no hay pérdida de paquetes
-                if (strpos($pingResult, '0% packet loss') !== false) {
-                    $message = "El dispositivo está en línea.\n";
-                    //return true;
-                } else {
-                    $message = "El dispositivo no responde al ping.\n";
-                    // return false;
-                }
-            }
-
-            return Redirect::route('routers')->with('success', $message);
+            return Redirect::route('routers')->with('success', "El dispositivo está en línea.");
+        }else{
+            return Redirect::route('routers')->with('error', "El dispositivo se encuentra fuera de línea");
+           //return "Offline";
+        }
         } catch (Exception $e) {
             return Redirect::route('routers')->with('error', $e->getMessage());
         }

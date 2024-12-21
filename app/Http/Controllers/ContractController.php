@@ -76,7 +76,7 @@ class ContractController extends Controller
         }
 
         if ($request->has('expired') && $request->input('expired') == 'true') {
-            $query->where('active', '=', '1')
+            $query->where('active', '=', '0')
                   ->where('end_date', '<', Carbon::now());
         }
         // Ordenación

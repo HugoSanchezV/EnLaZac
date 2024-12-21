@@ -41,8 +41,9 @@ class PingRouters extends Command
         UserTelegramService::sendMessageToAdmin(new TelegramService(), $message);
     }
 
-    public function sendPing($ip, $id)
+    public function sendPing($id)
     {
+        dd();
         $routerOSService = RouterOSService::getInstance();
         if($routerOSService->connectMessage($id)){
             $routerOSService->disconnect();
@@ -50,8 +51,6 @@ class PingRouters extends Command
         }else{
             return "Offline";
         }
-        
-        
     }
     // public function sendPing($ip, $id)
     // {
