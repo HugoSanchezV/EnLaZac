@@ -1,7 +1,6 @@
 <?php
 namespace App\Services;
 
-use App\Models\Device;
 use App\Models\PerformanceDevice;
 use App\Models\PerformanceDeviceMonthly;
 use App\Models\PerformanceDeviceWeekly;
@@ -21,95 +20,161 @@ class TrafficService implements ShouldQueue{
     use Queueable;
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function service(){
-
-    }
-
-    public function getDay(Device $device){
-
-        try{ 
-            return PerformanceDevice::select(
-                DB::raw('DATE_FORMAT(created_at, "%H:%i") as time'),   // Formato de hora:minuto para el eje Target
-                DB::raw('rate->"$.uplosad" as rate_upload'),
-                DB::raw('rate->"$.download" as rate_download'),
-                DB::raw('byte->"$.upload" as byte_upload'),
-                DB::raw('byte->"$.download" as byte_download')
-            )
-            ->where('device_id', $device->id)
-            ->whereDate('created_at', Carbon::today())
-            ->orderBy('created_at', 'asc')
-            ->get();
-        }
-        catch(Exception $e){
-            dd($e);
-        }
-    }
-    public function createStats()
+    public function createStats(PerformanceDevice $daily)
     {
         try{
-            $daily = PerformanceDevice::all();
-            $this->setWeekly($daily);
+            DB::beginTransaction();
+           // $daily = PerformanceDevice::orderBy('created_at', 'desc')->first();
+                $this->setWeekly($daily);
 
-            $weekly = $this->getWeekly();
-            $this->setMonthly($weekly);
+                $weekly = $this->getWeekly();
+                $this->setMonthly($weekly);
 
-            $monthly = $this->getMonthly();
-            $this->setYearly($monthly);
+                $monthly = $this->getMonthly();
+                $this->setYearly($monthly);
+            DB::commit();
 
 
         }catch(Exception $e){
             Log::error($e->getMessage());
+            DB::rollBack();
         }
     }
-    private function setYearly(Collection $daily)
+    private function setYearly(Collection $monthly)
     {
-        $last = PerformanceDeviceYearly::orderBy('created_at', 'desc')->first();
-        if(Carbon::parse($last->created_at)->weekOfYear == Carbon::parse($daily)->weekOfYear)
-        {
+        try{// Obtener el último registro semanal
+            $last = PerformanceDeviceYearly::orderBy('created_at', 'desc')->first();
 
-        }else{
-            PerformanceDeviceYearly::create([
-                'device_id'=>$daily->device_id,
+            // Validar si es un nuevo día de la semana o si no hay registros anteriores
+            
+            if (!$last || Carbon::parse($last->created_at)->monthName != Carbon::parse($monthly->created_at)->monthName) {
+                PerformanceDeviceYearly::create([
+                    'device_id' => $monthly->device_id,
+                    'amount' => 1,
+                    'rate' => $monthly->rate,
+                    'byte' => $monthly->byte,
+                ]);
+                return;
+            }
+
+            // Actualizar el registro existente
+            $rate = $last->rate; // Extraer el JSON actual
+            $rate['download'] = $this->operations($rate['download'], $monthly->rate['download'], $last->amount);
+            $rate['upload'] = $this->operations($rate['upload'], $monthly->rate['upload'], $last->amount);
+
+            $byte = $last->byte; // Extraer el JSON actual
+            $byte['download'] = $this->operations($byte['download'], $monthly->byte['download'], $last->amount);
+            $byte['upload'] = $this->operations($byte['upload'], $monthly->byte['upload'], $last->amount);
+
+            $last->update([
+                'rate' => $rate,
+                'byte' => $byte,
+                'amount' => $last->amount + 1, // Incrementar la cantidad
             ]);
+        }catch(Exception $e){
+            Log::error("Hubo un error en setYearly: ".$e->getMessage());
         }
     }
    
     private function setMonthly(Collection $weekly){
-        $last = PerformanceDeviceMonthly::orderBy('created_at', 'desc')->first();
-        if(Carbon::parse($last->created_at)->weekOfYear == Carbon::parse($weekly)->weekOfYear)
-        {
-            $last->update([
+        try{// Obtener el último registro semanal
+            $last = PerformanceDeviceMonthly::orderBy('created_at', 'desc')->first();
 
+            // Validar si es un nuevo día de la semana o si no hay registros anteriores
+            if (!$last || Carbon::parse($last->created_at)->weekOfYear != Carbon::parse($weekly->created_at)->weekOfYear) {
+                PerformanceDeviceMonthly::create([
+                    'device_id' => $weekly->device_id,
+                    'amount' => 1,
+                    'rate' => $weekly->rate,
+                    'byte' => $weekly->byte,
+                ]);
+                return;
+            }
+
+            // Actualizar el registro existente
+            $rate = $last->rate; // Extraer el JSON actual
+            $rate['download'] = $this->operations($rate['download'], $weekly->rate['download'], $last->amount);
+            $rate['upload'] = $this->operations($rate['upload'], $weekly->rate['upload'], $last->amount);
+
+            $byte = $last->byte; // Extraer el JSON actual
+            $byte['download'] = $this->operations($byte['download'], $weekly->byte['download'], $last->amount);
+            $byte['upload'] = $this->operations($byte['upload'], $weekly->byte['upload'], $last->amount);
+
+            $last->update([
+                'rate' => $rate,
+                'byte' => $byte,
+                'amount' => $last->amount + 1, // Incrementar la cantidad
             ]);
-        }else{
-            PerformanceDeviceMonthly::create([
-                'device_id' => $weekly->device_id,
-            ]);
+        }
+        catch(Exception $e){
+            Log::error("Hubo un error en setMonthly: ".$e->getMessage());
         }
     }
-
-   
-
-    private function setWeekly(Collection $daily)
+    private function setWeekly(PerformanceDevice $daily)
     {
-        $last = PerformanceDeviceWeekly::orderBy('created_at', 'desc')->first();
-        if(Carbon::parse($last->created_at)->dayName == Carbon::parse($daily)->dayName)
-        {
+        // Obtener el último registro semanal
+        try{
+            $last = PerformanceDeviceWeekly::orderBy('created_at', 'desc')->first();
+
+            // Validar si es un nuevo día de la semana o si no hay registros anteriores
+            if (!$last || Carbon::parse($last->created_at)->dayName != Carbon::parse($daily->created_at)->dayName) {
+                PerformanceDeviceWeekly::create([
+                    'device_id' => $daily->device_id,
+                    'amount' => 1,
+                    'rate' => $daily->rate,
+                    'byte' => $daily->byte,
+                ]);
+                return;
+            }
+    
+            // Actualizar el registro existente
+            $rate = $last->rate; // Extraer el JSON actual
+            $rate['download'] = $this->operations($rate['download'], $daily->rate['download'], $last->amount);
+            $rate['upload'] = $this->operations($rate['upload'], $daily->rate['upload'], $last->amount);
+    
+            $byte = $last->byte; // Extraer el JSON actual
+            $byte['download'] = $this->operations($byte['download'], $daily->byte['download'], $last->amount);
+            $byte['upload'] = $this->operations($byte['upload'], $daily->byte['upload'], $last->amount);
+    
             $last->update([
-
+                'rate' => $rate,
+                'byte' => $byte,
+                'amount' => $last->amount + 1, // Incrementar la cantidad
             ]);
-        }else{
-            //Nuevo registros
-            PerformanceDeviceWeekly::create([
-                'device_id'=>$daily->device_id,
-            ]);
+        }catch(Exception $e){
+            Log::error("Hubo un error en setWeekly: ".$e->getMessage());
         }
+       
+    }
 
+
+    private function operations($op1, $op2, $amount)
+    {
+        //op1 = rate['n'] or byte['n']
+        //op2 = first parameter (daily | weekly | monthly | yearly) on the function
+        $result = (($op1*$amount)+$op2)/$amount;
+
+        return $result;
     }
     private function getMonthly(){
-        return PerformanceDeviceMonthly::all();
+        return PerformanceDeviceMonthly::orderBy('created_at', 'desc')->first();
     }
     private function getWeekly(){
-        return PerformanceDeviceWeekly::all();
+        return PerformanceDeviceWeekly::orderBy('created_at', 'desc')->first();
     }
 }
+
+// $last = PerformanceDeviceMonthly::orderBy('created_at', 'desc')->first();
+        // if(Carbon::parse($last->created_at)->weekOfYear == Carbon::parse($weekly)->weekOfYear)
+        // {
+        //     $last->update([
+
+        //     ]);
+        // }else{
+        //     PerformanceDeviceMonthly::create([
+        //         'device_id' => $weekly->device_id,
+        //         'amount' => 1,
+        //         'rate' => $weekly->rate,
+        //         'byte' => $weekly->byte,
+        //     ]);
+        // }

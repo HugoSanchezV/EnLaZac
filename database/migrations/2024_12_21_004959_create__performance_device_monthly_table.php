@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('performance_device_monthly', function (Blueprint $table) {
             $table->id();
             $table->foreignId('device_id')->constrained('devices')->onDelete('cascade');
+            $table->integer('amount');
             $table->json('rate');
             $table->json('byte');
             $table->timestamps();

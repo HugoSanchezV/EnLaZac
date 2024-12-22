@@ -679,7 +679,7 @@ class ContractController extends Controller
         try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
-            Log::info("5. PINSHI CURRENT: ".$currentInstallation);
+            Log::info("5. CURRENT: ".$currentInstallation);
             $date = Carbon::parse($newInstallation)->startOfDay();
 
             // dd();

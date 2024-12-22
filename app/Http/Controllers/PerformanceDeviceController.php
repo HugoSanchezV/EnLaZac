@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Device;
 use App\Models\PerformanceDevice;
+use App\Models\PerformanceDeviceYearly;
 use App\Models\User;
 use App\Services\TrafficService;
 use Illuminate\Http\Request;
@@ -186,8 +187,7 @@ class PerformanceDeviceController extends Controller
             // })->filter(function ($data) {
             //     // Filtrar meses con datos válidos (excluyendo nulos o ceros)
             //     return $data['rateUpload'] !== null || $data['rateDownload'] !== null || $data['byteUpload'] !== null || $data['byteDownload'] !== null;
-            // });
-            
+            // }); 
             // // Reorganizar el arreglo en el formato deseado
             // $yearPerformance = [
             //     'labels' => $filteredPerformance->pluck('month'),
@@ -240,32 +240,47 @@ class PerformanceDeviceController extends Controller
     private function week($device)
     {
        try{ 
-        $subquery = PerformanceDevice::select(
-            DB::raw('DATE(created_at) as date'),
+
+        return PerformanceDeviceYearly::select(
+            DB::raw('DATE(created_at) as date'),   // Formato de hora:minuto para el eje Target
             DB::raw('DAYNAME(created_at) as day'),
-            DB::raw('rate->"$.upload" as rate_upload'),
+            DB::raw('rate->"$.uplosad" as rate_upload'),
             DB::raw('rate->"$.download" as rate_download'),
             DB::raw('byte->"$.upload" as byte_upload'),
             DB::raw('byte->"$.download" as byte_download')
         )
         ->where('device_id', $device->id)
         ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-        ->toBase(); // Convierte el query en una subconsulta básica
+        ->groupBy('created_at')
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        // $subquery = PerformanceDevice::select(
+        //     DB::raw('DATE(created_at) as date'),
+        //     DB::raw('DAYNAME(created_at) as day'),
+        //     DB::raw('rate->"$.upload" as rate_upload'),
+        //     DB::raw('rate->"$.download" as rate_download'),
+        //     DB::raw('byte->"$.upload" as byte_upload'),
+        //     DB::raw('byte->"$.download" as byte_download')
+        // )
+        // ->where('device_id', $device->id)
+        // ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+        // ->toBase(); // Convierte el query en una subconsulta básica
         
-        // Agrupación externa
-        return DB::table(DB::raw("({$subquery->toSql()}) as grouped"))
-            ->mergeBindings($subquery) // Combina los bindings del subquery
-            ->select(
-                'day',
-                'date',
-                DB::raw('AVG(rate_upload) as avg_rate_upload'),
-                DB::raw('AVG(rate_download) as avg_rate_download'),
-                DB::raw('SUM(byte_upload) as total_byte_upload'),
-                DB::raw('SUM(byte_download) as total_byte_download')
-            )
-            ->groupBy('date', 'day') // Agrupar por fecha y día
-            ->orderBy('date', 'asc') // Ordenar por fecha
-            ->get();
+        // // Agrupación externa
+        // return DB::table(DB::raw("({$subquery->toSql()}) as grouped"))
+        //     ->mergeBindings($subquery) // Combina los bindings del subquery
+        //     ->select(
+        //         'day',
+        //         'date',
+        //         DB::raw('AVG(rate_upload) as avg_rate_upload'),
+        //         DB::raw('AVG(rate_download) as avg_rate_download'),
+        //         DB::raw('SUM(byte_upload) as total_byte_upload'),
+        //         DB::raw('SUM(byte_download) as total_byte_download')
+        //     )
+        //     ->groupBy('date', 'day') // Agrupar por fecha y día
+        //     ->orderBy('date', 'asc') // Ordenar por fecha
+        //     ->get();
         
         }
         catch(Exception $e){
@@ -276,22 +291,38 @@ class PerformanceDeviceController extends Controller
     private function month($device)
     {
        try{ 
+
+
             $startDate = Carbon::now()->subWeeks(3)->startOfWeek(); // Las últimas 4 semanas
             $endDate = Carbon::now()->endOfWeek();
 
-            return PerformanceDevice::select(
-                DB::raw('YEARWEEK(created_at, 1) as year_week'), // Semana del año
-                DB::raw('WEEK(created_at, 1) as week_number'),   // Número de semana en el eje Target
-                DB::raw('AVG(rate->"$.upload") as avg_rate_upload'),
-                DB::raw('AVG(rate->"$.download") as avg_rate_download'),
-                DB::raw('SUM(byte->"$.upload") as total_byte_upload'),
-                DB::raw('SUM(byte->"$.download") as total_byte_download')
+            return PerformanceDeviceYearly::select(
+                DB::raw('YEARWEEK(created_at) as year_week'),   // Formato de hora:minuto para el eje Target
+                DB::raw('WEEK(created_at) as week_number'),
+                DB::raw('rate->"$.uplosad" as rate_upload'),
+                DB::raw('rate->"$.download" as rate_download'),
+                DB::raw('byte->"$.upload" as byte_upload'),
+                DB::raw('byte->"$.download" as byte_download')
             )
             ->where('device_id', $device->id)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('created_at')
             ->orderBy('created_at', 'asc')
             ->get();
+
+            // return PerformanceDevice::select(
+            //     DB::raw('YEARWEEK(created_at, 1) as year_week'), // Semana del año
+            //     DB::raw('WEEK(created_at, 1) as week_number'),   // Número de semana en el eje Target
+            //     DB::raw('AVG(rate->"$.upload") as avg_rate_upload'),
+            //     DB::raw('AVG(rate->"$.download") as avg_rate_download'),
+            //     DB::raw('SUM(byte->"$.upload") as total_byte_upload'),
+            //     DB::raw('SUM(byte->"$.download") as total_byte_download')
+            // )
+            // ->where('device_id', $device->id)
+            // ->whereBetween('created_at', [$startDate, $endDate])
+            // ->groupBy('created_at')
+            // ->orderBy('created_at', 'asc')
+            // ->get();
         }
         catch(Exception $e){
             dd($e);
@@ -302,19 +333,36 @@ class PerformanceDeviceController extends Controller
     {
         try
         {
-            return PerformanceDevice::select(
-                DB::raw('MONTHNAME(created_at) as month'),    // Mes para el eje Target
-                DB::raw('MONTH(created_at) as month_number'), // Número de mes para ordenar
-                DB::raw('AVG(rate->"$.upload") as avg_rate_upload'),
-                DB::raw('AVG(rate->"$.download") as avg_rate_download'),
-                DB::raw('SUM(byte->"$.upload") as total_byte_upload'),
-                DB::raw('SUM(byte->"$.download") as total_byte_download')
-            )
-            ->where('device_id', $device->id)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->groupBy('created_at')
-            ->orderBy('created_at', 'asc')
-            ->get();
+            try{ 
+                return PerformanceDeviceYearly::select(
+                    DB::raw('MONTHNAME(created_at) as month'),   // Formato de hora:minuto para el eje Target
+                    DB::raw('MONTH(created_at) as month_number'),
+                    DB::raw('rate->"$.uplosad" as rate_upload'),
+                    DB::raw('rate->"$.download" as rate_download'),
+                    DB::raw('byte->"$.upload" as byte_upload'),
+                    DB::raw('byte->"$.download" as byte_download')
+                )
+                ->where('device_id', $device->id)
+                ->orderBy('created_at', 'asc')
+                ->get();
+            }
+            catch(Exception $e){
+                dd($e);
+            }
+
+            // return PerformanceDevice::select(
+            //     DB::raw('MONTHNAME(created_at) as month'),    // Mes para el eje Target
+            //     DB::raw('MONTH(created_at) as month_number'), // Número de mes para ordenar
+            //     DB::raw('AVG(rate->"$.upload") as avg_rate_upload'),
+            //     DB::raw('AVG(rate->"$.download") as avg_rate_download'),
+            //     DB::raw('SUM(byte->"$.upload") as total_byte_upload'),
+            //     DB::raw('SUM(byte->"$.download") as total_byte_download')
+            // )
+            // ->where('device_id', $device->id)
+            // ->whereYear('created_at', Carbon::now()->year)
+            // ->groupBy('created_at')
+            // ->orderBy('created_at', 'asc')
+            // ->get();
 
         }catch(Exception $e){
             dd($e);
@@ -334,7 +382,7 @@ class PerformanceDeviceController extends Controller
         ])->validate();
         
         // Crear el PerformanceDevice con los datos validados
-        PerformanceDevice::create([
+        $recentDaily = PerformanceDevice::create([
             'device_id' => $request['device_id'],
             'rate' => [
                 'upload' => $request['rate']['upload'],   // Acceder a datos anidados correctamente
@@ -346,6 +394,6 @@ class PerformanceDeviceController extends Controller
             ],
         ]);
 
-        $service->createStats();
+        $service->createStats($recentDaily);
     }
 }
