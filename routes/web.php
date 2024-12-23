@@ -152,13 +152,13 @@ Route::middleware([
         Route::get('/installation/edit/{id}',           [InstallationController::class, 'edit'])->name('installation.edit');
         Route::put('/installation/update/{id}',         [InstallationController::class, 'update'])->name('installation.update');
 
-        Route::get('/sistema/configuracion/instalacion',                     [InstallationSettingsController::class, 'index'])->name('settings.installation');
-        Route::get('/sistema/configuracion/instalacion/create',              [InstallationSettingsController::class, 'create'])->name('settings.installation.create');
-        Route::post('/sistema/configuracion/instalacion/store',              [InstallationSettingsController::class, 'store'])->name('settings.installation.store');
-        Route::get('/sistema/configuracion/instalacion/show/{id}',           [InstallationSettingsController::class, 'show'])->name('settings.installation.show');
-        Route::get('/sistema/configuracion/instalacion/edit/{id}',           [InstallationSettingsController::class, 'edit'])->name('settings.installation.edit');
-        Route::put('/sistema/configuracion/instalacion/update/{id}',         [InstallationSettingsController::class, 'update'])->name('settings.installation.update');
-        Route::get('/sistema/configuracion/instalacion/edit/from/installation{id}',           [InstallationSettingsController::class, 'editFromInstallation'])->name('settings.installation.edit.installation');
+        // Route::get('/sistema/configuracion/instalacion',                     [InstallationSettingsController::class, 'index'])->name('settings.installation');
+        // Route::get('/sistema/configuracion/instalacion/create',              [InstallationSettingsController::class, 'create'])->name('settings.installation.create');
+        // Route::post('/sistema/configuracion/instalacion/store',              [InstallationSettingsController::class, 'store'])->name('settings.installation.store');
+        // Route::get('/sistema/configuracion/instalacion/show/{id}',           [InstallationSettingsController::class, 'show'])->name('settings.installation.show');
+        // Route::get('/sistema/configuracion/instalacion/edit/{id}',           [InstallationSettingsController::class, 'edit'])->name('settings.installation.edit');
+        // Route::put('/sistema/configuracion/instalacion/update/{id}',         [InstallationSettingsController::class, 'update'])->name('settings.installation.update');
+        // Route::get('/sistema/configuracion/instalacion/edit/from/installation{id}',           [InstallationSettingsController::class, 'editFromInstallation'])->name('settings.installation.edit.installation');
 
 
         Route::get('/routers',                  [RouterController::class, 'index'])->name('routers');

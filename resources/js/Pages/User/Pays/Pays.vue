@@ -81,7 +81,7 @@ const calculateTotal = () => {
 
 const isInCart = (itemId, itemType) => {
   return cart.value.some(
-    (item) => item.id === itemId && item.type === itemType
+    (item) => item.id === itemId && ((itemType === 'contract')||(itemType === 'rent'))
   );
 };
 
@@ -129,6 +129,7 @@ const addContractToRent = (contract) => {
   }
 
   if (isInCart(contract.id, "rent")) {
+    ///----------------------------
     alerta("Este contrato ya ha sido agregado.");
     return;
   }

@@ -34,16 +34,21 @@ class InstallationController extends Controller
     }
     public function index(Request $request)
     {
-        $query = Installation::query();
+        $query = Installation::with('contract.inventorieDevice.device.user');
 
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
                     ->orWhere('contract_id', 'like', "%$search%")
+                    ->orWhereHas('contract.inventorieDevice.device.user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('description', 'like', "%$search%")
-                    ->orWhere('assigned_date', 'like', "%$search%");
-                // Puedes agregar más campos si es necesario
+                    ->orWhere('assigned_date', 'like', "%$search%")
+                    
+                    ;
+                // Agrega más campos si es necesario
             });
         }
 
@@ -58,14 +63,19 @@ class InstallationController extends Controller
         );
 
 
-        $installation = $query->with('contract.inventorieDevice.device.user')->latest()->paginate(8)->through(function ($item) {
+        $installation = $query->latest()->paginate(8)->through(function ($item) {
+         //   dd($item->id);
             return [
                 'id' => $item->id,
-                'contract_id' => $item->contract->inventorieDevice->device->user->name,
+                'contract_id'=> $item->contract_id,
+                'name' => optional(optional(optional($item->contract)->inventorieDevice)->device->user)->name,
                 'description' => $item->description,
                 'assigned_date' => $item->assigned_date,
+               
             ];
         });
+
+     //   dd($installation);
 
 
         $totalInstallationCount = Installation::count();

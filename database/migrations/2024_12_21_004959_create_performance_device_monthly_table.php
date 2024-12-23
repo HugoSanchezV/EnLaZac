@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('performance_devices', function (Blueprint $table) {
+        Schema::create('performance_device_monthlies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('device_id')->constrained('devices')->onDelete('cascade');
+            $table->integer('amount');
             $table->json('rate');
             $table->json('byte');
             $table->timestamps();
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('performance_devices');
+        Schema::dropIfExists('performance_device_monthlies');
     }
 };

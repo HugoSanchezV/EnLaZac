@@ -11,6 +11,8 @@ table {
     border-collapse: separate;
     border-spacing: 0 20px;
     margin: 0 auto;
+    table-layout: fixed;
+    
 }
 
 @media (min-width: 768px) {
@@ -32,9 +34,21 @@ td {
     text-align: left;
     display: flex;
     flex-direction: column;
+    
+
+}
+td, p{
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
+    overflow-wrap: break-word; /* Compatibilidad adicional */
+}
+p{
+    white-space: normal; /* Permite saltos de línea */
+    word-wrap: break-word; /* Rompe palabras largas */
 }
 
 @media (min-width: 768px) {
+
     tr {
         border-bottom: 1px solid #ddd;
     }
@@ -43,10 +57,14 @@ td {
     td {
         padding: 0 0;
         display: table-cell;
+        white-space: normal; /* Permite saltos de línea */
+        word-wrap: break-word; /* Rompe palabras largas */
     }
 
     td {
         padding: 0 0.25rem;
+        white-space: normal; /* Permite saltos de línea */
+        word-wrap: break-word; /* Rompe palabras largas */
     }
 }
 
@@ -57,6 +75,9 @@ th {
 }
 
 @media (min-width: 768px) {
+    table{
+        table-layout: auto;
+    }
     th {
         display: table-cell;
     }

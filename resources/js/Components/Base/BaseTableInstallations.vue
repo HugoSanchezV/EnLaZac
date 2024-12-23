@@ -236,8 +236,8 @@ const getTag = (cellIndex) => {
         >
           <td></td>
           <td
-            v-for="(cell, cellIndex) in row"
-            :key="cellIndex"
+            v-for="([cellIndex, cell], cellIndexKey) in Object.entries(row).filter(([key]) => key !== 'contract_id')"
+            :key="cellIndexKey"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'description'">
@@ -279,8 +279,9 @@ const getTag = (cellIndex) => {
 
                 Mostrar
               </Link>
+
               <Link
-                :href="route('settings.installation.edit.installation', row.id)"
+                   :href="route('contracts.edit', row.contract_id)"
                 v-if="show"
                 class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -288,7 +289,7 @@ const getTag = (cellIndex) => {
                   edit_calendar
                 </span>
 
-                Primer pago
+                Ampliar primer pago
               </Link>
          
                 <Link
