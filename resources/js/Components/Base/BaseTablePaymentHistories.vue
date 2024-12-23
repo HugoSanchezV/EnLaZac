@@ -443,10 +443,10 @@ const deleteRegisterMonth = (info) => {
                 <button
                   @click="
                     destroy(row.id, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
-                      monthFilterRef: this.monthFilterRef,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
+                      monthFilterRef: monthFilterRef,
                     })
                   "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"

@@ -7,12 +7,20 @@ use App\Http\Controllers\PerformanceDeviceController;
 use App\Models\Router;
 use App\Models\PerformanceDevice;
 use App\Services\RouterOSService;
+use App\Services\TrafficService;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Bus\Queueable;
 
-class DeviceStats extends Command
+class DeviceStats extends Command 
 {
+    //use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     /**
      * The name and signature of the console command.
      *
@@ -34,6 +42,9 @@ class DeviceStats extends Command
     {
         $trafficData =  self::conectar();
         $performance = self::getData($trafficData);
+
+        $service = new TrafficService;
+
         
         $controller = new PerformanceDeviceController();
        // $this->info($performance[1]);
@@ -43,13 +54,12 @@ class DeviceStats extends Command
         {
             if(!is_null($p['device_id']))
             {
-                $controller->store($p);
+                //$this->info($p['device_id']);
+                if($p['device_id'] == 16){
+                    $service->createStats($controller->store($p));
+
+                }
             }
-
-         //   $this->info("++++++++++++++");
-
-           // $controller->store($p);
-            //self::store($p);
         }
         
     }

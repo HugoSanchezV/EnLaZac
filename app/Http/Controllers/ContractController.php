@@ -73,8 +73,8 @@ class ContractController extends Controller
         }
 
         if ($request->has('expired') && $request->input('expired') == 'true') {
-            $query->where('active', '=', '1')
-                ->where('end_date', '<', Carbon::now());
+            $query->where('active', '=', '0')
+                  ->where('end_date', '<', Carbon::now());
         }
         // Ordenación
         $order = 'asc';
@@ -712,7 +712,7 @@ class ContractController extends Controller
         try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
-            Log::info("5. PINSHI CURRENT: " . $currentInstallation);
+            Log::info("5. CURRENT: ".$currentInstallation);
             $date = Carbon::parse($newInstallation)->startOfDay();
 
             // dd();

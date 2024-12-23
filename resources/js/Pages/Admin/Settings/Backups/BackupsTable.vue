@@ -229,7 +229,15 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div>
+              <div  v-if="cellIndex == 'path'">
+                <div>
+                  <p>
+                    {{ cell }}
+                  </p>
+                </div>
+
+              </div>
+              <div v-else>
               <div class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase"
                   >{{ getTag(cellIndex) }} :</span

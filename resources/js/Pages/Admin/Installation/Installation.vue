@@ -34,8 +34,8 @@ const headers = [
         <div class="mb-2 md:mb-0">
           <h2>Instalaciones</h2>
         </div>
-        <div class="md:flex gap-1">
-          <Link
+        <div class="flex gap-2">
+          <!-- <Link
             :href="route('settings.installation')"
             method="get"
             class="mb-1 md:mb-0 flex justify-center md:justify-between items-center gap-2 text-white bg-blue-500 hover:bg-blue-600 py-2 px-3 text-sm rounded-md"
@@ -43,7 +43,7 @@ const headers = [
             <span class="material-symbols-outlined" style="font-size: 16px;"> edit_calendar </span>
 
              Primer Mes - Plazo
-          </Link>
+          </Link> -->
           <Link
             :href="route('installation.create')"
             method="get"

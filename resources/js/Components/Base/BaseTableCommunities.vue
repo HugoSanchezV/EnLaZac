@@ -10,7 +10,7 @@ import FilterOrderBase from "./FilterOrderBase.vue";
 // ACCION DE ELIMINAR
 const destroy = (id, data) => {
   const toast = useToast();
-
+ // console.log("GOLA");
   toast(
     {
       component: BaseQuestion,
@@ -32,6 +32,7 @@ const destroy = (id, data) => {
             data.attribute = "installation_cost";
           }
 
+          //alert(data.searchQuery)
           router.delete(
             url,
             {

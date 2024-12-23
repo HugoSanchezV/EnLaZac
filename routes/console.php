@@ -124,6 +124,13 @@ Schedule::call(function () {
     }
 })->monthly();
 
-Schedule::command('app:check-contracts')->daily();
-Schedule::command('app:update-contract-date')->daily();
+
+
+//Tarea diarias
+Schedule::call(function(){
+    Artisan::call('app:check-contracts');
+    Artisan::call('app:order-stats');
+
+})->daily();
+//Schedule::command('app:update-contract-date')->daily();
 // Schedule::command('app:device-stats')->everyFiveMinutes();
