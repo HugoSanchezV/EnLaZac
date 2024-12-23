@@ -42,6 +42,7 @@ class LocalPayController extends Controller
                 'error' => $request->error,
             ]);
         } catch (Exception $e) {
+            dd($e);
             return Redirect::route('pays')->with('error', 'No se ha encontrado el registro');
         }
     }
@@ -130,12 +131,14 @@ class LocalPayController extends Controller
                     'token' =>  Auth::id() . Str::random(6),
                     'status' =>  0,
                 ]);
+                dd($reference);
 
                 return $reference;
             });
             // DeleteUnpaidPayment::dispatch($reference->id)->delay(now()->addMinutes(3));
             return Redirect::route('local.pay.show', $reference->id);
         } catch (Exception $e) {
+            dd($e);
             return Redirect::route('pays')->with('error', 'Error al crear la orden');
         }
     }
@@ -151,7 +154,7 @@ class LocalPayController extends Controller
         }
     }
 
-    public function checkStatus($token, Request $request)
+    public function checkStatus( Request $request)
     {
         try {
             $token = $request->token ?? null;

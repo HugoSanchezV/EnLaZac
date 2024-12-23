@@ -23,27 +23,31 @@ class TrafficService implements ShouldQueue{
     public function createStats(PerformanceDevice $daily)
     {
         try{
+            Log::info("Entro en createStats");
             DB::beginTransaction();
            // $daily = PerformanceDevice::orderBy('created_at', 'desc')->first();
-                $this->setWeekly($daily);
+                $next= $this->setWeekly($daily);
+             //   Log::info($daily->device_id);
 
-                $weekly = $this->getWeekly();
-                $this->setMonthly($weekly);
+                $weekly = $this->getWeekly($daily->device_id);
+             //   Log::info($weekly->device_id);
+                $next = $this->setMonthly($next);
 
-                $monthly = $this->getMonthly();
-                $this->setYearly($monthly);
+                $monthly = $this->getMonthly($daily->device_id);
+              //  Log::info($monthly->device_id);
+                $this->setYearly($monthly, $next);
             DB::commit();
-
+            Log::info("Finalizó exitosamente");
 
         }catch(Exception $e){
             Log::error($e->getMessage());
             DB::rollBack();
         }
     }
-    private function setYearly(Collection $monthly)
+    private function setYearly(PerformanceDeviceMonthly $monthly, $next)
     {
         try{// Obtener el último registro semanal
-            $last = PerformanceDeviceYearly::orderBy('created_at', 'desc')->first();
+            $last = PerformanceDeviceYearly::where('device_id',$monthly->device_id)->orderBy('created_at', 'desc')->first();
 
             // Validar si es un nuevo día de la semana o si no hay registros anteriores
             
@@ -54,7 +58,7 @@ class TrafficService implements ShouldQueue{
                     'rate' => $monthly->rate,
                     'byte' => $monthly->byte,
                 ]);
-                return;
+                return true;
             }
 
             // Actualizar el registro existente
@@ -66,19 +70,23 @@ class TrafficService implements ShouldQueue{
             $byte['download'] = $this->operations($byte['download'], $monthly->byte['download'], $last->amount);
             $byte['upload'] = $this->operations($byte['upload'], $monthly->byte['upload'], $last->amount);
 
+            if($next){
+                $last->amount++;
+            }
             $last->update([
                 'rate' => $rate,
                 'byte' => $byte,
-                'amount' => $last->amount + 1, // Incrementar la cantidad
+                'amount' => $last->amount, // Incrementar la cantidad
             ]);
+            return false;
         }catch(Exception $e){
             Log::error("Hubo un error en setYearly: ".$e->getMessage());
         }
     }
    
-    private function setMonthly(Collection $weekly){
+    private function setMonthly(PerformanceDeviceWeekly $weekly){
         try{// Obtener el último registro semanal
-            $last = PerformanceDeviceMonthly::orderBy('created_at', 'desc')->first();
+            $last = PerformanceDeviceMonthly::where('device_id',$weekly->device_id)->orderBy('created_at', 'desc')->first();
 
             // Validar si es un nuevo día de la semana o si no hay registros anteriores
             if (!$last || Carbon::parse($last->created_at)->weekOfYear != Carbon::parse($weekly->created_at)->weekOfYear) {
@@ -88,9 +96,11 @@ class TrafficService implements ShouldQueue{
                     'rate' => $weekly->rate,
                     'byte' => $weekly->byte,
                 ]);
-                return;
+                return true;
             }
 
+            //Log::info("hola");
+           // Log::info("Weekly: Rate = ".$last->rate | Byte = $last->byte" );
             // Actualizar el registro existente
             $rate = $last->rate; // Extraer el JSON actual
             $rate['download'] = $this->operations($rate['download'], $weekly->rate['download'], $last->amount);
@@ -100,11 +110,16 @@ class TrafficService implements ShouldQueue{
             $byte['download'] = $this->operations($byte['download'], $weekly->byte['download'], $last->amount);
             $byte['upload'] = $this->operations($byte['upload'], $weekly->byte['upload'], $last->amount);
 
+            // if($next){
+            //     $last->amount++;
+            // }
+            
             $last->update([
                 'rate' => $rate,
                 'byte' => $byte,
-                'amount' => $last->amount + 1, // Incrementar la cantidad
+                'amount' => $last->amount+1, // Incrementar la cantidad
             ]);
+          //  return false;
         }
         catch(Exception $e){
             Log::error("Hubo un error en setMonthly: ".$e->getMessage());
@@ -113,18 +128,21 @@ class TrafficService implements ShouldQueue{
     private function setWeekly(PerformanceDevice $daily)
     {
         // Obtener el último registro semanal
+        Log::info($daily);
         try{
-            $last = PerformanceDeviceWeekly::orderBy('created_at', 'desc')->first();
+            $last = PerformanceDeviceWeekly::where('device_id',$daily->device_id)->orderBy('created_at', 'desc')->first();
 
             // Validar si es un nuevo día de la semana o si no hay registros anteriores
             if (!$last || Carbon::parse($last->created_at)->dayName != Carbon::parse($daily->created_at)->dayName) {
-                PerformanceDeviceWeekly::create([
+                Log::info("Va a crear el weeken");
+                return PerformanceDeviceWeekly::create([
                     'device_id' => $daily->device_id,
                     'amount' => 1,
                     'rate' => $daily->rate,
                     'byte' => $daily->byte,
                 ]);
-                return;
+               // return true;
+                
             }
     
             // Actualizar el registro existente
@@ -139,8 +157,12 @@ class TrafficService implements ShouldQueue{
             $last->update([
                 'rate' => $rate,
                 'byte' => $byte,
-                'amount' => $last->amount + 1, // Incrementar la cantidad
+                'amount' => $last->amount +1, // Incrementar la cantidad
             ]);
+            Log::info(" Weekly: $last");
+
+            return  $last;
+            
         }catch(Exception $e){
             Log::error("Hubo un error en setWeekly: ".$e->getMessage());
         }
@@ -150,17 +172,17 @@ class TrafficService implements ShouldQueue{
 
     private function operations($op1, $op2, $amount)
     {
+        //Log::info("Haciendo operacion: (($op1*$amount)+$op2)/$amount ");
         //op1 = rate['n'] or byte['n']
         //op2 = first parameter (daily | weekly | monthly | yearly) on the function
-        $result = (($op1*$amount)+$op2)/$amount;
-
-        return $result;
+        
+        return (($op1*$amount)+$op2)/($amount+1);
     }
-    private function getMonthly(){
-        return PerformanceDeviceMonthly::orderBy('created_at', 'desc')->first();
+    private function getMonthly($device_id){
+        return PerformanceDeviceMonthly::where('device_id',$device_id)->orderBy('created_at', 'desc')->first();
     }
-    private function getWeekly(){
-        return PerformanceDeviceWeekly::orderBy('created_at', 'desc')->first();
+    private function getWeekly($device_id){
+        return PerformanceDeviceWeekly::where('device_id', $device_id)->orderBy('created_at', 'desc')->first();
     }
 }
 

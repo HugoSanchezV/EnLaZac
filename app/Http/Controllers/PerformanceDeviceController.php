@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Device;
 use App\Models\PerformanceDevice;
+use App\Models\PerformanceDeviceMonthly;
+use App\Models\PerformanceDeviceWeekly;
 use App\Models\PerformanceDeviceYearly;
 use App\Models\User;
 use App\Services\TrafficService;
@@ -137,9 +139,13 @@ class PerformanceDeviceController extends Controller
             });
 
             // Hacer los periodos 
+         
             $performanceToday = self::today($device);
+         
             $performanceWeek = self::week($device);
+           // dd();
             $performanceMonth = self::month($device);
+            
             $performanceYear = self::year($device);
             
            // dd($performanceWeek);
@@ -154,26 +160,26 @@ class PerformanceDeviceController extends Controller
            // dd($todayPerformance);
             $weekPerformance = [
                 'labels' => $performanceWeek->pluck('day'),
-                'rateUpload' => $performanceWeek->pluck('avg_rate_upload'),
-                'rateDownload' => $performanceWeek->pluck('avg_rate_download'),
-                'byteUpload' => $performanceWeek->pluck('total_byte_upload'),
-                'byteDownload' => $performanceWeek->pluck('total_byte_download'),
+                'rateUpload' => $performanceWeek->pluck('rate_upload'),
+                'rateDownload' => $performanceWeek->pluck('rate_download'),
+                'byteUpload' => $performanceWeek->pluck('byte_upload'),
+                'byteDownload' => $performanceWeek->pluck('byte_download'),
             ];
 
             $monthPerformance = [
                 'labels' => $performanceMonth->pluck('week_number')->map(fn($week) => 'Semana ' . $week),
-                'rateUpload' => $performanceMonth->pluck('avg_rate_upload'),
-                'rateDownload' => $performanceMonth->pluck('avg_rate_download'),
-                'byteUpload' => $performanceMonth->pluck('total_byte_upload'),
-                'byteDownload' => $performanceMonth->pluck('total_byte_download'),
+                'rateUpload' => $performanceMonth->pluck('rate_upload'),
+                'rateDownload' => $performanceMonth->pluck('rate_download'),
+                'byteUpload' => $performanceMonth->pluck('byte_upload'),
+                'byteDownload' => $performanceMonth->pluck('byte_download'),
             ];
 
             $yearPerformance = [
                 'labels' => $performanceYear->pluck('month'),
-                'rateUpload' => $performanceYear->pluck('avg_rate_upload'),
-                'rateDownload' => $performanceYear->pluck('avg_rate_download'),
-                'byteUpload' => $performanceYear->pluck('total_byte_upload'),
-                'byteDownload' => $performanceYear->pluck('total_byte_download'),
+                'rateUpload' => $performanceYear->pluck('rate_upload'),
+                'rateDownload' => $performanceYear->pluck('rate_download'),
+                'byteUpload' => $performanceYear->pluck('byte_upload'),
+                'byteDownload' => $performanceYear->pluck('byte_download'),
             ];
 
             // $filteredPerformance = collect($yearPerformance['labels'])->map(function ($month, $index) use ($yearPerformance) {
@@ -196,7 +202,7 @@ class PerformanceDeviceController extends Controller
             //     'byteUpload' => $filteredPerformance->pluck('byteUpload'),
             //     'byteDownload' => $filteredPerformance->pluck('byteDownload'),
             // ];
-
+         //   dd($yearPerformance);
             return Inertia::render('Admin/PerformanceDevice/PerformanceDevice', [
                 'device' => $device,
                 'user' => $user,
@@ -222,7 +228,7 @@ class PerformanceDeviceController extends Controller
        try{ 
             return PerformanceDevice::select(
                 DB::raw('DATE_FORMAT(created_at, "%H:%i") as time'),   // Formato de hora:minuto para el eje Target
-                DB::raw('rate->"$.uplosad" as rate_upload'),
+                DB::raw('rate->"$.upload" as rate_upload'),
                 DB::raw('rate->"$.download" as rate_download'),
                 DB::raw('byte->"$.upload" as byte_upload'),
                 DB::raw('byte->"$.download" as byte_download')
@@ -241,17 +247,16 @@ class PerformanceDeviceController extends Controller
     {
        try{ 
 
-        return PerformanceDeviceYearly::select(
+        return PerformanceDeviceWeekly::select(
             DB::raw('DATE(created_at) as date'),   // Formato de hora:minuto para el eje Target
             DB::raw('DAYNAME(created_at) as day'),
-            DB::raw('rate->"$.uplosad" as rate_upload'),
+            DB::raw('rate->"$.upload" as rate_upload'),
             DB::raw('rate->"$.download" as rate_download'),
             DB::raw('byte->"$.upload" as byte_upload'),
             DB::raw('byte->"$.download" as byte_download')
         )
         ->where('device_id', $device->id)
         ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-        ->groupBy('created_at')
         ->orderBy('created_at', 'asc')
         ->get();
 
@@ -291,22 +296,19 @@ class PerformanceDeviceController extends Controller
     private function month($device)
     {
        try{ 
-
-
             $startDate = Carbon::now()->subWeeks(3)->startOfWeek(); // Las últimas 4 semanas
             $endDate = Carbon::now()->endOfWeek();
 
-            return PerformanceDeviceYearly::select(
+            return PerformanceDeviceMonthly::select(
                 DB::raw('YEARWEEK(created_at) as year_week'),   // Formato de hora:minuto para el eje Target
                 DB::raw('WEEK(created_at) as week_number'),
-                DB::raw('rate->"$.uplosad" as rate_upload'),
+                DB::raw('rate->"$.upload" as rate_upload'),
                 DB::raw('rate->"$.download" as rate_download'),
                 DB::raw('byte->"$.upload" as byte_upload'),
                 DB::raw('byte->"$.download" as byte_download')
             )
             ->where('device_id', $device->id)
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('created_at')
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -337,7 +339,7 @@ class PerformanceDeviceController extends Controller
                 return PerformanceDeviceYearly::select(
                     DB::raw('MONTHNAME(created_at) as month'),   // Formato de hora:minuto para el eje Target
                     DB::raw('MONTH(created_at) as month_number'),
-                    DB::raw('rate->"$.uplosad" as rate_upload'),
+                    DB::raw('rate->"$.upload" as rate_upload'),
                     DB::raw('rate->"$.download" as rate_download'),
                     DB::raw('byte->"$.upload" as byte_upload'),
                     DB::raw('byte->"$.download" as byte_download')
@@ -345,6 +347,7 @@ class PerformanceDeviceController extends Controller
                 ->where('device_id', $device->id)
                 ->orderBy('created_at', 'asc')
                 ->get();
+               // dd($hola);
             }
             catch(Exception $e){
                 dd($e);
@@ -394,6 +397,7 @@ class PerformanceDeviceController extends Controller
             ],
         ]);
 
+        return $recentDaily;
         $service->createStats($recentDaily);
     }
 }
