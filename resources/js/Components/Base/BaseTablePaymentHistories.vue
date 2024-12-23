@@ -199,7 +199,7 @@ const deleteRegisterMonth = (info) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
@@ -272,7 +272,7 @@ const deleteRegisterMonth = (info) => {
           </div>
         </div>
 
-        <div class="flex gap-1">
+        <div class="flex gap-1" v-if="user.admin === 1">
           <input
             type="text"
             id="monthFilter"
@@ -289,7 +289,7 @@ const deleteRegisterMonth = (info) => {
             x
           </button>
 
-          <!-- <button
+          <button
             @click="
               deleteRegisterMonth({
                 searchQuery: this.searchQuery,
@@ -304,7 +304,7 @@ const deleteRegisterMonth = (info) => {
             <span class="material-symbols-outlined"> paid </span>
 
             <span>Realizar corte del mes</span>
-          </button> -->
+          </button>
         </div>
 
         <!-- Final dfrop nbuton  -->
@@ -541,6 +541,10 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown2() {

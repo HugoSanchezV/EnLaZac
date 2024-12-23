@@ -503,15 +503,47 @@ const getTag = (cellIndex) => {
             <div class="sm:flex gap-4 flex flex-wrap actions">
               <Link
                 :href="route('performance.device', row.id)"
-                v-if="show"
+                v-if="row.user_id !== null && row.user_id !== null"
                 class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
-              <span class="material-symbols-outlined">
-              signal_cellular_alt
-              </span>
+                <span class="material-symbols-outlined">
+                  signal_cellular_alt
+                </span>
 
                 Consumo
               </Link>
+
+              <Link
+                :href="
+                  route('contracts.create', {
+                    device: row.device_id.id,
+                  })
+                "
+                v-if="
+                  row.user_id !== null &&
+                  row.device_id !== null &&
+                  (row.device_id?.contract?.id == undefined ||
+                    row.device_id?.contract?.id == null)
+                "
+                class="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <span class="material-symbols-outlined"> contract </span>
+
+                Nuevo Contrato
+              </Link>
+              <Link
+                v-else-if="
+                  row.device_id?.contract?.id !== undefined &&
+                  row.device_id?.contract?.id !== null
+                "
+                :href="route('contracts.show', row.device_id?.contract?.id)"
+                class="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <span class="material-symbols-outlined"> find_in_page </span>
+
+                Ver Contrato
+              </Link>
+
               <Link
                 :href="route('devices.show', row.id)"
                 class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"

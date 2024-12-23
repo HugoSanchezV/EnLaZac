@@ -76,11 +76,11 @@ class DevicesController extends Controller
         );
 
         // Paginación
-        $devices = $query->paginate(8)->through(function ($item) {
+        $devices = $query->with('inventorieDevice:id,mac_address', 'inventorieDevice.contract')->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
                 //'device_internal_id' => $item->device_internal_id,
-                'device_id' => $item->inventorieDevice,
+                'device_id' => $item->inventorieDevice->contracts ?? $item->inventorieDevice,
                 'user_id' => $item->user,
                 'comment' => $item->comment,
                 'address' => $item->address,
@@ -359,24 +359,24 @@ class DevicesController extends Controller
             try {
 
                 DB::transaction(function () use ($device, $routerOSService) {
-                    // $router =  $device->router;
+                    $router =  $device->router;
 
-                    // if (!$router->disabled) {
-                    //     $router->enable_devices -= 1;
-                    // }
-                    // $router->total_devices -= 1;
-                    // $router->save();
-                    // $device->delete();
+                    if (!$router->disabled) {
+                        $router->enable_devices -= 1;
+                    }
+                    $router->total_devices -= 1;
+                    $router->save();
+                    $device->delete();
 
-                    // $response = $routerOSService->executeCommand(
-                    //     '/ip/firewall/address-list/remove',
-                    //     [
-                    //         '.id' => $device->device_internal_id,
-                    //     ]
-                    // );
-                    // if (isset($response['!trap'])) {
-                    //     throw new \Exception('Error en la eliminación de la dirección en RouterOS');
-                    // }
+                    $response = $routerOSService->executeCommand(
+                        '/ip/firewall/address-list/remove',
+                        [
+                            '.id' => $device->device_internal_id,
+                        ]
+                    );
+                    if (isset($response['!trap'])) {
+                        throw new \Exception('Error en la eliminación de la dirección en RouterOS');
+                    }
                 });
 
                 return redirect()->route($url, [
@@ -644,7 +644,7 @@ class DevicesController extends Controller
         try {
             $devices = Device::where('device_id', $contract->inv_device_id)->first();
 
-          // $devices = Device::findOrFail($inv_device->device->id);
+            // $devices = Device::findOrFail($inv_device->device->id);
 
             if (!is_null($devices)) {
                 // foreach($devices  as $device)
@@ -660,7 +660,7 @@ class DevicesController extends Controller
             Log::error($e);
         }
     }
-    
+
     public function setDeviceStatusContrato(Device $device)
     {
         $device = Device::findOrFail($device->id);
@@ -843,7 +843,7 @@ class DevicesController extends Controller
             // Buscar la cola correspondiente a la IP del dispositivo
             $existingQueue = $routerOSService->executeCommand('/queue/simple/print', [
                 '?=target' => $device->address . '/32',
-                '?=name' => $device->comment 
+                '?=name' => $device->comment
             ]);
 
             if (isset($existingQueue[0])) {

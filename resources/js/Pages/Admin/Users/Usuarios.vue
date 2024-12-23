@@ -71,7 +71,6 @@ const headingsImport = "nombre, alias, email, numero, password, role";
               :toRouteExport="toRouteExport"
             ></base-export-excel>
             <base-import-excel
-              @click="openModal"
               :toImportRoute="toImportRoute"
               :headings="headingsImport"
             >

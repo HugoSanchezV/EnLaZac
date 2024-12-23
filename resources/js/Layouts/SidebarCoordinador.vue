@@ -75,9 +75,6 @@
                     subItem.route.split('.')[0],
                 }"
               >
-                <span class="material-symbols-outlined">
-                  fiber_manual_record
-                </span>
                 <Link
                   :href="
                     route(
@@ -86,8 +83,11 @@
                         : subItem.route
                     )
                   "
-                  class="block p-2"
+                  class="flex p-2 items-center w-full gap-2"
                 >
+                  <span class="material-symbols-outlined">
+                    fiber_manual_record
+                  </span>
                   {{ subItem.name }}
                 </Link>
               </li>
@@ -190,7 +190,6 @@ onMounted(() => {
   // Esto es necesario para forzar la reactividad en Vue
   menuItems.value = [...menuItems.value];
 });
-
 </script>
   
   <style scoped>

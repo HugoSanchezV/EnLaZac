@@ -44,21 +44,21 @@ class SMSService
 
   public function MessengerWhatsapp()
   {
-    $sid    = "AC733981076738ed1ad780e45c8743eb2f";
-    $token  = env('TWILIO_AUTH_TOKEN');
-    $twilio = new Client($sid, $token);
+    // $sid    = "AC733981076738ed1ad780e45c8743eb2f";
+    // $token  = env('TWILIO_AUTH_TOKEN');
+    // $twilio = new Client($sid, $token);
 
-    $message = $twilio->messages
-      ->create(
-        "whatsapp:+5214931704490", // to
-        array(
-          "from" => "whatsapp:+14155238886",
-          "contentSid" => "HX350d429d32e64a552466cafecbe95f3c",
-          "contentVariables" => '{"1":"12/1","2":"3pm"}',
-          "body" => "Your Message"
-        )
-      );
+    // $message = $twilio->messages
+    //   ->create(
+    //     "whatsapp:+5214931704490", // to
+    //     array(
+    //       "from" => "whatsapp:+14155238886",
+    //       "contentSid" => "HX350d429d32e64a552466cafecbe95f3c",
+    //       "contentVariables" => '{"1":"12/1","2":"3pm"}',
+    //       "body" => "Your Message"
+    //     )
+    //   );
 
-    print($message->sid);
+    // print($message->sid);
   }
 }

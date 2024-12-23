@@ -44,9 +44,11 @@ use App\Http\Controllers\ServiceVariablesController;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\TelegramSettingController;
 use App\Models\PaymentSanction;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
+        'isAuthenticated' => Auth::check(),
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,

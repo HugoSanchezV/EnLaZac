@@ -200,7 +200,7 @@ class InventorieDevicesController extends Controller
             ->with('success', 'Dispositivo Eliminado Con Éxito');
     }
 
-    public static    function changeStateDevice($id, $state = 0)
+    public static function changeStateDevice($id, $state = 0)
     {
         $device = InventorieDevice::findOrFail($id);
         $device->state = $state;

@@ -18,10 +18,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-  mapKey:{
+  mapKey: {
     type: String,
     required: true,
-  }
+  },
 });
 </script>
 
@@ -33,19 +33,24 @@ const props = defineProps({
       <div
         class="text-lg flex justify-between leading-6 font-semibold text-gray-800"
       >
-        <h3>Contrato ID: {{ contract[0].id }}</h3>
-        <Link
-          :href="route('contracts.show', contract[0].id)"
-          class="font-light bg-blue-500 text-white px-2 py-1 rounded-md"
-          >Ver más...</Link
-        >
+        <div v-if="contract[0]?.id !== undefined">
+          <h3>Contrato ID: {{ contract[0].id }}</h3>
+
+          <Link
+            :href="route('contracts.show', contract[0].id)"
+            class="font-light bg-blue-500 text-white px-2 py-1 rounded-md"
+            >Ver más...</Link
+          >
+        </div>
+
+        <h3 v-else>Sin Asignar</h3>
       </div>
       <p class="mt-1 text-sm text-gray-500">
         Detalles sobre el contrato y el dispositivo asignado
       </p>
     </div>
     <!-- Contenido del contrato del usuario -->
-    <div class="border-t border-gray-100 px-6 py-4">
+    <div class="border-t border-gray-100 px-6 py-4" >
       <!-- Lista de detalles sobre el usuario en un diseño de rejilla -->
       <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <!-- Muestra el nombre del usuario -->
@@ -53,19 +58,25 @@ const props = defineProps({
         <div class="sm:col-span-2">
           <dt class="text-sm font-medium text-gray-600">Dirección</dt>
           <dd class="mt-1 text-sm text-gray-900">
-            {{ contract === null ? "Sin asignar" : contract[0].address }}
+            {{
+              contract === null && contract[0]?.id !== undefined
+                ? "Sin asignar"
+                : contract[0]?.address
+            }}
           </dd>
         </div>
 
-        
         <!-- Muestra el teléfono del usuario -->
-        <div v-if="contract != null" class="sm:col-span-2">
+        <div
+          v-if="contract != null && contract[0]?.id !== undefined"
+          class="sm:col-span-2"
+        >
           <div>
             <dt class="text-sm font-medium text-gray-600">Geolocalización</dt>
             <dd class="mt-1 text-sm text-gray-900">
               <GoogleMaps
-                :lat="parseFloat(contract[0].geolocation.latitude)"
-                :lng="parseFloat(contract[0].geolocation.longitude)"
+                :lat="parseFloat(contract[0]?.geolocation.latitude)"
+                :lng="parseFloat(contract[0]?.geolocation.longitude)"
                 :clic="false"
                 :mapKey="mapKey"
               />
@@ -83,9 +94,9 @@ const props = defineProps({
 
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Contrato asignado</dt>
-          <div v-if="contract !== null">
+          <div v-if="contract !== null && contract[0]?.id !== undefined">
             <Link
-              :href="route('contracts.show', contract[0].id)"
+              :href="route('contracts.show', contract[0]?.id)"
               class="cursor-pointer text-blue-500 underline"
             >
               <dd class="mt-1 text-sm text-gray-900">{{ contract[0].id }}</dd>
@@ -99,16 +110,16 @@ const props = defineProps({
         <!-- Muestra el costo del plan -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Plan afiliado</dt>
-          <div v-if="plan !== null && contract[0].plan?.id !== undefined">
+          <div v-if="plan !== null && contract[0]?.plan?.id !== undefined">
             <Link
-              :href="route('plans.show', contract[0].plan?.id)"
+              :href="route('plans.show', contract[0]?.plan?.id)"
               class="cursor-pointer text-blue-500 underline"
             >
               <dd class="mt-1 text-sm text-gray-900">
                 {{
-                  contract[0].plan === null
+                  contract[0]?.plan === null
                     ? "Sin asignar"
-                    : contract[0].plan.name
+                    : contract[0]?.plan.name
                 }}
               </dd>
             </Link>
@@ -126,10 +137,11 @@ const props = defineProps({
 
         <!-- Muestra el dispositivo asignado al usuario -->
         <div class="sm:col-span-1">
-          <dt class="text-sm font-medium text-gray-600">
-            IP Asignado
-          </dt>
-          <Link :href="route('devices.show', device.id)" class="mt-1 text-sm text-gray-900">
+          <dt class="text-sm font-medium text-gray-600">IP Asignado</dt>
+          <Link
+            :href="route('devices.show', device.id)"
+            class="mt-1 text-sm text-gray-900"
+          >
             {{ device === null ? "Sin asignar" : device.address }}
           </Link>
         </div>

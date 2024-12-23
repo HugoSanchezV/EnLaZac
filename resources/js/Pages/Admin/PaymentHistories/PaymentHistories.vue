@@ -53,7 +53,7 @@ const headers = [
     <template v-slot:content>
       <div>
         <div v-if="props.totalPaymentsCount > 0">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Card para el total de pagos -->
             <div
               class="card-total-payments bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-lg shadow-md"
@@ -64,7 +64,7 @@ const headers = [
                   <p class="text-3xl mt-2 font-semibold">${{ totalAmount }}</p>
                 </div>
                 <div class="icon bg-white p-3 rounded-full shadow-md">
-                  <i class="fas fa-dollar-sign text-blue-700 text-2xl"></i>
+                  <i class="fas fa-dollar-sign text-blue-700 text-3xl"></i>
                 </div>
               </div>
             </div>

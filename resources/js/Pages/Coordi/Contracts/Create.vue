@@ -11,6 +11,9 @@ const props = defineProps({
   },
   mapKey:{
     type: String,
+  },
+  device_selected:{
+    type: String,
   }
 });
 </script>
@@ -29,7 +32,8 @@ const props = defineProps({
           :devices="devices" 
           :plans="plans" 
           :community="community"
-          :mapKey="mapKey"/>
+          :mapKey="mapKey"
+          :device_selected="device_selected"/>
         </div>
       </div>
     </template>

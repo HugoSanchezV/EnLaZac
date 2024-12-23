@@ -2,6 +2,7 @@
 import { Head, Link } from "@inertiajs/vue3";
 
 defineProps({
+  isAuthenticated: Boolean,
   canLogin: Boolean,
   canRegister: Boolean,
   laravelVersion: {
@@ -23,28 +24,35 @@ defineProps({
         ¡Bienvenido a EnLaZac!
       </h1>
       <p class="text-lg text-gray-600 mb-8 text-center">
-        Revisa cualquier característica de tu cuenta o escribenos sí encuentras algún error en nuestro servicio
+        Revisa cualquier característica de tu cuenta o escríbenos si encuentras algún error en nuestro servicio
       </p>
 
       <div class="flex space-x-4">
         <Link
-          v-if="canLogin"
+          v-if="!isAuthenticated && canLogin"
           :href="route('login')"
           class="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700 transition focus:outline-none focus:ring focus:ring-indigo-300"
         >
           Iniciar Sesión
         </Link>
         <Link
-          v-if="canRegister"
+          v-if="!isAuthenticated && canRegister"
           :href="route('register')"
           class="px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg hover:bg-green-600 transition focus:outline-none focus:ring focus:ring-green-300"
         >
           Registrarse
         </Link>
+        <Link
+          v-if="isAuthenticated"
+          :href="route('dashboard')" 
+          class="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 transition focus:outline-none focus:ring focus:ring-blue-300"
+        >
+          Ir al Inicio
+        </Link>
       </div>
 
       <footer class="mt-12 text-sm text-gray-500">
-        Todos los derechos reservados 2024
+        © 2024 Todos los derechos reservados. Desarrollado por <span class="font-bold">Nuvira</span>.
       </footer>
     </div>
   </div>

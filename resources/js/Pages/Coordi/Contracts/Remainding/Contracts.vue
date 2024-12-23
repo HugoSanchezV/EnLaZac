@@ -14,7 +14,7 @@ const { contracts } = toRefs(props);
 //const headers = ["Id", "Usuarios", "Plan Internet","Fecha de Inicio","Fecha de Terminación","¿Activo?", "Dirección", "Geolocación", "Acciones"];
 const filters = [
   "id",
-  "usuario",
+  // "usuario",
   "plan internet",
   "comunidad",
   "fecha de inicio",
@@ -127,6 +127,7 @@ export default {
       q: "",
       attribute: "id",
       type: "todos",
+      day: 6,
       order: "ASC",
     };
   },
@@ -138,7 +139,7 @@ export default {
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
-      this.type = props.type;
+      this.day = props.day;
       this.order = props.order;
 
       if (this.attribute === "id") {
@@ -177,7 +178,7 @@ export default {
         {
           q: this.q,
           attribute: this.attribute,
-          type: this.type,
+          days: this.day,
           order: this.order,
         },
         { preserveState: true, replace: true }

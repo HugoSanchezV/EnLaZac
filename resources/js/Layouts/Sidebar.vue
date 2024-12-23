@@ -26,7 +26,6 @@
       <!-- <span class="material-symbols-outlined">cell_tower</span>
       <span class="ml-2 text-lg font-bold">EnLaZac</span> -->
       <NuviraSide></NuviraSide>
-
     </div>
 
     <!-- Menu Items -->
@@ -76,10 +75,13 @@
                     subItem.route.split('.')[0],
                 }"
               >
-                <span class="material-symbols-outlined">
-                  fiber_manual_record
-                </span>
-                <Link :href="route(subItem.route)" class="block p-2">
+                <Link
+                  :href="route(subItem.route)"
+                  class="flex p-2 items-center w-full gap-2"
+                >
+                  <span class="material-symbols-outlined">
+                    fiber_manual_record
+                  </span>
                   {{ subItem.name }}
                 </Link>
               </li>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-click-outside="closeDropdown">
     <button
       id="dropdownRadioButton"
       @click="toggleDropdown"
@@ -71,6 +71,9 @@ const props = defineProps({
 // Función para alternar el estado del dropdown
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value;
+};
+const closeDropdown = () => {
+  dropdownOpen.value = false;
 };
 
 // Función para seleccionar un elemento y cerrar el dropdown

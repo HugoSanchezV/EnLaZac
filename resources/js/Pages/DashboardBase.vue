@@ -79,6 +79,7 @@ useGeneralNotifications();
               :upload_byte="props.upload_byte"
               :download_byte="props.download_byte"
               :routers="props.routers"
+              :all_routers="props.all_routers"
             >
             </dashboard-admin>
           </slot>
@@ -135,6 +136,9 @@ export default {
         type: Array,
       },
       routers: {
+        type: Array,
+      },
+      all_routers: {
         type: Array,
       },
     },

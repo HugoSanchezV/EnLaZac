@@ -1,6 +1,6 @@
 <script setup>
 import { router, useForm } from "@inertiajs/vue3";
-import {ref, onMounted, toRefs} from 'vue';
+import { ref, onMounted, toRefs } from "vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
@@ -11,13 +11,12 @@ import TextInput from "@/Components/TextInput.vue";
 import flatpickr from "flatpickr";
 
 import { monthSelectPlugin } from "flatpickr/dist/plugins/monthSelect";
-import monthSelect from 'flatpickr/dist/plugins/monthSelect';
+import monthSelect from "flatpickr/dist/plugins/monthSelect";
 import "flatpickr/dist/plugins/monthSelect/style.css";
 
-
 const props = defineProps({
-  lastID:{
-    type: Object
+  lastID: {
+    type: Object,
   },
   devices: {
     type: Array,
@@ -27,14 +26,17 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  community:{
+  community: {
     type: Array,
     default: () => [],
   },
-  mapKey:{
+  mapKey: {
     type: String,
     required: true,
-  }
+  },
+  device_selected: {
+    type: String,
+  },
 });
 
 //const selectedUser = ref(null);
@@ -47,9 +49,9 @@ const form = useForm({
   active: "",
   address: "",
   rural_community_id: "",
-  geolocation:{
+  geolocation: {
     latitude: "",
-    longitude:"",
+    longitude: "",
   },
 });
 
@@ -58,20 +60,21 @@ const handlePositionClicked = (position) => {
   form.geolocation.longitude = position.lng.toFixed(10); // Asignar la longitud con precisión
 };
 const lat = ref(null);
-const lng = ref(null); 
-const getPosition = () =>{
-  if(navigator.geolocation){
-    var success = function(position){
-      lat.value = form.geolocation.latitude = position.coords.latitude.toFixed(10),
-      lng.value = form.geolocation.longitude = position.coords.longitude.toFixed(10);
-    }
-  
-    navigator.geolocation.getCurrentPosition(success, function(msg)
-    {
-    console.error( msg );
+const lng = ref(null);
+const getPosition = () => {
+  if (navigator.geolocation) {
+    var success = function (position) {
+      (lat.value = form.geolocation.latitude =
+        position.coords.latitude.toFixed(10)),
+        (lng.value = form.geolocation.longitude =
+          position.coords.longitude.toFixed(10));
+    };
+
+    navigator.geolocation.getCurrentPosition(success, function (msg) {
+      console.error(msg);
     });
   }
-}
+};
 function addMonth(dateString) {
   const [year, month] = dateString.split("-").map(Number); // Divide "2024-11" en año y mes
   const date = new Date(year, month - 1); // Crea un objeto Date (mes indexado desde 0)
@@ -86,6 +89,7 @@ function addMonth(dateString) {
 }
 onMounted(() => {
   getPosition();
+  form.inv_device_id = props.device_selected || ""; 
   // Obtener el input de fecha
   // const datePicker = document.getElementById('start_date');
 
@@ -94,43 +98,39 @@ onMounted(() => {
   //alert(today);
 
   flatpickr("#start_date", {
-      plugins: [
+    plugins: [
       monthSelect({
-              shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
-              dateFormat: "Y-m", // Formato de valor en el input
-              altFormat: "F Y", // Formato de valor alternativo mostrado
-              theme: "dark" // Tema oscuro
-          })
-      ],
-      defaultDate: form.start_date || null, // Establece un valor predeterminado si existe
-      onChange: function (selectedDates, dateStr) {
-       // alert(dateStr);
-        form.start_date = dateStr; // Asigna el valor al formato "m.y"
-        form.end_date = addMonth(form.start_date);
+        shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
+        dateFormat: "Y-m", // Formato de valor en el input
+        altFormat: "F Y", // Formato de valor alternativo mostrado
+        theme: "dark", // Tema oscuro
+      }),
+    ],
+    defaultDate: form.start_date || null, // Establece un valor predeterminado si existe
+    onChange: function (selectedDates, dateStr) {
+      // alert(dateStr);
+      form.start_date = dateStr; // Asigna el valor al formato "m.y"
+      form.end_date = addMonth(form.start_date);
       //  console.log("Fecha seleccionada:", form.start_date.value);
-      },
+    },
   });
   flatpickr("#end_date", {
-      plugins: [
+    plugins: [
       monthSelect({
-              shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
-              dateFormat: "Y-m", // Formato de valor en el input
-              altFormat: "F Y", // Formato de valor alternativo mostrado
-              theme: "dark" // Tema oscuro
-          })
-      ]
+        shorthand: true, // Usa nombres cortos de meses (ej: "Jan" en lugar de "January")
+        dateFormat: "Y-m", // Formato de valor en el input
+        altFormat: "F Y", // Formato de valor alternativo mostrado
+        theme: "dark", // Tema oscuro
+      }),
+    ],
   });
   // form.start_date = setDayToFive(today);
   // onDateChange();
-
-
 });
-const getCurrentLocation = () =>
-{
-   form.geolocation.latitude = lat,
-   form.geolocation.longitude = lng;
-    getPosition();
-}
+const getCurrentLocation = () => {
+  (form.geolocation.latitude = lat), (form.geolocation.longitude = lng);
+  getPosition();
+};
 // const onDateChange= () =>{
 //   // console.log("ENTRA");
 //   // Imprimir la fecha seleccionada en la consola
@@ -149,8 +149,7 @@ const showWarning = (id) => {
         message: "Seleccione el Id de los campos correspondientes",
       },
 
-      listeners: {
-      },
+      listeners: {},
     },
 
     {
@@ -162,24 +161,16 @@ const showWarning = (id) => {
 };
 
 const submit = () => {
-  var miCheckbox = document.getElementById('activated');
+  var miCheckbox = document.getElementById("activated");
   if (miCheckbox.checked) {
     form.active = true;
   } else {
     form.active = false;
   }
 
-    console.log(form);
-    form.post(route("contracts.store"));
-
-
-
+  console.log(form);
+  form.post(route("contracts.store"));
 };
-
-
-
-
-
 </script>
 
 <template>
@@ -188,16 +179,24 @@ const submit = () => {
       <div>
         <InputLabel for="inv_device_id" value="ID del dispositivo" />
         <div class="mt-2">
-            <select
-              v-model="form.inv_device_id"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          <select
+            v-model="form.inv_device_id"
+            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          >
+            <option v-if="devices.length === 0" disabled value="">
+              No hay dispositivos con usuario
+            </option>
+
+            <option v-else value="" disabled>Selecciona una opción</option>
+            <option
+              v-for="device in devices"
+              :key="device.id"
+              :value="device.id"
+              :selected="device.id == device_selected"
             >
-              <option v-if="devices.length === 0" disabled value="">No hay dispositivos con usuario</option>
-              <option v-else value="" disabled>Selecciona una opción</option>
-              <option v-for="device in devices" :key="device.id" :value="device.id">
-                  {{ device.id + " - " + device.mac_address }}
-              </option>
-            </select>
+              {{ device.id + " - " + device.mac_address }}
+            </option>
+          </select>
         </div>
         <InputError class="mt-2" :message="form.errors.inv_device_id" />
       </div>
@@ -205,36 +204,40 @@ const submit = () => {
       <div class="mt-4">
         <InputLabel for="plan_id" value="ID del plan" />
         <div class="mt-2">
-            <select
-              v-model="form.plan_id"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-              <option disabled v-if="plans.length === 0" value="">No hay registro de comunidades</option>
-              <option  disabled v-else value="">Selecciona una opción</option>
-              <option v-for="plan in plans" :key="plan.id" :value="plan.id">
-                  {{ plan.id + " - " + plan.name }}
-              </option>
-            </select>
+          <select
+            v-model="form.plan_id"
+            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          >
+            <option disabled v-if="plans.length === 0" value="">
+              No hay registro de comunidades
+            </option>
+            <option disabled v-else value="">Selecciona una opción</option>
+            <option v-for="plan in plans" :key="plan.id" :value="plan.id">
+              {{ plan.id + " - " + plan.name }}
+            </option>
+          </select>
         </div>
         <InputError class="mt-2" :message="form.errors.plan_id" />
       </div>
       <div class="mt-4">
         <InputLabel for="rural_community_id" value="ID de la comunidad" />
         <div class="mt-2">
-            <select
-              v-model="form.rural_community_id"
-              class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            >
-            <option disabled v-if="community.length === 0" value="">No hay registro de comunidades</option>
+          <select
+            v-model="form.rural_community_id"
+            class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          >
+            <option disabled v-if="community.length === 0" value="">
+              No hay registro de comunidades
+            </option>
             <option disabled v-else value="">Selecciona una opción</option>
             <option v-for="com in community" :key="com.id" :value="com.id">
-                  {{com.id+" - " + com.name}}
-              </option>
-            </select>
+              {{ com.id + " - " + com.name }}
+            </option>
+          </select>
         </div>
         <InputError class="mt-2" :message="form.errors.rural_community_id" />
       </div>
-      
+
       <div class="mt-4 flex justify-between">
         <div>
           <InputLabel for="start_date" value="Fecha de Inicio" />
@@ -242,13 +245,13 @@ const submit = () => {
             id="start_date"
             v-model="form.start_date"
             type="text"
-            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
             required
             autofocus
             autocomplete="start_date"
             @input="onDateChange"
           />
-          
+
           <InputError class="mt-2" :message="form.errors.start_date" />
         </div>
         <div>
@@ -257,24 +260,22 @@ const submit = () => {
             id="end_date"
             v-model="form.end_date"
             type="text"
-            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" 
+            class="flatpickr mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
             required
             autofocus
             autocomplete="end_date"
           />
           <InputError class="mt-2" :message="form.errors.end_date" />
         </div>
-          
       </div>
 
       <div class="mt-4 flex gap-4">
         <InputLabel for="active" value="¿Contrato Activo?" />
-        
+
         <label class="switch">
-          <input type="checkbox" id="activated"/>
+          <input type="checkbox" id="activated" />
           <span class="slider round"></span>
         </label>
-
       </div>
 
       <div class="mt-4">
@@ -292,17 +293,20 @@ const submit = () => {
       </div>
 
       <div class="mt-4">
-        <p>Su ubicación actual será tomada de manera automática 
-          para obtener la locación del cliente o ingrese la ubicación manualmente. 
+        <p>
+          Su ubicación actual será tomada de manera automática para obtener la
+          locación del cliente o ingrese la ubicación manualmente.
         </p>
       </div>
       <div class="flex justify-between items-center gap-2 mt-5">
         <p>Ingresar ubicación manualmente</p>
         <label class="switch">
-          <input type="checkbox" 
-          @change="getCurrentLocation"  
-          checked 
-          v-model="ubicacionManual" />
+          <input
+            type="checkbox"
+            @change="getCurrentLocation"
+            checked
+            v-model="ubicacionManual"
+          />
           <span class="slider round"></span>
         </label>
       </div>
@@ -313,7 +317,7 @@ const submit = () => {
           <TextInput
             id="latitude"
             v-model="form.geolocation.latitude"
-            readonly 
+            readonly
             class="mt-1 block w-full"
             autocomplete="latitude"
           />
@@ -325,7 +329,7 @@ const submit = () => {
           <TextInput
             id="longitude"
             v-model="form.geolocation.longitude"
-            readonly 
+            readonly
             class="mt-1 block w-full"
             autocomplete="longitude"
           />
@@ -334,13 +338,14 @@ const submit = () => {
       </div>
       <div v-if="ubicacionManual" class="flex mt-4">
         <GoogleMaps
-        :lat="parseInt(lat)"
-        :lng="parseInt(lng)"
-        :clic=true
-        :mapKey="mapKey"
-        @otherPos_clicked="handlePositionClicked" />
+          :lat="parseInt(lat)"
+          :lng="parseInt(lng)"
+          :clic="true"
+          :mapKey="mapKey"
+          @otherPos_clicked="handlePositionClicked"
+        />
       </div>
-      
+
       <div v-else>
         <div class="mt-4">
           <TextInput
@@ -357,7 +362,7 @@ const submit = () => {
             class="mt-1 block w-full"
             autocomplete="longitude"
           />
-      </div>
+        </div>
       </div>
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
@@ -387,26 +392,23 @@ const submit = () => {
   </div>
 </template>
 <script>
-import GoogleMaps from '@/Components/GoogleMaps.vue'
+import GoogleMaps from "@/Components/GoogleMaps.vue";
 export default {
   components: {
-        GoogleMaps
-    },
-  props: 
-    ["contract"],
+    GoogleMaps,
+  },
+  props: ["contract"],
 
   data() {
     return {
       ubicacionManual: false,
       form: {
-        latitude: '',
-        longitude: '',
+        latitude: "",
+        longitude: "",
       },
-
     };
   },
 };
-
 </script>
 <style scoped>
 .switch {

@@ -8,6 +8,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
+import useClickOutSide from './Components/Base/hooks/useClickOutSide';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -19,6 +20,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(Toast)
+            .directive('click-outside', useClickOutSide)
             .mount(el);
     },
     progress: {

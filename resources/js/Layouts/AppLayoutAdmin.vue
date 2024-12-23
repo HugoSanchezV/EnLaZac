@@ -62,7 +62,7 @@ const formattedDate = (dateCreation) => {
   
   <div class="flex h-screen">
     <div
-      class="lg:block top-0 left-0 w-auto min-w-[200px] h-screen z-50 bg-white shadow-2xl"
+      class="lg:block top-0 left-0 w-auto min-w-[200px] h-screen z-50 bg-white shadow-2xl ml-12"
       :class="{ 'block fixed': menuIsOpen, hidden: !menuIsOpen }"
     >
       <sidebar @close-menu-emit="closeMenu"></sidebar>

@@ -20,7 +20,7 @@ class StatisticsController extends Controller
 {
     private $route = [];
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -29,7 +29,9 @@ class StatisticsController extends Controller
         }
 
         if ($user->admin == 1) {
-            return self::showAdmin();
+            // dd($request->all());
+            $id = isset($request->router) ? $request->router : null;
+            return self::showAdmin($id);
         }
 
         if ($user->admin == 2) {
@@ -45,7 +47,7 @@ class StatisticsController extends Controller
     public function showUser()
     {
         try {
-           // dd(Auth::id());
+            // dd(Auth::id());
             $user = User::with('device.inventorieDevice')->findOrFail(Auth::id());
 
             $devices = $user->device;
@@ -54,11 +56,11 @@ class StatisticsController extends Controller
             //dd($devices);
             foreach ($devices as $device) {
                 // Verifica si el dispositivo tiene un contrato
-                if(!is_null($device->inventorieDevice)){
+                if (!is_null($device->inventorieDevice)) {
 
                     $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
                     // $plan = $contract ? Plan::find($contract->plan_id) : null;
-    
+
                     // Añadir los datos del dispositivo, contrato y plan al arreglo
                     $contracts[] = [
                         'device' => $device,
@@ -68,8 +70,8 @@ class StatisticsController extends Controller
                 }
             }
             //dd("Termina el for");
-        $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
-  
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
+
             // dd($contracts);
             return Inertia::render('User/DashboardUser', [
                 'user' => $user,
@@ -78,7 +80,6 @@ class StatisticsController extends Controller
                 'mapKey' => $mapKey,
             ]);
         } catch (Exception $e) {
-            dd($e->getMessage());
             return Redirect::route('usuarios')->with('error', 'Error al mostrar el usuario');
         }
     }
@@ -116,7 +117,7 @@ class StatisticsController extends Controller
         ]);
     }
 
-    public function showAdmin()
+    public function showAdmin($id = null)
     {
         //  dd(Carbon::now());
         //Varias consultas para mandar aca
@@ -129,7 +130,9 @@ class StatisticsController extends Controller
 
         //dd($activeContract);
 
-        $trafficData = self::conectar();
+        $id = isset($id) ? $id : Router::first()->id;
+
+        $trafficData = self::conectar($id);
 
         if (empty($trafficData)) {
             $target = [];
@@ -172,9 +175,9 @@ class StatisticsController extends Controller
             }
         }
         //     dd(Carbon::now()->toString());
-
         //  dd($userCount->count());
         // dd('Terminó');
+        $all_routers = Router::select('id')->where('sync', 1)->orderBy('id', 'asc')->get();
         return Inertia::render('DashboardBase', [
             'morrosos' => $morrosos,
             'activeDevice' => $activeDevice,
@@ -187,7 +190,7 @@ class StatisticsController extends Controller
             'upload_byte' => $upload_byte,
             'download_byte' => $download_byte,
             'routers' => $this->route,
-
+            'all_routers' => $all_routers,
         ]);
     }
     function convertToGb($bytes)
@@ -203,12 +206,13 @@ class StatisticsController extends Controller
     {
         return round($bps / 1000000, 5); // Convertir a Mbps
     }
-    public function conectar()
+    public function conectar($id)
     {
         $trafficData = [];
-        $routers = Router::all();
+        $routers = Router::where('id', $id)->get();
+
         //dd(($routers->count()));
-        if (($routers->count()) != 0) {
+        if (($routers->count()) != 0 && $routers[0]->sync == 1) {
             foreach ($routers as $r) {
                 // dd($trafficData);
                 try {
@@ -238,7 +242,7 @@ class StatisticsController extends Controller
 
     public function userCount()
     {
-        return User::all();
+        return [User::count()];
     }
 
     public function morrososCount()

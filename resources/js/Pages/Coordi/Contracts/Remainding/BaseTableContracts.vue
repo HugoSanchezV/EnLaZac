@@ -46,7 +46,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
@@ -236,7 +236,8 @@ const getTag = (cellIndex) => {
                 }"
               >
                 {{ daysRemaining(row.end_date) }} días restantes
-              </span> con fecha {{ cell }}
+              </span>
+              con fecha {{ cell }}
             </div>
             <div v-else>
               <div class="flex gap-1">
@@ -383,6 +384,10 @@ export default {
       this.dropdownOpen = !this.dropdownOpen;
     },
 
+    closeDropdown() {
+      this.dropdownOpen = false;
+    },
+
     toggleDropdown2() {
       this.dropdownOpen2 = !this.dropdownOpen2;
     },
@@ -393,7 +398,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        day: this.daysFilter,
         order: this.currentOrder,
       });
     },
@@ -404,7 +409,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentContract,
+        day: this.daysFilter,
         order: this.currentOrder,
       });
     },
@@ -414,7 +419,7 @@ export default {
       this.$emit("search", {
         searchQuery: this.searchQuery,
         attribute: this.currentFilter,
-        type: this.currentUser,
+        day: this.daysFilter,
         order: this.currentOrder,
       });
     },
@@ -423,8 +428,21 @@ export default {
       console.log(this.searchQuery);
     },
     filterContracts() {
-      const url = route("reaming.contracts", { days: this.daysFilter });
-      router.visit(url, { method: "get", preserveState: true });
+      // const url = route("reaming.contracts", {
+      //   days: this.daysFilter,
+      //   q: this.q,
+      //   attribute: this.attribute,
+      //   order: this.order,
+      // });
+
+      this.$emit("search", {
+        searchQuery: this.searchQuery,
+        attribute: this.currentFilter,
+        day: this.daysFilter,
+        order: this.currentOrder,
+      });
+      // console.log(url);
+      // router.visit(url, { method: "get", preserveState: true });
     },
     openModal(contractId, data) {
       this.selectedContractId = contractId;

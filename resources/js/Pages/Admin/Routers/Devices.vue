@@ -37,7 +37,7 @@ const columns = ["id", "name"];
   <dashboard-base :applyStyles="false">
     <template v-slot:namePage>
       <div class="flex justify-between flex-col md:flex-row">
-        <div class="md:mb-10">
+        <div class="mb-10 md:mb-0">
           <h2>Conexiones</h2>
         </div>
         <div class="block flex-col columns-1 md:columns-3 gap-1">
