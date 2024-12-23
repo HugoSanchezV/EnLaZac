@@ -254,9 +254,9 @@ const getTag = (cellIndex) => {
                 <button
                   @click="
                     openModal(row.id, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
                     })
                   "
                   class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"

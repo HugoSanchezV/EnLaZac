@@ -199,7 +199,7 @@ const confirmSelectionTecnico = (
         >
         </filter-order-base>
 
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown1"
@@ -385,7 +385,7 @@ const confirmSelectionTecnico = (
                       searchQuery: searchQuery,
                       attribute: currentFilter,
                       order: currentOrder,
-                      routerObject: routerObject
+                      routerObject: routerObject,
                     })
                   "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -486,6 +486,10 @@ export default {
   methods: {
     toggleDropdown1() {
       this.dropdownOpen1 = !this.dropdownOpen1;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown(index) {

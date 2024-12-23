@@ -68,10 +68,17 @@
               <li
                 v-for="subItem in item.subItems"
                 :key="subItem.name"
-                class="text-sm text-gray-100 hover:text-gray-200 rounded-md m-1 flex items-center pl-2"
+                class="text-sm hover:text-gray-200 rounded-md m-1 flex items-center pl-2"
                 :class="{
                   'bg-gradient-to-r from-cyan-500 to-teal-400':
                     route().current().split('.')[0] ===
+                    subItem.route.split('.')[0],
+
+                  'text-gray-50':
+                    route().current().split('.')[0] ===
+                    subItem.route.split('.')[0],
+                  'text-gray-300':
+                    route().current().split('.')[0] !==
                     subItem.route.split('.')[0],
                 }"
               >

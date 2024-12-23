@@ -5,7 +5,7 @@ import { useToast, TYPE, POSITION } from "vue-toastification";
 
 import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 
-import FilterBase from "./FilterBase.vue";
+import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 
 // ACCION DE ELIMINAR
 const destroy = (id, data) => {
@@ -91,7 +91,7 @@ const getTag = (cell) => {
       <!-- incio de filtros -->
       <div class="flex md:flex-row flex-col gap-2">
         <div class="flex">
-          <filter-base
+          <filter-order-base
             :list="[
               { id: 0, order: 'ASC' },
               { id: 1, order: 'DESC' },
@@ -99,8 +99,8 @@ const getTag = (cell) => {
             name="order"
             @elementSelected="orderSelect"
           >
-          </filter-base>
-          <div>
+          </filter-order-base>
+          <div v-click-outside="closeDropdown">
             <button
               id="dropdownRadioButton"
               @click="toggleDropdown"
@@ -542,6 +542,10 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown2() {

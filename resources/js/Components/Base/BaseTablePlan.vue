@@ -108,7 +108,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
@@ -304,7 +304,7 @@ const getTag = (cellIndex) => {
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex actions">
               <Link
-                :href="route('plans.show',row.id)"
+                :href="route('plans.show', row.id)"
                 v-if="show"
                 class="flex items-center gap-2 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -445,6 +445,10 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown2() {

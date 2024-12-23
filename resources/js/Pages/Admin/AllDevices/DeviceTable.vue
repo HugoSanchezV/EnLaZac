@@ -8,7 +8,7 @@ import BaseQuestion from "@/Components/Base/BaseQuestion.vue";
 import ModalUsers from "../Components/ModalUsers.vue";
 
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
-import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
+import { usePage } from "@inertiajs/vue3";
 // ACCION DE ELIMINAR
 
 const toRouteExport = "devices.all.excel";
@@ -34,6 +34,8 @@ const getOriginal = (data) => {
     return "address";
   }
 };
+
+const admin = usePage().props.auth.user.admin;
 
 const destroy = (id, data) => {
   const toast = useToast();
@@ -212,7 +214,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
@@ -370,9 +372,9 @@ const getTag = (cellIndex) => {
                   @close="closeDeviceModal(row.id)"
                   @selectData="
                     confirmSelectionDevice(row, $event, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
                     })
                   "
                   :data="inv_devices"
@@ -420,9 +422,9 @@ const getTag = (cellIndex) => {
                   @close="closeModal(row.id)"
                   @selectData="
                     confirmSelectionUser(row, $event, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
                     })
                   "
                   :data="users"
@@ -503,7 +505,9 @@ const getTag = (cellIndex) => {
             <div class="sm:flex gap-4 flex flex-wrap actions">
               <Link
                 :href="route('performance.device', row.id)"
-                v-if="row.user_id !== null && row.user_id !== null"
+                v-if="
+                  row.user_id !== null && row.user_id !== null && admin == 1
+                "
                 class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <span class="material-symbols-outlined">
@@ -545,6 +549,7 @@ const getTag = (cellIndex) => {
               </Link>
 
               <Link
+                v-if="admin === 1"
                 :href="route('devices.show', row.id)"
                 class="flex items-center gap-1 bg-slate-500 hover:bg-slate-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -566,6 +571,7 @@ const getTag = (cellIndex) => {
               </Link>
 
               <Link
+                v-if="admin === 1"
                 :href="route('devices.one.ping', row.id)"
                 class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
@@ -600,13 +606,13 @@ const getTag = (cellIndex) => {
                 Editar
               </Link>
 
-              <div v-if="del">
+              <div v-if="admin === 1">
                 <button
                   @click="
                     destroy(row.id, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
                     })
                   "
                   class="flex items-center gap-1 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -708,6 +714,10 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown2() {

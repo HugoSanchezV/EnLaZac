@@ -2,7 +2,9 @@
 import { toRefs } from "vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
 import BaseImportExcelDevices from "@/Components/Base/Excel/BaseImportExcelDevices.vue";
+import { usePage } from "@inertiajs/vue3";
 
+const admin = usePage().props.auth.user.admin;
 const props = defineProps({
   devices: Object,
   pagination: Object,
@@ -89,7 +91,7 @@ const columns = ["id", "name"];
 
     <template v-slot:content>
       <div v-if="props.totalDevicesCount > 0">
-        <div class="flex justify-center md:justify-start">
+        <div class="flex justify-center md:justify-start" v-if="admin === 1">
           <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <base-import-excel-devices
             @click="openModal"

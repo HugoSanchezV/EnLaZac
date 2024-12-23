@@ -31,7 +31,7 @@ const destroy = (id, data) => {
           if (data.attribute === "costo de instalación") {
             data.attribute = "installation_cost";
           }
-          
+
           router.delete(
             url,
             {
@@ -86,7 +86,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
@@ -261,9 +261,9 @@ const getTag = (cellIndex) => {
                 <button
                   @click="
                     destroy(row.id, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
                     })
                   "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -353,6 +353,10 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown2() {

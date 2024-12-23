@@ -87,27 +87,27 @@ const destroy = (id, data) => {
 const formatDescription = (tipo) => {
   // Convertimos la fecha ISO a un objeto Date
 
-  switch (tipo){
-    case 'fuera-corte': 
-    return "No pagó antes del día de corte"
-    break;
-    
-    case 'recargo-mes': 
-    return "Recargo del mes"
-    break;
-    
-    case 'renta-dispositivo': 
-    return "Renta del dispositivo"
-    break;
-    
-    case 'instalacion-inicial': 
-    return "Instalación inicial"
-    break;
-    
-    case 'cambio-domicilio': 
-    return "Cambio de domicilio"
-    break;
-    
+  switch (tipo) {
+    case "fuera-corte":
+      return "No pagó antes del día de corte";
+      break;
+
+    case "recargo-mes":
+      return "Recargo del mes";
+      break;
+
+    case "renta-dispositivo":
+      return "Renta del dispositivo";
+      break;
+
+    case "instalacion-inicial":
+      return "Instalación inicial";
+      break;
+
+    case "cambio-domicilio":
+      return "Cambio de domicilio";
+      break;
+
     default:
       return tipo;
   }
@@ -158,7 +158,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
@@ -357,9 +357,9 @@ const getTag = (cellIndex) => {
                 <button
                   @click="
                     destroy(row.id, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
                     })
                   "
                   class="flex items-center gap-2 bg-red-500 hover:bg-red-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
@@ -450,6 +450,10 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown2() {
