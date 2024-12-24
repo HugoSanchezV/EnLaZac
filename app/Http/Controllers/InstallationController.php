@@ -137,7 +137,7 @@ class InstallationController extends Controller
 
                 return redirect()->route('installation')->with('success', 'La Instalación fue Actualizada Con Éxito');
             }else{
-                return redirect()->route('installation')->with('error', 'Este contrato ya no es posible actualizarlo: Primer pago del servicio realizado');
+                return redirect()->route('installation')->with('error', 'Este contrato ya no es posible actualizarlo: Caducó la función, se ha ampliado el contrato');
             }
             
         }catch(Exception $e){
@@ -167,9 +167,9 @@ class InstallationController extends Controller
                 'assigned_date' => $validatedData['assigned_date'],
             ]);
     
-            InstallationSetting::create([
-                'installation_id' => $installation->id,
-            ]);
+            // InstallationSetting::create([
+            //     'installation_id' => $installation->id,
+            // ]);
 
             if(($confirmacion == "true"))
             {
@@ -216,24 +216,25 @@ class InstallationController extends Controller
         $controller = new ContractController();
         //dd("YEAH");
 
-        Log::info("2. Esta dentro de la funcion");
+        //Log::info("2. Esta dentro de la funcion");
         if($description == "1"){
             $installation = Installation::with('installationSettings')->findOrFail($installation->id);
            // Log::info('Dentro de la condición');
-            if($installation->installationSettings){
-               // Log::info('Si tiene configuración');
-                if(is_null($installation->installationSettings->exemption_months)){
-                    
-                    return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months, $config_exemption);
-                }else{
-                    Log::info("3. Si tiene la config de exemption months: ");
-                    //Log::info('No es nula entro a la condicion perrona');
-                    return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months, $config_exemption);
-                }
-                //return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months);
-            }else{
-                return $controller->updateEndDateContract($installation, $newInstallation, null, $config_exemption);
-            }
+            // if($installation->installationSettings){
+            //    // Log::info('Si tiene configuración');
+            //     if(is_null($installation->installationSettings->exemption_months)){
+            //         Log::info("Esta null");
+            //         return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months, $config_exemption);
+            //     }else{
+            //         Log::info("3. Si tiene la config de exemption months: ");
+            //         //Log::info('No es nula entro a la condicion perrona');
+            //         return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months, $config_exemption);
+            //     }
+            //     //return $controller->updateEndDateContract($installation, $newInstallation, $installation->installationSettings->exemption_months);
+            // }else{
+            //     Log::info("Siempre null alv");
+            return $controller->updateEndDateContract($installation, $newInstallation, null, $config_exemption);
+            //}
         }
         return true;
     }
@@ -258,16 +259,8 @@ class InstallationController extends Controller
 
         $installation = Installation::with('installationSettings')->findOrFail($installation->id);
 
-     //   dd($installation->description);
         if($installation->description == "1"){
-            if($installation->installationSettings){
-               
-                $controller->storeEndDateContract($installation->contract_id, $installation->assigned_date, $installation->installationSettings->exemption_months);
-            }else{
-                $controller->storeEndDateContract($installation->contract_id, $installation->assigned_date, null);
-
-            }
-
+            $controller->storeEndDateContract($installation->contract_id, $installation->assigned_date, null);
         }
 
     }
