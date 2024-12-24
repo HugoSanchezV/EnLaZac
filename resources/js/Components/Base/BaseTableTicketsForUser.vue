@@ -109,7 +109,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown1"
@@ -403,8 +403,8 @@ const getTag = (cellIndex) => {
       </tbody>
     </table>
   </div>
-  <span class="overlay"></span>
-  <div class="container-modal">
+  <!-- <span class="overlay"></span> -->
+  <!-- <div class="container-modal">
     <div class="content-modal">
       <h2>Hola checando esta vaina</h2>
       <p>Parangaracutirimicuaro</p>
@@ -415,7 +415,7 @@ const getTag = (cellIndex) => {
         >
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
   
   <script>
@@ -480,6 +480,10 @@ export default {
   methods: {
     toggleDropdown1() {
       this.dropdownOpen1 = !this.dropdownOpen1;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen1 = false;
     },
 
     toggleDropdown(index) {
