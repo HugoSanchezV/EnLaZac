@@ -123,7 +123,7 @@ const getTag = (cellIndex) => {
         >
         </filter-order-base>
 
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown1"
@@ -372,6 +372,10 @@ export default {
   methods: {
     toggleDropdown1() {
       this.dropdownOpen1 = !this.dropdownOpen1;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown(index) {

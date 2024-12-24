@@ -29,7 +29,7 @@ class InstallationController extends Controller
     public function __construct()
     {
         if (Auth::user()->admin === 2) {
-            $this->path = 'Coordi';
+            $this->path = 'Admin';
         }
     }
     public function index(Request $request)
@@ -80,7 +80,7 @@ class InstallationController extends Controller
 
         $totalInstallationCount = Installation::count();
 
-        return Inertia::render( $this->path . '/Installation/Installation', [
+        return Inertia::render( "Admin" . '/Installation/Installation', [
             'installation' => $installation,
             'pagination' => [
                 'links' => $installation->links()->elements[0],

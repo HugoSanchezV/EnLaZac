@@ -76,7 +76,7 @@ const getTag = (cellIndex) => {
           @elementSelected="orderSelect"
         >
         </filter-order-base>
-        <div>
+        <div v-click-outside="closeDropdown">
           <button
             id="dropdownRadioButton"
             @click="toggleDropdown"
@@ -208,7 +208,7 @@ const getTag = (cellIndex) => {
           >
             <div v-if="cellIndex === 'device'">
               <Link href="#">
-                {{ cell.mac_address  }} 
+                {{ cell.mac_address }}
               </Link>
             </div>
             <div v-else-if="cellIndex === 'user' && cell !== null">
@@ -383,6 +383,10 @@ export default {
   methods: {
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
+    },
+
+    closeDropdown() {
+      this.dropdownOpen = false;
     },
 
     toggleDropdown2() {

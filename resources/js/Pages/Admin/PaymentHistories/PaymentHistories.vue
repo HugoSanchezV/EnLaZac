@@ -63,7 +63,7 @@ const headers = [
                   <h3 class="text-xl font-bold">Total Recaudado</h3>
                   <p class="text-3xl mt-2 font-semibold">${{ totalAmount }}</p>
                 </div>
-                <div class="icon bg-white p-3 rounded-full shadow-md">
+                <div class="icon flex justify-center items-center bg-white p-3 rounded-full shadow-md">
                   <i class="fas fa-dollar-sign text-blue-700 text-3xl"></i>
                 </div>
               </div>
@@ -80,7 +80,7 @@ const headers = [
                     ${{ totalAmountMonth }}
                   </p>
                 </div>
-                <div class="icon bg-white p-3 rounded-full shadow-md">
+                <div class="icon flex justify-center items-center bg-white p-3 rounded-full shadow-md">
                   <i class="fas fa-calendar-alt text-green-700 text-2xl"></i>
                 </div>
               </div>

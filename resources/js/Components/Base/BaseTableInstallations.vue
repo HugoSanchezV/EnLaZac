@@ -2,10 +2,15 @@
 import { router } from "@inertiajs/vue3";
 import { ref, onMounted, toRefs } from "vue";
 import { useToast, TYPE, POSITION } from "vue-toastification";
+import { usePage } from "@inertiajs/vue3";
+
 
 import BaseQuestion from "./BaseQuestion.vue";
 
 import FilterOrderBase from "./FilterOrderBase.vue";
+
+
+const admin = usePage().props.auth.user.admin;
 
 const getOriginal = (data) => {
   if (data === "contrato") {
@@ -233,7 +238,9 @@ const formattedDate = today.toISOString().split("T")[0];
         >
           <td></td>
           <td
-            v-for="([cellIndex, cell], cellIndexKey) in Object.entries(row).filter(([key]) => key !== 'contract_id')"
+            v-for="([cellIndex, cell], cellIndexKey) in Object.entries(
+              row
+            ).filter(([key]) => key !== 'contract_id')"
             :key="cellIndexKey"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
@@ -277,9 +284,9 @@ const formattedDate = today.toISOString().split("T")[0];
                 Mostrar
               </Link>
 
-              <Link
-                   :href="route('contracts.edit', row.contract_id)"
-                v-if="show"
+              <Link 
+                :href="route('contracts.edit', row.contract_id)"
+                v-if="admin === 1"
                 class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >
                 <span class="material-symbols-outlined" style="font-size: 16px">
@@ -312,7 +319,7 @@ const formattedDate = today.toISOString().split("T")[0];
                 Editar
               </Link>
 
-              <div v-if="del">
+              <div v-if="admin === 1">
                 <button
                   @click="
                     destroy(row.id, {

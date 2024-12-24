@@ -131,7 +131,7 @@ class LocalPayController extends Controller
                     'token' =>  Auth::id() . Str::random(6),
                     'status' =>  0,
                 ]);
-                dd($reference);
+                // dd($reference);
 
                 return $reference;
             });
