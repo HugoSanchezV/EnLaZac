@@ -59,7 +59,7 @@ const seleccionar = (valor) => {
     <h2 class="flex justify-center">Actualizar estado del ticket</h2>
 
     <div class="mt-4">
-      <div class="flex justify-center mt-5">
+      <div class="flex justify-center flex-col columns-1 md:flex-row mt-5">
         <button
           @click="seleccionar('0')"
           class="border py-2 px-3 rounded-l-md"

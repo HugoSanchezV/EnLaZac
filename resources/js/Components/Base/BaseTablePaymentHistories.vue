@@ -611,25 +611,29 @@ export default {
 
   mounted() {
     this.monthFilterRef = this.$refs.monthFilterRef;
-    flatpickr(this.monthFilterRef, {
-      plugins: [
-        monthSelect({
-          shorthand: true,
-          dateFormat: "Y-m",
-          altFormat: "F Y",
-          theme: "white",
-        }),
-      ],
-      onChange: (selectedDates, dateStr) => {
-        this.$emit("search", {
-          searchQuery: this.searchQuery,
-          attribute: this.currentFilter,
-          type: this.currentPayment,
-          order: this.currentOrder,
-          date: dateStr,
-        });
-      },
-    });
+    if (this.monthFilterRef) {
+      flatpickr(this.monthFilterRef, {
+        plugins: [
+          monthSelect({
+            shorthand: true,
+            dateFormat: "Y-m",
+            altFormat: "F Y",
+            theme: "white",
+          }),
+        ],
+        onChange: (selectedDates, dateStr) => {
+          this.$emit("search", {
+            searchQuery: this.searchQuery,
+            attribute: this.currentFilter,
+            type: this.currentPayment,
+            order: this.currentOrder,
+            date: dateStr,
+          });
+        },
+      });
+    } else {
+      console.log("No se cargo el calendario");
+    }
   },
 };
 </script>
