@@ -23,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pre_registered_users');
+        Schema::dropIfExists('pre_register_users');
     }
 };
