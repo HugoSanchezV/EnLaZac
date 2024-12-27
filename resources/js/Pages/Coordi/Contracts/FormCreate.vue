@@ -54,16 +54,18 @@ const form = useForm({
 });
 
 const handlePositionClicked = (position) => {
-  form.geolocation.latitude = position.lat.toFixed(10); // Asignar la latitud con precisión
-  form.geolocation.longitude = position.lng.toFixed(10); // Asignar la longitud con precisión
+  form.geolocation.latitude = position.lat.toFixed(15); // Asignar la latitud con precisión
+  form.geolocation.longitude = position.lng.toFixed(15); // Asignar la longitud con precisión
 };
 const lat = ref(null);
 const lng = ref(null); 
 const getPosition = () =>{
   if(navigator.geolocation){
     var success = function(position){
-      lat.value = form.geolocation.latitude = position.coords.latitude.toFixed(10),
-      lng.value = form.geolocation.longitude = position.coords.longitude.toFixed(10);
+      lat.value = form.geolocation.latitude = position.coords.latitude.toFixed(15),
+      lng.value = form.geolocation.longitude = position.coords.longitude.toFixed(15);
+
+     // alert("Latitude: "+lat.value+", Longitude: "+lng.value);
     }
   
     navigator.geolocation.getCurrentPosition(success, function(msg)
@@ -127,9 +129,9 @@ onMounted(() => {
 });
 const getCurrentLocation = () =>
 {
-   form.geolocation.latitude = lat,
-   form.geolocation.longitude = lng;
-    getPosition();
+  form.geolocation.latitude = lat,
+  form.geolocation.longitude = lng;
+  getPosition();
 }
 // const onDateChange= () =>{
 //   // console.log("ENTRA");
@@ -138,28 +140,6 @@ const getCurrentLocation = () =>
 //   date.setMonth(date.getMonth() + 1);
 //   form.end_date = date.toISOString().split('T')[0];
 //   }
-
-const showWarning = (id) => {
-  const toast = useToast();
-
-  toast(
-    {
-      component: BaseQuestion,
-      props: {
-        message: "Seleccione el Id de los campos correspondientes",
-      },
-
-      listeners: {
-      },
-    },
-
-    {
-      type: TYPE.ERROR,
-      position: POSITION.TOP_CENTER,
-      timeout: 10000,
-    }
-  );
-};
 
 const submit = () => {
   var miCheckbox = document.getElementById('activated');
@@ -171,14 +151,7 @@ const submit = () => {
 
     console.log(form);
     form.post(route("contracts.store"));
-
-
-
 };
-
-
-
-
 
 </script>
 
@@ -334,8 +307,8 @@ const submit = () => {
       </div>
       <div v-if="ubicacionManual" class="flex mt-4">
         <GoogleMaps
-        :lat="parseInt(lat)"
-        :lng="parseInt(lng)"
+        :lat="parseFloat(lat)"
+        :lng="parseFloat(lng)"
         :clic=true
         :mapKey="mapKey"
         @otherPos_clicked="handlePositionClicked" />
