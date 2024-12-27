@@ -49,7 +49,7 @@ const columns = ["id", "name"];
               <span class="material-symbols-outlined" style="font-size: 16px">
                 hub
               </span>
-              Ping a Conexinoes
+              Ping a Conexiones
             </Link>
           </div>
           <div>

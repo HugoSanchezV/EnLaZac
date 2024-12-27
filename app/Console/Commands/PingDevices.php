@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Charge;
 use App\Models\Device;
 use App\Models\ExtraCharge;
 use App\Models\Router;
@@ -30,15 +31,15 @@ class PingDevices extends Command
     {
         $id = $this->argument('id');
 
-        $cargo = new ExtraCharge();
-
+        $cargo = new Charge();
+        //dd("fff");
         //Set data
         $cargo->contract_id = 1;
         $cargo->description = "No pagó antes del día de corte";
         $cargo->amount = 50;
         $cargo->paid = false;
         
-        $this->info( ($cargo));
+        $this->info(($cargo));
         /*
         $router = Router::select('id', 'ip_address','user') -> get();
 

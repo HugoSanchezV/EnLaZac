@@ -26,62 +26,73 @@ class OrderStats extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Clean old performance stats from the database';
 
     /**
      * Execute the console command.
      */
-    
     public function handle()
     {
-        try{
-            DB::beginTransaction();
-                $this->deleteAllPerformanceDevice();
+        try {
+            Log::info('Iniciando limpieza de estadísticas de rendimiento.');
 
-                $this->deleteOldPerformanceDeviceWeekly();
+            $this->deleteAllPerformanceDevice();
+            $this->deleteOldPerformanceDeviceWeekly();
+            $this->deleteOldPerformanceDeviceMonthly();
+            $this->deleteOldPerformanceDeviceYearly();
 
-                $this->deleteOldPerformanceDeviceMonthly();
-
-                $this->deleteOldPerformanceDeviceYearly();
-            DB::commit();
-        }catch(Exception $e){
-            Log::error($e->getMessage());
-            DB::rollBack();
+            Log::info('Limpieza completada exitosamente.');
+        } catch (Exception $e) {
+            Log::error('Error durante la limpieza de estadísticas: ' . $e->getMessage());
         }
     }
-    private function deleteOldPerformanceDeviceYearly(){
-        PerformanceDeviceYearly::where(DB::raw('YEAR(created_at)'), '!=', Carbon::now()->year)->delete();
+
+    private function deleteAllPerformanceDevice()
+    {
+        try {
+            PerformanceDevice::truncate();
+            Log::info('Todos los registros de PerformanceDevice han sido eliminados.');
+        } catch (Exception $e) {
+            Log::error('Error en deleteAllPerformanceDevice: ' . $e->getMessage());
+        }
     }
+
+    private function deleteOldPerformanceDeviceWeekly()
+    {
+        try {
+            if (Carbon::now()->dayName === 'Monday') {
+                PerformanceDeviceWeekly::truncate();
+                Log::info('Todos los registros de PerformanceDeviceWeekly han sido eliminados.');
+            }
+        } catch (Exception $e) {
+            Log::error('Error en deleteOldPerformanceDeviceWeekly: ' . $e->getMessage());
+        }
+    }
+
     private function deleteOldPerformanceDeviceMonthly()
     {
-        try{
-            $rangeWeek = ((int)Carbon::now()->weekOfYear) - 4;
+        try {
+            $startOfAllowedWeeks = Carbon::now()->subWeeks(4)->startOfWeek();
 
-            if($rangeWeek > 0){
-                PerformanceDeviceMonthly::where(DB::raw('WEEKOFYEAR(created_at)'), '<', $rangeWeek)
-                ->where(DB::raw('YEAR(created_at)'), '=', Carbon::now()->year)
-                ->delete();
-            }
-        }catch(Exception $e){
-            Log::Error("Hubo un error en deleteOldPerformanceDeviceMonthly: ".$e->getMessage());
+            PerformanceDeviceMonthly::where('created_at', '<', $startOfAllowedWeeks)->delete();
+
+            Log::info('Registros antiguos de PerformanceDeviceMonthly han sido eliminados.');
+        } catch (Exception $e) {
+            Log::error('Error en deleteOldPerformanceDeviceMonthly: ' . $e->getMessage());
         }
     }
-    private function deleteOldPerformanceDeviceWeekly(){
-        try{
-            if(Carbon::now()->dayName == 'Monday')
-            {
-                PerformanceDeviceWeekly::truncate();
-            }
-        }catch(Exception $e){
-            Log::Error("Hubo un error en deleteOldPerformanceDeviceWeekly: ".$e->getMessage());
-        }
-    }
-    private function deleteAllPerformanceDevice(){
-        //Borrra todos los registros de la tabla y reinicia el autoincremento
-        try{ 
-            PerformanceDevice::truncate();
-        }catch(Exception $e){
-            Log::Error("Hubo un error en deleteAllPerformanceDevice: ".$e->getMessage());
+
+    private function deleteOldPerformanceDeviceYearly()
+    {
+        try {
+            $currentYearStart = Carbon::now()->startOfYear();
+
+            PerformanceDeviceYearly::where('created_at', '<', $currentYearStart)->delete();
+
+            Log::info('Registros antiguos de PerformanceDeviceYearly han sido eliminados.');
+        } catch (Exception $e) {
+            Log::error('Error en deleteOldPerformanceDeviceYearly: ' . $e->getMessage());
         }
     }
 }
+

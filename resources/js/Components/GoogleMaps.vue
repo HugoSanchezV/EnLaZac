@@ -3,7 +3,6 @@
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { Loader } from '@googlemaps/js-api-loader'
 
-
 export default {
   props: {
     lat: {
@@ -24,10 +23,12 @@ export default {
     }
   },
   setup(props, { emit }) {
+    
     const currPos = computed(() => ({
-      lat: props.lat,
-      lng: props.lng
+      lat: parseFloat(props.lat),
+      lng: parseFloat(props.lng)
     }))
+  //  alert("LATITUDE: "+props.lat+",  LONGITUDE:"+props.lng);
 
     const otherPos = ref(null)
     const marker = ref(null) // Referencia para el marcador
@@ -39,6 +40,7 @@ export default {
 
     // Función para centrar el mapa en la posición actual
     const centerMap = () => {
+      //alert(map.value);
       if (map.value) {
         map.value.setCenter(currPos.value) // Centra el mapa en la posición actual
         if (marker.value) {
@@ -61,8 +63,7 @@ export default {
         title: "Tu ubicación actual",
         draggable: true
       })
-
-      // Manejar clics en el mapa si se habilita la opción 'clic'
+      
       if (props.clic) {
         clickListener = map.value.addListener('click', ({ latLng }) => {
           otherPos.value = {
@@ -72,13 +73,29 @@ export default {
 
           // Si ya existe un marcador, mueve su posición
           marker.value.setPosition(otherPos.value)
-
+          
           // Emitir la nueva posición clicada
           emit('otherPos_clicked', otherPos.value)
         })
       }
     })
-   
+    watch(
+      () => props.lat,
+      (newVal, oldVal) => {
+        console.log('Lat cambió: ', oldVal, ' => ', newVal)
+        centerMap()
+      }
+    )
+
+    // 2) Watch individual para lng
+    watch(
+      () => props.lng,
+      (newVal, oldVal) => {
+        console.log('Lng cambió: ', oldVal, ' => ', newVal)
+        centerMap()
+      }
+    )
+
     // Limpieza del evento al desmontar
     onUnmounted(() => {
       if (clickListener) clickListener.remove()
@@ -92,4 +109,5 @@ export default {
 <template>
 
   <div ref="mapDiv" style="width: 100%; height: 40vh" />
+  
 </template>

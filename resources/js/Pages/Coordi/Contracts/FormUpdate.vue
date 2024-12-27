@@ -33,9 +33,38 @@ const form = useForm({
     longitude:"",
   },
 });
-const lat = ref(null);
-const lng = ref(null); 
+const lat = ref(0);
+const lng = ref(0); 
 
+const getPosition = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Éxito: aquí recibes el objeto "position"
+        // y puedes asignar la latitud y longitud.
+        lat.value = position.coords.latitude;
+        lng.value = position.coords.longitude;
+
+        form.geolocation.latitude = lat.value;
+        form.geolocation.longitude = lng.value;
+
+      //  console.log('Lat:', lat.value, 'Lng:', lng.value);
+      },
+      (error) => {
+        // Manejo de error
+        console.error('Error obteniendo posición:', error);
+      },
+      {
+        enableHighAccuracy: true,  // Pide la mayor precisión posible (GPS)
+        timeout: 10000,            // Espera hasta 10s para obtener la ubicación
+        maximumAge: 0              // No uses una posición en caché
+      }
+    );
+  } else {
+    console.error("Geolocalización no soportada");
+  }
+
+};
 
 function addMonth(dateString) {
   const [year, month] = dateString.split("-").map(Number); // Divide "2024-11" en año y mes
@@ -108,15 +137,20 @@ const updateStatus = () =>{
   }
 
 }
+
 const handlePositionClicked = (position) => {
-  form.geolocation.latitude = position.lat.toFixed(6); // Asignar la latitud con precisión
-  form.geolocation.longitude = position.lng.toFixed(6); // Asignar la longitud con precisión
+  form.geolocation.latitude = position.lat.toFixed(15); // Asignar la latitud con precisión
+  form.geolocation.longitude = position.lng.toFixed(15); // Asignar la longitud con precisión
+  lat.value = form.geolocation.latitude;
+  lng.value = form.geolocation.longitude;
 };
 
 const submit = () => {
   updateStatus();
   form.put(route("contracts.update", { id: props.contract }));
 };
+
+
 
 </script>
 
@@ -262,11 +296,21 @@ const submit = () => {
       </div>
       <div class="flex mt-4">
         <GoogleMaps
-        :lat="parseInt(lat)"
-        :lng="parseInt(lng)"
+        :lat="parseFloat(lat)"
+        :lng="parseFloat(lng)"
         :clic=true
         :mapKey="mapKey"
-         @otherPos_clicked="handlePositionClicked" />
+        @otherPos_clicked="handlePositionClicked" 
+         />
+      </div>
+      <div class="mt-2 flex justify-center">
+        <button
+            type="button"
+            @click="getPosition()"
+            class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+          >
+            Posición actual
+          </button>
       </div>
       
 

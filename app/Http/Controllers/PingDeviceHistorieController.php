@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use App\Models\Router;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 use function PHPUnit\Framework\isNull;
 
@@ -233,14 +234,23 @@ class PingDeviceHistorieController extends Controller
         ]);
     }
 
-    public function create(PingDeviceHistorie $request)
+    public function create(array $data)
     {
-        $validatedData = $request->validated();
-        PingDeviceHistorie::create([
-            'device_id' => $$validatedData['device_id'],
-            'router_id' => $$validatedData['router_id'],
-            'status' => $$validatedData['status'],
-        ]);
+        try{
+            $validatedData = Validator::make($data, [
+                'device_id' => ['required', 'exists:devices,id'],
+                'router_id' => ['required', 'exists:routers,id'],
+                'status' => ['required', 'string'],
+            ])->validate();
+            PingDeviceHistorie::create([
+                'device_id' => $validatedData['device_id'],
+                'router_id' => $validatedData['router_id'],
+                'status' => $validatedData['status'],
+            ]);
+
+        }catch(Exception $e){
+            //dd("JAJAJ");
+        }
         //sdd("termino de ingresar");
         //return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');   
     }

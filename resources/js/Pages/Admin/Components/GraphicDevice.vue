@@ -113,7 +113,7 @@ const byteMax = () => {
       const CurrentUploadByte = props.upload_byte[props.upload_byte.length-1];
       document.getElementById('avg-byte-upload'+props.type).textContent = (AvgUploadByte).toFixed(5);
       document.getElementById('tasa-byte-upload'+props.type).textContent = (MaxUploadByte).toFixed(5);
-      document.getElementById('current-byte-upload'+props.type).textContent = (CurrentUploadByte).toFixed(5);
+      document.getElementById('current-byte-upload'+props.type).textContent = (CurrentUploadByte);
 
     }
    
@@ -128,7 +128,7 @@ const byteMax = () => {
       const CurrentDownloadByte = props.download_byte[props.download_byte.length-1];
       document.getElementById('avg-byte-download'+props.type).textContent = (AvgDownloadByte).toFixed(5);
       document.getElementById('tasa-byte-download'+props.type).textContent = (MaxDownloadByte).toFixed(5);
-      document.getElementById('current-byte-download'+props.type).textContent = (CurrentDownloadByte).toFixed(5);
+      document.getElementById('current-byte-download'+props.type).textContent = (CurrentDownloadByte);
     }
 }
 
@@ -144,7 +144,7 @@ const rateMax = () => {
       const CurrentUploadRate = props.upload_rate[props.upload_rate.length-1];
       document.getElementById('avg-rate-upload'+props.type).textContent = (AvgUploadRate).toFixed(5);
       document.getElementById('tasa-rate-upload'+props.type).textContent = (MaxUploadRate).toFixed(5);
-      document.getElementById('current-rate-upload'+props.type).textContent = (CurrentUploadRate).toFixed(5);
+      document.getElementById('current-rate-upload'+props.type).textContent = (CurrentUploadRate);
     }
 
     if(props.download_rate.length == 0){
@@ -157,7 +157,7 @@ const rateMax = () => {
       const CurrentDownloadRate = props.download_rate[props.download_rate.length-1];
       document.getElementById('avg-rate-download'+props.type).textContent = (AvgDownloadRate).toFixed(5);
       document.getElementById('tasa-rate-download'+props.type).textContent =( MaxDownloadRate).toFixed(5);
-      document.getElementById('current-rate-download'+props.type).textContent = (CurrentDownloadRate).toFixed(5);
+      document.getElementById('current-rate-download'+props.type).textContent = (CurrentDownloadRate);
     }
 }
 

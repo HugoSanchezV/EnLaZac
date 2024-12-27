@@ -13,6 +13,7 @@ class PerformanceDeviceYearly extends Model
         'amount',
         'rate',
         'byte',  
+        'created_at'
     ];
     protected $casts = [
         'rate'  => 'array',
