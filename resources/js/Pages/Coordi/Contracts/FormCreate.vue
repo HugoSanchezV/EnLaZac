@@ -56,8 +56,8 @@ const form = useForm({
 });
 
 const handlePositionClicked = (position) => {
-  form.geolocation.latitude = position.lat.toFixed(10); // Asignar la latitud con precisión
-  form.geolocation.longitude = position.lng.toFixed(10); // Asignar la longitud con precisión
+  form.geolocation.latitude = position.lat.toFixed(15); // Asignar la latitud con precisión
+  form.geolocation.longitude = position.lng.toFixed(15); // Asignar la longitud con precisión
 };
 const lat = ref(null);
 const lng = ref(null);
@@ -138,27 +138,6 @@ const getCurrentLocation = () => {
 //   date.setMonth(date.getMonth() + 1);
 //   form.end_date = date.toISOString().split('T')[0];
 //   }
-
-const showWarning = (id) => {
-  const toast = useToast();
-
-  toast(
-    {
-      component: BaseQuestion,
-      props: {
-        message: "Seleccione el Id de los campos correspondientes",
-      },
-
-      listeners: {},
-    },
-
-    {
-      type: TYPE.ERROR,
-      position: POSITION.TOP_CENTER,
-      timeout: 10000,
-    }
-  );
-};
 
 const submit = () => {
   var miCheckbox = document.getElementById("activated");

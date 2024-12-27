@@ -712,7 +712,7 @@ class ContractController extends Controller
         try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
-            Log::info("5. CURRENT: ".$currentInstallation);
+          //  Log::info("5. CURRENT: ".$currentInstallation);
             $date = Carbon::parse($newInstallation)->startOfDay();
 
             // dd();
@@ -724,17 +724,18 @@ class ContractController extends Controller
             // Log::info("NO HAY NADA PAPI: ");
             if (!is_null($installation->installationSettings)) {
 
-                if (is_null($installation->installationSettings->exemption_months)) {
-                    Log::info("antes NO tenia un config");
-                    Log::info("currentInstallation: " . $currentInstallation . "  y exemption: " . $exemption);
+                if(is_null($installation->installationSettings->exemption_months))
+                {
+                 //   Log::info("antes NO tenia un config");
+                 //   Log::info("currentInstallation: ".$currentInstallation."  y exemption: ".$exemption);
                     $currentAssigned = $this->checkRange($currentInstallation, $exemption);
-                } else {
-                    Log::info("antes tenia un config");
+                }else{
+                 //   Log::info("antes tenia un config");
                     $currentAssigned = $this->checkRangeConfigExemption($currentInstallation, $config_exemption);
                 }
-            } else {
-                //  dd("En este rango");
-                Log::info("tiene puro rango");
+            }else{
+              //  dd("En este rango");
+              //  Log::info("tiene puro rango");
                 $currentAssigned = $this->checkRange($currentInstallation, $exemption);
             }
 
