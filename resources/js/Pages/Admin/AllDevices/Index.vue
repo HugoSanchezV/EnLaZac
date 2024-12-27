@@ -94,9 +94,7 @@ const columns = ["id", "name"];
         <div class="flex justify-center md:justify-start" v-if="admin === 1">
           <base-export-excel :toRouteExport="toRouteExport"></base-export-excel>
           <base-import-excel-devices
-            @click="openModal"
             :toImportRoute="toImportRoute"
-            :to-import-route-second="toImportRouteSecond"
             :headings="headingsImport"
           >
           </base-import-excel-devices>

@@ -6,8 +6,8 @@ const props = defineProps({
   payments: Object,
   pagination: Object,
   totalPaymentsCount: Number,
-  totalAmount: Number,
-  totalAmountMonth: Number,
+  totalAmount: String,
+  totalAmountMonth: String,
 });
 
 const { payments } = toRefs(props);

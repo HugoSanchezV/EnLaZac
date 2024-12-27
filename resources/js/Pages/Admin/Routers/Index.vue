@@ -156,7 +156,6 @@ const headingsImport = "usuario, direccion, password"
           ></base-export-excel>
 
           <base-import-excel
-            @click="openModal"
             :toImportRoute="toImportRoute"
             :headings="headingsImport"
           >
@@ -227,6 +226,7 @@ export default {
       q: "",
       attribute: "id",
       type: "todos",
+      order: "asc",
       isActived: false,
     };
   },

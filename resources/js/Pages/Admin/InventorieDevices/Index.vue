@@ -63,7 +63,6 @@ const headingsImport = "mac, descripción, marca";
           ></base-export-excel>
 
           <base-import-excel
-            @click="openModal"
             :toImportRoute="toImportRoute"
             :headings="headingsImport"
           >
