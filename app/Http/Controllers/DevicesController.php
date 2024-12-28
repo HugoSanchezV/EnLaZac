@@ -27,8 +27,6 @@ use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
-use function PHPUnit\Framework\isNull;
-
 class DevicesController extends Controller
 {
     protected DeviceService $deviceService;
