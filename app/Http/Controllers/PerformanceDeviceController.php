@@ -14,6 +14,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class PerformanceDeviceController extends Controller
@@ -226,20 +227,34 @@ class PerformanceDeviceController extends Controller
         // Consulta para el día de hoy, agrupado por hora y minuto exacto
         
        try{ 
-            return PerformanceDevice::select(
-                DB::raw('DATE_FORMAT(created_at, "%H:%i") as time'),   // Formato de hora:minuto para el eje Target
-                DB::raw('rate->"$.upload" as rate_upload'),
-                DB::raw('rate->"$.download" as rate_download'),
-                DB::raw('byte->"$.upload" as byte_upload'),
-                DB::raw('byte->"$.download" as byte_download')
-            )
-            ->where('device_id', $device->id)
-            ->whereDate('created_at', Carbon::today())
-            ->orderBy('created_at', 'asc')
+        $columns = "
+            TO_CHAR(created_at, 'HH24:MI') AS time, 
+            (rate->>'upload')::float AS rate_upload, 
+            (rate->>'download')::float AS rate_download, 
+            (byte->>'upload')::float AS byte_upload, 
+            (byte->>'download')::float AS byte_download
+        ";
+
+        return PerformanceDevice::selectRaw($columns)
+            ->where('device_id', $device->id) // Reemplaza con el ID del dispositivo
+            ->whereRaw('DATE(created_at) = ?', [now()->toDateString()]) // Filtra por la fecha actual
+            ->orderBy('created_at', 'asc') // Ordena por la fecha de creación
             ->get();
+            // return PerformanceDevice::select(
+            //     DB::raw('DATE_FORMAT(created_at, "%H:%i") as time'),   // Formato de hora:minuto para el eje Target
+            //     DB::raw('rate->"$.upload" as rate_upload'),
+            //     DB::raw('rate->"$.download" as rate_download'),
+            //     DB::raw('byte->"$.upload" as byte_upload'),
+            //     DB::raw('byte->"$.download" as byte_download')
+            // )
+            // ->where('device_id', $device->id)
+            // ->whereDate('created_at', Carbon::today())
+            // ->orderBy('created_at', 'asc')
+            // ->get();
         }
         catch(Exception $e){
-            dd($e);
+            Log::info($e);
+
         }
     }
 
@@ -247,49 +262,32 @@ class PerformanceDeviceController extends Controller
     {
        try{ 
 
-        return PerformanceDeviceWeekly::select(
-            DB::raw('DATE(created_at) as date'),   // Formato de hora:minuto para el eje Target
-            DB::raw('DAYNAME(created_at) as day'),
-            DB::raw('rate->"$.upload" as rate_upload'),
-            DB::raw('rate->"$.download" as rate_download'),
-            DB::raw('byte->"$.upload" as byte_upload'),
-            DB::raw('byte->"$.download" as byte_download')
-        )
-        ->where('device_id', $device->id)
-        ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-        ->orderBy('created_at', 'asc')
-        ->get();
-
-        // $subquery = PerformanceDevice::select(
-        //     DB::raw('DATE(created_at) as date'),
+        return 
+        PerformanceDeviceWeekly::selectRaw("
+            created_at::date as date, 
+            TO_CHAR(created_at, 'FMDay') as day, 
+            COALESCE((rate->>'upload')::float, 0) as rate_upload, 
+            COALESCE((rate->>'download')::float, 0) as rate_download, 
+            COALESCE((byte->>'upload')::float, 0) as byte_upload, 
+            COALESCE((byte->>'download')::float, 0) as byte_download
+        ")
+        // PerformanceDeviceWeekly::select(
+        //     DB::raw('DATE(created_at) as date'),   // Formato de hora:minuto para el eje Target
         //     DB::raw('DAYNAME(created_at) as day'),
         //     DB::raw('rate->"$.upload" as rate_upload'),
         //     DB::raw('rate->"$.download" as rate_download'),
         //     DB::raw('byte->"$.upload" as byte_upload'),
         //     DB::raw('byte->"$.download" as byte_download')
         // )
-        // ->where('device_id', $device->id)
-        // ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
-        // ->toBase(); // Convierte el query en una subconsulta básica
-        
-        // // Agrupación externa
-        // return DB::table(DB::raw("({$subquery->toSql()}) as grouped"))
-        //     ->mergeBindings($subquery) // Combina los bindings del subquery
-        //     ->select(
-        //         'day',
-        //         'date',
-        //         DB::raw('AVG(rate_upload) as avg_rate_upload'),
-        //         DB::raw('AVG(rate_download) as avg_rate_download'),
-        //         DB::raw('SUM(byte_upload) as total_byte_upload'),
-        //         DB::raw('SUM(byte_download) as total_byte_download')
-        //     )
-        //     ->groupBy('date', 'day') // Agrupar por fecha y día
-        //     ->orderBy('date', 'asc') // Ordenar por fecha
-        //     ->get();
+        ->where('device_id', $device->id)
+        ->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])
+        ->orderBy('created_at', 'asc')
+        ->get();
         
         }
         catch(Exception $e){
-            dd($e);
+            Log::info($e);
+
         }
     }
 
@@ -299,14 +297,14 @@ class PerformanceDeviceController extends Controller
             $startDate = Carbon::now()->subWeeks(3)->startOfWeek(); // Las últimas 4 semanas
             $endDate = Carbon::now()->endOfWeek();
 
-            return PerformanceDeviceMonthly::select(
-                DB::raw('YEARWEEK(created_at) as year_week'),   // Formato de hora:minuto para el eje Target
-                DB::raw('WEEK(created_at) as week_number'),
-                DB::raw('rate->"$.upload" as rate_upload'),
-                DB::raw('rate->"$.download" as rate_download'),
-                DB::raw('byte->"$.upload" as byte_upload'),
-                DB::raw('byte->"$.download" as byte_download')
-            )
+            return PerformanceDeviceMonthly::selectRaw("
+                TO_CHAR(created_at, 'IYYY-IW') as year_week, -- Año y semana ISO
+                EXTRACT(WEEK FROM created_at)::int as week_number, -- Número de semana
+                (rate->>'upload')::float as rate_upload,
+                (rate->>'download')::float as rate_download,
+                (byte->>'upload')::float as byte_upload,
+                (byte->>'download')::float as byte_download
+            ")
             ->where('device_id', $device->id)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->orderBy('created_at', 'asc')
@@ -327,7 +325,8 @@ class PerformanceDeviceController extends Controller
             // ->get();
         }
         catch(Exception $e){
-            dd($e);
+            Log::info($e);
+
         }
     }
         
@@ -336,21 +335,21 @@ class PerformanceDeviceController extends Controller
         try
         {
             try{ 
-                return PerformanceDeviceYearly::select(
-                    DB::raw('MONTHNAME(created_at) as month'),   // Formato de hora:minuto para el eje Target
-                    DB::raw('MONTH(created_at) as month_number'),
-                    DB::raw('rate->"$.upload" as rate_upload'),
-                    DB::raw('rate->"$.download" as rate_download'),
-                    DB::raw('byte->"$.upload" as byte_upload'),
-                    DB::raw('byte->"$.download" as byte_download')
-                )
+                return PerformanceDeviceYearly::selectRaw("
+                    TO_CHAR(created_at, 'FMMonth') as month, -- Nombre del mes (e.g., January)
+                    EXTRACT(MONTH FROM created_at)::int as month_number, -- Número del mes (e.g., 1 para enero)
+                    (rate->>'upload')::float as rate_upload, -- Extraer y convertir a número
+                    (rate->>'download')::float as rate_download,
+                    (byte->>'upload')::float as byte_upload,
+                    (byte->>'download')::float as byte_download
+                ")
                 ->where('device_id', $device->id)
                 ->orderBy('created_at', 'asc')
                 ->get();
                // dd($hola);
             }
             catch(Exception $e){
-                dd($e);
+                Log::info($e);
             }
 
             // return PerformanceDevice::select(
@@ -368,7 +367,8 @@ class PerformanceDeviceController extends Controller
             // ->get();
 
         }catch(Exception $e){
-            dd($e);
+            Log::info($e);
+
         }
     }
 

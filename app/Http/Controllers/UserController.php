@@ -23,6 +23,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -123,14 +124,19 @@ class UserController extends Controller
     {
         try {
             $user = User::with('device.inventorieDevice')->findOrFail($id);
-
+            Log::info("Despues de user id");
             $devices = $user->device;
 
             $contracts = [];
 
             foreach ($devices as $device) {
                 // Verifica si el dispositivo tiene un contrato
-                $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
+                if(!is_null($device->inventorieDevice)){
+
+                    $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
+                }else{
+                    $contract = null;
+                }
                 // $plan = $contract ? Plan::find($contract->plan_id) : null;
 
                 // Añadir los datos del dispositivo, contrato y plan al arreglo
@@ -148,7 +154,8 @@ class UserController extends Controller
                 'contracts' => $contracts
             ]);
         } catch (Exception $e) {
-            dd($e->getMessage());
+            Log::Error($e->getMessage());
+         //   dd($e->getMessage());
             return Redirect::route('usuarios')->with('error', 'Error al mostrar el usuario');
         }
     }

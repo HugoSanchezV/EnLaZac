@@ -20,7 +20,7 @@ const props = defineProps({
   },
   mapKey: {
     type: String,
-    required: true,
+    required: false,
   },
 });
 </script>
