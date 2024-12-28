@@ -324,7 +324,7 @@ class RouterController extends Controller
 
         // 
         $order = 'asc';
-        if ($request->order && isNull($request->order)) {
+        if ($request->order && is_null($request->order)) {
             $order = $request->order;
         }
         $query->orderBy(
