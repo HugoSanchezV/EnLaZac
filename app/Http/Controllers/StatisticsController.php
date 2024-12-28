@@ -129,7 +129,7 @@ class StatisticsController extends Controller
         $userCount = self::userCount();
 
         //dd($activeContract);
-
+        
         $id = isset($id) ? $id : Router::first()->id;
 
         $trafficData = self::conectar($id);
@@ -242,7 +242,7 @@ class StatisticsController extends Controller
 
     public function userCount()
     {
-        return [User::count()];
+        return [User::where('admin','!=',1)->count()];
     }
 
     public function morrososCount()

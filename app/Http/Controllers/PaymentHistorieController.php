@@ -54,7 +54,7 @@ class PaymentHistorieController extends Controller
             $total_month = $total;
         }
 
-        if (isNull($request->date)) {
+        if (is_null($request->date)) {
             $query->where('created_at', 'like', $request->date . '%');
             if ($user->admin === 2) {
                 $total_month = DB::table('payment_histories')->where('created_at', 'like', $request->date . '%')->where('worker', $user->id . ' ' . $user->name)->sum('amount');

@@ -251,7 +251,7 @@ class RouterController extends Controller
                             "comment" => $comment,
                             "list" => $user["list"],
                             "address" => $user["address"],
-                            "creation_time" => DateTime::createFromFormat('M/d/Y H:i:s', $user["creation-time"]),
+                            "creation_time" => now(),
                             "disabled" => $user["disabled"] === "false" ? 0 : 1,
                             ]
                     );
