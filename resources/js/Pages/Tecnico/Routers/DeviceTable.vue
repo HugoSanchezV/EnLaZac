@@ -302,7 +302,7 @@ const getTag = (cellIndex) => {
               <label class="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  :checked="cell === 0"
+                  :checked="cell == 0"
                   class="sr-only peer"
                   @click="setDeviceStatus(row)"
                 />
