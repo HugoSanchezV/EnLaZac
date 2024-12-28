@@ -160,7 +160,7 @@ class LocalPayController extends Controller
             $token = $request->token ?? null;
             $payment = PaymentHistorie::where('transaction_id', $token)->get();
 
-            if (!isNull($payment)) {
+            if (!is_null($payment)) {
                 return Redirect::route('pays')->with('success', 'Orden terminada');
             }
             return Redirect::back()->with('warning', 'No ha sido pagado');
