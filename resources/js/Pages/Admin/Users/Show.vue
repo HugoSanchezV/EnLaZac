@@ -19,7 +19,7 @@
             <CardInformation 
               :device="item.device" 
               :contract="item.contract" 
-              :plan="item.contract.plan"  
+              :plan="item?.contract?.plan !== undefined ? item?.contract?.plan: null"  
             />
           </div>
         </div>

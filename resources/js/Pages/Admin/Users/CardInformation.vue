@@ -23,6 +23,8 @@ const props = defineProps({
     required: false,
   },
 });
+
+console.log(props.contract)
 </script>
 
 <template>
@@ -33,7 +35,7 @@ const props = defineProps({
       <div
         class="text-lg flex justify-between leading-6 font-semibold text-gray-800"
       >
-        <div v-if="contract[0]?.id !== undefined">
+        <div v-if="props.contract !== null && contract[0]?.id !== undefined">
           <h3>Contrato ID: {{ contract[0].id }}</h3>
 
           <Link
@@ -59,7 +61,7 @@ const props = defineProps({
           <dt class="text-sm font-medium text-gray-600">Dirección</dt>
           <dd class="mt-1 text-sm text-gray-900">
             {{
-              contract === null && contract[0]?.id !== undefined
+              contract === null 
                 ? "Sin asignar"
                 : contract[0]?.address
             }}
