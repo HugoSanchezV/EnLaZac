@@ -242,7 +242,7 @@ class StatisticsController extends Controller
 
     public function userCount()
     {
-        return [User::whereNotIn('admin','!=',1)->count()];
+        return [User::where('admin','!=',1)->count()];
     }
 
     public function morrososCount()
