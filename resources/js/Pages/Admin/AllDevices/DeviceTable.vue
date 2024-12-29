@@ -347,7 +347,7 @@ const getTag = (cellIndex) => {
             <div v-if="cellIndex === 'disabled'">
               <label class="inline-flex items-center cursor-pointer">
                 <input
-                  type="checkbox"
+                type="checkbox"
                   :checked="cell == 0"
                   class="sr-only peer"
                   @click="setDeviceStatus(row)"

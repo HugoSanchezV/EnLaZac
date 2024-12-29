@@ -9,6 +9,7 @@ import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import SidebarCoordinador from "./SidebarCoordinador.vue";
 import BaseSearchHeaderTechnical from "@/Components/BaseSearchHeaderTechnical.vue";
+import BaseButtonBack from "@/Components/Base/BaseButtonBack.vue";
 defineProps({
   title: String,
 });

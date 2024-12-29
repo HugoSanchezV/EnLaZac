@@ -272,7 +272,7 @@ const deleteRegisterMonth = (info) => {
           </div>
         </div>
 
-        <div class="flex gap-1" v-if="user.admin === 1">
+        <div class="flex flex-wrap justify-center gap-1" v-if="user.admin === 1">
           <input
             type="text"
             id="monthFilter"
