@@ -172,26 +172,27 @@ export default {
       this.attribute = props.attribute;
       this.type = props.type;
       this.order = props.order;
-
+      
       if (this.attribute === "id interno") {
         this.attribute = "device_internal_id";
       }
-
+      
       if (this.attribute === "dispositivo") {
         this.attribute = "device_id";
       }
-
+      
       if (this.attribute === "usuario") {
         this.attribute = "user_id";
       }
-
+      
       if (this.attribute === "comentario") {
         this.attribute = "comment";
       }
-
+      
       if (this.attribute === "ip") {
         this.attribute = "address";
       }
+      
       this.$inertia.get(
         link,
         {
