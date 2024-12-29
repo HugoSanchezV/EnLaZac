@@ -37,53 +37,6 @@ const seleccionar = (valor) => {
 
 
 <template>
-  <div class="flex justify-center border flex-col m-5 p-10 bg-white">
-    <h2 class="flex justify-center">
-      Actualizar estado del ticket
-    </h2>
-
-    <div class="mt-4">
-        <div class="flex justify-center flex-col columns-1 md:flex-row mt-5">
-          <button
-            
-            :class="{
-              'border py-2 px-3 rounded-l-md hover:bg-slate-200': true,
-              'bg-red-500 hover:bg-red-500 text-white': form.status === '0',
-            }"
-          >
-            Pendiente
-          </button>
-          <button
-           
-            :class="{
-              'border py-2 px-3  hover:bg-slate-200': true,
-              'bg-yellow-500 hover:bg-yellow-500 text-white': form.status === '1',
-            }"
-          >
-            En espera
-          </button>
-          <button
-           
-            :class="{
-              'border py-2 px-3  hover:bg-slate-200': true,
-              'bg-blue-500 hover:bg-blue-500 text-white': form.status === '2',
-            }"
-          >
-            Trabajando
-          </button>
-          <button
-            
-            :class="{
-              
-              'border py-2 px-3 rounded-r-md hover:bg-slate-200': true,
-              'bg-green-500 hover:bg-green-500 text-white': form.status === '3',
-            }"
-          >
-            Solucionado
-          </button>
-        </div>
-      </div>
-  </div>
   <div class="mt-5 pl-5 pr-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div>

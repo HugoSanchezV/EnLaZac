@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('contract_id')->constrained('contracts')->onDelete('cascade');
             $table->string('description');
-            $table->integer('amount');
+            $table->decimal('amount');
             $table->boolean('paid');
             $table->date('date_paid')->nullable();
             $table->timestamps();

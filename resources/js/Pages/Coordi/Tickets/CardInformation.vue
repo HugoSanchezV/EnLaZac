@@ -66,7 +66,7 @@ onMounted(() => {
           <!-- Descripción -->
           <div class="sm:col-span-2">
             <dt class="text-sm font-medium text-indigo-600">Descripción</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ ticket.description }}</dd>
+            <dd class="mt-1 text-lg font-semibold text-gray-900 break-words">{{ ticket.description }}</dd>
           </div>
 
           <!-- Estado -->

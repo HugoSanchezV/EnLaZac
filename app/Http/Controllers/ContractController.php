@@ -372,8 +372,8 @@ class ContractController extends Controller
             return redirect()->route('contracts')->with('success', 'Contrato creado con éxito');
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e->getMessage());
-            return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato');
+            //dd($e->getMessage());
+            return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato: '.$e->getMessage());
         }
     }
     private function sanction(Contract $contract)

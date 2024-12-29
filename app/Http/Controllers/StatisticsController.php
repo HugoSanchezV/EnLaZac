@@ -119,16 +119,13 @@ class StatisticsController extends Controller
 
     public function showAdmin($id = null)
     {
-        //  dd(Carbon::now());
         //Varias consultas para mandar aca
         $morrosos = self::morrososCount();
-        //  dd($morrosos);
+
         $activeDevice = self::activeDevices();
         $activeContract = self::activeContract();
         $newTickets = self::currentTickets();
         $userCount = self::userCount();
-
-        //dd($activeContract);
         
         $id = isset($id) ? $id : Router::first()->id;
 
@@ -237,27 +234,27 @@ class StatisticsController extends Controller
     public function store() {}
     public function activeContract()
     {
-        return Contract::with('inventorieDevice.device.user')->where('active', '1')->get();
+        return (Contract::with('inventorieDevice.device.user')->where('active', '1')->get())->count();
     }
 
     public function userCount()
     {
-        return User::where('admin','!=',1)->count();
+        return User::where('admin','!=','1')->count();
     }
 
     public function morrososCount()
     {
-        return (Contract::with('inventorieDevice.device.user')->where('end_date', '<', Carbon::today())->where('active', false)->get());
+        return (Contract::with('inventorieDevice.device.user')->where('end_date', '<', Carbon::today())->where('active', false)->get())->count();
     }
 
     public function activeDevices()
     {
-        return (Device::where('disabled', '0')->get());
+        return (Device::where('disabled', '0')->get())->count();
     }
 
     public function currentTickets()
     {
         $currentDate = Carbon::now()->format('Y-m-d');  // Obtener solo la fecha actual
-        return Ticket::with('user')->whereDate('created_at', $currentDate)->get();
+        return (Ticket::with('user')->whereDate('created_at', $currentDate)->get())->count();
     }
 }
