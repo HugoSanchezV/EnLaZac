@@ -10,10 +10,6 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import SidebarCoordinador from "./SidebarCoordinador.vue";
 import BaseSearchHeaderTechnical from "@/Components/BaseSearchHeaderTechnical.vue";
 import BaseButtonBack from "@/Components/Base/BaseButtonBack.vue";
-<<<<<<< HEAD
-=======
-
->>>>>>> 8ef692e81e87adfd68893e4d46ee5899504e4f00
 defineProps({
   title: String,
 });

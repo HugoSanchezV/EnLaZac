@@ -74,7 +74,7 @@ class ContractController extends Controller
 
         if ($request->has('expired') && $request->input('expired') == 'true') {
             $query->where('active', '=', '0')
-                  ->where('end_date', '<', Carbon::now());
+                ->where('end_date', '<', Carbon::now());
         }
         // Ordenación
         $order = 'asc';
@@ -227,37 +227,45 @@ class ContractController extends Controller
         //     ->where('contracts.id', $id)
         //     ->first();
 
-        $contract = Contract::select(
-            'contracts.*',
-            'plans.*',
-            'rural_communities.*',
-            'inventorie_devices.*',
-            'devices.*',
-            'contracts.id as contract_id',
-            'contracts.address as contract_address',
-            'plans.name as plan_name',
-            'plans.id as plan_id',
-            'devices.address as device_address',
-            'users.id as user_id',
-            'users.name as user_name',
-            'users.email as user_email'
-        )
-            ->leftJoin('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
-            ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
-            ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
-            ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device (corrección del campo)
-            ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
-            ->where('contracts.id', $id)
-            ->first();
-        // dd($contract);
+        try {
+            $contract = Contract::FindOrFail($id);
+            if (is_null($contract->inventorieDevice)) {
+                return back()->with('warning', 'Reasigna un dispositivo para poder continuar');
+            }
+            $contract = Contract::select(
+                'contracts.*',
+                'plans.*',
+                'rural_communities.*',
+                'inventorie_devices.*',
+                'devices.*',
+                'contracts.id as contract_id',
+                'contracts.address as contract_address',
+                'plans.name as plan_name',
+                'plans.id as plan_id',
+                'devices.address as device_address',
+                'users.id as user_id',
+                'users.name as user_name',
+                'users.email as user_email'
+            )
+                ->leftJoin('plans', 'contracts.plan_id', '=', 'plans.id') // Join con Plan
+                ->join('rural_communities', 'contracts.rural_community_id', '=', 'rural_communities.id') // Join con RuralCommunity
+                ->join('inventorie_devices', 'contracts.inv_device_id', '=', 'inventorie_devices.id') // Join con InventorieDevice
+                ->leftJoin('devices', 'inventorie_devices.id', '=', 'devices.device_id') // Left join con Device (corrección del campo)
+                ->leftJoin('users', 'devices.user_id', '=', 'users.id') // Left join con User
+                ->where('contracts.id', $id)
+                ->first();
+            // dd($contract);
 
-        $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
-        //  dd($mapKey);
+            $mapKey = env('VITE_GOOGLE_MAPS_API_KEY');
+            //  dd($mapKey);
 
-        return Inertia::render($this->path . '/Show', [
-            'contract' => $contract,
-            'mapKey' => $mapKey,
-        ]);
+            return Inertia::render($this->path . '/Show', [
+                'contract' => $contract,
+                'mapKey' => $mapKey,
+            ]);
+        } catch (Exception $e) {
+            return back('contracts')->with('error', 'Hubo un error al cargar el registro');
+        }
     }
 
     public function create(Request $request)
@@ -373,7 +381,7 @@ class ContractController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             //dd($e->getMessage());
-            return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato: '.$e->getMessage());
+            return redirect()->route('contracts')->with('error', 'Hubo un error al crear el contrato: ' . $e->getMessage());
         }
     }
     private function sanction(Contract $contract)
@@ -712,7 +720,7 @@ class ContractController extends Controller
         try {
             $controller = new ServiceVariablesController();
             $currentInstallation =  Carbon::parse($installation->assigned_date)->startOfDay();
-          //  Log::info("5. CURRENT: ".$currentInstallation);
+            //  Log::info("5. CURRENT: ".$currentInstallation);
             $date = Carbon::parse($newInstallation)->startOfDay();
 
             // dd();
@@ -724,18 +732,17 @@ class ContractController extends Controller
             // Log::info("NO HAY NADA PAPI: ");
             if (!is_null($installation->installationSettings)) {
 
-                if(is_null($installation->installationSettings->exemption_months))
-                {
-                 //   Log::info("antes NO tenia un config");
-                 //   Log::info("currentInstallation: ".$currentInstallation."  y exemption: ".$exemption);
+                if (is_null($installation->installationSettings->exemption_months)) {
+                    //   Log::info("antes NO tenia un config");
+                    //   Log::info("currentInstallation: ".$currentInstallation."  y exemption: ".$exemption);
                     $currentAssigned = $this->checkRange($currentInstallation, $exemption);
-                }else{
-                 //   Log::info("antes tenia un config");
+                } else {
+                    //   Log::info("antes tenia un config");
                     $currentAssigned = $this->checkRangeConfigExemption($currentInstallation, $config_exemption);
                 }
-            }else{
-              //  dd("En este rango");
-              //  Log::info("tiene puro rango");
+            } else {
+                //  dd("En este rango");
+                //  Log::info("tiene puro rango");
                 $currentAssigned = $this->checkRange($currentInstallation, $exemption);
             }
 

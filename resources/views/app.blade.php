@@ -5,7 +5,7 @@
     <link rel="manifest" href="/manifest.json" type="application/json">
     <link rel="icon" sizes="32x32" href="/icons/IconTab_Nuvira.png" type="image/png">
     <meta charset="utf-8">
-    {{-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> --}}
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
