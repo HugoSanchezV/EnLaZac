@@ -20,8 +20,6 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 
-use function PHPUnit\Framework\isNull;
-
 class InstallationController extends Controller
 {
     protected $path = 'Admin';
@@ -68,10 +66,9 @@ class InstallationController extends Controller
             return [
                 'id' => $item->id,
                 'contract_id'=> $item->contract_id,
-                'name' => optional(optional(optional($item->contract)->inventorieDevice)->device->user)->name,
+                'name' => data_get($item, 'contract.inventorieDevice.device.user.name')?? "Sin asignar", // Usa data_get para manejar nulos
                 'description' => $item->description,
                 'assigned_date' => $item->assigned_date,
-               
             ];
         });
 

@@ -166,7 +166,7 @@ useGeneralNotifications();
                 </span>
               </div>
               <h2 class="text-xl md:text-3xl lg:text-4xl font-bold">
-                <span>{{ morrosos.length }}</span>
+                <span>{{ morrosos }}</span>
               </h2>
               <p
                 class="mt-2 text-center text-sm md:text-lg lg:text-xl text-gray-700"
@@ -189,7 +189,7 @@ useGeneralNotifications();
                 </span>
               </div>
               <h2 class="text-xl md:text-3xl lg:text-4xl font-bold">
-                <span>{{ activeContract.length }}</span>
+                <span>{{ activeContract }}</span>
               </h2>
               <p
                 class="mt-2 text-center text-sm md:text-lg lg:text-xl text-gray-700"
@@ -212,7 +212,7 @@ useGeneralNotifications();
                 </span>
               </div>
               <h2 class="text-xl md:text-3xl lg:text-4xl font-bold">
-                <span>{{ new_tickets.length }}</span>
+                <span>{{ new_tickets }}</span>
               </h2>
               <p
                 class="mt-2 text-center text-sm md:text-lg lg:text-xl text-gray-700"
@@ -235,7 +235,7 @@ useGeneralNotifications();
                 </span>
               </div>
               <h2 class="text-xl md:text-3xl lg:text-4xl font-bold">
-                <span>{{ currentUsers.length }}</span>
+                <span>{{ currentUsers }}</span>
               </h2>
               <p
                 class="mt-2 text-center text-sm md:text-lg lg:text-xl text-gray-700"

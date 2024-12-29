@@ -123,7 +123,7 @@ class InventorieDevicesController extends Controller
         $inventorieDevices = InventorieDevice::findOrFail($id);
 
         return Inertia::render('Admin/InventorieDevices/Show', [
-            'intentorieDevices' => $inventorieDevices,
+            'inventorieDevices' => $inventorieDevices,
         ]);
     }
 

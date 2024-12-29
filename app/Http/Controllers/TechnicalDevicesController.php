@@ -105,7 +105,7 @@ class TechnicalDevicesController extends Controller
     {
         $devices = Device::select('comment', 'address')->get();
 
-        $users = User::select('id', 'name', 'email')->where('admin', '==', '0')->get();
+        $users = User::select('id', 'name', 'email')->where('admin', '=', '0')->get();
 
         $inv_devices = InventorieDevice::select('id', 'mac_address')->where('state', '0')->get();
 
@@ -200,7 +200,7 @@ class TechnicalDevicesController extends Controller
 
         $devices = Device::select('comment', 'address')->get();
 
-        $users = User::select('id', 'name', 'email')->where('admin', '==', '0')->get();
+        $users = User::select('id', 'name', 'email')->where('admin', '=', '0')->get();
 
         $inv_devices = InventorieDevice::select('id', 'mac_address')->where('state', '0');
 
