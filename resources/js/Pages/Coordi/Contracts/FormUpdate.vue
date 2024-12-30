@@ -296,11 +296,11 @@ const submit = () => {
       </div>
       <div class="flex mt-4">
         <GoogleMaps
-        :lat="parseFloat(lat)"
-        :lng="parseFloat(lng)"
-        :clic=true
-        :mapKey="mapKey"
-        @otherPos_clicked="handlePositionClicked" 
+          :lat="parseFloat(lat)"
+          :lng="parseFloat(lng)"
+          :clic=true
+          :mapKey="mapKey"
+          @otherPos_clicked="handlePositionClicked" 
          />
       </div>
       <div class="mt-2 flex justify-center">

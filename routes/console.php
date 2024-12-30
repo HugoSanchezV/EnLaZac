@@ -10,11 +10,10 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-//Schedule de Ping-devices 
 
 Schedule::call(function () {
     
-    Log::info('Tarea ejecutada');
+    Log::info('Schedule 5 minutos');
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
     // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
@@ -31,9 +30,10 @@ Schedule::call(function () {
     if ($taskDevice->period == "everyFiveMinutes" && $taskDevice->status) {
         Artisan::call('app:device-stats');
     }
-})->everySecond();
+})->everyFiveMinutes();
 
 Schedule::call(function () {
+    Log::info("Schedule 15 minutos");
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
     // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
@@ -52,6 +52,7 @@ Schedule::call(function () {
 })->everyFifteenMinutes();
 
 Schedule::call(function () {
+    Log::info("Schedule 30 minutos");
     // $task = ScheduledTask::where('task_name', 'ping-routers')->first();
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
     // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
@@ -71,6 +72,7 @@ Schedule::call(function () {
 })->everyThirtyMinutes();
 
 Schedule::call(function () {
+    Log::info("Schedule 1 hora");
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
     // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
@@ -87,6 +89,10 @@ Schedule::call(function () {
 })->hourly();
 
 Schedule::call(function () {
+    Log::info("Schedule Diario");
+    Artisan::call('app:check-contracts');
+    Artisan::call('app:order-stats');
+
     $taskRouter = ScheduledTask::where('task_name', 'ping-routers')->first();
     // $taskContract = ScheduledTask::where('task_name', 'check-contracts')->first();
     $taskDevice = ScheduledTask::where('task_name', 'device-stats')->first();
@@ -109,6 +115,7 @@ Schedule::call(function () {
 })->daily();
 
 Schedule::call(function () {
+    Log::info("Schedule Semanalmente");
     $taskDevice = ScheduledTask::where('task_name', 'backups')->first();
 
     if ($taskDevice->period == "weekly" && $taskDevice->status) {
@@ -117,6 +124,7 @@ Schedule::call(function () {
 })->weekly();
 
 Schedule::call(function () {
+    Log::info("Schedule Mensualmente");
     $taskDevice = ScheduledTask::where('task_name', 'backups')->first();
 
     if ($taskDevice->period == "monthly" && $taskDevice->status) {
@@ -124,13 +132,5 @@ Schedule::call(function () {
     }
 })->monthly();
 
-
-
-//Tarea diarias
-Schedule::call(function(){
-    Artisan::call('app:check-contracts');
-    Artisan::call('app:order-stats');
-
-})->daily();
 //Schedule::command('app:update-contract-date')->daily();
 // Schedule::command('app:device-stats')->everyFiveMinutes();

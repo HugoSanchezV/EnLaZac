@@ -9,6 +9,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import flatpickr from "flatpickr";
+import GoogleMaps from "@/Components/GoogleMaps.vue";
 
 import { monthSelectPlugin } from "flatpickr/dist/plugins/monthSelect";
 import monthSelect from "flatpickr/dist/plugins/monthSelect";
@@ -54,26 +55,44 @@ const form = useForm({
     longitude: "",
   },
 });
+const lat = ref(0);
+const lng = ref(0);
 
 const handlePositionClicked = (position) => {
   form.geolocation.latitude = position.lat.toFixed(15); // Asignar la latitud con precisión
   form.geolocation.longitude = position.lng.toFixed(15); // Asignar la longitud con precisión
+  lat.value = form.geolocation.latitude;
+  lng.value = form.geolocation.longitude;
 };
-const lat = ref(null);
-const lng = ref(null);
+
 const getPosition = () => {
   if (navigator.geolocation) {
-    var success = function (position) {
-      (lat.value = form.geolocation.latitude =
-        position.coords.latitude.toFixed(10)),
-        (lng.value = form.geolocation.longitude =
-          position.coords.longitude.toFixed(10));
-    };
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Éxito: aquí recibes el objeto "position"
+        // y puedes asignar la latitud y longitud.
+        lat.value = position.coords.latitude;
+        lng.value = position.coords.longitude;
 
-    navigator.geolocation.getCurrentPosition(success, function (msg) {
-      console.error(msg);
-    });
+        form.geolocation.latitude = lat.value;
+        form.geolocation.longitude = lng.value;
+
+      //  console.log('Lat:', lat.value, 'Lng:', lng.value);
+      },
+      (error) => {
+        // Manejo de error
+        console.error('Error obteniendo posición:', error);
+      },
+      {
+        enableHighAccuracy: true,  // Pide la mayor precisión posible (GPS)
+        timeout: 10000,            // Espera hasta 10s para obtener la ubicación
+        maximumAge: 0              // No uses una posición en caché
+      }
+    );
+  } else {
+    console.error("Geolocalización no soportada");
   }
+
 };
 function addMonth(dateString) {
   const [year, month] = dateString.split("-").map(Number); // Divide "2024-11" en año y mes
@@ -91,12 +110,8 @@ onMounted(() => {
   getPosition();
   form.inv_device_id = props.device_selected || ""; 
   // Obtener el input de fecha
-  // const datePicker = document.getElementById('start_date');
 
   // Inicializar el valor con el día 5 del mes actual
-  const today = new Date();
-  //alert(today);
-
   flatpickr("#start_date", {
     plugins: [
       monthSelect({
@@ -127,18 +142,6 @@ onMounted(() => {
   // form.start_date = setDayToFive(today);
   // onDateChange();
 });
-const getCurrentLocation = () => {
-  (form.geolocation.latitude = lat), (form.geolocation.longitude = lng);
-  getPosition();
-};
-// const onDateChange= () =>{
-//   // console.log("ENTRA");
-//   // Imprimir la fecha seleccionada en la consola
-//   const date = new Date(form.start_date);
-//   date.setMonth(date.getMonth() + 1);
-//   form.end_date = date.toISOString().split('T')[0];
-//   }
-
 const submit = () => {
   var miCheckbox = document.getElementById("activated");
   if (miCheckbox.checked) {
@@ -147,7 +150,7 @@ const submit = () => {
     form.active = false;
   }
 
-  console.log(form);
+ // console.log(form);
   form.post(route("contracts.store"));
 };
 </script>
@@ -256,7 +259,10 @@ const submit = () => {
           <span class="slider round"></span>
         </label>
       </div>
-
+      <div class="mt-4">
+        <p>Ubicación
+        </p>
+      </div>
       <div class="mt-4">
         <InputLabel for="address" value="Dirección" />
         <TextInput
@@ -270,27 +276,8 @@ const submit = () => {
         />
         <InputError class="mt-2" :message="form.errors.address" />
       </div>
-
-      <div class="mt-4">
-        <p>
-          Su ubicación actual será tomada de manera automática para obtener la
-          locación del cliente o ingrese la ubicación manualmente.
-        </p>
-      </div>
-      <div class="flex justify-between items-center gap-2 mt-5">
-        <p>Ingresar ubicación manualmente</p>
-        <label class="switch">
-          <input
-            type="checkbox"
-            @change="getCurrentLocation"
-            checked
-            v-model="ubicacionManual"
-          />
-          <span class="slider round"></span>
-        </label>
-      </div>
-
-      <div v-if="ubicacionManual" class="flex gap-2">
+      
+      <div class="flex gap-2">
         <div class="mt-4">
           <InputLabel for="latitude" value="Latitude" />
           <TextInput
@@ -315,34 +302,26 @@ const submit = () => {
           <InputError class="mt-2" :message="form.errors.longitude" />
         </div>
       </div>
-      <div v-if="ubicacionManual" class="flex mt-4">
+      <div class="flex mt-4">
         <GoogleMaps
-          :lat="parseInt(lat)"
-          :lng="parseInt(lng)"
-          :clic="true"
+          :lat="parseFloat(lat)"
+          :lng="parseFloat(lng)"
+          :clic=true
           :mapKey="mapKey"
-          @otherPos_clicked="handlePositionClicked"
-        />
+          @otherPos_clicked="handlePositionClicked" 
+         />
       </div>
 
-      <div v-else>
-        <div class="mt-4">
-          <TextInput
-            id="latitude"
-            v-model="form.geolocation.latitude"
-            type="hidden"
-            class="mt-1 block w-full"
-            autocomplete="latitude"
-          />
-          <TextInput
-            id="longitude"
-            v-model="form.geolocation.longitude"
-            type="hidden"
-            class="mt-1 block w-full"
-            autocomplete="longitude"
-          />
-        </div>
+      <div class="mt-2 flex justify-center">
+        <button
+            type="button"
+            @click="getPosition()"
+            class="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+          >
+            Posición actual
+          </button>
       </div>
+
       <div class="flex items-center justify-end mt-4">
         <PrimaryButton
           class="ms-4 flex items-center gap-2"
@@ -370,25 +349,6 @@ const submit = () => {
     </form>
   </div>
 </template>
-<script>
-import GoogleMaps from "@/Components/GoogleMaps.vue";
-export default {
-  components: {
-    GoogleMaps,
-  },
-  props: ["contract"],
-
-  data() {
-    return {
-      ubicacionManual: false,
-      form: {
-        latitude: "",
-        longitude: "",
-      },
-    };
-  },
-};
-</script>
 <style scoped>
 .switch {
   position: relative;
