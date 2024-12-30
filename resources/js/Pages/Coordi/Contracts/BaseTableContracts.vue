@@ -317,7 +317,7 @@ const confirmSelection = (row, select, data) => {
               }}
             </div>
             <div v-else-if="cellIndex === 'active'">
-              <div v-if="cell === 0">
+              <div v-if="cell == 0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
