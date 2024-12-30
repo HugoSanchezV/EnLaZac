@@ -48,10 +48,10 @@ class TelegramMadelineController extends Controller
 
         $phone = $request->input('phone');
         $firstName = $request->input('first_name');
-        $lastName = $request->input('last_name', '');
+        $lastName = $request->input('last_name', '') ?? '';
 
         try {
-            $userId = $this->telegramService->importContact('4931252248', 'july', 'san');
+            $userId = $this->telegramService->importContact($phone, $firstName, $lastName);
 
             if ($userId) {
                 return response()->json([

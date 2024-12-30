@@ -111,6 +111,7 @@ class LocalPayController extends Controller
 
     public function store(Request $request)
     {
+
         try {
             $reference = DB::transaction(function () use ($request) {
                 $order = LocalPay::where('user_id', Auth::id())->first();
@@ -175,7 +176,9 @@ class LocalPayController extends Controller
         try {
 
             DB::transaction(function () use ($token, $request) {
-                self::update($request->amount, $request->cart,  $token);
+                $pay = LocalPay::where('token', $token)->first();
+                // dd($pay->user_id);
+                self::update($request->amount, $request->cart,  $token, $pay->user_id);
                 $result = self::destroyByToken($token);
 
                 if (!$result) {
@@ -203,10 +206,11 @@ class LocalPayController extends Controller
         }
     }
 
-    public function update($amount, $cart,  $transaction)
+    public function update($amount, $cart,  $transaction, $user_id = null)
     {
         $payment = new PaymentService();
 
+        // dd($user_id);
         $worker = Auth::id() . " " . Auth::user()->name;
         $payment->createPayment(
             $amount,
@@ -215,6 +219,7 @@ class LocalPayController extends Controller
             "/local/pay/show/{$transaction}",
             "Local",
             $worker,
+            $user_id ?? null,
         );
 
         $payment->updateDataPayments($cart);

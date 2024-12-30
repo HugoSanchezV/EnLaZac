@@ -19,14 +19,12 @@ use Illuminate\Support\Facades\Log;
 
 class PaymentService
 {
-    public function createPayment($amount, $cart, $transaction, $url, $method = "Paypal", $worker = "Paypal")
+    public function createPayment($amount, $cart, $transaction, $url, $method = "Paypal", $worker = "Paypal", $user_id = null)
     {
         try {
-
-
             $controller = new PaymentHistorieController();
             $pay = new PaymentHistorie();
-            $pay->user_id = Auth::id();
+            $pay->user_id = $user_id ?? Auth::id();
             $pay->worker = $worker;
             $pay->amount = $amount;
             $pay->content = $cart;

@@ -34,36 +34,32 @@ class PayController extends Controller
 
             if ($devices->count() > 0) {
 
-                $contracts = [] ; 
+                $contracts = [];
 
                 $contractIds = [];
-                foreach($devices as $device){
-                    if($device->inventorieDevice){
-                        if($device->inventorieDevice->contract)
-                        {
-                            $contractIds [] = $device->inventorieDevice->contract->id;
+                foreach ($devices as $device) {
+                    if ($device->inventorieDevice) {
+                        if ($device->inventorieDevice->contract) {
+                            $contractIds[] = $device->inventorieDevice->contract->id;
                         }
                     }
+                }
 
-                }  
 
                 $contracts = Contract::with([
                     'plan',
                     'charges' => function ($query) {
                         $query->where('paid', false); // Filtrar charges donde paid sea false
                     },
-                ])->findOrFail($contractIds)->where('active', 1);
+                ])->where('id', $contractIds)->where('active', 1)->get();
 
-                if($contracts->count() == 0){
+                // dd($contracts);
+                if ($contracts->count() == 0) {
                     return Redirect::route('dashboard')->with('error', 'No hay contratos disponibles');
-
                 }
-                
-            } else 
-            {
+            } else {
                 //$contracts = 0;
                 return Redirect::route('dashboard')->with('error', 'No hay contratos disponibles');
-
             }
             // dd($contracts);
 
@@ -71,17 +67,17 @@ class PayController extends Controller
             $mercadopago = MercadoPagoSetting::select('active')->first();
             // Retornar la vista con los datos necesarios
 
-         //   dd($rent);
+            //   dd($rent);
             return Inertia::render('User/Pays/Pays', [
-               // 'charges' => $charges,
+                // 'charges' => $charges,
                 'contracts' => $contracts,
-                'paypal' => $paypal,
-                'mercadopago' => $mercadopago,
+                'paypal' => $paypal ?? ['active' => false],
+                'mercadopago' => $mercadopago ?? ['active' => false],
                 'rent' => $rent,
             ]);
         } catch (Exception $e) {
-           dd($e);
-           return Redirect::route('dashboard')->with('error', 'Error al mostrar los contratos');
+            dd($e->getMessage());
+            return Redirect::route('dashboard')->with('error', 'Error al mostrar los contratos');
         }
     }
 }

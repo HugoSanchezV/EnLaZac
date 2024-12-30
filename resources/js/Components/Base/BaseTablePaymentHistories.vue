@@ -559,7 +559,7 @@ export default {
         attribute: this.currentFilter,
         type: this.currentPayment,
         order: this.currentOrder,
-        date: this.monthFilterRef.value,
+        date: this.monthFilterRef?.value,
       });
     },
 
@@ -571,7 +571,7 @@ export default {
         attribute: this.currentFilter,
         type: this.currentPayment,
         order: this.currentOrder,
-        date: this.monthFilterRef.value,
+        date: this.monthFilterRef?.value,
       });
     },
 
@@ -582,7 +582,7 @@ export default {
         attribute: this.currentFilter,
         type: this.currentPayment,
         order: this.currentOrder,
-        date: this.monthFilterRef.value,
+        date: this.monthFilterRef?.value,
       });
     },
 

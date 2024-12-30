@@ -59,7 +59,7 @@ class TelegramService
                         '_' => 'inputPhoneContact',
                         'phone' => $phoneNumber,
                         'first_name' => $firstName,
-                        'last_name' => $lastName,
+                        'last_name' => $lastName ?? '',
                     ],
                 ],
             ]);

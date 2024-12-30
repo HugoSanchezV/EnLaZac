@@ -54,6 +54,7 @@ class PaymentHistorieController extends Controller
             $total_month = $total;
         }
 
+
         if (!is_null($request->date)) {
             $query->where('created_at', 'like', $request->date . '%');
             if ($user->admin === 2) {

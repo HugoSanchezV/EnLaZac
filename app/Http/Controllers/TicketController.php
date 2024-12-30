@@ -70,7 +70,7 @@ class TicketController extends Controller
                 Carbon::now()->startOfDay(),
                 Carbon::now()->endOfDay(),
             ]);
-                // ->where('end_date', '<', Carbon::now());
+            // ->where('end_date', '<', Carbon::now());
         }
 
         $tickets = $query->latest()->paginate(8)->through(function ($item) {
@@ -86,9 +86,9 @@ class TicketController extends Controller
         });
 
 
-     
 
-        return Inertia::render( $this->path . '/Tickets', [
+
+        return Inertia::render($this->path . '/Tickets', [
             'tickets' => $tickets,
             'pagination' => [
                 'links' => $tickets->links()->elements[0],
@@ -246,12 +246,15 @@ class TicketController extends Controller
             });
         }
 
+        $order = 'asc';
         // Ordenamiento
-        if ($request->order) {
-            $query->orderBy($request->order, 'asc');
-        } else {
-            $query->orderBy('id', 'asc');
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         // Paginación y transformación de los datos
         $tickets = $query->latest()->paginate(8)->through(function ($item) {

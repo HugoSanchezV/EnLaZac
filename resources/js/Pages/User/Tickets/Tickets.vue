@@ -203,9 +203,7 @@ export default {
   },
   methods: {
     search(props) {
-      const link = route("tickets");
-
-      console.log(props.searchQuery);
+      const link = route("tickets.usuario");
 
       this.q = props.searchQuery;
       this.attribute = props.attribute;
