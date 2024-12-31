@@ -292,7 +292,7 @@ const getTag = (cellIndex) => {
             class="font-medium text-gray-900 whitespace-nowrap"
           >
             <div v-if="cellIndex === 'paid'">
-              {{ cell === 0 ? "No" : "Sí" }}
+              {{ cell == 0 ? "No" : "Sí" }}
             </div>
             <div v-else-if="cellIndex === 'description'">
               {{ formatDescription(cell) }}
