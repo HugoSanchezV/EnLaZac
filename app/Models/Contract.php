@@ -34,8 +34,7 @@ class Contract extends Model
     public function paymentSanction(){ 
         return $this->belongsTo(PaymentSanction::class, 'id', 'contract_id');}
     
-    public function plan()
-    {
+    public function plan(){
         return $this->belongsTo(Plan::class);
     }
 

@@ -59,23 +59,43 @@ const formatCurrency = (value) => {
   }).format(value);
 };
 
+
 const formatDescription = (tipo) => {
+  // Convertimos la fecha ISO a un objeto Date
+
   switch (tipo) {
-    case "instalacion-inicial":
-      return "Instalación inicial";
-    case "cambio-domicilio":
-      return "Cambio de domicilio";
-    case "recargo-mes":
-      return "Recargo del mes";
     case "fuera-corte":
       return "No pagó antes del día de corte";
+      break;
+
+    case "recargo-mes":
+      return "Recargo del mes";
+      break;
+
+    case "renta-dispositivo":
+      return "Renta del dispositivo";
+      break;
+
+    case "instalacion-inicial":
+      return "Instalación inicial";
+      break;
+
+    case "cambio-domicilio":
+      return "Cambio de domicilio";
+      break;
+
     default:
       return tipo;
   }
 };
 
+const calculateCartTotal = (cartItems) =>
+  (cartItems || [])
+    .filter(item => typeof item.amount === "number") // Filtra valores no válidos
+    .reduce((acc, item) => acc + item.amount, 0);
+
 const calculateTotal = () => {
-  totalAmount.value = cart.value.reduce((acc, item) => acc + item.amount, 0);
+  totalAmount.value = calculateCartTotal(cart.value);
   showPayment.value = totalAmount.value > 0;
 };
 

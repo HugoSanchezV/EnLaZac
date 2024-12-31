@@ -20,7 +20,7 @@ const filters = [
 
 const headers = [
   "Id",
-  "Contracto",
+  "Contracto de",
   "Descripción",
   "Fecha asignada",
   "Acciones",

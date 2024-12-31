@@ -74,7 +74,7 @@ const destroy = (id, data) => {
 const getTag = (cellIndex) => {
   switch (cellIndex) {
     case "contract_id":
-      return "Contrato";
+      return "Contrato de";
       break;
     case "description":
       return "Descripción";

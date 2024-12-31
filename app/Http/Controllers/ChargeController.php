@@ -22,12 +22,15 @@ class ChargeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Charge::query();
+        $query = Charge::with('contract.inventorieDevice.device.user');
 
         if ($request->has('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%$search%")
+                    ->orWhereHas('contract.inventorieDevice.device.user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%");
+                    })
                     ->orWhere('contract_id', 'like', "%$search%")
                     ->orWhere('description', 'like', "%$search%")
                     ->orWhere('amount', 'like', "%$search%")
@@ -50,7 +53,7 @@ class ChargeController extends Controller
         $charges = $query->latest()->paginate(8)->through(function ($item) {
             return [
                 'id' => $item->id,
-                'contract_id' => $item->contract_id,
+                'contract_id' => data_get($item, 'contract.inventorieDevice.device.user.name')?? "Sin asignar", // Usa data_get para manejar nulos
                 'description' => $item->description,
                 'amount' => $item->amount,
                 'paid' =>  $item->paid,

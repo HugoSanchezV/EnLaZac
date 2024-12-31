@@ -86,44 +86,40 @@ const destroy = (id, data) => {
 
 const formatDescription = (tipo) => {
   // Convertimos la fecha ISO a un objeto Date
-
   switch (tipo) {
     case "fuera-corte":
       return "No pagó antes del día de corte";
       break;
-
     case "recargo-mes":
       return "Recargo del mes";
       break;
-
     case "renta-dispositivo":
       return "Renta del dispositivo";
       break;
-
     case "instalacion-inicial":
       return "Instalación inicial";
       break;
-
     case "cambio-domicilio":
       return "Cambio de domicilio";
       break;
-
     default:
       return tipo;
   }
 };
 
 const getTag = (cellIndex) => {
+  console.log(cellIndex);
   switch (cellIndex) {
     case "description":
       return "Descripción";
       break;
     case "contract_id":
-      return "Contrato";
+      return "Contrato de";
       break;
     case "amount":
       return "Monto";
       break;
+
     case "paid":
       return "¿Pagado?";
       break;
@@ -291,11 +287,30 @@ const getTag = (cellIndex) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
+        
             <div v-if="cellIndex === 'paid'">
-              {{ cell == 0 ? "No" : "Sí" }}
+              <span class="flex">
+                <span class="lg:hidden md:hidden block font-bold lowercase">
+                  {{ getTag(cellIndex) }} :
+                    
+          
+                </span>
+                
+                  {{ cell == 0 ? " No" : " Sí" }}
+              </span>
             </div>
             <div v-else-if="cellIndex === 'description'">
-              {{ formatDescription(cell) }}
+              <span class="flex">
+                <span class="lg:hidden md:hidden block font-bold lowercase">
+                  {{ getTag(cellIndex) }} :
+                    
+    
+                </span>
+                <span>
+                  {{ formatDescription(cell) }}
+
+                </span>
+              </span>
             </div>
             <div v-else>
               <div class="flex gap-1">

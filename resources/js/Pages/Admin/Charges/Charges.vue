@@ -24,7 +24,7 @@ const filters = [
 
 const headers = [
   "Id",
-  "Contrato",
+  "Contrato de",
   "Descripción",
   "Monto",
   "¿Pagado?",

@@ -43,9 +43,7 @@ class InstallationController extends Controller
                         $q->where('name', 'like', "%$search%");
                     })
                     ->orWhere('description', 'like', "%$search%")
-                    ->orWhere('assigned_date', 'like', "%$search%")
-                    
-                    ;
+                    ->orWhere('assigned_date', 'like', "%$search%");
                 // Agrega más campos si es necesario
             });
         }

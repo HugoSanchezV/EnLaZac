@@ -147,7 +147,7 @@ onMounted(() => {
             >
               <option :value="null" selected>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ "Contracto: "+contract.id + " - Disp.: " + contract?.device?.mac_address   + " - Plan: "+ contract.plan.name }}
+                  {{ "Contracto: "+contract.id + " - Disp.: " + (contract?.device?.mac_address || "Sin asignar")   + " - Plan: "+ (contract?.plan?.name || "Sin asignar") }}
               </option>
             </select>
         </div>
