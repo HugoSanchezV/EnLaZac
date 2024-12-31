@@ -132,6 +132,7 @@ const alerta = (message) => {
 const addChargeToCart = (charge) => {
   console.log("Agregaste un cargo al carrito");
   console.log(charge);
+  charge.amount = parseFloat(charge.amount);
   console.log(typeof charge.amount);
   console.log("================================");
   if (isInCart(charge.id, "individual-charge")) {
