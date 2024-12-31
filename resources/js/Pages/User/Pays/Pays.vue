@@ -18,9 +18,9 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  rent:{
+  rent: {
     type: Number,
-  }
+  },
 });
 
 const cart = ref([]);
@@ -32,24 +32,22 @@ const selectedMonthsPerRent = ref({});
 const availableCharges = ref([]);
 
 // Al inicializar el componente, extraemos los cargos individuales
-onMounted (()=> {
-
+onMounted(() => {
   props.contracts.forEach((contract) => {
     contract.charges.forEach((charge) => {
-      if (["instalacion-inicial", "cambio-domicilio"].includes(charge.description)) {
+      if (
+        ["instalacion-inicial", "cambio-domicilio"].includes(charge.description)
+      ) {
         availableCharges.value.push({
           id: charge.id,
           type: "individual-charge",
           contractId: contract.id,
-          description: (charge.description),
+          description: charge.description,
           amount: charge.amount,
         });
       }
     });
   });
-
-
-
 });
 
 const formatCurrency = (value) => {
@@ -58,7 +56,6 @@ const formatCurrency = (value) => {
     currency: "MXN",
   }).format(value);
 };
-
 
 const formatDescription = (tipo) => {
   // Convertimos la fecha ISO a un objeto Date
@@ -91,20 +88,28 @@ const formatDescription = (tipo) => {
 
 const calculateCartTotal = (cartItems) =>
   (cartItems || [])
-    .filter(item => typeof item.amount === "number") // Filtra valores no válidos
+    .filter((item) => typeof item.amount === "number") // Filtra valores no válidos
     .reduce((acc, item) => acc + item.amount, 0);
 
 const calculateTotal = () => {
   totalAmount.value = calculateCartTotal(cart.value);
   showPayment.value = totalAmount.value > 0;
+
+  console.log("total");
+  console.log("Total a pagar: ", totalAmount.value);
+  console.log("================================");
+
+  console.log("Carrito");
+  console.log(cart.value);
+  console.log("================================");
 };
 
 const isInCart = (itemId, itemType) => {
   return cart.value.some(
-    (item) => item.id === itemId && ((itemType === 'contract')||(itemType === 'rent'))
+    (item) =>
+      item.id === itemId && (itemType === "contract" || itemType === "rent")
   );
 };
-
 
 const alerta = (message) => {
   const toast = useToast();
@@ -125,6 +130,10 @@ const alerta = (message) => {
 };
 
 const addChargeToCart = (charge) => {
+  console.log("Agregaste un cargo al carrito");
+  console.log(charge);
+  console.log(typeof charge.amount);
+  console.log("================================");
   if (isInCart(charge.id, "individual-charge")) {
     alerta("Este cargo ya ha sido agregado al carrito.");
     return;
@@ -203,12 +212,15 @@ const addContractToCart = (contract) => {
 
   // Agregar cargos no individuales relacionados con el contrato
   contract.charges.forEach((charge) => {
-    if (!isInCart(charge.id, "charge") && !["instalacion-inicial", "cambio-domicilio"].includes(charge.description)) {
+    if (
+      !isInCart(charge.id, "charge") &&
+      !["instalacion-inicial", "cambio-domicilio"].includes(charge.description)
+    ) {
       cart.value.push({
         id: charge.id,
         type: "charge",
         contractId: contract.id,
-        description: (charge.description),
+        description: charge.description,
         amount: charge.amount,
       });
     }
@@ -217,22 +229,23 @@ const addContractToCart = (contract) => {
   calculateTotal();
 };
 
-const setButton = (type) =>{
-  return (type == 'charge')? false : true;
-}
+const setButton = (type) => {
+  return type == "charge" ? false : true;
+};
 
 const removeFromCart = (contractId, type) => {
   // Eliminar contrato y sus cargos asociados
-  if(type == 'contract'){
+  if (type == "contract") {
     cart.value = cart.value.filter(
-      (item) => !(item.id === contractId && item.type === "contract") && item.contractId !== contractId
+      (item) =>
+        !(item.id === contractId && item.type === "contract") &&
+        item.contractId !== contractId
     );
-  }else{
+  } else {
     cart.value = cart.value.filter((item) => item.id !== contractId);
   }
   calculateTotal();
 };
-
 </script>
 
 
@@ -243,29 +256,38 @@ const removeFromCart = (contractId, type) => {
         <!-- Tabla de contratos -->
         <div class="bg-white shadow rounded-lg p-5 col-span-2">
           <h3 class="text-lg font-bold mb-3">Contratos del Usuario</h3>
-          <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+          <table
+            class="table-auto w-full border-collapse border border-gray-300 text-sm"
+          >
             <thead>
               <tr>
                 <th class="border border-gray-300 p-2">ID</th>
                 <th class="border border-gray-300 p-2">Fecha de Fin</th>
                 <th class="border border-gray-300 p-2">Precio</th>
                 <th class="border border-gray-300 p-2">Acción</th>
-                <th class="border border-gray-300 p-2">Renta del dispositivo</th>
-            
+                <th class="border border-gray-300 p-2">
+                  Renta del dispositivo
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="contract in contracts" :key="contract.id">
                 <td class="border border-gray-300 p-2">{{ contract.id }}</td>
-                <td class="border border-gray-300 p-2">{{ contract.end_date }}</td>
-                <td class="border border-gray-300 p-2">{{ formatCurrency(contract.plan.price) }}</td>
-                
+                <td class="border border-gray-300 p-2">
+                  {{ contract.end_date }}
+                </td>
+                <td class="border border-gray-300 p-2">
+                  {{ formatCurrency(contract.plan.price) }}
+                </td>
+
                 <td class="border border-gray-300 p-2 flex items-center gap-2">
                   <select
                     v-model="selectedMonthsPerContract[contract.id]"
                     class="border border-gray-400 p-1 rounded"
                   >
-                    <option :value=null disabled selected>Selecciona una opción</option>
+                    <option :value="null" disabled selected>
+                      Selecciona una opción
+                    </option>
                     <option v-for="n in 12" :key="n" :value="n">
                       {{ n }} mes(es)
                     </option>
@@ -276,21 +298,21 @@ const removeFromCart = (contractId, type) => {
                     @click="addContractToCart(contract)"
                   >
                     {{
-                      isInCart(contract.id, 'contract')
+                      isInCart(contract.id, "contract")
                         ? "Ya agregado"
                         : "Agregar al carrito"
                     }}
                   </button>
-                  
                 </td>
                 <td class="border border-gray-300 p-2 items-center">
                   <div class="flex flex-col gap-2">
-
                     <select
                       v-model="selectedMonthsPerRent[contract.id]"
                       class="border border-gray-400 p-1 rounded"
                     >
-                      <option :value=null disabled selected>Selecciona una opción</option>
+                      <option :value="null" disabled selected>
+                        Selecciona una opción
+                      </option>
                       <option v-for="n in 12" :key="n" :value="n">
                         {{ n }} mes(es)
                       </option>
@@ -301,14 +323,13 @@ const removeFromCart = (contractId, type) => {
                       @click="addContractToRent(contract)"
                     >
                       {{
-                        isInCart(contract.id, 'contract')
+                        isInCart(contract.id, "contract")
                           ? "Ya agregado"
                           : "Agregar al carrito"
                       }}
                     </button>
                   </div>
                 </td>
-            
               </tr>
             </tbody>
           </table>
@@ -317,7 +338,9 @@ const removeFromCart = (contractId, type) => {
         <!-- Tabla de cargos individuales -->
         <div class="bg-white shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Cargos Disponibles</h3>
-          <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+          <table
+            class="table-auto w-full border-collapse border border-gray-300 text-sm"
+          >
             <thead>
               <tr>
                 <th class="border border-gray-300 p-2">Descripción</th>
@@ -327,8 +350,12 @@ const removeFromCart = (contractId, type) => {
             </thead>
             <tbody>
               <tr v-for="charge in availableCharges" :key="charge.id">
-                <td class="border border-gray-300 p-2">{{ formatDescription(charge.description) }}</td>
-                <td class="border border-gray-300 p-2">{{ formatCurrency(charge.amount) }}</td>
+                <td class="border border-gray-300 p-2">
+                  {{ formatDescription(charge.description) }}
+                </td>
+                <td class="border border-gray-300 p-2">
+                  {{ formatCurrency(charge.amount) }}
+                </td>
                 <td class="border border-gray-300 p-2">
                   <button
                     class="bg-green-500 text-white px-3 py-1 rounded"
@@ -345,7 +372,9 @@ const removeFromCart = (contractId, type) => {
         <!-- Carrito -->
         <div class="bg-white shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Carrito</h3>
-          <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+          <table
+            class="table-auto w-full border-collapse border border-gray-300 text-sm"
+          >
             <thead>
               <tr>
                 <th class="border border-gray-300 p-2">Concepto</th>
@@ -355,8 +384,12 @@ const removeFromCart = (contractId, type) => {
             </thead>
             <tbody>
               <tr v-for="(item, index) in cart" :key="index">
-                <td class="border border-gray-300 p-2">{{ formatDescription(item.description) }}</td>
-                <td class="border border-gray-300 p-2">{{ formatCurrency(item.amount) }}</td>
+                <td class="border border-gray-300 p-2">
+                  {{ formatDescription(item.description) }}
+                </td>
+                <td class="border border-gray-300 p-2">
+                  {{ formatCurrency(item.amount) }}
+                </td>
                 <td class="border border-gray-300 p-2">
                   <button
                     v-if="setButton(item.type)"
@@ -369,7 +402,7 @@ const removeFromCart = (contractId, type) => {
               </tr>
             </tbody>
           </table>
-          
+
           <div class="text-right mt-5">
             <h4 class="text-lg font-bold">
               Total a pagar: {{ formatCurrency(totalAmount) }}
@@ -377,12 +410,12 @@ const removeFromCart = (contractId, type) => {
           </div>
         </div>
         <div></div>
-         <!-- Sección de Pago -->
-         <div class="bg-gray-100 shadow rounded-lg p-5">
-            <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
-            <div v-if="showPayment" class="mt-5">
-              <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" />
-            </div>
+        <!-- Sección de Pago -->
+        <div class="bg-gray-100 shadow rounded-lg p-5">
+          <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
+          <div v-if="showPayment" class="mt-5">
+            <!-- <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" /> -->
+          </div>
         </div>
       </div>
     </template>
