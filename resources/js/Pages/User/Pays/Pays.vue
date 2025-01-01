@@ -30,6 +30,7 @@ const selectedMonthsPerContract = ref({});
 const selectedMonthsPerRent = ref({});
 // Lista de cargos individuales
 const availableCharges = ref([]);
+const unabledContracts = ref(true);
 
 // Al inicializar el componente, extraemos los cargos individuales
 onMounted(() => {
@@ -45,6 +46,10 @@ onMounted(() => {
           description: charge.description,
           amount: charge.amount,
         });
+        if("instalacion-inicial".includes(charge.description))
+        {
+          unabledContracts.value = false;
+        }
       }
     });
   });
@@ -105,10 +110,36 @@ const calculateTotal = () => {
 };
 
 const isInCart = (itemId, itemType) => {
-  return cart.value.some(
-    (item) =>
-      item.id === itemId && (itemType === "contract" || itemType === "rent")
+  let valor = cart.value.some(
+    (item) => {
+      if(item.id === itemId)
+      {
+        if((itemType === "contract" )||(itemType === "rent" )){
+          if((item.type === "contract" )||(item.type === "rent" )){
+            return true;
+          }else{
+            return false;
+          }
+
+        }else if((itemType  === 'individual-charge') && (item.type === 'individual-charge')) {
+          return true;
+        }
+      }else{
+        return false;
+      }
+     // item.id === itemId && (((itemType === "contract" )||(itemType === "rent" )))
+    }
   );
+  //alert(valor);
+  return valor;
+};
+const isInCartIndivialCharge = (itemId) => {
+  let valor = cart.value.some(
+    (item) => 
+    item.id === itemId && item.type == "individual-charge"
+  );
+  //alert(valor);
+  return valor;
 };
 
 const alerta = (message) => {
@@ -149,6 +180,7 @@ const addChargeToCart = (charge) => {
 
   calculateTotal();
 };
+
 
 const addContractToRent = (contract) => {
   const months = selectedMonthsPerRent.value[contract.id] || 0;
@@ -238,75 +270,105 @@ const removeFromCart = (contractId, type) => {
   // Eliminar contrato y sus cargos asociados
   if (type == "contract") {
     cart.value = cart.value.filter(
-      (item) =>
-        !(item.id === contractId && item.type === "contract") &&
-        item.contractId !== contractId
+      (item) => !(item.id === contractId && item.type === "contract") && item.contractId !== contractId && (item.type === 'individual-charge')
     );
-  } else {
-    cart.value = cart.value.filter((item) => item.id !== contractId);
+  }else if(type == 'rent'){
+    cart.value = cart.value.filter(
+      (item) => !(item.id === contractId && item.type === "rent") && item.contractId !== contractId && (item.type === 'individual-charge')
+    );
+  }else if(type == 'individual-charge'){
+    cart.value = cart.value.filter(
+      (item) => !(item.id === contractId && item.type === "rent") && item.contractId !== contractId && ((item.type === 'rent')||(item.type === 'contract'))
+    );
+  }else{
+    cart.value = cart.value.filter((item) => item.id !== contractId );
+  
   }
   calculateTotal();
 };
+
+const formatDateWithDay = (dateString) => {
+  const date = new Date(dateString); // Convertir la cadena en un objeto Date
+  return new Intl.DateTimeFormat("es-ES", {
+    weekday: "long", // Día de la semana
+    day: "numeric",  // Día del mes
+    month: "long",   // Mes completo
+    year: "numeric", // Año
+  }).format(date);
+};
+
 </script>
 
 
 <template>
   <dashboard-base :applyStyles="false">
     <template v-slot:content>
-      <div class="m-5 grid grid-cols-1 gap-5">
+      <div class="m-10 gap-5  ">
         <!-- Tabla de contratos -->
-        <div class="bg-white shadow rounded-lg p-5 col-span-2">
+        <div v-if="unabledContracts" class="bg-white shadow rounded-lg p-5 col-span-2">
           <h3 class="text-lg font-bold mb-3">Contratos del Usuario</h3>
-          <table
-            class="table-auto w-full border-collapse border border-gray-300 text-sm"
-          >
-            <thead>
-              <tr>
+          <table class="w-full text-sm text-left">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-950">
+              <tr class="bg-white border-b hover:bg-gray-100">
                 <th class="border border-gray-300 p-2">ID</th>
                 <th class="border border-gray-300 p-2">Fecha de Fin</th>
                 <th class="border border-gray-300 p-2">Precio</th>
-                <th class="border border-gray-300 p-2">Acción</th>
-                <th class="border border-gray-300 p-2">
-                  Renta del dispositivo
-                </th>
+                <th class="border border-gray-300 p-2">Servicio</th>
+                <th class="border border-gray-300 p-2">Renta del dispositivo</th>
+            
               </tr>
             </thead>
             <tbody>
               <tr v-for="contract in contracts" :key="contract.id">
-                <td class="border border-gray-300 p-2">{{ contract.id }}</td>
-                <td class="border border-gray-300 p-2">
-                  {{ contract.end_date }}
+                <td class="border border-gray-300 items-center p-2 ">
+                  {{ contract.id }}
                 </td>
-                <td class="border border-gray-300 p-2">
-                  {{ formatCurrency(contract.plan.price) }}
+                <td class="border border-gray-300 items-center p-2">
+                  <div class="flex gap-1">
+                    <span class="lg:hidden md:hidden block">Fin del contrato: </span>
+                    {{ formatDateWithDay(contract.end_date) }}
+                    
+                  </div>
+              
                 </td>
+                <td class="border border-gray-300 items-center p-2">
+                  <div class="flex  gap-1">
+                    <span class="lg:hidden md:hidden block">Precio: </span>
+                    {{ formatCurrency(contract.plan.price) }}
+                    
+                  </div>
+                </td>
+                
+                <td class="border border-gray-300 p-2 items-center gap-2">
+                  <span class="lg:hidden md:hidden block">Servicio</span>
 
-                <td class="border border-gray-300 p-2 flex items-center gap-2">
-                  <select
-                    v-model="selectedMonthsPerContract[contract.id]"
-                    class="border border-gray-400 p-1 rounded"
-                  >
-                    <option :value="null" disabled selected>
-                      Selecciona una opción
-                    </option>
-                    <option v-for="n in 12" :key="n" :value="n">
-                      {{ n }} mes(es)
-                    </option>
-                  </select>
-                  <button
-                    class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
-                    :disabled="isInCart(contract.id, 'contract')"
-                    @click="addContractToCart(contract)"
-                  >
-                    {{
-                      isInCart(contract.id, "contract")
-                        ? "Ya agregado"
-                        : "Agregar al carrito"
-                    }}
-                  </button>
+                  <div class="flex flex-col gap-2 items-center">
+                    <select
+                      v-model="selectedMonthsPerContract[contract.id]"
+                      class="border border-gray-400 p-1 rounded"
+                    >
+                      <option :value=null disabled selected>Selecciona una opción</option>
+                      <option v-for="n in 12" :key="n" :value="n">
+                        {{ n }} mes(es)
+                      </option>
+                    </select>
+                    <button
+                      class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
+                      :disabled="isInCart(contract.id, 'contract')"
+                      @click="addContractToCart(contract)"
+                    >
+                      {{
+                        isInCart(contract.id, 'contract')
+                          ? "Agregado"
+                          : "Agregar"
+                      }}
+                    </button>
+                  </div>
+                  
                 </td>
-                <td class="border border-gray-300 p-2 items-center">
-                  <div class="flex flex-col gap-2">
+                <td class="border border-gray-300 p-2 items-center gap-2">
+                  <span class="lg:hidden md:hidden block">Renta del dispositivo</span>
+                  <div class="flex flex-col gap-2 items-center">
                     <select
                       v-model="selectedMonthsPerRent[contract.id]"
                       class="border border-gray-400 p-1 rounded"
@@ -320,15 +382,16 @@ const removeFromCart = (contractId, type) => {
                     </select>
                     <button
                       class="bg-blue-500 text-white px-3 py-1 rounded disabled:opacity-50"
-                      :disabled="isInCart(contract.id, 'contract')"
+                      :disabled="isInCart(contract.id, 'rent')"
                       @click="addContractToRent(contract)"
                     >
                       {{
-                        isInCart(contract.id, "contract")
-                          ? "Ya agregado"
-                          : "Agregar al carrito"
+                        isInCart(contract.id, 'rent')
+                          ? "Agregado"
+                          : "Agregar"
                       }}
                     </button>
+
                   </div>
                 </td>
               </tr>
@@ -338,31 +401,31 @@ const removeFromCart = (contractId, type) => {
 
         <!-- Tabla de cargos individuales -->
         <div class="bg-white shadow rounded-lg p-5">
-          <h3 class="text-lg font-bold mb-3">Cargos Disponibles</h3>
-          <table
-            class="table-auto w-full border-collapse border border-gray-300 text-sm"
-          >
-            <thead>
+          <h3 class="text-lg font-bold mb-3">Cargos de Instalaciones</h3>
+          <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+            <thead  class="text-xs text-gray-700 uppercase bg-gray-950">
               <tr>
                 <th class="border border-gray-300 p-2">Descripción</th>
+                <th class="border border-gray-300 p-2">Del contrato</th>
+
                 <th class="border border-gray-300 p-2">Monto</th>
                 <th class="border border-gray-300 p-2">Acción</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="charge in availableCharges" :key="charge.id">
-                <td class="border border-gray-300 p-2">
-                  {{ formatDescription(charge.description) }}
-                </td>
-                <td class="border border-gray-300 p-2">
-                  {{ formatCurrency(charge.amount) }}
-                </td>
+                <td class="border border-gray-300 p-2">{{ formatDescription(charge.description) }}</td>
+                <td class="border border-gray-300 p-2">{{ formatDescription(charge.contractId) }}</td>
+                <td class="border border-gray-300 p-2">{{ formatCurrency(charge.amount) }}</td>
                 <td class="border border-gray-300 p-2">
                   <button
                     class="bg-green-500 text-white px-3 py-1 rounded"
+                    :disabled="isInCart(charge.id,'individual-charge')"
                     @click="addChargeToCart(charge)"
                   >
-                    Agregar al carrito
+                    {{
+                      isInCart(charge.id, "individual-charge") ? "Agregado": "Agregar"
+                    }}
                   </button>
                 </td>
               </tr>
@@ -373,10 +436,8 @@ const removeFromCart = (contractId, type) => {
         <!-- Carrito -->
         <div class="bg-white shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Carrito</h3>
-          <table
-            class="table-auto w-full border-collapse border border-gray-300 text-sm"
-          >
-            <thead>
+          <table class="table-auto w-full border-collapse border border-gray-300 text-sm">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-950">
               <tr>
                 <th class="border border-gray-300 p-2">Concepto</th>
                 <th class="border border-gray-300 p-2">Monto</th>
@@ -410,6 +471,7 @@ const removeFromCart = (contractId, type) => {
             </h4>
           </div>
         </div>
+       
         <div></div>
         <!-- Sección de Pago -->
         <div class="bg-gray-100 shadow rounded-lg p-5">
@@ -504,7 +566,12 @@ td {
 }
 
 th {
-  background-color: #2c3e50;
+  background-color: #9321fe;
+  /*
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+  --tw-gradient-from: #6366f1 var(--tw-gradient-from-position);
+  --tw-gradient-stops: var(--tw-gradient-from), #a855f7 var(--tw-gradient-via-position), var(--tw-gradient-to);
+  --tw-gradient-to: #ec4899 var(--tw-gradient-to-position);*/
   color: white;
   font-weight: 600;
 }

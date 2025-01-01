@@ -53,6 +53,8 @@ class PayController extends Controller
                     },
                 ])->where('id', $contractIds)->where('active', 1)->get();
 
+                
+
                 // dd($contracts);
                 if ($contracts->count() == 0) {
                     return Redirect::route('dashboard')->with('error', 'No hay contratos disponibles');
