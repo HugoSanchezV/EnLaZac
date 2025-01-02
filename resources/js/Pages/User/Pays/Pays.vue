@@ -278,7 +278,7 @@ const removeFromCart = (contractId, type) => {
     );
   }else if(type == 'individual-charge'){
     cart.value = cart.value.filter(
-      (item) => !(item.id === contractId && item.type === "rent") && item.contractId !== contractId && ((item.type === 'rent')||(item.type === 'contract'))
+      (item) => !(item.id === contractId && item.type === 'individual-charge')
     );
   }else{
     cart.value = cart.value.filter((item) => item.id !== contractId );

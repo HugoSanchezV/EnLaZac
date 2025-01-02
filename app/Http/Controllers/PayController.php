@@ -31,34 +31,40 @@ class PayController extends Controller
             $rent = Interest::sum('amount');
 
             $devices = Device::with(['inventorieDevice.contract'])->where('user_id', $userId)->get();
+       //     dd($devices);
 
             if ($devices->count() > 0) {
 
-                $contracts = [];
-
                 $contractIds = [];
+
                 foreach ($devices as $device) {
-                    if ($device->inventorieDevice) {
-                        if ($device->inventorieDevice->contract) {
-                            $contractIds[] = $device->inventorieDevice->contract->id;
-                        }
+                    if ($device->inventorieDevice && $device->inventorieDevice->contract) {
+                        $contractIds[] = $device->inventorieDevice->contract->id;
                     }
                 }
-
-
+                
+                // Verifica si hay IDs de contratos
+                if (empty($contractIds)) {
+                    return Redirect::route('dashboard')->with('error', 'No hay contratos disponibles');
+                }
+                
+                // Realiza una única consulta para obtener los contratos
                 $contracts = Contract::with([
                     'plan',
                     'charges' => function ($query) {
                         $query->where('paid', false); // Filtrar charges donde paid sea false
                     },
-                ])->where('id', $contractIds)->where('active', 1)->get();
-
+                ])->whereIn('id', $contractIds) // Filtrar por los IDs recopilados
+                  ->where('active', '1') // Filtrar contratos activos
+                  ->get();
                 
-
-                // dd($contracts);
-                if ($contracts->count() == 0) {
+                // Verifica si no se encontraron contratos
+                if ($contracts->isEmpty()) {
                     return Redirect::route('dashboard')->with('error', 'No hay contratos disponibles');
                 }
+                
+                // Aquí puedes continuar con la lógica usando $contracts
+                
             } else {
                 //$contracts = 0;
                 return Redirect::route('dashboard')->with('error', 'No hay contratos disponibles');
