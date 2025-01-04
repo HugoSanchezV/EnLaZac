@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentSanction\UpdatePaymentSanctionRequest;
+use App\Models\Contract;
 use App\Models\PaymentSanction;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,21 +14,32 @@ class PaymentSanctionController extends Controller
     public function update(Request $request, $id, $url = 'contracts'){
 
       // dd($request->status);
+        $controllerContract = new ContractController;
         try{
-            $validatedData = $request->validate(['status' => 'boolean',]);
+            $validatedData = $request->validate(['status' => 'boolean']);
 
             $paymentSanction = PaymentSanction::findOrFail($id);
 
             if($paymentSanction->status != $validatedData['status'])
             {
                 $paymentSanction->status = !$paymentSanction->status;
+
+            
     
                 $message = $paymentSanction->status ? 'activada' : 'desactivada';
-    
+                
+
+                if($paymentSanction->status){
+                    $controllerContract->sanctionActivedToContract($paymentSanction->contract_id);
+                }else{
+                    $controllerContract->sanctionDisabledToContract($paymentSanction->contract_id);
+                }
+
                 $paymentSanction->update([
     
                     'status' => $paymentSanction->status,
                 ]);
+
 
                 return redirect()->route('contracts')->with('success', 'Sanción '.$message.' exitosamente');
             }
@@ -52,13 +64,15 @@ class PaymentSanctionController extends Controller
        // dd("Sin ID");
         try{
 
-            $validatedData = $request->validate(['status' => 'boolean',]);
+            $validatedData = $request->validate(['status' => 'boolean']);
             if($validatedData['status'])
             {
                 PaymentSanction::create([
                     'contract_id' => $id,
                     'status' => true,
                 ]);
+
+                
 
                 return redirect()->route('contracts')->with('success', 'Sanción activada exitosamente');
             }
@@ -79,27 +93,44 @@ class PaymentSanctionController extends Controller
         ]);
     }
     public function shutDownSanction($id){
-        $payment = PaymentSanction::where('contract_id', $id)->first();
-        //Log::info("");
-        if($payment->applied){
+        try{
+            $payment = PaymentSanction::where('contract_id', $id)->first();
+            $controller = new ContractController;
+            //Log::info("");
+            //if($payment->applied){
+                
             $payment->update([
                 'contract_id' => $id,
                 'status' => false,
                 'applied' => false,
             ]);
-            
+                
+           // }
+            $controller->sanctionDisabledToContract($id);
+
+        }catch(Exception $e){
+            Log::error($e->getMessage());
         }
 
     }
 
     public function fromPayment($id){
-        $payment = PaymentSanction::where('contract_id', $id)->first();
-        Log::info("SE APLICO LA SANCION");
-        $payment->update([
-            'contract_id' => $id,
-            'status' => true,
-            'applied' => false
-        ]);
+        try{
+            $payment = PaymentSanction::where('contract_id', $id)->first();
+            $controller = new ContractController;
+            //Log::info("SE APLICO LA SANCION");
+            $payment->update([
+                'contract_id' => $id,
+                'status' => true,
+                'applied' => false
+            ]);
+            
+            $controller->sanctionActivedToContract($id);
+            
+        }catch(Exception $e)
+        {
+            Log::error($e->getMessage());
+        }
     }
 
     public function getSanction(){

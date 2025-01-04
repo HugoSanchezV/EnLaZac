@@ -390,6 +390,7 @@ class ContractController extends Controller
 
         $controller->store($contract->id);
     }
+    
     private function extend(Contract $contract)
     {
         $controller = new ExtendContractController();
@@ -401,20 +402,38 @@ class ContractController extends Controller
         $service = new ChargeService();
 
         $service->createChargeInstallation($contract);
-
-        // $controller = new ChargeController();
-        // $cargo = new Charge();
-        // $community = RuralCommunity::findOrFail($contract->rural_community_id);
-
-        // $cargo->contract_id = $contract->id;
-        // $cargo->description = "Cargo de instalación";
-        // $cargo->amount = $community->installation_cost;
-        // $cargo->paid = false;
-
-        // $controller->store_schedule($cargo);
     }
 
+    public function sanctionActivedToContract($id)
+    {
+        try{
+            $contract = Contract::findOrFail($id);
+            $contract->end_date = Carbon::parse($contract->end_date)->setDay(1);
+            $contract->save();
+           // Log::info("Con sanción: ".$contract->end_date);
+        }catch(Exception $e){
+            Log::error($e->getMessage());
+           // return $e->getMessage();
+        }
+    }
+    public function sanctionDisabledToContract($id)
+    {
+        try{
+          //  Log::info("Se desactivó la sancion al contrato");
+            $day = CutOffDay::first()->day ?? null;
 
+            $contract = Contract::findOrFail($id);
+            $contract->end_date = Carbon::parse($contract->end_date)->setDay($day);
+
+           // Log::info("Asi quedo el contrato despues de quitarle la sancion: ".$contract);
+    
+            $contract->save();
+        }catch(Exception $e){
+            Log::error("Aplicar sanción al contrato: ".$e->getMessage());
+
+            //return $e->getMessage();
+        }
+    }
 
     public function edit($id)
     {
@@ -498,13 +517,20 @@ class ContractController extends Controller
                     $deviceController->setConsumePlanToDevice($device[0], $plan);
                 }
 
+                $payment = PaymentSanction::where('contract_id', $id)->first();
+                $day = null;
+                if($payment->status){
+                    $day = 1;
+                }else{
+                    $day = $cutOffDay;
+                }
 
                 $contract->update(
                     [
                         'inv_device_id' => $validatedData['inv_device_id'],
                         'plan_id' => $validatedData['plan_id'],
-                        'start_date' => $validatedData['start_date'] . "-" . $cutOffDay,
-                        'end_date' => $validatedData['end_date'] . "-" . $cutOffDay,
+                        'start_date' => $validatedData['start_date'] . "-" . $day,
+                        'end_date' => $validatedData['end_date'] . "-" . $day,
                         'active' => $validatedData['active'],
                         'address' => $validatedData['address'],
                         'rural_community_id' => $validatedData['rural_community_id'],

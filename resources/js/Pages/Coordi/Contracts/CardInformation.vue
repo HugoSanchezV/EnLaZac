@@ -41,7 +41,14 @@ const props = defineProps({
         <!-- Nombre del usuario -->
         <div class="sm:col-span-1">
           <dt class="text-sm font-medium text-gray-600">Nombre de Usuario</dt>
-          <Link :href="route('usuarios.show', contract.user_id)" class="mt-1 text-sm text-gray-900">{{ contract.user_name || 'Sin asignar' }}</Link :href="route('usuarios.show', contract.user_id)">
+          <div v-if="contract.user_id !== null">
+
+            <Link :href="route('usuarios.show', contract.user_id)" class="mt-1 text-sm text-gray-900">{{ contract.user_name || 'Sin asignar' }}</Link :href="route('usuarios.show', contract.user_id)">
+
+          </div>
+          <div v-else>
+            <p>Sin asignar</p>
+          </div>
         </div>
 
         <!-- Email del usuario -->

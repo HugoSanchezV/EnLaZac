@@ -58,7 +58,7 @@ class CheckContracts extends Command
                 $this->processContracts($today, new ChargeService(), $equipmentDay);
             break;
 
-            case '14':
+            case '1':
                 $this->sanctionContracts();
             break;
 

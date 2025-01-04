@@ -45,18 +45,19 @@ const formatDescription = (description) =>{
       <div class="px-8 py-6">
         <!-- Lista de detalles en un diseño de rejilla responsivo -->
         <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          
-          <!-- ID del cargo -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">ID</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ installation.id }}</dd>
-          </div>
 
           <!-- ID del contrato  -->
           <div>
             <dt class="text-sm font-medium text-indigo-600">Id del contrato</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ installation.contract === null ? 'Sin asignar' : installation.contract.id }}
+              <div v-if="installation.contract !== null">
+                <Link :href="route('contracts.show', installation.contract.id)">
+                 {{ installation.contract.id }}
+                </Link>
+              </div>
+              <div v-else>
+                <p>Sin asignar</p>
+              </div>
             </dd>
           </div>
 
@@ -91,17 +92,6 @@ const formatDescription = (description) =>{
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: ["router"],
-  data() {
-    return {
-      modificarPassword: false,
-    };
-  },
-};
-</script>
 
   <style scoped>
   /* Estilos personalizados adicionales */

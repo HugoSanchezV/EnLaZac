@@ -51,6 +51,7 @@ class PayController extends Controller
                 // Realiza una única consulta para obtener los contratos
                 $contracts = Contract::with([
                     'plan',
+                    'paymentSanction',
                     'charges' => function ($query) {
                         $query->where('paid', false); // Filtrar charges donde paid sea false
                     },

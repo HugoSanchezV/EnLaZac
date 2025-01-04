@@ -288,12 +288,13 @@ const removeFromCart = (contractId, type) => {
 };
 
 const formatDateWithDay = (dateString) => {
-  const date = new Date(dateString); // Convertir la cadena en un objeto Date
+  // Agregar la hora para evitar problemas de huso horario
+  const date = new Date(`${dateString}T00:00:00`);
   return new Intl.DateTimeFormat("es-ES", {
-    weekday: "long", // Día de la semana
-    day: "numeric",  // Día del mes
-    month: "long",   // Mes completo
-    year: "numeric", // Año
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   }).format(date);
 };
 
@@ -477,7 +478,7 @@ const formatDateWithDay = (dateString) => {
         <div class="bg-gray-100 shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
           <div v-if="showPayment" class="mt-5">
-            <!-- <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" /> -->
+            <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" />
           </div>
         </div>
       </div>

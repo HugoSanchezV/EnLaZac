@@ -5,7 +5,7 @@
         <div class="flex justify-between">
           <h2>Información del contrato</h2>
           <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">Contrato No. {{
-            contract.id
+            contract.contract_id
           }}</span>
           
         </div>

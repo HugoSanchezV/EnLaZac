@@ -90,6 +90,17 @@ const getTag = (cellIndex) => {
   }
 };
 
+const formatDateWithDay = (dateString) => {
+  // Agregar la hora para evitar problemas de huso horario
+  const date = new Date(`${dateString}T00:00:00`);
+  return new Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+};
+
 const today = new Date();
 const formattedDate = today.toISOString().split("T")[0];
 </script>
@@ -252,11 +263,17 @@ const formattedDate = today.toISOString().split("T")[0];
                 <h2>Cambio de domicilio</h2>
               </div>
             </div>
+            <div v-else-if="cellIndex === 'assigned_date'" class="flex gap-1">
+              <span class="lg:hidden md:hidden block font-bold lowercase"
+                >{{ getTag(cellIndex) }} :</span
+              >
+              {{ formatDateWithDay(cell) }}
+            </div>
             <div v-else class="flex gap-1">
               <span class="lg:hidden md:hidden block font-bold lowercase"
                 >{{ getTag(cellIndex) }} :</span
               >
-              {{ cell }}
+              {{ (cell) }}
             </div>
           </td>
           <td class="flex items-stretch">

@@ -61,7 +61,7 @@ class ChargeController extends Controller
                 'created_at' => $item->created_at->format('Y-m-d H:i:s'),
             ];
         });
-
+       
         $totalChargesCount = Charge::count();
 
         return Inertia::render('Admin/Charges/Charges', [
@@ -81,25 +81,37 @@ class ChargeController extends Controller
 
     public function show($id)
     {
-        $charge = Charge::with('contract.inventorieDevice.device.user')->findOrFail($id);
+        try{
+            $charge = Charge::with('contract.inventorieDevice.device.user')->findOrFail($id);
+            
+    
+            return Inertia::render('Admin/Charges/Show', [
+                'charge' => $charge,
+            ]);
 
-        return Inertia::render('Admin/Charges/Show', [
-            'charge' => $charge,
-        ]);
+        }catch(Exception $e){
+            Log::error($e);
+            return redirect()->route('charges')->with('error', 'Error al mostrar el cargo');
+        }
     }
 
     public function edit($id)
     {
         try {
-
+            $controllerInterest = new InterestsController;
+            $interestFuera = $controllerInterest->getInterest('fuera-fecha');
+            $interestRecargo = $controllerInterest->getInterest('recargo-mes');
             $charge = Charge::findOrFail($id);
             $contracts = Contract::with('inventorieDevice', 'plan')->get();
 
             return Inertia::render('Admin/Charges/Edit', [
                 'charge' => $charge,
                 'contracts' => $contracts,
+                'interestFuera' => $interestFuera,
+                'interestRecargo' => $interestRecargo
             ]);
         } catch (Exception $e) {
+            Log::error($e);
             return redirect()->route('charges')->with('error', 'Hubo un error al obtener la información del registro');
         }
     }
@@ -113,6 +125,7 @@ class ChargeController extends Controller
             $charge->update($validatedData);
             return redirect()->route('charges')->with('success', 'Cargo Actualizado Con Éxito');
         } catch (Exception $e) {
+            Log::error($e);
             return redirect()->route('charges')->with('error', 'Error Al Actualizar El Cargo');
         }
     }
@@ -124,11 +137,11 @@ class ChargeController extends Controller
 
         $charge->save();
     }
-    public function installationCharge($type, $contract_id){
-        Charge::create([
-            'contract_id'
-        ]);
-    }
+    // public function installationCharge($type, $contract_id){
+    //     Charge::create([
+    //         'contract_id'
+    //     ]);
+    // }
     public function store_schedule(Charge $request)
     {
 
@@ -145,11 +158,15 @@ class ChargeController extends Controller
     public function create()
     {
         $contracts = Contract::with('inventorieDevice.device.user', 'plan')->get();
-        
+        $controllerInterest = new InterestsController;
+        $interestFuera = $controllerInterest->getInterest('fuera-fecha');
+        $interestRecargo = $controllerInterest->getInterest('recargo-mes');
         return Inertia::render(
             'Admin/Charges/Create',
             [
                 'contracts' => $contracts,
+                'interestFuera' => $interestFuera,
+                'interestRecargo' => $interestRecargo
             ]
         );
     }

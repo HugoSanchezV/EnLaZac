@@ -123,6 +123,7 @@ const submit = () => {
           id="price"
           v-model="form.price"
           type="number"
+          min="0"
           class="mt-1 block w-full"
           required
           autofocus
@@ -141,6 +142,7 @@ const submit = () => {
               id="burst_limit.upload_limits"
               v-model="form.burst_limit.upload_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="Mbps"
             />
@@ -151,6 +153,7 @@ const submit = () => {
             <TextInput
               id="burst_limit.download_limits"
               v-model="form.burst_limit.download_limits"
+              min="0"
               type="number"
               class="mt-1 block w-full"
               placeholder="Mbps"
@@ -170,6 +173,7 @@ const submit = () => {
               id="burst_threshold.upload_limits"
               v-model="form.burst_threshold.upload_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="Mbps"
             />
@@ -181,6 +185,7 @@ const submit = () => {
               id="burst_threshold.download_limits"
               v-model="form.burst_threshold.download_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="Mbps"
             />
@@ -199,6 +204,7 @@ const submit = () => {
               id="burst_time.upload_limits"
               v-model="form.burst_time.upload_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="S"
             />
@@ -210,6 +216,7 @@ const submit = () => {
               id="burst_time.download_limits"
               v-model="form.burst_time.download_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="S"
             />
@@ -228,6 +235,7 @@ const submit = () => {
               id="limite_at.upload_limits"
               v-model="form.limite_at.upload_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="Kbps"
             />
@@ -239,6 +247,7 @@ const submit = () => {
               id="limite_at.download_limits"
               v-model="form.limite_at.download_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="Kbps"
             />
@@ -257,6 +266,7 @@ const submit = () => {
               id="max_limit.upload_limits"
               v-model="form.max_limit.upload_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="Mbps"
             />
@@ -268,6 +278,7 @@ const submit = () => {
               id="max_limit.download_limits"
               v-model="form.max_limit.download_limits"
               type="number"
+              min="0"
               class="mt-1 block w-full"
               placeholder="Mbps"
             />
