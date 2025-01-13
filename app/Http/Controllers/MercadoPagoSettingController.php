@@ -27,6 +27,7 @@ class MercadoPagoSettingController extends Controller
      */
     public function update(Request $request)
     {
+      
         $request->validate([
             'active' => 'required|between:0,1',
             'mode' => 'required|in:sandbox,live',
@@ -36,6 +37,12 @@ class MercadoPagoSettingController extends Controller
             'live_client_secret' => 'nullable|string',
             'currency' => 'required|string',
         ]);
+
+        //dd($request->all());
+
+        $request["sandbox_client_id"] = $request->sandbox_client_id ?? '';
+        $request["sandbox_client_secret"] = $request->sandbox_client_secret ?? '';
+
 
         try {
             $fields = $request->only([
@@ -59,6 +66,7 @@ class MercadoPagoSettingController extends Controller
 
             return Redirect::route('settings.mercadopago.edit')->with('success', $message);
         } catch (Exception $e) {
+            dd($e->getMessage());
             Log::error('Error al guardar configuración de MercadoPago', [
                 'error' => $e->getMessage(),
                 'input' => $request->all(),

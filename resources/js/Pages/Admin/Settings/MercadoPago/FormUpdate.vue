@@ -52,10 +52,10 @@
 
         <!-- Sandbox Client Secret -->
         <div>
-          <InputLabel for="sandbox_client_secret" value="ID Client" />
+          <InputLabel for="live_client_id" value="ID Client" />
           <TextInput
-            id="sandbox_client_secret"
-            v-model="form.sandbox_client_secret"
+            id="live_client_id"
+            v-model="form.live_client_id"
             type="text"
             class="mt-1 block w-full"
             required
