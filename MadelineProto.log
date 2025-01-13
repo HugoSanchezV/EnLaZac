@@ -5472,3 +5472,1125 @@ PingLoop:       	Ping DC 1.0
 PingLoop:       	Ping DC 2.0
 Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
 Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 3 outgoing messages in DC 1, 1 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 5 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 5 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 5 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+MinDatabase:    	Found 2 pending contexts
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateDeleteMessages
+UpdateHandler:  	Saving update of type updateReadHistoryInbox
+UpdateHandler:  	Saving update of type updatePeerSettings
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 5 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+MinDatabase:    	Found 1 pending contexts
+FeedLoop:       	Getdiff fed me message of type message in update feed loop generic...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateNewMessage
+UpdateHandler:  	Saving update of type updateMessageID
+UpdateHandler:  	Saving update of type updatePeerSettings
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+MinDatabase:    	Found 1 pending contexts
+UpdateHandler:  	Parsing updates (updates) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateReadHistoryOutbox
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 5 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 5 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 5 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+UpdateHandler:  	Parsing updates (updatesTooLong) received via the socket...
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateServiceNotification
+entry:          	Telegram returned an RPC error: Concurrent usage of the current session from multiple connections was detected, the current session was invalidated by the server for security reasons! (406) (AUTH_KEY_DUPLICATED), caused by /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/RPCErrorException.php:804
+Revision: 8.3.5
+
+TL trace:
+['updates.getDifference']
+ResponseHandler.php(493):	make()
+WrappedFuture.php(59):	danog\MadelineProto\MTProtoSession\{closure}()
+CallHandler.php(92):	await()
+CallHandler.php(45):	methodCallAsyncRead()
+UpdateLoop.php(173):	methodCallAsyncRead()
+Loop.php(139):      	loop()
+Loop.php(251):      	loopInternal()
+AbstractDriver.php(597):	danog\Loop\{closure}()
+Revolt\EventLoop\Internal\{closure}()
+DriverSuspension.php(64):	resume()
+AbstractDriver.php(425):	Revolt\EventLoop\Internal\{closure}()
+AbstractDriver.php(616):	invokeMicrotasks()
+Revolt\EventLoop\Internal\{closure}()
+AbstractDriver.php(497):	resume()
+AbstractDriver.php(553):	invokeCallbacks()
+Revolt\EventLoop\Internal\{closure}()
+AbstractDriver.php(94):	resume()
+DriverSuspension.php(117):	Revolt\EventLoop\Internal\{closure}()
+Future.php(251):    	suspend()
+AbstractServer.php(176):	await()
+entry.php(119):     	waitShutdown()
+entry.php(154):     	danog\MadelineProto\Ipc\Runner\{closure}()
+
+MTProto:        	Reporting: Surfaced: Telegram returned an RPC error: Concurrent usage of the current session from multiple connections was detected, the current session was invalidated by the server for security reasons! (406) (AUTH_KEY_DUPLICATED), caused by /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/RPCErrorException.php:804
+Revision: 8.3.5
+
+TL trace:
+['updates.getDifference']
+ResponseHandler.php(493):	make()
+WrappedFuture.php(59):	danog\MadelineProto\MTProtoSession\{closure}()
+CallHandler.php(92):	await()
+CallHandler.php(45):	methodCallAsyncRead()
+UpdateLoop.php(173):	methodCallAsyncRead()
+Loop.php(139):      	loop()
+Loop.php(251):      	loopInternal()
+AbstractDriver.php(597):	danog\Loop\{closure}()
+Revolt\EventLoop\Internal\{closure}()
+DriverSuspension.php(64):	resume()
+AbstractDriver.php(425):	Revolt\EventLoop\Internal\{closure}()
+AbstractDriver.php(616):	invokeMicrotasks()
+Revolt\EventLoop\Internal\{closure}()
+AbstractDriver.php(497):	resume()
+AbstractDriver.php(553):	invokeCallbacks()
+Revolt\EventLoop\Internal\{closure}()
+AbstractDriver.php(94):	resume()
+DriverSuspension.php(117):	Revolt\EventLoop\Internal\{closure}()
+Future.php(251):    	suspend()
+AbstractServer.php(176):	await()
+entry.php(119):     	waitShutdown()
+entry.php(154):     	danog\MadelineProto\Ipc\Runner\{closure}()
+
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 8 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 6 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 3 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 1 incoming messages in DC 1, 0 left
+Session:        	Can't garbage collect ping_delay_disconnect with message ID 7459474705495123852 sent 2.900648794 seconds ago in DC 1, no response has been received or it wasn't yet handled!
+Session:        	Garbage collected 1 outgoing messages in DC 1, 1 left
+PingLoop:       	Ping DC 1.0
+AckHandler:     	No reply for message: ping_delay_disconnect with message ID 7459474705495123852 sent 5.001767583 seconds ago
+PingLoop:       	Error while pinging DC 1.0
+PingLoop:       	Amp\TimeoutException: Request timeout in /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/MTProtoSession/AckHandler.php:124
+Stack trace:
+#0 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/WrappedFuture.php(59): danog\MadelineProto\Connection::danog\MadelineProto\MTProtoSession\{closure}()
+#1 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/MTProtoSession/CallHandler.php(92): danog\MadelineProto\WrappedFuture->await()
+#2 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Loop/Connection/PingLoop.php(64): danog\MadelineProto\Connection->methodCallAsyncRead()
+#3 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(425): danog\MadelineProto\Loop\Connection\PingLoop->danog\MadelineProto\Loop\Connection\{closure}()
+#4 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(616): Revolt\EventLoop\Internal\AbstractDriver->invokeMicrotasks()
+#5 [internal function]: Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#6 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/DriverSuspension.php(64): Fiber->resume()
+#7 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(425): Revolt\EventLoop\Internal\DriverSuspension::Revolt\EventLoop\Internal\{closure}()
+#8 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(616): Revolt\EventLoop\Internal\AbstractDriver->invokeMicrotasks()
+#9 [internal function]: Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#10 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(497): Fiber->resume()
+#11 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(553): Revolt\EventLoop\Internal\AbstractDriver->invokeCallbacks()
+#12 [internal function]: Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#13 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(94): Fiber->resume()
+#14 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/DriverSuspension.php(117): Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#15 /home/hugo/proyectos/EnLaZac/vendor/amphp/amp/src/Future.php(251): Revolt\EventLoop\Internal\DriverSuspension->suspend()
+#16 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Ipc/AbstractServer.php(176): Amp\Future->await()
+#17 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Ipc/Runner/entry.php(119): danog\MadelineProto\Ipc\AbstractServer::waitShutdown()
+#18 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Ipc/Runner/entry.php(154): danog\MadelineProto\Ipc\Runner\{closure}()
+#19 {main}
+Session:        	Garbage collected 1 incoming messages in DC 2, 0 left
+Session:        	Can't garbage collect ping_delay_disconnect with message ID 7459474714085002116 sent 4.974731572 seconds ago in DC 2, no response has been received or it wasn't yet handled!
+Session:        	Garbage collected 1 outgoing messages in DC 2, 1 left
+PingLoop:       	Ping DC 2.0
+AckHandler:     	No reply for message: ping_delay_disconnect with message ID 7459474714085002116 sent 5.000481508 seconds ago
+PingLoop:       	Error while pinging DC 2.0
+PingLoop:       	Amp\TimeoutException: Request timeout in /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/MTProtoSession/AckHandler.php:124
+Stack trace:
+#0 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/WrappedFuture.php(59): danog\MadelineProto\Connection::danog\MadelineProto\MTProtoSession\{closure}()
+#1 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/MTProtoSession/CallHandler.php(92): danog\MadelineProto\WrappedFuture->await()
+#2 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Loop/Connection/PingLoop.php(64): danog\MadelineProto\Connection->methodCallAsyncRead()
+#3 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(425): danog\MadelineProto\Loop\Connection\PingLoop->danog\MadelineProto\Loop\Connection\{closure}()
+#4 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(616): Revolt\EventLoop\Internal\AbstractDriver->invokeMicrotasks()
+#5 [internal function]: Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#6 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/DriverSuspension.php(64): Fiber->resume()
+#7 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(425): Revolt\EventLoop\Internal\DriverSuspension::Revolt\EventLoop\Internal\{closure}()
+#8 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(616): Revolt\EventLoop\Internal\AbstractDriver->invokeMicrotasks()
+#9 [internal function]: Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#10 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(497): Fiber->resume()
+#11 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(553): Revolt\EventLoop\Internal\AbstractDriver->invokeCallbacks()
+#12 [internal function]: Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#13 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/AbstractDriver.php(94): Fiber->resume()
+#14 /home/hugo/proyectos/EnLaZac/vendor/revolt/event-loop/src/EventLoop/Internal/DriverSuspension.php(117): Revolt\EventLoop\Internal\AbstractDriver->Revolt\EventLoop\Internal\{closure}()
+#15 /home/hugo/proyectos/EnLaZac/vendor/amphp/amp/src/Future.php(251): Revolt\EventLoop\Internal\DriverSuspension->suspend()
+#16 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Ipc/AbstractServer.php(176): Amp\Future->await()
+#17 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Ipc/Runner/entry.php(119): danog\MadelineProto\Ipc\AbstractServer::waitShutdown()
+#18 /home/hugo/proyectos/EnLaZac/vendor/danog/madelineproto/src/Ipc/Runner/entry.php(154): danog\MadelineProto\Ipc\Runner\{closure}()
+#19 {main}
+ResponseHandler: 	Already got a response to ping_delay_disconnect with message ID 7459474714085002116 acked (by reply), but there is another reply incoming message pong with message ID 7459474714085002116!
+ResponseHandler: 	Already got a response to ping_delay_disconnect with message ID 7459474705495123852 acked (by reply), but there is another reply incoming message pong with message ID 7459474705495123852!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 3 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 3 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 3 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
