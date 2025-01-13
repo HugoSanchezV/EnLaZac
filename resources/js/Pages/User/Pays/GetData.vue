@@ -18,7 +18,7 @@ const props = defineProps({
   },
   mercadopago: {
     type: Number,
-  }
+  },
 });
 const carrito = ref([]);
 onMounted(() => {
@@ -33,15 +33,15 @@ onMounted(() => {
 <template>
   <div class="mt-5 w-full">
     <div class="mb-5 w-full">
-    
       <!-- <resources_vue_components_MercadoPagoButton v-if="mercadopago['active']" -->
-        <resources_vue_components_MercadoPagoButton v-if="mercadopago !== null && mercadopago == 1"
+      <resources_vue_components_MercadoPagoButton
+        v-if="mercadopago !== null && mercadopago == 1"
         :totalAmount="totalAmount"
         :allCart="cart"
       >
       </resources_vue_components_MercadoPagoButton>
     </div>
-    
+
     <div class="mt-5 w-full">
       <resources_js_components_PaypalButton
         :totalAmount="totalAmount"
@@ -51,7 +51,7 @@ onMounted(() => {
       >
       </resources_js_components_PaypalButton>
     </div>
-    
+
     <div class="">
       <resources_js_component_paymentlocal
         :totalAmount="totalAmount"

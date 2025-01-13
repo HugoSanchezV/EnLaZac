@@ -73,7 +73,8 @@ class PayController extends Controller
             // dd($contracts);
 
             $paypal = PaypalAccount::first();
-            $mercadopago = MercadoPagoSetting::select('active')->first();
+            $mercadopago = MercadoPagoSetting::select('active')->get()->first();
+            
             // Retornar la vista con los datos necesarios
 
             //   dd($rent);

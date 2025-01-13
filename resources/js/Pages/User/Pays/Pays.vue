@@ -478,7 +478,7 @@ const formatDateWithDay = (dateString) => {
         <div class="bg-gray-100 shadow rounded-lg p-5">
           <h3 class="text-lg font-bold mb-3">Métodos de Pago</h3>
           <div v-if="showPayment" class="mt-5">
-            <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago" />
+            <GetData :totalAmount="totalAmount" :cart="cart" :paypal="paypal" :mercadopago="mercadopago.active" />
           </div>
         </div>
       </div>
