@@ -3,7 +3,7 @@
     <dashboard-base :applyStyles="false">
       <template v-slot:namePage>
         <div class="flex justify-between">
-          <h2>Información de la installation</h2>
+          <h2>Información de la instalación</h2>
           <span class="bg-cyan-500 text-md text-white py-2 px-3 rounded-md">Instalacion No. {{
             installation.id
           }}</span>

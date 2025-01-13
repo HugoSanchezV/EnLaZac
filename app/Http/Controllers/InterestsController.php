@@ -79,4 +79,5 @@ class InterestsController extends Controller
     public function getInterest($name){
         return Interest::where('name',$name)->first();
     }
+
 }

@@ -106,6 +106,34 @@ const formatDescription = (tipo) => {
       return tipo;
   }
 };
+const formatDateWithDayAndTime = (dateString) => {
+  // Reemplazar espacio por "T" para convertir al formato ISO 8601
+  if(dateString !== ''){
+   // alert(dateString);
+    const validDateString = dateString.replace(" ", "T");
+    const date = new Date(validDateString);
+  
+    return new Intl.DateTimeFormat("es-ES", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date);
+
+  }
+};
+
+// console.log(formatDateWithDayAndTime("2026-07-01 19:09:43"));
+// Resultado: "miércoles, 1 de julio de 2026, 19:09"
+
+
+// console.log(formatDateTime("2025-01-02 19:09:43"));
+// Resultado: "jueves, 2 de enero de 2025, 19:09"
+
+
+//console.log(formatDateWithDay("2026-07-01")); // miércoles, 1 de julio de 2026
 
 const getTag = (cellIndex) => {
   console.log(cellIndex);
@@ -288,16 +316,29 @@ const getTag = (cellIndex) => {
             class="font-medium text-gray-900 whitespace-nowrap"
           >
         
-            <div v-if="cellIndex === 'paid'">
-              <span class="flex">
+            <div v-if="cellIndex === 'date_paid'" class="flex gap-1">
+       
+                <span class="lg:hidden md:hidden block font-bold lowercase">
+                  {{ getTag(cellIndex) }} :
+                </span>
+                  {{ formatDateWithDayAndTime(cell) }}
+        
+            </div>
+            <div v-else-if="cellIndex === 'paid'" class="flex gap-1">
                 <span class="lg:hidden md:hidden block font-bold lowercase">
                   {{ getTag(cellIndex) }} :
                     
           
                 </span>
-                
                   {{ cell == 0 ? " No" : " Sí" }}
-              </span>
+            </div>
+            <div v-else-if="cellIndex === 'created_at'" class="flex gap-1">
+                <span class="lg:hidden md:hidden block font-bold lowercase">
+                  {{ getTag(cellIndex) }} :
+                    
+          
+                </span>
+                  {{ formatDateWithDayAndTime(cell) }}
             </div>
             <div v-else-if="cellIndex === 'description'">
               <span class="flex">

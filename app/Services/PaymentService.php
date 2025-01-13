@@ -53,8 +53,6 @@ class PaymentService
             $controller->updateMonths($months, $id);
             $controllerSanction->shutDownSanction($id);
 
-
-
             if(!$isRent){
                 Log::info("SE VA A CONECTAR: ".$isRent);
                 $controllerDevice->connectUser($contract);

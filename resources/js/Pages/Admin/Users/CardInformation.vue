@@ -45,7 +45,7 @@ console.log(props.contract)
           >
         </div>
 
-        <h3 v-else>Sin Asignar</h3>
+        <h3 v-else>Conexión</h3>
       </div>
       <p class="mt-1 text-sm text-gray-500">
         Detalles sobre el contrato y el dispositivo asignado

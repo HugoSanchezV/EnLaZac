@@ -126,20 +126,8 @@ const closeModal = (id) => {
 
 const confirmSelection = (row, select, data) => {
   if(select.selectId != null){
-    const url = route("contracts.payment.sanction.update", select.selectId);
-    const attributeUrl = getOriginal(data.attribute);
-    router.put(url, {
-      status: select.status,
-      q: data.searchQuery,
-      attribute: attributeUrl,
-      order: data.order,
-    });
 
-   
-  }else{
-    if(select.status)
-    {
-      const url = route("contracts.payment.sanction.store", row.id);
+      const url = route("contracts.payment.sanction.update", select.selectId);
       const attributeUrl = getOriginal(data.attribute);
       router.put(url, {
         status: select.status,
@@ -147,11 +135,26 @@ const confirmSelection = (row, select, data) => {
         attribute: attributeUrl,
         order: data.order,
       });
-
-    }
+  }else{
+    console.log("select.selectId == null");
   }
   closeModal();
 }
+
+const formatDateWithDay = (dateString) => {
+  // Agregar la hora para evitar problemas de huso horario
+  const date = new Date(`${dateString}T00:00:00`);
+  return new Intl.DateTimeFormat("es-ES", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+};
+
+//console.log(formatDateWithDay("2026-07-01")); // miércoles, 1 de julio de 2026
+
+
 </script>
 
 <template>
@@ -303,18 +306,14 @@ const confirmSelection = (row, select, data) => {
             :key="cellIndex"
             class="font-medium text-gray-900 whitespace-nowrap"
           >
-            <div v-if="cellIndex === 'geolocation'">
-              {{
-                typeof cell === "object"
-                  ? JSON.stringify(cell)
-                      .replace(/[{}""]/g, "")
-                      .replace(/[:]/g, ": ")
-                      .replace(/[,]/g, " | ")
-                      .replace("latitude", "Latitud")
-                      .replace("longitude", "Longitud")
-                      .replace("null", "Sin locación")
-                  : String(cell).replace(/[{}]/g, "")
-              }}
+            <div v-if="cellIndex === 'end_date'" class="flex gap-1">
+              <span class="lg:hidden md:hidden block font-bold lowercase"
+                  >{{ getTag(cellIndex) }} :</span
+                >
+              <span class="">
+                {{formatDateWithDay(cell)}}
+
+              </span>
             </div>
             <div v-else-if="cellIndex === 'active'">
               <div v-if="cell == 0">

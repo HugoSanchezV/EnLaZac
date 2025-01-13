@@ -66,18 +66,16 @@ const formattedDate = (dateCreation) => {
       <div class="px-8 py-6">
         <!-- Lista de detalles en un diseño de rejilla responsivo -->
         <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          
-          <!-- ID del cargo -->
-          <div>
-            <dt class="text-sm font-medium text-indigo-600">ID</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ charge.id }}</dd>
-          </div>
 
           <!-- ID del contrato  -->
           <div>
             <dt class="text-sm font-medium text-indigo-600">Id del contrato</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ charge.contract === null ? 'Sin asignar' : charge.contract.id }}
+            <dd class="mt-1 text-lg font-semibold text-gray-900" v-if="charge.contract !== null">
+              <Link 
+              :href="route('contracts.show',charge.contract.id)"
+              >
+                {{ charge.contract?.id }}
+              </Link>
             </dd>
           </div>
 
@@ -85,7 +83,7 @@ const formattedDate = (dateCreation) => {
            <div>
             <dt class="text-sm font-medium text-indigo-600">Nombre del usuario</dt>
             <dd class="mt-1 text-lg font-semibold text-gray-900">
-              {{ charge.contract === null ? 'Sin asignar' : charge.contract.inventorie_device.device.user.name }}
+              {{ charge.contract?.inventorie_device?.device?.user?.name === null ? 'Sin asignar' : charge.contract?.inventorie_device?.device.user?.name }}
             </dd>
           </div>
 
@@ -104,7 +102,7 @@ const formattedDate = (dateCreation) => {
           <!-- Fecha de pago -->
           <div>
             <dt class="text-sm font-medium text-indigo-600">Fecha de pago</dt>
-            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ charge.date_paid }}</dd>
+            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ charge.date_paid === null ? 'Sin fecha':charge.date_paid }}</dd>
           </div>
 
           <!-- creado en -->

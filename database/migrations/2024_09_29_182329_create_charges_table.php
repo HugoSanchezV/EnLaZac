@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('amount');
             $table->boolean('paid');
-            $table->date('date_paid')->nullable();
+            $table->datetime('date_paid')->nullable();
             $table->timestamps();
         });
     }
