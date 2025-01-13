@@ -5069,3 +5069,275 @@ PingLoop, 715339411:       	Ping DC 1.0
 Session, 715339411:        	Garbage collected 15 incoming messages in DC 1, 0 left
 Session, 715339411:        	Garbage collected 16 outgoing messages in DC 1, 0 left
 AbstractServer, 715339411: 	Accepted IPC client connection!
+Logger:         	MadelineProto 8.3.5
+Logger:         	Copyright (C) 2016-2025 Daniil Gentili
+Logger:         	Licensed under AGPLv3
+Logger:         	https://github.com/danog/MadelineProto
+Serialization:  	Got exclusive session lock!
+DataCenter:     	Acquiring connect lock for 2!
+DataCenter:     	Connecting to DC 2
+DataCenterConnection: 	Restoring 0 messages to DC 2
+Session:        	Resetting session in DC 2.0 due to creating initial session...
+Connection:     	Connecting to DC 2.0 via tcp://149.154.167.50:443 main DC 2, via ipv4 using AbridgedStream => BufferedRawStream => DefaultStream 
+Connection:     	Connected to DC 2.0 via tcp://149.154.167.50:443 main DC 2, via ipv4 using AbridgedStream => BufferedRawStream => DefaultStream!
+DataCenterConnection: 	Acquiring lock in order to init auth for DC 2
+DataCenterConnection: 	Initing auth for DC 2
+DataCenterConnection: 	Done initing auth for DC 2
+Session:        	Garbage collected 0 outgoing messages in DC 2, 1 left
+PingLoop:       	Ping DC 2.0
+MTProto:        	AUTH_KEY_UNREGISTERED
+MTProto:        	Starting update system
+APIWrapper:     	MadelineProto is ready!
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/ipcState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/ipcState.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+AbstractServer: 	Accepted IPC client connection!
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 7 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 6 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 2.0
+Login:          	Sending code...
+ResponseHandler: 	Resending auth.sendCode with message ID 7459470719765568760 sent 0.573799424 seconds ago to new DC 1...
+DataCenter:     	Acquiring connect lock for 1!
+DataCenter:     	Connecting to DC 1
+DataCenterConnection: 	Restoring 0 messages to DC 1
+Session:        	Resetting session in DC 1.0 due to creating initial session...
+Connection:     	Connecting to DC 1.0 via tcp://149.154.175.51:443 main DC 1, via ipv4 using AbridgedStream => BufferedRawStream => DefaultStream 
+Connection:     	Connected to DC 1.0 via tcp://149.154.175.51:443 main DC 1, via ipv4 using AbridgedStream => BufferedRawStream => DefaultStream!
+DataCenterConnection: 	Acquiring lock in order to init auth for DC 1
+DataCenterConnection: 	Initing auth for DC 1
+DataCenterConnection: 	Generating permanent authorization key for DC 1...
+AuthKeyHandler: 	Requesting pq...
+Session:        	Garbage collected 0 outgoing messages in DC 1, 1 left
+ResponseHandler: 	Trying to assign a response of type ResPQ to its request...
+ResponseHandler: 	Does the request of return type ResPQ match?
+ResponseHandler: 	Yes
+AuthKeyHandler: 	Factorizing with native_single_cpp (please wait, might take a while)
+AuthKeyHandler: 	Factorizing with python_single_alt (please wait, might take a while)
+AuthKeyHandler: 	Install https://prime.madelineproto.xyz and the FFI extension to speed this up!
+AuthKeyHandler: 	Factorizing with python_single (please wait, might take a while)
+AuthKeyHandler: 	Install https://prime.madelineproto.xyz and the FFI extension to speed this up!
+AuthKeyHandler: 	Factorizing with native_single (please wait, might take a while)
+AuthKeyHandler: 	Install https://prime.madelineproto.xyz and the FFI extension to speed this up!
+AuthKeyHandler: 	Factorization 2984985904490393893 = 1726093619 * 1729330247
+AuthKeyHandler: 	Starting Diffie Hellman key exchange
+ResponseHandler: 	Trying to assign a response of type Server_DH_Params to its request...
+ResponseHandler: 	Does the request of return type Server_DH_Params match?
+ResponseHandler: 	Yes
+AuthKeyHandler: 	Server-client time delta = -1.0 s
+Crypt:          	Executing p/g checks (1/2)...
+Crypt:          	Executing p/g checks (2/2)...
+Crypt:          	Executing g check...
+Crypt:          	Executing g_a check (1/2)...
+Crypt:          	Executing g_a check (2/2)...
+AuthKeyHandler: 	Generating b...
+AuthKeyHandler: 	Generating g_b...
+Crypt:          	Executing g_a check (1/2)...
+Crypt:          	Executing g_a check (2/2)...
+AuthKeyHandler: 	Executing g_b check...
+AuthKeyHandler: 	Preparing client_DH_inner_data...
+AuthKeyHandler: 	Executing set_client_DH_params...
+ResponseHandler: 	Trying to assign a response of type Set_client_DH_params_answer to its request...
+ResponseHandler: 	Does the request of return type Set_client_DH_params_answer match?
+ResponseHandler: 	Yes
+AuthKeyHandler: 	Generating authorization key (install gmp to speed up this process)...
+AuthKeyHandler: 	Diffie Hellman key exchange processed successfully!
+AuthKeyHandler: 	Auth key generated
+DataCenterConnection: 	Generating temporary authorization key for DC 1...
+AuthKeyHandler: 	Requesting pq...
+ResponseHandler: 	Trying to assign a response of type ResPQ to its request...
+ResponseHandler: 	Does the request of return type ResPQ match?
+ResponseHandler: 	Yes
+AuthKeyHandler: 	Factorizing with native_single_cpp (please wait, might take a while)
+AuthKeyHandler: 	Factorizing with python_single_alt (please wait, might take a while)
+AuthKeyHandler: 	Install https://prime.madelineproto.xyz and the FFI extension to speed this up!
+AuthKeyHandler: 	Factorizing with python_single (please wait, might take a while)
+AuthKeyHandler: 	Install https://prime.madelineproto.xyz and the FFI extension to speed this up!
+AuthKeyHandler: 	Factorizing with native_single (please wait, might take a while)
+AuthKeyHandler: 	Install https://prime.madelineproto.xyz and the FFI extension to speed this up!
+AuthKeyHandler: 	Factorization 1659038529652085651 = 1270123867 * 1306202153
+AuthKeyHandler: 	Starting Diffie Hellman key exchange
+Session:        	Garbage collected 3 incoming messages in DC 2, 0 left
+Session:        	Can't garbage collect auth.sendCode sent 4.277753546 seconds ago in DC 2, no response has been received or it wasn't yet handled!
+Session:        	Garbage collected 2 outgoing messages in DC 2, 1 left
+PingLoop:       	Ping DC 2.0
+ResponseHandler: 	Trying to assign a response of type Server_DH_Params to its request...
+ResponseHandler: 	Does the request of return type Server_DH_Params match?
+ResponseHandler: 	Yes
+AuthKeyHandler: 	Server-client time delta = 0.0 s
+Crypt:          	Executing p/g checks (1/2)...
+Crypt:          	Executing p/g checks (2/2)...
+Crypt:          	Executing g check...
+Crypt:          	Executing g_a check (1/2)...
+Crypt:          	Executing g_a check (2/2)...
+AuthKeyHandler: 	Generating b...
+AuthKeyHandler: 	Generating g_b...
+Crypt:          	Executing g_a check (1/2)...
+Crypt:          	Executing g_a check (2/2)...
+AuthKeyHandler: 	Executing g_b check...
+AuthKeyHandler: 	Preparing client_DH_inner_data...
+AuthKeyHandler: 	Executing set_client_DH_params...
+ResponseHandler: 	Trying to assign a response of type Set_client_DH_params_answer to its request...
+ResponseHandler: 	Does the request of return type Set_client_DH_params_answer match?
+ResponseHandler: 	Yes
+AuthKeyHandler: 	Generating authorization key (install gmp to speed up this process)...
+AuthKeyHandler: 	Diffie Hellman key exchange processed successfully!
+AuthKeyHandler: 	Auth key generated
+DataCenterConnection: 	Binding authorization keys...
+WriteLoop:      	Skipping auth.sendCode sent 7.280061908 seconds ago due to unbound keys in DC 1.0
+DataCenterConnection: 	Bound temporary and permanent authorization keys, DC 1
+WriteLoop:      	Skipping auth.sendCode sent 7.490886589 seconds ago due to uninited connection in DC 1.0
+WriteLoop:      	Writing client info (also executing help.getConfig)...
+DataCenterConnection: 	Done initing auth for DC 1
+PingLoop:       	Ping DC 1.0
+Login:          	Code sent successfully! Once you receive the code you should use the completePhoneLogin function.
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 15 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 13 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 2 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 3 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Login:          	Logging in as a normal user...
+Login:          	Logged in successfully!
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+MTProto:        	Starting update system
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+FeedLoop:       	Resumed update feed loop generic
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 15 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 19 outgoing messages in DC 1, 0 left
+UpdateHandler:  	Parsing updates (updateShort) received via the socket...
+FeedLoop:       	Resumed update feed loop generic
+UpdateHandler:  	Saving update of type updateUserStatus
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 4 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 5 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+PingLoop:       	Ping DC 1.0
+PingLoop:       	Ping DC 2.0
+Session:        	Garbage collected 3 incoming messages in DC 1, 0 left
+Session:        	Garbage collected 4 outgoing messages in DC 1, 0 left
+PingLoop:       	Ping DC 1.0
+Session:        	Garbage collected 2 incoming messages in DC 2, 0 left
+Session:        	Garbage collected 2 outgoing messages in DC 2, 0 left
+PingLoop:       	Ping DC 2.0
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/safe.php.lock...
+SessionPaths:   	Waiting for exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+SessionPaths:   	Got exclusive lock of /home/hugo/proyectos/EnLaZac/storage/madelineproto/session.madeline/lightState.php.lock...
+APIWrapper:     	Saved session!
