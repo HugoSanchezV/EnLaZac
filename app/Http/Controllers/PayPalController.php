@@ -25,7 +25,7 @@ class PayPalController extends Controller
             $paypalAccount = PaypalAccount::first();
 
             $paypalModule->setApiCredentials([
-                'mode'    => 'sandbox', // Por defecto 'sandbox'
+                'mode'    => 'live', // Por defecto 'sandbox'
                 'sandbox' => [
                     'client_id'     => $paypalAccount->live_client_id ?? '',
                     'client_secret' => $paypalAccount->live_client_secret ?? '',
@@ -91,7 +91,7 @@ class PayPalController extends Controller
             $paypalAccount = PaypalAccount::first();
 
             $paypalModule->setApiCredentials([
-                'mode'    => 'sandbox', // Por defecto 'sandbox'
+                'mode'    => 'live', // Por defecto 'sandbox'
                 'sandbox' => [
                     'client_id'     => $paypalAccount->live_client_id ?? '',
                     'client_secret' => $paypalAccount->live_client_secret ?? '',
