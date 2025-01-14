@@ -588,7 +588,7 @@ class ContractController extends Controller
             return Redirect::route('contracts', $data)->with('success', 'Contrato Eliminado Con Éxito');
         } catch (Exception $e) {
             DB::rollBack();
-            return Redirect::route('contracts', $data)->with('error', 'Error al cargar el registro' . $e);
+            return Redirect::route('contracts', $data)->with('error', 'Error al eliminar el contrato ' . $e);
         }
     }
 

@@ -19,6 +19,11 @@ use Illuminate\Support\Facades\Redirect;
 class StatisticsController extends Controller
 {
     private $route = [];
+    private $target = [];
+    private $upload_rate = [];
+    private $download_rate = [];
+    private $upload_byte = [];
+    private $download_byte = [];
 
     public function index(Request $request)
     {
@@ -119,6 +124,7 @@ class StatisticsController extends Controller
 
     public function showAdmin($id = null)
     {
+        
         //Varias consultas para mandar aca
         $morrosos = self::morrososCount();
 
@@ -127,19 +133,35 @@ class StatisticsController extends Controller
         $newTickets = self::currentTickets();
         $userCount = self::userCount();
         
-        $id = isset($id) ? $id : Router::first()->id;
+        $id = isset($id) ? $id : (Router::first() ? Router::first()->id : null);
 
-        $trafficData = self::conectar($id);
+        if(!is_null($id)){
+            $trafficData = self::conectar($id);
+    
+            self::gettingTraffic($trafficData);
+        }
 
-        if (empty($trafficData)) {
-            $target = [];
-            $upload_rate = [];
-            $download_rate = [];
-            $upload_byte = [];
-            $download_byte = [];
+        $all_routers = Router::select('id')->where('sync', 1)->orderBy('id', 'asc')->get();
+        return Inertia::render('DashboardBase', [
+            'morrosos' => $morrosos,
+            'activeDevice' => $activeDevice,
+            'new_tickets' => $newTickets,
+            'currentUsers' => $userCount,
+            'activeContract' => $activeContract,
+            'target' => $this->target,
+            'upload_rate' => $this->upload_rate,
+            'download_rate' => $this->download_rate,
+            'upload_byte' => $this->upload_byte,
+            'download_byte' => $this->download_byte,
+            'routers' => $this->route,
+            'all_routers' => $all_routers,
+        ]);
+    }
 
-            $this->route = [];
-        } else {
+    private function gettingTraffic($trafficData)
+    {
+        if (!empty($trafficData)) {
+            
             foreach ($trafficData as $data) {
                 if (!is_null($data)) {
                     foreach ($data as $dt) {
@@ -157,11 +179,11 @@ class StatisticsController extends Controller
                             $download_byteTemp[] = self::convertToMb($byteArray[1]);  // Tasa de bajada
                         }
                     }
-                    $target[] = $targetTemp;
-                    $upload_rate[] = $upload_rateTemp;
-                    $download_rate[] = $download_rateTemp;
-                    $upload_byte[] = $upload_byteTemp;
-                    $download_byte[] = $download_byteTemp;
+                    $this->target[] = $targetTemp;
+                    $this->upload_rate[] = $upload_rateTemp;
+                    $this->download_rate[] = $download_rateTemp;
+                    $this->upload_byte[] = $upload_byteTemp;
+                    $this->download_byte[] = $download_byteTemp;
 
                     $targetTemp = [];
                     $upload_rateTemp = [];
@@ -171,24 +193,6 @@ class StatisticsController extends Controller
                 }
             }
         }
-        //     dd(Carbon::now()->toString());
-        //  dd($userCount->count());
-        // dd('Terminó');
-        $all_routers = Router::select('id')->where('sync', 1)->orderBy('id', 'asc')->get();
-        return Inertia::render('DashboardBase', [
-            'morrosos' => $morrosos,
-            'activeDevice' => $activeDevice,
-            'new_tickets' => $newTickets,
-            'currentUsers' => $userCount,
-            'activeContract' => $activeContract,
-            'target' => $target,
-            'upload_rate' => $upload_rate,
-            'download_rate' => $download_rate,
-            'upload_byte' => $upload_byte,
-            'download_byte' => $download_byte,
-            'routers' => $this->route,
-            'all_routers' => $all_routers,
-        ]);
     }
     function convertToGb($bytes)
     {
