@@ -12,7 +12,12 @@
     <template v-slot:content>
       <div class="flex justify-center w-full">
         <div class="rounded-lg w-full md:w-1/2 md:max-w-2xl">
-          <FormUpdate :charge="charge" :contracts="contracts" />
+          <FormUpdate 
+          :charge="charge" 
+          :contracts="contracts" 
+          :interestFuera="interestFuera"
+          :interestRecargo="interestRecargo"
+          />
         </div>
       </div>
     </template>
@@ -34,6 +39,12 @@ export default {
     },
     charge:{
       type: Object,
+    },
+    interestFuera: {
+    type: Number
+    },
+    interestRecargo: {
+      type: Number
     }
   },
 };
