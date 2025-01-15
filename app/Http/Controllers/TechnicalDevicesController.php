@@ -33,7 +33,6 @@ class TechnicalDevicesController extends Controller
 
     public function index(Request $request)
     {
-
         // Trabajamos con Eloquent directamente, sin getQuery()
         $query = Device::with(['inventorieDevice:id,mac_address', 'user:id,name', 'router:id,ip_address']);
 
@@ -508,9 +507,9 @@ class TechnicalDevicesController extends Controller
         return $this->sendPing($device, $url);
     }
 
-    public function setDeviceStatus(Device $device, $url = 'technical.routers.devices')
+    public function setDeviceStatus(Device $device, Request $request, $url = 'technical.routers.devices')
     {
-        $device = Device::findOrFail($device->id);
+        $device = Device::lockForUpdate()->findOrFail($device->id);
         $router = $device->router;
 
         $state = 1;
@@ -565,16 +564,26 @@ class TechnicalDevicesController extends Controller
             });
         } catch (\Exception $e) {
             $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
-            return Redirect::route($url)->with('error', $message);
+            return Redirect::route($url, [
+                "router" => $device->router_id,
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])->with('error', $message);
         }
 
         $message = $action . ' ' . $device->address . ' realizado con éxito';
-        return Redirect::route($url, $router)->with('success', $message);
+        return Redirect::route($url, [
+            "router" => $device->router_id,
+            "q" => $request->q,
+            "attribute" => $request->attribute,
+            "order" => $request->order,
+        ])->with('success', $message);
     }
 
-    public function AllsetDeviceStatus(Device $device, $url = 'technical.devices')
+    public function AllsetDeviceStatus(Device $device, Request $request, $url = 'technical.devices')
     {
-        return $this->setDeviceStatus($device, $url);
+        return $this->setDeviceStatus($device, $request, $url);
     }
 
     public function setDeviceStatusContrato(Device $device)

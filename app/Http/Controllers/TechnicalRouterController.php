@@ -308,6 +308,7 @@ class TechnicalRouterController extends Controller
 
     public function devices(Router $router, Request $request)
     {
+        // dd($request->all());
         // aqui no se usa query por que el has many no tiene,
         // por lo tanto podemos usar durecto el router -> devices 
         $query = $router->devices();
@@ -329,11 +330,14 @@ class TechnicalRouterController extends Controller
         }
 
         // Ordenación
-        if ($request->attribute) {
-            $query->orderBy($request->attribute, $request->order);
-        } else {
-            $query->orderBy('id', 'asc');
+        $order = 'asc';
+        if ($request->order && in_array(strtolower($request->order), ['asc', 'desc'], true)) {
+            $order = strtolower($request->order);
         }
+        $query->orderBy(
+            $request->attribute ?: 'id',
+            $order
+        );
 
         // Paginación
         $devices = $query

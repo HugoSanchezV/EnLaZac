@@ -206,7 +206,7 @@ class RouterController extends Controller
                 $routerOSService = RouterOSService::getInstance();
                 $routerOSService->connect($id);
 
-                $router = Router::findOrFail($id);
+                $router = Router::lockForUpdate()->findOrFail($id);
 
                 $address = $routerOSService->executeCommand('/ip/address/print');
 

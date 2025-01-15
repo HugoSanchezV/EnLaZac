@@ -9,7 +9,9 @@ import ModalUsers from "@/Pages/Admin/Components/ModalUsers.vue";
 
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 import { usePage } from "@inertiajs/vue3";
+import debounce from "lodash.debounce";
 
+const isProcessing = ref(false);
 const admin = usePage().props.auth.user.admin;
 // ACCION DE ELIMINAR
 
@@ -84,13 +86,55 @@ const destroy = (id, data) => {
   );
 };
 
-const setDeviceStatus = (row) => {
+// const setDeviceStatus = (row) => {
+//   const url = route("devices.set.status", {
+//     device: row.id,
+//   });
+
+//   router.patch(url, () => {});
+// };
+
+const setDeviceStatus = (row, data) => {
+  console.log(isProcessing.value);
+
+  if (isProcessing.value) {
+    const toast = useToast();
+
+    toast.warnig("Espere un momento", {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+
+    return;
+  }
+
+  isProcessing.value = true;
+
+  const toast = useToast();
+
+  toast.success("Procesando peticion...", {
+    position: POSITION.TOP_CENTER,
+    draggable: true,
+  });
+
+  actionSetDeviceStatus(row, data);
+};
+
+const actionSetDeviceStatus = debounce((row, data) => {
+  const attributeUrl = getOriginal(data.attribute);
+
   const url = route("devices.set.status", {
     device: row.id,
   });
 
-  router.patch(url, () => {});
-};
+  router.patch(url, {
+    q: data.searchQuery,
+    attribute: attributeUrl,
+    order: data.order,
+  });
+
+  isProcessing.value = false;
+}, 750);
 
 const isModalOpen = ref({});
 const isModalDeviceOpen = ref({});
@@ -348,7 +392,14 @@ const getTag = (cellIndex) => {
                   type="checkbox"
                   :checked="cell === 0"
                   class="sr-only peer"
-                  @click="setDeviceStatus(row)"
+                  :disabled="isProcessing"
+                  @click="
+                    setDeviceStatus(row, {
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
+                    })
+                  "
                 />
                 <div
                   class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:ring-blue-300 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-green-300"

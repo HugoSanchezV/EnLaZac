@@ -174,6 +174,9 @@ Route::middleware([
         Route::put('/devices/update/{device}',          [DevicesController::class, 'update'])->name('devices.update');
         Route::put('/devices/all/update/{device}',          [DevicesController::class, 'device_all_update'])->name('devices.all.update');
 
+        Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
+        Route::patch('/devices/all/set/device/status/{device}',     [DevicesController::class, 'AllsetDeviceStatus'])->name('devices.all.set.status');
+
         Route::get('/tickets',                   [TicketController::class, 'index'])->name('tickets');
         Route::post('/tickets/statusUpdate/{id}', [TicketController::class, 'statusUpdate'])->name('tickets.statusUpdate');
         Route::get('/tickets/create',            [TicketController::class, 'create'])->name('tickets.create');
@@ -238,8 +241,7 @@ Route::middleware([
         Route::delete('/devices/delete/{device}',          [DevicesController::class, 'destroy'])->name('devices.destroy');
         Route::delete('/devices/all/delete/{device}',          [DevicesController::class, 'device_all_destroy'])->name('devices.all.destroy');
         // -- device red
-        Route::patch('/devices/set/device/status/{device}',     [DevicesController::class, 'setDeviceStatus'])->name('devices.set.status');
-        Route::patch('/devices/all/set/device/status/{device}',     [DevicesController::class, 'AllsetDeviceStatus'])->name('devices.all.set.status');
+        
         Route::get('/devices/set/device/ping/{device}',  [DevicesController::class, 'sendPing'])->name('devices.ping');
         // -- ping
         Route::get('/devices/{router}/ping',                  [DevicesController::class, 'pingAllDevice'])->name('devices.all.ping');

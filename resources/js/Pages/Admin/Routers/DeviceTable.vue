@@ -9,10 +9,13 @@ import ModalUsers from "../Components/ModalUsers.vue";
 
 import FilterOrderBase from "@/Components/Base/FilterOrderBase.vue";
 import BaseExportExcel from "@/Components/Base/Excel/BaseExportExcel.vue";
+
+import debounce from "lodash.debounce";
 // ACCION DE ELIMINAR
 
 const toRouteExport = "routers.devices.excel";
 const urlComplete = route(toRouteExport, route().params.router);
+const isProcessing = ref(false);
 
 const getOriginal = (data) => {
   if (data === "id interno") {
@@ -82,14 +85,47 @@ const destroy = (id, data) => {
   );
 };
 
-const setDeviceStatus = (row) => {
+const setDeviceStatus = (row, data) => {
+  console.log(isProcessing.value);
+
+  if (isProcessing.value) {
+    const toast = useToast();
+
+    toast.warnig("Espere un momento", {
+      position: POSITION.TOP_CENTER,
+      draggable: true,
+    });
+
+    return;
+  }
+
+  isProcessing.value = true;
+
+  const toast = useToast();
+
+  toast.success("Procesando peticion...", {
+    position: POSITION.TOP_CENTER,
+    draggable: true,
+  });
+
+  actionSetDeviceStatus(row, data);
+};
+
+const actionSetDeviceStatus = debounce((row, data) => {
+  const attributeUrl = getOriginal(data.attribute);
+
   const url = route("devices.set.status", {
     device: row.id,
   });
 
+  router.patch(url, {
+    q: data.searchQuery,
+    attribute: attributeUrl,
+    order: data.order,
+  });
 
-  router.patch(url, () => {});
-};
+  isProcessing.value = false;
+}, 750);
 
 const isModalOpen = ref({});
 const isModalDeviceOpen = ref({});
@@ -351,7 +387,14 @@ const getTag = (cellIndex) => {
                   type="checkbox"
                   :checked="cell == 0"
                   class="sr-only peer"
-                  @click="setDeviceStatus(row)"
+                  :disabled="isProcessing"
+                  @click="
+                    setDeviceStatus(row, {
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
+                    })
+                  "
                 />
                 <div
                   class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 peer-focus:ring-blue-300 rounded-full peer bg-gray-300 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-300 peer-checked:bg-green-300"
@@ -373,9 +416,9 @@ const getTag = (cellIndex) => {
                   @close="closeDeviceModal(row.id)"
                   @selectData="
                     confirmSelectionDevice(row, $event, {
-                      searchQuery: this.searchQuery,
-                      attribute: this.currentFilter,
-                      order: this.currentOrder,
+                      searchQuery: searchQuery,
+                      attribute: currentFilter,
+                      order: currentOrder,
                     })
                   "
                   :data="inv_devices"
@@ -512,7 +555,6 @@ const getTag = (cellIndex) => {
                 Consumo
               </Link>
 
-            
               <Link
                 :href="
                   route('contracts.create', {
@@ -532,8 +574,10 @@ const getTag = (cellIndex) => {
                 Nuevo Contrato
               </Link>
               <Link
-              v-else-if="(row.device_id?.contract?.id !== undefined &&
-                    row.device_id?.contract?.id !== null)"
+                v-else-if="
+                  row.device_id?.contract?.id !== undefined &&
+                  row.device_id?.contract?.id !== null
+                "
                 :href="route('contracts.show', row.device_id?.contract?.id)"
                 class="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
               >

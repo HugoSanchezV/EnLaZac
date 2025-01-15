@@ -480,7 +480,7 @@ class DevicesController extends Controller
             default => 'Estado desconocido',
         };
     }
-    
+
     public function sendPing(Device $device, $url = 'routers.devices')
     {
 
@@ -551,9 +551,9 @@ class DevicesController extends Controller
         return $this->sendPing($device, $url);
     }
 
-    public function setDeviceStatus(Device $device, $url = 'routers.devices')
+    public function setDeviceStatus(Device $device, Request $request, $url = 'routers.devices')
     {
-        $device = Device::findOrFail($device->id);
+        $device = Device::lockForUpdate()->findOrFail($device->id);
         $router = $device->router;
 
         $state = 1;
@@ -608,16 +608,29 @@ class DevicesController extends Controller
             });
         } catch (\Exception $e) {
             $message = 'Falla al ' . $action . ' el dispositivo, intentalo más tarde';
-            return Redirect::route($url)->with('error', $message);
+            return Redirect::route($url, [
+                "router" => $device->router_id,
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ])->with('error', $message);
         }
 
         $message = $action . ' ' . $device->address . ' realizado con éxito';
-        return Redirect::route($url, $router)->with('success', $message);
+        return Redirect::route(
+            $url,
+            [
+                "router" =>  $device->router_id,
+                "q" => $request->q,
+                "attribute" => $request->attribute,
+                "order" => $request->order,
+            ]
+        )->with('success', $message);
     }
 
-    public function AllsetDeviceStatus(Device $device, $url = 'devices')
+    public function AllsetDeviceStatus(Device $device, Request $request, $url = 'devices')
     {
-        return $this->setDeviceStatus($device, $url);
+        return $this->setDeviceStatus($device, $request, $url);
     }
 
     public function disconectUser(Contract $contract)
