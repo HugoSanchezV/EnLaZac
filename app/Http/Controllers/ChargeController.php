@@ -102,7 +102,7 @@ class ChargeController extends Controller
             $interestFuera = $controllerInterest->getInterest('fuera-fecha')->amount;
             $interestRecargo = $controllerInterest->getInterest('recargo-mes')->amount;
             $charge = Charge::findOrFail($id);
-            $contracts = Contract::with('inventorieDevice', 'plan', 'ruralCommunity')->get();
+            $contracts = Contract::with('inventorieDevice.device.user', 'plan', 'ruralCommunity')->get();
 
             return Inertia::render('Admin/Charges/Edit', [
                 'charge' => $charge,
