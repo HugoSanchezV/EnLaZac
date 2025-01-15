@@ -10,6 +10,8 @@ import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
   contracts: Array,
+  interestRecargo: Number,
+  interestFuera: Number,
   
 });
 const customDescription = ref('');
@@ -17,7 +19,7 @@ const customDescription = ref('');
 const form = useForm({
   contract_id: "",
   description: "",
-  amount: 0, 
+  amount: "0.0", 
   paid:"",
   date_paid:"", 
 });
@@ -77,6 +79,35 @@ const paid = () =>{
   }
 }
 
+const findContract = (id) => {
+  return props.contracts.find((contract) => contract.id === id);
+}
+
+const handleDescriptionChange = () =>{
+
+  if(form.contract_id.length !== 0){
+    let contract = findContract(form.contract_id);
+    switch(form.description){
+      case "cambio-domicilio":
+      case "instalacion-inicial":
+        form.amount = contract.rural_community.installation_cost;
+        break;
+      case "renta-dispositivo":
+        form.amount = (parseFloat(props.interestRecargo) + parseFloat(props.interestFuera)).toString();
+      break;
+      case "recargo-mes":
+        form.amount = (props.interestRecargo).toString();
+      break;
+      case "fuera-corte":
+        form.amount = (props.interestFuera).toString();
+      break;
+  
+    }
+  }else{
+    console.log("contract_id null");
+  }
+}
+
 const submit = () => {
   if(paid()){
     if(form.description == 'custom'){ form.description = customDescription.value}
@@ -119,7 +150,7 @@ const submit = () => {
           <!-- Select para elegir una descripción -->
           <select
               v-model="form.description"
-              @change="handleDescriptionChange"
+              @change="handleDescriptionChange()"
               class="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           >
               <option disabled value="">Selecciona la descripción</option>

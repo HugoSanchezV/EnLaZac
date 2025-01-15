@@ -91,7 +91,7 @@ class ChargeController extends Controller
 
         }catch(Exception $e){
             Log::error($e);
-            return redirect()->route('charges')->with('error', 'Error al mostrar el cargo');
+            return redirect()->route('charges')->with('errorr', 'Error al mostrar el cargo');
         }
     }
 
@@ -99,10 +99,10 @@ class ChargeController extends Controller
     {
         try {
             $controllerInterest = new InterestsController;
-            $interestFuera = $controllerInterest->getInterest('fuera-fecha');
-            $interestRecargo = $controllerInterest->getInterest('recargo-mes');
+            $interestFuera = $controllerInterest->getInterest('fuera-fecha')->amount;
+            $interestRecargo = $controllerInterest->getInterest('recargo-mes')->amount;
             $charge = Charge::findOrFail($id);
-            $contracts = Contract::with('inventorieDevice', 'plan')->get();
+            $contracts = Contract::with('inventorieDevice', 'plan', 'ruralCommunity')->get();
 
             return Inertia::render('Admin/Charges/Edit', [
                 'charge' => $charge,
@@ -157,10 +157,12 @@ class ChargeController extends Controller
 
     public function create()
     {
-        $contracts = Contract::with('inventorieDevice.device.user', 'plan')->get();
+        $contracts = Contract::with('inventorieDevice.device.user', 'plan', 'ruralCommunity')->get();
         $controllerInterest = new InterestsController;
-        $interestFuera = $controllerInterest->getInterest('fuera-fecha');
-        $interestRecargo = $controllerInterest->getInterest('recargo-mes');
+        $interestFuera = $controllerInterest->getInterest('fuera-fecha')->amount;
+        $interestRecargo = $controllerInterest->getInterest('recargo-mes')->amount;
+
+      //  dd($interestFuera);
         return Inertia::render(
             'Admin/Charges/Create',
             [

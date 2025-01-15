@@ -580,15 +580,19 @@ class ContractController extends Controller
 
             $device = Device::where('device_id', $contract->inv_device_id)->get();
 
-            $deviceController = new DevicesController();
-            $deviceController->removeConsumePlanFromDevice($device[0]);
+            if($device->count() > 0){
+                $deviceController = new DevicesController();
+                $deviceController->removeConsumePlanFromDevice($device[0]);
+            }
 
             $contract->delete();
             DB::commit();
             return Redirect::route('contracts', $data)->with('success', 'Contrato Eliminado Con Éxito');
         } catch (Exception $e) {
             DB::rollBack();
-            return Redirect::route('contracts', $data)->with('error', 'Error al cargar el registro' . $e);
+
+            Log::Error("Error al eliminar el contrato: ".$e->getMessage());
+            return Redirect::route('contracts', $data)->with('error', 'Error al eliminar el contrato ' . $e);
         }
     }
 
