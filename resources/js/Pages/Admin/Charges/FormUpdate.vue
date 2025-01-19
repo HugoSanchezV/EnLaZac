@@ -215,6 +215,7 @@ onMounted(() => {
           <TextInput
             id="amount"
             v-model="form.amount"
+            step=".01"
             type="number"
             min = "0"
             class="mt-1 block w-full"

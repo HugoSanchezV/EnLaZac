@@ -80,7 +80,7 @@ const submit = () => {
   <div class="mt-5">
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <!-- Name -->
-      <div>
+      <div >
         <InputLabel for="name" value="Nombre" />
         <TextInput
           id="name"
@@ -95,7 +95,7 @@ const submit = () => {
       </div>
 
       <!-- Description -->
-      <div>
+      <div class="mt-4">
         <InputLabel for="description" value="Descripción" />
         <TextInput
           id="description"
@@ -110,7 +110,7 @@ const submit = () => {
       </div>
 
       <!-- Price -->
-      <div>
+      <div class="mt-4">
         <InputLabel for="price" value="Precio" />
         <TextInput
           id="price"

@@ -89,7 +89,9 @@ const getTag = (cellIndex) => {
       break;
   }
 };
-
+const canShow = (row) =>{
+  return !Object.entries(row).some(([key, value]) => key === 'description' && value === '2');
+}
 const formatDateWithDay = (dateString) => {
   // Agregar la hora para evitar problemas de huso horario
   const date = new Date(`${dateString}T00:00:00`);
@@ -278,6 +280,19 @@ const formattedDate = today.toISOString().split("T")[0];
           </td>
           <td class="flex items-stretch">
             <div class="sm:flex gap-4 flex flex-wrap actions">
+              <Link 
+                :href="route('contracts.edit', row.contract_id)"
+                v-if="admin === 1 && canShow(row)" 
+                class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
+              >
+                <span class="material-symbols-outlined" style="font-size: 16px">
+                  edit_calendar
+                </span>
+
+                Ampliar primer pago
+              </Link>
+
+              
               <Link
                 :href="route('installation.show', row.id)"
                 v-if="show"
@@ -301,18 +316,7 @@ const formattedDate = today.toISOString().split("T")[0];
                 Mostrar
               </Link>
 
-              <Link 
-                :href="route('contracts.edit', row.contract_id)"
-                v-if="admin === 1"
-                class="flex items-center gap-2 bg-green-500 hover:bg-green-600 py-1 px-2 rounded-md text-white sm:mb-0 mb-1"
-              >
-                <span class="material-symbols-outlined" style="font-size: 16px">
-                  edit_calendar
-                </span>
-
-                Ampliar primer pago
-              </Link>
-
+              
               <Link
                 v-if="edit"
                 :href="route('installation.edit', row.id)"
