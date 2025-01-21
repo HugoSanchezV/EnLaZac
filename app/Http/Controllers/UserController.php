@@ -180,7 +180,12 @@ class UserController extends Controller
                     $register->delete();
                 }
 
-                self::make_register_notification($user);
+                try{
+
+                    self::make_register_notification($user);
+                }catch(Exception $e){
+                    dd($e->getMessage()." Te encontr[e");
+                }
 
                 return $user;
             });
@@ -201,7 +206,8 @@ class UserController extends Controller
 
             return redirect()->route('usuarios')->with('success', 'Usuario creado con éxito ' . $message, 'user');
         } catch (Exception $e) {
-            return redirect()->route('usuarios')->with('success', 'Hubo un problema al crear el registro', 'user');
+            Log::info($e->getMessage());
+            return redirect()->route('usuarios')->with('error', 'Hubo un problema al crear el registro', 'user');
         }
     }
 

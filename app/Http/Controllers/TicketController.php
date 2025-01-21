@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\TicketNotification;
 use App\Events\TicketEvent;
+use App\Events\TicketTechnicalEvent;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -136,17 +137,27 @@ class TicketController extends Controller
             $user_id = $request->user_id;
         }
 
-        $validatedData = $request->validated();
+        try{
+            $validatedData = $request->validated();
+    
+            // print('HOLAAA');
+            $ticket = Ticket::create([
+                'subject' => $validatedData['subject'],
+                'description' => $validatedData['description'],
+                'user_id' => $user_id,
+                'technical_id' => $request->technical_id ?? null,
+            ]);
+    
+            self::make_ticket_notification($ticket);
+            if(!is_null($request->technical_id)){
+                self::make_ticket_technical_notification($ticket, $request->technical_id);
+            }
 
-        // print('HOLAAA');
-        $ticket = Ticket::create([
-            'subject' => $validatedData['subject'],
-            'description' => $validatedData['description'],
-            'user_id' => $user_id,
-            'technical_id' => $request->technical_id ?? null,
-        ]);
-
-        self::make_ticket_notification($ticket);
+        }catch(Exception $e)
+        {
+            Log::error($e->getMessage());
+            return redirect()->route('tickets')->with('error', 'Error al crear el Ticket');
+        }
 
         return redirect()->route('tickets')->with('success', 'Ticket creado con éxito');
     }
@@ -176,16 +187,30 @@ class TicketController extends Controller
 
     public function update(UpdateTicketRequest $request, $id)
     {
+
         $ticket = Ticket::findOrFail($id);
 
-        $validatedData = $request->validated();
-        $ticket->update([
-            'subject' => $validatedData['subject'],
-            'status' => $validatedData['status'],
-            'description' => $validatedData['description'],
-            'user_id' => $request->user_id ?? null,
-            'technical_id' => $request->technical_id ?? null,
-        ]);
+        try{
+            $old_user = $ticket->technical_id;
+            $validatedData = $request->validated();
+            $ticket->update([
+                'subject' => $validatedData['subject'],
+                'status' => $validatedData['status'],
+                'description' => $validatedData['description'],
+                'user_id' => $request->user_id ?? null,
+                'technical_id' => $request->technical_id ?? null,
+            ]);
+            if(!is_null($request->technical_id))
+            {
+                if($old_user != $request->technical_id){
+                    self::make_ticket_technical_notification($ticket, $request->technical_id);
+                }
+            }
+
+        }catch(Exception $e){
+            Log::error($e->getMessage());
+            return redirect()->route('tickets')->with('error', 'Error Al Actualizar El Ticket');
+        }
         return redirect()->route('tickets')->with('success', 'Ticket Actualizado Con Éxito');
     }
     public function statusUpdate(UpdateTicketStatusRequest $request, $id)
@@ -217,6 +242,9 @@ class TicketController extends Controller
         }
     }
 
+    static function make_ticket_technical_notification(Ticket $ticket, $id){
+        event(new TicketTechnicalEvent($ticket, $id));
+    }
     static function make_ticket_notification($ticket)
     {
         event(new TicketEvent($ticket));

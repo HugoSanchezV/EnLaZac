@@ -20,10 +20,10 @@ class TelegramService
 
         try {
             // Crear una instancia de Settings
-            $settings = new Settings($settingsArray);
+            // $settings = new Settings($settingsArray);
 
-            // Inicializar MadelineProto con la instancia de Settings
-            $this->madelineProto = new API($session, $settings);
+            // // Inicializar MadelineProto con la instancia de Settings
+            // $this->madelineProto = new API($session, $settings);
         } catch (\Exception $e) {
             Log::error('Error al inicializar MadelineProto: ' . $e->getMessage());
             throw $e;

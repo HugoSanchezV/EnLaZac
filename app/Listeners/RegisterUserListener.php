@@ -51,7 +51,7 @@ class RegisterUserListener
         return "Nuevo usuario registrado no. ".$event->user->id;
     }
     public function createHTML($usuario){
-        $url = route('usuario.show', ['id' => $usuario->id]);
+        $url = route('usuarios.show', ['user' => $usuario]);
         return '
     <!DOCTYPE html>
     <html>

@@ -241,12 +241,12 @@ const formattedDate = (dateCreation) => {
                           <div
                             v-if="
                               notification.type ==
-                              'App\\Notifications\\TicketNotification'
+                              'App\\Notifications\\TicketTechnicalNotification'
                             "
                           >
                             <Link
                               :href="
-                                route('tickets.show', notification.data.id)
+                                route('technical.tickets.show', notification.data.id)
                               "
                               class="dropdown-item"
                               @click.prevent="
