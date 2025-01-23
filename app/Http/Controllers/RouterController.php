@@ -171,8 +171,25 @@ class RouterController extends Controller
     public function destroy(Request $request, $id)
     {
         try {
-            $router = Router::findOrFail($id);
-            $router->delete();
+            DB::transaction(function () use ($id) {
+                $router = Router::findOrFail($id);
+
+
+                $device = Device::with("inventorieDevice")
+                    ->select('device_id')
+                    ->where('router_id', $id)
+                    ->whereNotNull('device_id')
+                    ->get();
+
+                if ($device->isNotEmpty()) {
+                    foreach ($device as $item) {
+                        InventorieDevicesController::changeStateDevice($item->device_id, 0);
+                    }
+                }
+
+                $router->delete();
+            });
+
             return Redirect::route('routers', $request->query())->with('success', 'Router Eliminado Con Éxito');
         } catch (Exception $e) {
             return Redirect::route('routers', $request->query())->with('error', 'Error al cargar el registro');
@@ -187,14 +204,14 @@ class RouterController extends Controller
         try {
 
             $routerOSService = RouterOSService::getInstance();
-        if($routerOSService->connectMessage($id)){
-            $routerOSService->disconnect();
+            if ($routerOSService->connectMessage($id)) {
+                $routerOSService->disconnect();
 
-            return Redirect::route('routers')->with('success', "El dispositivo está en línea.");
-        }else{
-            return Redirect::route('routers')->with('error', "El dispositivo se encuentra fuera de línea");
-           //return "Offline";
-        }
+                return Redirect::route('routers')->with('success', "El dispositivo está en línea.");
+            } else {
+                return Redirect::route('routers')->with('error', "El dispositivo se encuentra fuera de línea");
+                //return "Offline";
+            }
         } catch (Exception $e) {
             return Redirect::route('routers')->with('error', $e->getMessage());
         }
@@ -220,28 +237,28 @@ class RouterController extends Controller
                         '?list' => 'MOROSOS'
                     ]
                 );
-                    
+
                 // dd($users);
-                
+
                 $db_devices = Device::where('router_id', $id)->get();
-                
+
                 if (!empty($users) && !empty($db_devices)) {
                     $users = $this->routerService->getDevicesNotInDatabase($users, $db_devices);
-                    
+
                     if (empty($users)) {
                         return Redirect::route('routers')->with('success', 'El router se encuntra actualizado, todos los id conciden con la base de datos');
                     }
                 }
-                
+
                 $total_devices = count($users);
                 $enable_devices = 0;
-                
+
                 foreach ($users as $user) {
-                    
+
                     $comment = isset($user['comment']) ? mb_convert_encoding($user['comment'], 'UTF-8', 'auto')  : null;
-                    
+
                     $enable_devices += $user["disabled"] === "false" ? 1 : 0;
-                    
+
                     Device::create(
                         [
                             "device_internal_id" => $user[".id"],
@@ -253,7 +270,7 @@ class RouterController extends Controller
                             "address" => $user["address"],
                             "creation_time" => now(),
                             "disabled" => $user["disabled"] === "false" ? 0 : 1,
-                            ]
+                        ]
                     );
                 }
 
@@ -280,9 +297,8 @@ class RouterController extends Controller
             return Redirect::route('routers')->with('success', 'Router Sincronizado con Éxito');
         } catch (Exception $e) {
             // dd($e);
-            if($e->getCode() === "HY000") {
+            if ($e->getCode() === "HY000") {
                 dd($e);
-
             }
             return Redirect::route('routers')->with('error', $e->getMessage());
         }

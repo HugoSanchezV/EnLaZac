@@ -15,7 +15,7 @@
                 <li class="mb-3">
                   <p>
                     Solo se aceptan archivos
-                    <span class="font-extrabold">.csv, .xls, .xlsx</span>
+                    <span class="font-extrabold"> .xls, .xlsx</span>
                   </p>
                 </li>
 

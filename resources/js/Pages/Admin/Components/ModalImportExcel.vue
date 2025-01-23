@@ -15,7 +15,7 @@
                 type="file"
                 name="excel"
                 id="excel"
-                accept=".csv, .xls, .xlsx"
+                accept=" .xls, .xlsx"
                 required
                 ref="fileInput"
               />

@@ -19,11 +19,19 @@ class UserImport implements ToModel, WithHeadingRow, WithValidation
      */
     public function model(array $row)
     {
+        // Convertir el número a cadena y limpiar caracteres no numéricos
+        // $phone = preg_replace('/\D/', '', (string)$row['numero']);
+
+        // // Validar que sea numérico y de 10 dígitos
+        // if (!is_numeric($phone) || strlen($phone) !== 10) {
+        //     throw new \Exception("El número de teléfono debe ser numérico y tener exactamente 10 dígitos. Dato recibido: {$phone}");
+        // }
+
         $user = new User([
             'name' => $row['nombre'],
             'email' => $row['email'],
             'alias' => $row['alias'],
-            'phone' => $row['numero'],
+            'phone' => strval($row['numero']),
             'password' => Hash::make($row['password']),
             'admin' => $row['role'] === 1 ? 0 : $row['role'],
         ]);
@@ -48,7 +56,7 @@ class UserImport implements ToModel, WithHeadingRow, WithValidation
             'nombre' => 'required|string|max:255',
             'alias' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'phone' => 'required|string|size:10|unique:users,phone',
+            'numero' => 'required|size:10|unique:users,phone',
             'password' => 'required|string|min:8',
             'role' => 'required|integer|in:0,2,3',
         ];
