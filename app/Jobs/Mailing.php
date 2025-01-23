@@ -6,6 +6,7 @@ use App\Models\MailSetting;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -58,6 +59,7 @@ class Mailing implements ShouldQueue
                 back()->with('success', 'Email has been sent.');
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             back()->with('error', 'Message could not be sent');
         }
     }

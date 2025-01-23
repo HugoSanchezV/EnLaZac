@@ -9,10 +9,12 @@ use App\Events\RegisterUserEvent;
 use App\Listeners\ContractWarningListener;
 use App\Events\ContractWarningEvent;
 use App\Events\PingTecnicoEvent;
+use App\Events\TicketTechnicalEvent;
 use App\Listeners\ContractWarningListen;
 use App\Listeners\PingTecnicoListener;
 use App\Listeners\RegisterUserListener;
 use App\Listeners\TicketListener;
+use App\Listeners\TicketTechnicalListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -29,7 +31,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         PingTecnicoEvent::class => [
             PingTecnicoListener::class,
-        ]
+        ],
+        TicketTechnicalEvent::class =>[
+            TicketTechnicalListener::class,
+        ],
     ];
     
     /**

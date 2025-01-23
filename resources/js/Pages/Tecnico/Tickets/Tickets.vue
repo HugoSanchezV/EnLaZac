@@ -45,7 +45,7 @@ const filters = [
               summarize
             </span>
 
-            Crear Tickets
+            Crear Ticket
           </Link>
         </div>
       </div>

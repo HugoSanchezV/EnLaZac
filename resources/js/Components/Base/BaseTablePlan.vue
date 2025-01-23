@@ -69,6 +69,15 @@ const destroy = (id, data) => {
   );
 };
 
+const subString = (text) => {
+
+  if(text.length < 69){
+    return text;
+  }else{
+   return text.substr(0, 70) + "...";
+  }
+};
+
 const getTag = (cellIndex) => {
   switch (cellIndex) {
     case "name":
@@ -291,6 +300,12 @@ const getTag = (cellIndex) => {
 
                 {{ cell.upload_limits }}
               </span>
+            </div>
+            <div v-else-if="cellIndex === 'description'">
+              <div class="flex-wrap break-words whitespace-normal">
+                {{ subString(cell) }}
+                
+              </div>
             </div>
             <div v-else>
               <div class="flex gap-1">

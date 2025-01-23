@@ -442,7 +442,7 @@ Route::middleware([
         Route::get('/tickets/create/usuario',            [TicketController::class, 'create_user'])->name('tickets.usuario.create');
         Route::post('/tickets/store/usuario',          [TicketController::class, 'store_user'])->name('tickets.usuario.store');
         Route::get('/tickets/edit/usuario/{id}',         [TicketController::class, 'edit_user'])->name('tickets.usuario.edit')->middleware(['ticket']);
-        Route::get('/tickets/update/usuario/{id}',         [TicketController::class, 'update_user'])->name('tickets.usuario.update')->middleware(['ticket']);
+        Route::put('/tickets/update/usuario/{id}',         [TicketController::class, 'update_user'])->name('tickets.usuario.update')->middleware(['ticket']);
         Route::delete('/tickets/delete/usuario/{id}',    [TicketController::class, 'destroy_user'])->name('tickets.usuario.destroy')->middleware(['ticket']);
 
 

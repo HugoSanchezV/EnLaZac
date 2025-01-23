@@ -175,7 +175,7 @@ onMounted(() => {
             >
               <option :value="null" selected>Selecciona una opción</option>
               <option v-for="contract in contracts" :key="contract.id" :value="contract.id">
-                  {{ "Contracto: "+contract.id + " - Disp.: " + (contract?.device?.mac_address || "Sin asignar")   + " - Plan: "+ (contract?.plan?.name || "Sin asignar") }}
+                {{ "Contracto: "+contract.id + " - Usuario: " + (contract.inventorie_device?.device?.user?.name || "Sin asignar")  + " - Plan: "+ (contract?.plan?.name || "Sin asignar") }}
               </option>
             </select>
         </div>
@@ -215,6 +215,7 @@ onMounted(() => {
           <TextInput
             id="amount"
             v-model="form.amount"
+            step=".01"
             type="number"
             min = "0"
             class="mt-1 block w-full"

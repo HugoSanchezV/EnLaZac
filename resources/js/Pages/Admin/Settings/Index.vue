@@ -187,7 +187,7 @@ import { Link } from "@inertiajs/vue3";
                   design_services
                 </span>
 
-                <span>Variable del servicio</span>
+                <span>Variables del servicio</span>
               </div>
             </Link>
 
