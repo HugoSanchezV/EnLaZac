@@ -131,10 +131,10 @@ class UserController extends Controller
 
             foreach ($devices as $device) {
                 // Verifica si el dispositivo tiene un contrato
-                if(!is_null($device->inventorieDevice)){
+                if (!is_null($device->inventorieDevice)) {
 
                     $contract = Contract::with('plan')->where('inv_device_id', $device->inventorieDevice->id)->get();
-                }else{
+                } else {
                     $contract = null;
                 }
                 // $plan = $contract ? Plan::find($contract->plan_id) : null;
@@ -155,7 +155,7 @@ class UserController extends Controller
             ]);
         } catch (Exception $e) {
             Log::Error($e->getMessage());
-         //   dd($e->getMessage());
+            //   dd($e->getMessage());
             return Redirect::route('usuarios')->with('error', 'Error al mostrar el usuario');
         }
     }
@@ -169,7 +169,7 @@ class UserController extends Controller
                     'name' => $validatedData['name'],
                     'alias' => $validatedData['alias'],
                     'email' => $validatedData['email'],
-                    'phone' => $validatedData['phone'],
+                    'phone' => $validatedData['phone'] ?? null,
                     'password' => Hash::make($validatedData['password']),
                     'admin' => $validatedData['admin'],
                 ]);
@@ -180,27 +180,30 @@ class UserController extends Controller
                     $register->delete();
                 }
 
-                try{
+                try {
 
                     self::make_register_notification($user);
-                }catch(Exception $e){
-                    dd($e->getMessage()." Te encontr[e");
+                } catch (Exception $e) {
+                    dd($e->getMessage() . " Te encontr[e");
                 }
 
                 return $user;
             });
 
-            $chatId = UserTelegramService::createContactTelegramSendMessage([
-                'name' => $request->name,
-                'alias' => $request->alias,
-                'phone' => '52' . $request->phone,
-            ], $this->telegramService);
+            if ($request->phone !== null) {
+                $chatId = UserTelegramService::createContactTelegramSendMessage([
+                    'name' => $request->name,
+                    'alias' => $request->alias,
+                    // 'phone' => '52' . $request->phone,
+                    'phone' => $request->phone,
+                ], $this->telegramService);
 
-            if ($chatId) {
-                TelegramAccount::create([
-                    'chat_id' => $chatId,
-                    'user_id' => $user->id,
-                ]);
+                if ($chatId) {
+                    TelegramAccount::create([
+                        'chat_id' => $chatId,
+                        'user_id' => $user->id,
+                    ]);
+                }
             }
             $message = isset($chatId) ? 'Agregado a telegram' : 'Sin telegram';
 

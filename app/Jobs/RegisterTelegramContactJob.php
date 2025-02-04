@@ -29,7 +29,8 @@ class RegisterTelegramContactJob implements ShouldQueue
             $chatId = UserTelegramService::createContactTelegramSendMessage([
                 'name' => $this->user->name,
                 'alias' => $this->user->alias ?? '',
-                'phone' => '52' . $this->user->phone,
+                // 'phone' => '52' . $this->user->phone,
+                'phone' => $this->user->phone,
             ], $telegramService);
 
             if ($chatId) {

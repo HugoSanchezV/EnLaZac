@@ -13,12 +13,14 @@ const form = useForm({
 });
 
 const submit = () => {
-  if (!/^\d{10}$/.test(form.phone)) {
-    toast.error("El número de teléfono debe tener exactamente 12 dígitos", {
-      position: POSITION.TOP_CENTER,
-      draggable: true,
-    });
-
+  if (!/^(52|1)\d{10}$/.test(form.phone)) {
+    toast.error(
+      "El número de teléfono debe comenzar con 52(mx) o 1(usa) y tener exactamente 10 dígitos después",
+      {
+        position: POSITION.TOP_CENTER,
+        draggable: true,
+      }
+    );
     return;
   }
 
@@ -38,6 +40,7 @@ const submit = () => {
     <form @submit.prevent="submit" class="border p-14 m-5 bg-white">
       <div class="mt-4">
         <InputLabel for="phone" value="Teléfono" />
+        <p class="text-sm mt-1 text-gray-600">52(mx) o 1(usa) seguido de 10 dígitos <span class="text-red-500">*</span> </p>
         <TextInput
           minlength="12"
           maxlength="12"

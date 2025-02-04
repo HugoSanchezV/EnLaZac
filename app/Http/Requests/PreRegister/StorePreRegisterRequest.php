@@ -26,7 +26,8 @@ class StorePreRegisterRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'size:10',
+                'min:11',
+                'max:12',
                 'unique:pre_register_users,phone',
                 'unique:users,phone',
             ],

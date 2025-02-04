@@ -5,6 +5,7 @@ import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
+import { POSITION, useToast } from "vue-toastification";
 
 const props = defineProps({
   user: Object,
@@ -29,7 +30,22 @@ onMounted(() => {
     form.admin = props.user.admin || 0;
   }
 });
+
+const toast = useToast();
 const submit = () => {
+  if (form.phone !== props.user.phone) {
+    if (!/^(52|1)\d{10}$/.test(form.phone)) {
+      toast.error(
+        "El número de teléfono debe comenzar con 52 (México) o 1 (EE.UU.) y tener exactamente 10 dígitos después",
+        {
+          position: POSITION.TOP_CENTER,
+          draggable: true,
+        }
+      );
+      return;
+    }
+  }
+
   form.put(route("usuarios.update", { id: props.user.id }), {
     onFinish: () => form.reset("password", "password_confirmation"),
   });
@@ -120,6 +136,10 @@ const seleccionar = (valor) => {
 
       <div class="mt-4">
         <InputLabel for="phone" value="Teléfono" />
+        <p class="text-sm mt-1 text-gray-600">
+          52(mx) o 1(usa) seguido de 10 dígitos
+          <span class="text-red-500">*</span>
+        </p>
         <TextInput
           minlength="12"
           maxlength="12"

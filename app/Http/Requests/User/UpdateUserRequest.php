@@ -35,9 +35,10 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($userId),
             ],
             'phone' => [
-                'required',
+                'nullable',
                 'string',
-                'size:10', // Exactamente 12 caracteres
+                'min:11', // Exactamente 12 caracteres
+                'max:12', // Exactamente 12 caracteres
                 // 'unique:pre_register_users,phone,' . $userId, 
                 Rule::unique('users', 'phone')->ignore($userId),
                 //'unique:users,phone', // Verificación en users (para evitar duplicados)

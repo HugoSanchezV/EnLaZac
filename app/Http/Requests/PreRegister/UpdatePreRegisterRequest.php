@@ -26,7 +26,8 @@ class UpdatePreRegisterRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'size:10', // Exactamente 12 caracteres
+                'min:11',
+                'max:12',
                 'unique:pre_register_users,phone,' . $preRegisterUserId, // Ignora el registro actual en pre_register_users
                 'unique:users,phone', // Verificación en users (para evitar duplicados)
             ],
