@@ -27,7 +27,7 @@ const submit = () => {
   if (form.phone !== "") {
     if (!/^(52|1)\d{10}$/.test(form.phone)) {
       toast.error(
-        "El número de teléfono debe comenzar con 52(mx) o 1(usa) y tener exactamente 10 dígitos después",
+        "El número de teléfono debe comenzar con 52 (México) o 1 (EE.UU.) y tener exactamente 10 dígitos después",
         {
           position: POSITION.TOP_CENTER,
           draggable: true,

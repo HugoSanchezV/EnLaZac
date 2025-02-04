@@ -22,7 +22,8 @@ class CreateNewUser implements CreatesNewUsers
 
     private $messages = [
         'phone.required' => 'El número de teléfono es obligatorio.',
-        'phone.size' => 'El número de teléfono debe tener exactamente 10 dígitos.',
+        'phone.min' => 'El número de teléfono debe comenzar con 52 (México) o 1 (EE.UU.) y tener exactamente 10 dígitos después',
+        'phone.max' => 'El número de teléfono debe comenzar con 52 (México) o 1 (EE.UU.) y tener exactamente 10 dígitos después',
         'phone.unique' => 'Este número de teléfono ya está registrado.',
         'phone.exists' => 'Este número de teléfono no se encuentra en el pre-registro, contacta con tu proovedor.',
     ];
@@ -39,7 +40,7 @@ class CreateNewUser implements CreatesNewUsers
             Validator::make($input, [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'phone' => ['required', 'string', 'size:10', 'exists:pre_register_users,phone', 'unique:users,phone',],
+                'phone' => ['required', 'string', 'min:11', 'max:12',  'exists:pre_register_users,phone', 'unique:users,phone',],
                 'password' => $this->passwordRules(),
                 'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
             ], $this->messages)->validate();
