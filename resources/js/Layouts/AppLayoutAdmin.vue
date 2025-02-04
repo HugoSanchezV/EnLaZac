@@ -242,7 +242,7 @@ const formattedDate = (dateCreation) => {
                                                 <span class="time">{{ formattedDate(notification.created_at) }}</span>
                                             </Link>
                                         </div>
-                                        <div v-else>
+                                        <div v-else-if="notification.type == 'App\\Notifications\\RegisterUserNotification'">
                                             <Link  
                                                 :href = "route('usuarios.show', notification.data.id)"
                                                 class="dropdown-item"
